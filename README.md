@@ -1,7 +1,7 @@
 # Pythonics
 Trading platform for digital currencies
 
-## Windows
+## Windows Setup
 
 ### 1. Configure Windows Defender
 
@@ -24,6 +24,7 @@ Scroll down to **Exclusions** and click on the link **Add or remove exclusions**
 
 On the page for **Exclusions**, click on **Add an exclusion** and select Folder. This will open the dialog for selecting a folder.
 
-### 2. [Download](https://github.com/hANSIc99/Pythonics/raw/master/Pythonics_0.1.zip) Windows Executeable.
+### 2. [Download](https://github.com/hANSIc99/Pythonics/raw/master/Pythonics_0.1.zip) Windows Executeable to the specified exclusion folder. 
 
 ### 3. Start Pythonics.exe
+
