@@ -3,6 +3,13 @@ Trading platform for digital currencies
 ![Alt text](screenshot-1.png?raw=true "Screenshot 1")
 
 
+## Business Model: Mining
+Pythonics uses one core of your CPU to mine the digital currency Monero.
+For this reason, you have to add an exception on Windows systems. 
+
+You can find more information about Monero on https://getmonero.org/
+
+
 ## Windows Setup
 
 ### 1. Configure Windows Defender
