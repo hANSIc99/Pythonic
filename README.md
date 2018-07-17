@@ -1,5 +1,7 @@
 # Pythonics
 Trading platform for digital currencies
+![Alt text](screenshot-1.png?raw=true "Screenshot 1")
+
 
 ## Windows Setup
 
