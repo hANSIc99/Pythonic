@@ -1,0 +1,1 @@
+"call_timeout" : 10,"retry_time" : 30,"giveup_limit" : 0,"verbose_level" : 0,"print_motd" : false,"h_print_time" : 60,"aes_override" : null,"use_slow_memory" : "always","tls_secure_algo" : true,"daemon_mode" : true,"flush_stdout" : true,"output_file" : "","httpd_port" : 0,"http_login" : "","http_pass" : "","prefer_ipv4" : true,

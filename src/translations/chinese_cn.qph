@@ -1,0 +1,59 @@
+<!DOCTYPE QPH>
+<QPH language="zh_CN" sourcelanguage="en_US">
+<phrase>
+    <source>Save as ...</source>
+    <target>另存为</target>
+</phrase>
+<phrase>
+    <source>Crypto Fox</source>
+    <target>密码学狐狸</target>
+</phrase>
+<phrase>
+    <source>Save</source>
+    <target>保存</target>
+</phrase>
+<phrase>
+    <source>Run</source>
+    <target>跑</target>
+</phrase>
+<phrase>
+    <source>Start debug</source>
+    <target>开始调试</target>
+</phrase>
+<phrase>
+    <source>Do you want to save changes?</source>
+    <target>你想保存更改吗？</target>
+</phrase>
+<phrase>
+    <source>New workflow</source>
+    <target>新工作流程</target>
+</phrase>
+<phrase>
+    <source>Open workflow</source>
+    <target>打开工作流程</target>
+</phrase>
+<phrase>
+    <source>Save workflow</source>
+    <target>保存工作流</target>
+</phrase>
+<phrase>
+    <source>Close?</source>
+    <target>关？</target>
+</phrase>
+<phrase>
+    <source>Warning: Execution of all tasks will be stopped!</source>
+    <target>警告：所有任务的执行将会停止！</target>
+</phrase>
+<phrase>
+    <source>Info</source>
+    <target>信息</target>
+</phrase>
+<phrase>
+    <source>Language</source>
+    <target>语言</target>
+</phrase>
+<phrase>
+    <source>File</source>
+    <target>文件</target>
+</phrase>
+</QPH>
