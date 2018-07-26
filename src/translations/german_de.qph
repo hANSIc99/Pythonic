@@ -1,0 +1,391 @@
+<!DOCTYPE QPH>
+<QPH sourcelanguage="en_US" language="de_DE">
+<phrase>
+    <source>Save as ...</source>
+    <target>Speichern unter ...</target>
+</phrase>
+<phrase>
+    <source>Crypto Fox</source>
+    <target>Krypto Fuchs</target>
+</phrase>
+<phrase>
+    <source>Save</source>
+    <target>Speichern</target>
+</phrase>
+<phrase>
+    <source>en</source>
+    <target>Englisch</target>
+</phrase>
+<phrase>
+    <source>cn</source>
+    <target>Chinesisch</target>
+</phrase>
+<phrase>
+    <source>es</source>
+    <target>Spanisch</target>
+</phrase>
+<phrase>
+    <source>de</source>
+    <target>Deutsch</target>
+</phrase>
+<phrase>
+    <source>Warning: Execution of all tasks will be stopped!</source>
+    <target>Warnung: Alle Aufgaben werden gestoppt!</target>
+</phrase>
+<phrase>
+    <source>Close?</source>
+    <target>Beenden?</target>
+</phrase>
+<phrase>
+    <source>Save workflow</source>
+    <target>Workflow speichern</target>
+</phrase>
+<phrase>
+    <source>Open workflow</source>
+    <target>Workflow öffnen</target>
+</phrase>
+<phrase>
+    <source>New workflow</source>
+    <target>Neuer Workflow</target>
+</phrase>
+<phrase>
+    <source>Do you want to save changes?</source>
+    <target>Wollen Sie die Änderungen speichern?</target>
+</phrase>
+<phrase>
+    <source>Start debug</source>
+    <target>Debugging starten</target>
+</phrase>
+<phrase>
+    <source>Run</source>
+    <target>Starten</target>
+</phrase>
+<phrase>
+    <source>File</source>
+    <target>Datei</target>
+</phrase>
+<phrase>
+    <source>Language</source>
+    <target>Sprache</target>
+</phrase>
+<phrase>
+    <source>Info</source>
+    <target>Info</target>
+</phrase>
+<phrase>
+    <source>Help</source>
+    <target>Hilfe</target>
+</phrase>
+<phrase>
+    <source>Yes</source>
+    <target>Ja</target>
+</phrase>
+<phrase>
+    <source>No</source>
+    <target>Nein</target>
+</phrase>
+<phrase>
+    <source>Process your own Python 3.6 code.</source>
+    <target>Verarbeite deinen eigenen Python 3.6 code.</target>
+</phrase>
+<phrase>
+    <source>Enter your Python 3.6 code below:</source>
+    <target>Gib deinen Python 3.6 code hier ein:</target>
+</phrase>
+<phrase>
+    <source>Log output?</source>
+    <target>Log-Datei Ausgabe?</target>
+</phrase>
+<phrase>
+    <source>&quot;&quot;&quot; use the variable input to access data from previous elements &quot;&quot;&quot;</source>
+    <target>&quot;&quot;&quot; verwende die Variable input um auf die Ausgabe des voherigen Elementes zuzugreifen &quot;&quot;&quot;</target>
+</phrase>
+<phrase>
+    <source>&quot;&quot;&quot; set the output variable to pass data to following elements &quot;&quot;&quot;</source>
+    <target>&quot;&quot;&quot; nutze die Variable output um Daten an das nachfolgende Element weiterzugeben &quot;&quot;&quot; </target>
+</phrase>
+<phrase>
+    <source>&quot;&quot;&quot; set the variable log_txt to adjust the logging text &quot;&quot;&quot;</source>
+    <target>&quot;&quot;&quot; setze die Variable log_txt um die Log-Ausgabe anzupassen &quot;&quot;&quot;</target>
+</phrase>
+<phrase>
+    <source>Greater than (&gt;) ...</source>
+    <target>Größer als (&gt;) ...</target>
+</phrase>
+<phrase>
+    <source>Greater or equal than (&gt;=) ...</source>
+    <target>Größer oder gleich (&gt;=) ...</target>
+</phrase>
+<phrase>
+    <source>Less than (&lt;) ...</source>
+    <target>Kleiner als (&lt;) ...</target>
+</phrase>
+<phrase>
+    <source>Less or equal than (&lt;=) ...</source>
+    <target>Kleiner oder gleich (&lt;=) ...</target>
+</phrase>
+<phrase>
+    <source>Equal to (==) ...</source>
+    <target>Gleich (==) ...</target>
+</phrase>
+<phrase>
+    <source>NOT equal to (!=) ...</source>
+    <target>Ungleich (!=) ...</target>
+</phrase>
+<phrase>
+    <source>Leads the execution path</source>
+    <target>Lenkt die Ausgabe</target>
+</phrase>
+<phrase>
+    <source>according to the defined condition.</source>
+    <target>in Abhängigkeit der Abfrage.</target>
+</phrase>
+<phrase>
+    <source>Put string in quotation marks:</source>
+    <target>Setze Strings in Anführungszeichen:</target>
+</phrase>
+<phrase>
+    <source>e.g. &quot;state_x&quot;</source>
+    <target>z.B. &quot;state_x&quot;</target>
+</phrase>
+<phrase>
+    <source>Negate query (if NOT ... )</source>
+    <target>Negiere Abfrage (if NOT ...)</target>
+</phrase>
+<phrase>
+    <source>if INPUT is ...</source>
+    <target>wenn INPUT ...</target>
+</phrase>
+<phrase>
+    <source>Edit Branch</source>
+    <target>Bearbeite Abzweig</target>
+</phrase>
+<phrase>
+    <source>Go to element:</source>
+    <target>Gehe zu Element:</target>
+</phrase>
+<phrase>
+    <source>Choose an element from the list</source>
+    <target>Wähle ein Element aus der Liste</target>
+</phrase>
+<phrase>
+    <source>to which you want to return with the</source>
+    <target>zu welchem mit der aktuellen Eingabe</target>
+</phrase>
+<phrase>
+    <source>current input</source>
+    <target>zurück gesprungen werden soll.</target>
+</phrase>
+<phrase>
+    <source>Edit Return</source>
+    <target>Bearbeite Rücksprung</target>
+</phrase>
+<phrase>
+    <source>Edit Process Branch</source>
+    <target>Bearbeite Prozess-Abzweig</target>
+</phrase>
+<phrase>
+    <source>Multiprocessing: Start a new execution path.</source>
+    <target>Multiprocessing: Starte einen parallelen Ausführungspfad</target>
+</phrase>
+<phrase>
+    <source>Choose technical analysis function</source>
+    <target>Wähle technische Analyse</target>
+</phrase>
+<phrase>
+    <source>Find information about technical analysis on</source>
+    <target>Weitere Informationen bzgl. technischer Analyse auf</target>
+</phrase>
+<phrase>
+    <source>Edit TA function</source>
+    <target>Bearbeite TA Funktion</target>
+</phrase>
+<phrase>
+    <source>Enter time range MA</source>
+    <target>Eingabe Zeitinterval MA</target>
+</phrase>
+<phrase>
+    <source>Default value: 3</source>
+    <target>Standardwert: 3</target>
+</phrase>
+<phrase>
+    <source>Enter time range EMA</source>
+    <target>Eingabe Zeitinterval EMA</target>
+</phrase>
+<phrase>
+    <source>Enter MA period</source>
+    <target>Eingabe MA Zeitspanne</target>
+</phrase>
+<phrase>
+    <source>Enter periods</source>
+    <target>Eingabe Zeitraum</target>
+</phrase>
+<phrase>
+    <source>Edit Basic Operation</source>
+    <target>Bearbeite Basisfunktion</target>
+</phrase>
+<phrase>
+    <source>New</source>
+    <target>Neu</target>
+</phrase>
+<phrase>
+    <source>Open</source>
+    <target>Öffnen</target>
+</phrase>
+<phrase>
+    <source>Save</source>
+    <target>Speichern</target>
+</phrase>
+<phrase>
+    <source>Save as ...</source>
+    <target>Speichern unter ...</target>
+</phrase>
+<phrase>
+    <source>Settings</source>
+    <target>Einstellungen</target>
+</phrase>
+<phrase>
+    <source>Close</source>
+    <target>Beenden</target>
+</phrase>
+<phrase>
+    <source>Stop execution</source>
+    <target>Stoppe Ausführung</target>
+</phrase>
+<phrase>
+    <source>Enter time offset [s] (default: 0; range: -999s to + 999s)</source>
+    <target>Zeitliches Offset [s] (Standard: 0; Bereich: -999s bis + 999s)</target>
+</phrase>
+<phrase>
+    <source>Synchronize with Binance and execute subsequent modules</source>
+    <target>Ausführung nachfolgender Elemente nach</target>
+</phrase>
+<phrase>
+    <source>after expiration of the selected interval.</source>
+    <target>Synchronisierung mit Binance.</target>
+</phrase>
+<phrase>
+    <source>Edit Binance Scheduler</source>
+    <target>Bearbeite Binance Scheduler</target>
+</phrase>
+<phrase>
+    <source>1 Minute</source>
+    <target>1 Minute</target>
+</phrase>
+<phrase>
+    <source>3 Minutes</source>
+    <target>3 Minuten</target>
+</phrase>
+<phrase>
+    <source>5 Minutes</source>
+    <target>5 Minuten</target>
+</phrase>
+<phrase>
+    <source>15 Minutes</source>
+    <target>15 Minuten</target>
+</phrase>
+<phrase>
+    <source>30 Minutes</source>
+    <target>30 Minuten</target>
+</phrase>
+<phrase>
+    <source>1 Hour</source>
+    <target>1 Stunde</target>
+</phrase>
+<phrase>
+    <source>2 Hours</source>
+    <target>2 Stunden</target>
+</phrase>
+<phrase>
+    <source>4 Hours</source>
+    <target>4 Stunden</target>
+</phrase>
+<phrase>
+    <source>6 Hours</source>
+    <target>6 Stunden</target>
+</phrase>
+<phrase>
+    <source>8 Hours</source>
+    <target>8 Stunden</target>
+</phrase>
+<phrase>
+    <source>12 Hours</source>
+    <target>12 Stunden</target>
+</phrase>
+<phrase>
+    <source>1 Day</source>
+    <target>1 Tag</target>
+</phrase>
+<phrase>
+    <source>Choose the scheduler interval</source>
+    <target>Setze Scheduler Intervall</target>
+</phrase>
+<phrase>
+    <source>Outputs a Pandas dataframe in the following format:</source>
+    <target>Gibt einen Pandas Dataframe im folgenden Format aus:</target>
+</phrase>
+<phrase>
+    <source>Edit OHLC query</source>
+    <target>Bearbeite OHLC Abfrage</target>
+</phrase>
+<phrase>
+    <source>Enter currency pair</source>
+    <target>Eingabe des Währungspaar</target>
+</phrase>
+<phrase>
+    <source>e.g. &quot;XMRBTC&quot;</source>
+    <target>z.B. &quot;XMRBTC&quot;</target>
+</phrase>
+<phrase>
+    <source>Choose the OHLC interval</source>
+    <target>Wähle OHLC Intervall</target>
+</phrase>
+<phrase>
+    <source>Place a Order</source>
+    <target>Platziere eine Order</target>
+</phrase>
+<phrase>
+    <source>Enter quantity:</source>
+    <target>Eingabe Ordermenge:</target>
+</phrase>
+<phrase>
+    <source>Buy</source>
+    <target>Kaufen</target>
+</phrase>
+<phrase>
+    <source>Sell</source>
+    <target>Verkaufen</target>
+</phrase>
+<phrase>
+    <source>Enter API key:</source>
+    <target>Eingabe API-Schlüssel</target>
+</phrase>
+<phrase>
+    <source>Enter secret key:</source>
+    <target>Eingabe privater Schlüssel:</target>
+</phrase>
+<phrase>
+    <source>Attention: Use a dot (&quot;.&quot;) as decimal seperator!</source>
+    <target>Achtung: Verwende einen Punkt (&quot;.&quot;) als Dezimaltrennzeichen!</target>
+</phrase>
+<phrase>
+    <source>Test order without effect.</source>
+    <target>Probe Order ohne Auswirkung.</target>
+</phrase>
+<phrase>
+    <source>Debug delay:</source>
+    <target>Debugging Verzögerung:</target>
+</phrase>
+<phrase>
+    <source>Milliseconds</source>
+    <target>Millisekunden</target>
+</phrase>
+<phrase>
+    <source>Debug info of element:</source>
+    <target>Debug Info von Element:</target>
+</phrase>
+<phrase>
+    <source>Debug</source>
+    <target>Debug</target>
+</phrase>
+</QPH>

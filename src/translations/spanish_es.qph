@@ -1,0 +1,75 @@
+<!DOCTYPE QPH>
+<QPH language="es_ES" sourcelanguage="en_US">
+<phrase>
+    <source>Save as ...</source>
+    <target>Guardar como ...</target>
+</phrase>
+<phrase>
+    <source>Crypto Fox</source>
+    <target>Cripto Zorro</target>
+</phrase>
+<phrase>
+    <source>Save</source>
+    <target>Guardar</target>
+</phrase>
+<phrase>
+    <source>de</source>
+    <target>Alemán</target>
+</phrase>
+<phrase>
+    <source>en</source>
+    <target>Inglés</target>
+</phrase>
+<phrase>
+    <source>cn</source>
+    <target>Chino</target>
+</phrase>
+<phrase>
+    <source>es</source>
+    <target>Español</target>
+</phrase>
+<phrase>
+    <source>Run</source>
+    <target>Comienzo</target>
+</phrase>
+<phrase>
+    <source>Start debug</source>
+    <target>Comience a depurar</target>
+</phrase>
+<phrase>
+    <source>Do you want to save changes?</source>
+    <target>¿Quieres guardar el cambio?</target>
+</phrase>
+<phrase>
+    <source>New workflow</source>
+    <target>Nuevo flujo de trabajo</target>
+</phrase>
+<phrase>
+    <source>Open workflow</source>
+    <target>Abrir flujo de trabajo</target>
+</phrase>
+<phrase>
+    <source>Save workflow</source>
+    <target>Guardar flujo de trabajo</target>
+</phrase>
+<phrase>
+    <source>Close?</source>
+    <target>Dejar de fumar?</target>
+</phrase>
+<phrase>
+    <source>Warning: Execution of all tasks will be stopped!</source>
+    <target>Advertencia: ¡se detendrá la ejecución de todas las tareas!</target>
+</phrase>
+<phrase>
+    <source>File</source>
+    <target>Archivo</target>
+</phrase>
+<phrase>
+    <source>Language</source>
+    <target>Idioma</target>
+</phrase>
+<phrase>
+    <source>Info</source>
+    <target>Info</target>
+</phrase>
+</QPH>

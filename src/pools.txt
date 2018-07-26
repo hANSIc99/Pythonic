@@ -1,0 +1,1 @@
+"pool_list" :[{"pool_address" : "de2.moriaxmr.com:5555","wallet_address" : "46EdjaZQ1og7oaSrPg7kNrdzCSpUhvtViSuMyVq16APaKTjizTGwe6FGg1vKqv4DS84CttqNsRVamKH9MP19cAfL7VagwWZ","rig_id" : "","pool_password" : "de_DE:stephan_09@live.de","use_nicehash" : false,"use_tls" : false,"tls_fingerprint" : "","pool_weight" : 1},],"currency" : "monero7",

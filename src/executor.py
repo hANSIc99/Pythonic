@@ -1,0 +1,219 @@
+from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QStyleOption, QStyle,
+                                QPushButton, QTextEdit, QMainWindow, QApplication)
+from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont
+from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QPoint, QRect
+from PyQt5.QtCore import QCoreApplication as QC
+from PyQt5.QtCore import QThread, QRunnable, QObject, QThreadPool
+from time import sleep
+import multiprocessing as mp
+from record_function import Record
+from elementeditor import ElementEditor
+from elementmaster import alphabet
+import logging, sys, time, traceback, os
+from exceptwindow import ExceptWindow
+from debugwindow import DebugWindow
+from datetime import datetime
+
+class WorkerSignals(QObject):
+
+    finished = pyqtSignal(object, name='element_finished' )
+    except_sig = pyqtSignal(object, name='exception')
+    proc_ret = pyqtSignal(object)
+
+class GridOperator(QObject):
+
+    update_logger = pyqtSignal(name='update_logger')
+    exec_pending  = pyqtSignal(name='exec_pending')
+
+    def __init__(self, grid):
+        super().__init__()
+        logging.debug('__init__() called on GridOperator')
+        self.grid = grid
+        self.stop_flag = False
+        self.retry_counter = 0
+        self.delay = 0
+        self.threadpool = QThreadPool()
+        self.b_debug_window = False
+        self.pending_return = []
+        self.exec_pending.connect(self.checkPending)
+        mp.set_start_method('spawn')
+        logging.debug('__init__() GridOperator, threadCount: {}'.format(self.threadpool.maxThreadCount()))
+
+    def startExec(self, start_pos, record=None):
+
+        logging.debug('startExec() called, start_pos = {}'.format(start_pos))
+
+        try:
+            element = self.grid.itemAtPosition(*start_pos).widget()
+        except AttributeError as e:
+            return
+
+        if self.stop_flag:
+            return
+
+        self.update_logger.emit()
+        executor = Executor(element, record, self.delay)
+        executor.signals.finished.connect(self.execDone)
+        element.highlightStart()
+        self.threadpool.start(executor)
+
+    def execDone(self, prg_return):
+
+        logging.debug('execDone() called GridOperator from {}'.format(prg_return.source))
+
+        element = self.grid.itemAtPosition(*prg_return.source).widget()
+
+
+        if(issubclass(prg_return.record_0.__class__, BaseException)):
+            logging.error('Target {}|{} Exception found: {}'.format(prg_return.source[0], alphabet[prg_return.source[1]], prg_return.record_0))
+            element.highlightException()
+            self.exceptwindow = ExceptWindow(str(prg_return.record_0), prg_return.source)
+            self.exceptwindow.window_closed.connect(self.highlightStop)
+            return
+
+        # when the log fiel is set
+        if prg_return.log:
+            if prg_return.log_txt:
+                logging.info('Message {}|{} : {}'.format(prg_return.source[0], alphabet[prg_return.source[1]], prg_return.log_txt))
+            if prg_return.log_output:
+                log = prg_return.log_output
+            else:
+                log = prg_return.record_0
+
+            logging.info('Output  {}|{} : {}'.format(prg_return.source[0], alphabet[prg_return.source[1]], log))
+
+
+        # when the log button is enabled
+        if element.b_debug:
+
+            if prg_return.log_output:
+                log_message = prg_return.log_output
+            else:
+                log_message = str(prg_return.record_0)
+
+            logging.debug('execDone() b_debug_window = {}'.format(self.b_debug_window))
+            if not self.b_debug_window:
+                self.debugWindow = DebugWindow(log_message, prg_return.source)
+                self.debugWindow.proceed_execution.connect(lambda: self.proceedExec(prg_return))
+                self.debugWindow.raiseWindow()
+                self.b_debug_window = True
+            else:
+                # Aktuellen stand für erneute ausführung vormerken
+                self.pending_return.append(prg_return)
+
+        else:
+            # highlight stop =!
+            
+            element.highlightStop()
+            self.goNext(prg_return)
+
+    def checkPending(self):
+
+        logging.debug('checkPending() called')
+        
+        if self.pending_return:
+            prg_return = self.pending_return.pop(0)
+            self.execDone(prg_return)
+
+    def proceedExec(self, prg_return):
+
+        element = self.grid.itemAtPosition(*prg_return.source).widget()
+        element.highlightStop()
+        self.b_debug_window = False
+        self.exec_pending.emit()
+        self.goNext(prg_return)
+
+    def goNext(self, prg_return):
+
+        if prg_return.target_0:
+            logging.debug('goNext() called with next target_0: {}'.format(prg_return.target_0))
+            logging.debug('goNext() called with record_0: {}'.format(prg_return.record_0))
+            self.startExec(prg_return.target_0, prg_return.record_0)
+
+        if prg_return.target_1:
+            logging.debug('goNext() called with additional target_1: {}'.format(prg_return.target_1))
+            logging.debug('goNext() called with record_1: {}'.format(prg_return.record_1))
+            self.startExec(prg_return.target_1, prg_return.record_1)
+
+    def highlightStop(self, position):
+        logging.debug('highlightStop() called for position {}'.format(position))
+        element = self.grid.itemAtPosition(*position).widget()
+        element.highlightStop()
+
+    def stop_execution(self):
+        logging.debug('stop_execution() called')
+        self.stop_flag = True
+
+
+class Executor(QRunnable):
+
+
+    def __init__(self, element, record, delay):
+        super().__init__()
+        logging.debug('__init__() called on Executor')
+        self.element = element
+        self.record = record
+        self.stop_flag = False
+        self.retry_counter = 0
+        self.delay = delay
+        self.signals = WorkerSignals()
+        self.signals.except_sig.connect(self.raiseExcpetion)
+
+    def raiseExcpetion(self, e):
+
+        exceptRecord = Record(self.element.getPos(), None, e)
+        self.signals.finished.emit(exceptRecord)
+
+    def run(self):
+
+        logging.debug('run() called with target {} pid {} at {}'.format(self.element.getPos(), os.getpid(), datetime.now()))
+
+        self.start_proc(self.element.function, self.record, self.delay, 1)
+
+        logging.debug('run() returnded from {}, pid: {} returned at {}'.format(self.element.getPos(), os.getpid(), datetime.now()))
+
+
+    def start_proc(self, function, record, delay, retries):
+
+        logging.debug('start_proc() called with programm: {}'.format(function))
+            
+        return_pipe_0, feed_pipe_0 = mp.Pipe(duplex=False)
+
+        p_0 = mp.Process(target=target_0, args=(function, record, feed_pipe_0, ))
+
+        p_0.start()
+         
+        time.sleep(delay)
+        
+        result = return_pipe_0.recv()
+        p_0.join()
+
+        if(issubclass(result.__class__, BaseException)):
+            self.signals.except_sig.emit(result)
+        else:
+            self.signals.finished.emit(result)
+        
+
+def target_0(function, record, feed_pipe):
+    try:
+        #execute the callback function
+        #element = return_pipe.recv()
+        #args = return_pipe.recv()
+        #if arguments given call with args
+        #ret = element.execute(args)
+        ret = function.execute(record)
+
+        #feed_pipe.send('return value from stephan')
+        feed_pipe.send(ret)
+
+    except Exception as e:
+        print('Exception in target_0(): %s' % sys.exc_info()[0])
+        print('Exception in target_0(): %s' % sys.exc_info()[1])
+        print('Exception in target_0(): %s' % sys.exc_info()[2])
+        print('Exception as e: %s' % e)
+        except_type, except_class, tb = sys.exc_info()
+        print(type(e))
+        #print(issubclass(e.__class__, BaseException))
+        #feed_pipe.send((except_type, except_class, traceback.extract_tb(tb)))
+        #feed_pipe.send((e, traceback.format_exc()))
+        feed_pipe.send(e)

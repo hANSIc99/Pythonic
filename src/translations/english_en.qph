@@ -1,0 +1,75 @@
+<!DOCTYPE QPH>
+<QPH sourcelanguage="en_US" language="de_DE">
+<phrase>
+    <source>Save as ...</source>
+    <target>Save as ...</target>
+</phrase>
+<phrase>
+    <source>Crypto Fox</source>
+    <target>Crypto Fox</target>
+</phrase>
+<phrase>
+    <source>Save</source>
+    <target>Save</target>
+</phrase>
+<phrase>
+    <source>de</source>
+    <target>German</target>
+</phrase>
+<phrase>
+    <source>es</source>
+    <target>Spanish</target>
+</phrase>
+<phrase>
+    <source>cn</source>
+    <target>Chinese</target>
+</phrase>
+<phrase>
+    <source>en</source>
+    <target>English</target>
+</phrase>
+<phrase>
+    <source>Run</source>
+    <target>Run</target>
+</phrase>
+<phrase>
+    <source>Start debug</source>
+    <target>Start debug</target>
+</phrase>
+<phrase>
+    <source>Do you want to save changes?</source>
+    <target>Do you want to save changes?</target>
+</phrase>
+<phrase>
+    <source>Close?</source>
+    <target>Close?</target>
+</phrase>
+<phrase>
+    <source>Save workflow</source>
+    <target>Save workflow</target>
+</phrase>
+<phrase>
+    <source>New workflow</source>
+    <target>New workflow</target>
+</phrase>
+<phrase>
+    <source>Warning: Execution of all tasks will be stopped!</source>
+    <target>Warning: Execution of all tasks will be stopped!</target>
+</phrase>
+<phrase>
+    <source>Open workflow</source>
+    <target>Open workflow</target>
+</phrase>
+<phrase>
+    <source>File</source>
+    <target>File</target>
+</phrase>
+<phrase>
+    <source>Language</source>
+    <target>Language</target>
+</phrase>
+<phrase>
+    <source>Info</source>
+    <target>Info</target>
+</phrase>
+</QPH>
