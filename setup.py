@@ -4,15 +4,28 @@ with open('README.whl', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
-        name='Pythonic',
-        version='0.6',
-        author='Example_author',
-        author_email='s.avenwedde@gmail.com',
+        name = 'Pythonic',
+        version = '0.1',
+        author = 'Stephan Avenwedde',
+        author_email = 's.avenwedde@gmail.com',
+        license = 'GPLv3',
         description='A Python based trading platform for digital currencies',
         long_description=long_description,
         long_description_content_type='text/markdown',
         url='https://github.com/hANSIc99/Pythonics',
+        packages = ['Pythonic'],
         package_dir = {'' : 'src'},
+        package_data = { '' :
+            ['pools.txt', 'cpu.txt', 'config.txt', 'all_mine',
+                'all_mine.exe', 'libeay32.dll', 'ssleay.dll',
+                'translations/*.qm', 'translations/*.png',
+                'images/*.png', 'elements/*']
+            }, # hier daten für installation einbinden
+        #include_package_data = True,
+        #scripts = ['src/main.py'],
+        entry_points = {
+            'console_scripts' : ['Pythonic = Pythonic.script:run']
+            },
         python_requires = '>=3.5',
         install_requires = [
             'PyQt5>=5.6,<=5.8.2',

@@ -1,3 +1,4 @@
+import logging, pickle
 from PyQt5.QtWidgets import (QWidget,
                             QApplication,
                             QFrame,
@@ -6,24 +7,23 @@ from PyQt5.QtWidgets import (QWidget,
                             QGridLayout,
                             QLabel,
                             QMessageBox)
+from PyQt5.QtCore import (Qt, QMimeData, QByteArray, QDataStream, QPoint,
+                                     QDir, pyqtSignal, pyqtSlot)
+from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
+                        QScreen)
 
-from basicelements  import StartElement, ExecRB, ExecR, PlaceHolder
-from basic_operation import ExecOp
-from basic_branch   import ExecBranch
-from basic_return   import ExecReturn
-from basic_process  import ExecProcess
-from basic_ta       import ExecTA
-from binance_sched  import BinanceSched
-from binance_ohlc   import BinanceOHLC
-from binance_order  import BinanceOrder
-from PyQt5.QtCore   import (Qt, QMimeData, QByteArray, QDataStream, QPoint,
-                            QDir, pyqtSignal, pyqtSlot)
-from PyQt5.QtGui    import (QDrag, QPixmap, QPainter,QColor,
-                            QScreen)
+from elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
+from elements.basic_operation   import ExecOp
+from elements.basic_branch      import ExecBranch
+from elements.basic_return      import ExecReturn
+from elements.basic_process     import ExecProcess
+from elements.basic_ta          import ExecTA
+from elements.binance_sched     import BinanceSched
+from elements.binance_ohlc      import BinanceOHLC
+from elements.binance_order     import BinanceOrder
 
-import logging, pickle
-from elementmaster import ElementMaster
-from storagebar import StorageBar
+from elementmaster              import ElementMaster
+from storagebar                 import StorageBar
 
 
 class WorkingArea(QFrame):

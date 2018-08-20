@@ -1,0 +1,3 @@
+include README.whl
+include LICENSE
+include src/pools.txt

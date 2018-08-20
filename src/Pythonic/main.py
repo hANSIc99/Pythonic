@@ -357,3 +357,13 @@ if __name__ == '__main__':
     ex.show()
     app.exec()
 
+def run():
+    mp.freeze_support()
+    app = QApplication(sys.argv)
+    translator = QTranslator(app)
+
+    ex = MainWindow(app)
+    ex.show()
+    app.exec()
+
+
