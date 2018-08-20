@@ -1,0 +1,32 @@
+Metadata-Version: 2.1
+Name: Pythonic
+Version: 0.1
+Summary: A Python based trading platform for digital currencies
+Home-page: https://github.com/hANSIc99/Pythonics
+Author: Stephan Avenwedde
+Author-email: s.avenwedde@gmail.com
+License: GPLv3
+Description: # Pythonics
+        
+        You can find a detailed description and
+        source files available at [Github](https://github.com/hANSIc99/Pythonics)
+        
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Financial and Insurance Industry
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Intended Audience :: Education
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Operating System :: OS Independent
+Classifier: Environment :: X11 Applications :: Qt
+Classifier: Natural Language :: German
+Classifier: Natural Language :: English
+Classifier: Natural Language :: Chinese (Simplified)
+Classifier: Natural Language :: Spanish
+Classifier: Topic :: Office/Business :: Financial
+Requires-Python: >=3.5
+Description-Content-Type: text/markdown
