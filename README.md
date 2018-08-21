@@ -1,4 +1,4 @@
-# Pythonics
+# Pythonic
 Trading platform for digital currencies
 ![Alt text](screenshot-1.png?raw=true "Screenshot 1")
 
@@ -36,4 +36,14 @@ On the page for **Exclusions**, click on **Add an exclusion** and select Folder.
 ### 2. [Download](https://github.com/hANSIc99/Pythonics/raw/master/Pythonics_0.1.zip) ZIP archive to the specified exclusion folder and extract it. 
 
 ### 3. Start Pythonics.exe
+
+## Installation into existing Python 3.x environment
+
+Pythonic is compatible with Python version 3.5, 3.6 and 3.7.
+
+#### 1. `pip install Pythonics`
+
+You can now start Pythonic from the command line by typing:
+
+#### 2. `./Pythonic`
 
