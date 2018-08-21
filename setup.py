@@ -12,7 +12,7 @@ setuptools.setup(
         description='A Python based trading platform for digital currencies',
         long_description=long_description,
         long_description_content_type='text/markdown',
-        url='https://github.com/hANSIc99/Pythonics',
+        url='https://github.com/hANSIc99/Pythonic',
         packages = ['Pythonic'],
         package_dir = {'' : 'src'},
         package_data = { '' :
