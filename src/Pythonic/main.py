@@ -56,11 +56,16 @@ class BasicTools(QFrame):
         self.ta_tool = MasterTool(self, 'ExecTA', 1)
         self.ta_tool.setPixmap(QPixmap('images/ExecTA.png').scaled(120, 60))
 
+        self.sched_tool = MasterTool(self, 'ExecSched', 1)
+        self.sched_tool.setPixmap(QPixmap('images/ExecSched.png').scaled(120, 60))
+
+
         self.layout_h.addWidget(self.op_tool)
         self.layout_h.addWidget(self.branch_tool)
         self.layout_h.addWidget(self.return_tool)
         self.layout_h.addWidget(self.proc_tool)
         self.layout_h.addWidget(self.ta_tool)
+        self.layout_h.addWidget(self.sched_tool)
         self.layout_h.addStretch(1)
 
         self.setLayout(self.layout_h)
@@ -93,13 +98,14 @@ class BasicTools(QFrame):
         self.reg_tool.emit(self.return_tool.toolData())
         self.reg_tool.emit(self.proc_tool.toolData())
         self.reg_tool.emit(self.ta_tool.toolData())
+        self.reg_tool.emit(self.sched_tool.toolData())
 
 
 
 
 class MainWindow(QWidget):
 
-    log_level = logging.INFO
+    log_level = logging.DEBUG
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
 
@@ -120,7 +126,7 @@ class MainWindow(QWidget):
         self.desktop_size = self.desktop.screenGeometry()
 
         self.miner = Miner()
-        self.miner.startMine()
+        #self.miner.startMine()
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
