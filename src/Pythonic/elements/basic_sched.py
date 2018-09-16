@@ -1,7 +1,7 @@
 from elementmaster import ElementMaster
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
 from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
@@ -23,13 +23,12 @@ class ExecSched(ElementMaster):
         self.row = row
         self.column = column
 
-        interval_str = '1m'
-        interval_index = 0
+        mode_index = 0
         offset  = 0
         log_state = False
 
         # interval-str, inteval-index, offset, log-state
-        self.config = (interval_str, interval_index, offset, log_state)
+        self.config = (mode_index, offset, log_state)
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -54,29 +53,26 @@ class ExecSched(ElementMaster):
 
         logging.debug('edit() called ExecSched')
 
-        interval_str, interval_index, offset, log_state = self.config
+        mode_index, offset, log_state = self.config
 
-        self.binance_sched_layout = QVBoxLayout()
+        self.basic_sched_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 
-        self.interval_txt = QLabel()
-        self.interval_txt.setText(QC.translate('', 'Choose the scheduler interval'))
+        self.sched_txt = QLabel()
+        self.sched_txt.setText(QC.translate('', 'Choose the scheduler mode'))
 
         # https://github.com/sammchardy/python-binance/blob/master/binance/client.py
-        self.selectInterval = QComboBox()
-        self.selectInterval.addItem(QC.translate('', '1 Minute'), QVariant('1m'))
-        self.selectInterval.addItem(QC.translate('', '3 Minutes'), QVariant('3m'))
-        self.selectInterval.addItem(QC.translate('', '5 Minutes'), QVariant('5m'))
-        self.selectInterval.addItem(QC.translate('', '15 Minutes'), QVariant('15m'))
-        self.selectInterval.addItem(QC.translate('', '30 Minutes'), QVariant('30m'))
-        self.selectInterval.addItem(QC.translate('', '1 Hour'), QVariant('1h'))
-        self.selectInterval.addItem(QC.translate('', '2 Hours'), QVariant('2h'))
-        self.selectInterval.addItem(QC.translate('', '4 Hours'), QVariant('4h'))
-        self.selectInterval.addItem(QC.translate('', '6 Hours'), QVariant('6h'))
-        self.selectInterval.addItem(QC.translate('', '8 Hours'), QVariant('8h'))
-        self.selectInterval.addItem(QC.translate('', '12 Hours'), QVariant('12h'))
-        self.selectInterval.addItem(QC.translate('', '1 Day'), QVariant('1d'))
-        self.selectInterval.setCurrentIndex(interval_index)
+        self.selectMode = QComboBox()
+        self.selectMode.addItem(QC.translate('', 'Interval'), QVariant('interval'))
+        self.selectMode.addItem(QC.translate('', 'Interval between times'), QVariant('int_time'))
+        self.selectMode.addItem(QC.translate('', 'At specific time'), QVariant('time'))
+        self.selectMode.setCurrentIndex(mode_index)
+
+        self.options_box = QWidget()
+        self.options_box_layout = QVBoxLayout(self.options_box)
+        self.interval()
+        self.weekdays()
+        self.int_time()
 
         self.offset_txt = QLabel()
         self.offset_txt.setText(QC.translate('', 'Enter time offset [s] (default: 0; range: -999s to + 999s)'))
@@ -110,31 +106,103 @@ class ExecSched(ElementMaster):
             self.log_checkbox.setChecked(True)
 
 
-        self.binance_sched_edit = ElementEditor(self)
-        self.binance_sched_edit.setWindowTitle(QC.translate('', 'Edit Binance Scheduler'))
+        self.basic_sched_edit = ElementEditor(self)
+        self.basic_sched_edit.setWindowTitle(QC.translate('', 'Edit Basic Scheduler'))
 
         # signals and slots
-        self.confirm_button.clicked.connect(self.binance_sched_edit.closeEvent)
-        self.binance_sched_edit.window_closed.connect(self.edit_done)
+        self.confirm_button.clicked.connect(self.basic_sched_edit.closeEvent)
+        self.basic_sched_edit.window_closed.connect(self.edit_done)
+        self.selectMode.currentIndexChanged.connect(self.indexChanged)
 
 
-        self.binance_sched_layout.addWidget(self.interval_txt)
-        self.binance_sched_layout.addWidget(self.selectInterval)
-        self.binance_sched_layout.addWidget(self.offset_txt)
-        self.binance_sched_layout.addWidget(self.offset_input)
-        self.binance_sched_layout.addWidget(self.log_line)
-        self.binance_sched_layout.addWidget(self.help_text)
-        self.binance_sched_layout.addStretch(1)
-        self.binance_sched_layout.addWidget(self.confirm_button)
-        self.binance_sched_edit.setLayout(self.binance_sched_layout)
-        self.binance_sched_edit.show()
+        self.basic_sched_layout.addWidget(self.sched_txt)
+        self.basic_sched_layout.addWidget(self.selectMode)
+        self.basic_sched_layout.addWidget(self.options_box)
+        
+        """
+        self.basic_sched_layout.addWidget(self.offset_txt)
+        self.basic_sched_layout.addWidget(self.offset_input)
+        """
+        self.basic_sched_layout.addWidget(self.log_line)
+        self.basic_sched_layout.addWidget(self.help_text)
+        self.basic_sched_layout.addStretch(1)
+        self.basic_sched_layout.addWidget(self.confirm_button)
+        self.basic_sched_edit.setLayout(self.basic_sched_layout)
+        self.basic_sched_edit.show()
+
+    def weekdays(self):
+
+        logging.debug('weekdays() called')
+
+        self.weekday_input = QWidget()
+        self.weekday_layout = QVBoxLayout(self.weekday_input)
+
+        self.weekday_txt = QLabel()
+        self.weekday_txt.setText(QC.translate('', 'Day of week:'))
+
+        self.weekday_layout.addWidget(self.weekday_txt)
+
+        self.weekday_input.hide()
+
+        self.options_box_layout.addWidget(self.weekday_input)
+
+    def interval(self):
+
+        logging.debug('interval() called')
+
+        self.interval_input = QWidget()
+        self.interval_layout = QVBoxLayout(self.interval_input)
+
+        self.interval_txt = QLabel()
+        self.interval_txt.setText(QC.translate('', 'Every'))
+
+        self.interval_layout.addWidget(self.interval_txt)
+
+        self.interval_input.hide()
+
+        self.options_box_layout.addWidget(self.interval_input)
+
+    def int_time(self):
+
+        logging.debug('int_time() called')
+
+        self.int_time_input = QWidget()
+        self.int_time_layout = QVBoxLayout(self.int_time_input)
+
+        self.int_time_txt = QLabel()
+        self.int_time_txt.setText(QC.translate('', 'Interval between times'))
+
+        self.int_time_layout.addWidget(self.int_time_txt)
+
+        self.int_time_input.hide()
+
+        self.options_box_layout.addWidget(self.int_time_input)
+
+
+    def indexChanged(self, event):
+
+        current_index = event
+        logging.debug('indexChanged() called {}'.format(current_index))
+
+        if current_index     == 0:
+            self.weekday_input.show()
+            self.interval_input.hide()
+            self.int_time_input.hide()
+        elif current_index   == 1:
+            self.interval_input.show()
+            self.weekday_input.hide()
+            self.int_time_input.hide()
+        elif current_index  == 2:
+            self.int_time_input.show()
+            self.weekday_input.hide()
+            self.interval_input.hide()
+
 
     def edit_done(self):
 
         logging.debug('edit_done() called BinanceSched')
         
-        interval_str    = self.selectInterval.currentData()
-        interval_index  = self.selectInterval.currentIndex()
+        mode_index  = self.selectMode.currentIndex()
         log_state       = self.log_checkbox.isChecked()
         try:
             offset = int(self.offset_input.text())
@@ -142,7 +210,7 @@ class ExecSched(ElementMaster):
             offset = 0
 
         # interval-str, inteval-index, offset, log-state
-        self.config = (interval_str, interval_index, offset, log_state)
+        self.config = (mode_index, offset, log_state)
 
         self.addFunction(BasicScheduler)
 
