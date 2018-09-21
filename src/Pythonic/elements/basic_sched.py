@@ -66,13 +66,13 @@ class ExecSched(ElementMaster):
         self.selectMode.addItem(QC.translate('', 'Interval'), QVariant('interval'))
         self.selectMode.addItem(QC.translate('', 'Interval between times'), QVariant('int_time'))
         self.selectMode.addItem(QC.translate('', 'At specific time'), QVariant('time'))
-        self.selectMode.setCurrentIndex(mode_index)
 
         self.options_box = QWidget()
         self.options_box_layout = QVBoxLayout(self.options_box)
         self.interval()
         self.weekdays()
         self.int_time()
+
 
         self.offset_txt = QLabel()
         self.offset_txt.setText(QC.translate('', 'Enter time offset [s] (default: 0; range: -999s to + 999s)'))
@@ -102,6 +102,13 @@ class ExecSched(ElementMaster):
         self.log_line_layout.addWidget(self.log_checkbox)
         self.log_line_layout.addStretch(1)
 
+        # load config
+
+        #self.selectMode.setCurrentIndex(mode_index)
+        self.selectMode.setCurrentIndex(2) #anpassen
+
+        self.loadLastConfig()
+
         if log_state:
             self.log_checkbox.setChecked(True)
 
@@ -114,6 +121,8 @@ class ExecSched(ElementMaster):
         self.basic_sched_edit.window_closed.connect(self.edit_done)
         self.selectMode.currentIndexChanged.connect(self.indexChanged)
 
+
+        
 
         self.basic_sched_layout.addWidget(self.sched_txt)
         self.basic_sched_layout.addWidget(self.selectMode)
@@ -140,7 +149,62 @@ class ExecSched(ElementMaster):
         self.weekday_txt = QLabel()
         self.weekday_txt.setText(QC.translate('', 'Day of week:'))
 
+        self.check_monday       = QCheckBox()
+        self.check_tuesday      = QCheckBox()
+        self.check_wednesday    = QCheckBox()
+        self.check_thursday     = QCheckBox()
+        self.check_friday       = QCheckBox()
+        self.check_saturday     = QCheckBox()
+        self.check_sunday       = QCheckBox()
+
+        self.txt_monday         = QLabel()
+        self.txt_tuesday        = QLabel()
+        self.txt_wednesday      = QLabel()
+        self.txt_thursday       = QLabel()
+        self.txt_friday         = QLabel()
+        self.txt_saturday       = QLabel()
+        self.txt_sunday         = QLabel()
+
+        self.txt_monday.setText(QC.translate('', 'Monday'))
+        self.txt_tuesday.setText(QC.translate('', 'Tuesday'))
+        self.txt_wednesday.setText(QC.translate('', 'Wednesday'))
+        self.txt_thursday.setText(QC.translate('', 'Thursday'))
+        self.txt_friday.setText(QC.translate('', 'Friday'))
+        self.txt_saturday.setText(QC.translate('', 'Saturday'))
+        self.txt_sunday.setText(QC.translate('', 'Sunday'))
+
+        self.mon_tue_wed = QWidget()
+        self.mon_tue_wed_layout = QHBoxLayout(self.mon_tue_wed)
+        self.mon_tue_wed_layout.addWidget(self.txt_monday)
+        self.mon_tue_wed_layout.addWidget(self.check_monday)
+        self.mon_tue_wed_layout.addWidget(self.txt_tuesday)
+        self.mon_tue_wed_layout.addWidget(self.check_tuesday)
+        self.mon_tue_wed_layout.addWidget(self.txt_wednesday)
+        self.mon_tue_wed_layout.addWidget(self.check_wednesday)
+        self.mon_tue_wed_layout.addStretch(1)
+
+        self.thu_fri_sat = QWidget()
+        self.thu_fri_sat_layout = QHBoxLayout(self.thu_fri_sat)
+        self.thu_fri_sat_layout.addWidget(self.txt_thursday)
+        self.thu_fri_sat_layout.addWidget(self.check_thursday)
+        self.thu_fri_sat_layout.addWidget(self.txt_friday)
+        self.thu_fri_sat_layout.addWidget(self.check_friday)
+        self.thu_fri_sat_layout.addWidget(self.txt_saturday)
+        self.thu_fri_sat_layout.addWidget(self.check_saturday)
+        self.thu_fri_sat_layout.addStretch(1)
+
+        self.sun = QWidget()
+        self.sun_layout = QHBoxLayout(self.sun)
+        self.sun_layout.addWidget(self.txt_sunday)
+        self.sun_layout.addWidget(self.check_sunday)
+        self.sun_layout.addStretch(1)
+
+        
+
         self.weekday_layout.addWidget(self.weekday_txt)
+        self.weekday_layout.addWidget(self.mon_tue_wed)
+        self.weekday_layout.addWidget(self.thu_fri_sat)
+        self.weekday_layout.addWidget(self.sun)
 
         self.weekday_input.hide()
 
@@ -153,10 +217,26 @@ class ExecSched(ElementMaster):
         self.interval_input = QWidget()
         self.interval_layout = QVBoxLayout(self.interval_input)
 
+        self.time_base_input_line = QWidget()
+        self.time_base_input_layout = QHBoxLayout(self.time_base_input_line)
+
         self.interval_txt = QLabel()
         self.interval_txt.setText(QC.translate('', 'Every'))
 
+        self.repeat_val_input = QLineEdit()
+        self.repeat_val_input.setValidator(QIntValidator(1, 9999))
+        self.repeat_val_input.setText('1')
+
+        self.time_base_input = QComboBox()
+        self.time_base_input.addItem(QC.translate('', 'Seconds'), QVariant('sec'))
+        self.time_base_input.addItem(QC.translate('', 'Minutes'), QVariant('min'))
+        self.time_base_input.addItem(QC.translate('', 'Hours'), QVariant('hour'))
+
+        self.time_base_input_layout.addWidget(self.repeat_val_input)
+        self.time_base_input_layout.addWidget(self.time_base_input)
+
         self.interval_layout.addWidget(self.interval_txt)
+        self.interval_layout.addWidget(self.time_base_input_line)
 
         self.interval_input.hide()
 
@@ -184,18 +264,27 @@ class ExecSched(ElementMaster):
         current_index = event
         logging.debug('indexChanged() called {}'.format(current_index))
 
-        if current_index     == 0:
-            self.weekday_input.show()
-            self.interval_input.hide()
-            self.int_time_input.hide()
-        elif current_index   == 1:
+        if current_index     == 0:  # Interval
             self.interval_input.show()
             self.weekday_input.hide()
             self.int_time_input.hide()
-        elif current_index  == 2:
-            self.int_time_input.show()
+        elif current_index   == 1:  # Interval between times
+            self.interval_input.show()
             self.weekday_input.hide()
+            self.int_time_input.show()
+        elif current_index  == 2:   # At specific time
+            self.int_time_input.show()
+            self.weekday_input.show()
             self.interval_input.hide()
+
+    def loadLastConfig(self):
+
+        #ta_str, ta_index, ta_config, log_state = self.config
+
+        #logging.debug('loadLastConfig() called with ta_str = {}'.format(ta_str))
+
+        self.indexChanged(2)
+
 
 
     def edit_done(self):
