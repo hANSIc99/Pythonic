@@ -1,6 +1,6 @@
 from elementmaster import ElementMaster
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator
+from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant, QRegExp
+from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QRegExpValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
 from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
@@ -64,34 +64,19 @@ class ExecSched(ElementMaster):
         # https://github.com/sammchardy/python-binance/blob/master/binance/client.py
         self.selectMode = QComboBox()
         self.selectMode.addItem(QC.translate('', 'Interval'), QVariant('interval'))
-        self.selectMode.addItem(QC.translate('', 'Interval between times'), QVariant('int_time'))
+        self.selectMode.addItem(QC.translate('', 'Interval between times'), QVariant('time_between'))
         self.selectMode.addItem(QC.translate('', 'At specific time'), QVariant('time'))
 
         self.options_box = QWidget()
         self.options_box_layout = QVBoxLayout(self.options_box)
         self.interval()
-        self.weekdays()
-        self.int_time()
+        self.at_time()
+        self.time_between()
+        self.on_weekdays()
 
-
-        self.offset_txt = QLabel()
-        self.offset_txt.setText(QC.translate('', 'Enter time offset [s] (default: 0; range: -999s to + 999s)'))
-
-        self.offset_input = QLineEdit()
-        self.offset_input.setValidator(QIntValidator(-999, 999))
-        self.offset_input.setText(str(offset))
-
-        self.help_text = QWidget()
-        self.help_text_layout = QVBoxLayout(self.help_text)
 
         self.help_text_1 = QLabel()
-        self.help_text_1.setText(QC.translate('', 'Synchronize with Binance and execute subsequent modules')) 
-
-        self.help_text_2 = QLabel()
-        self.help_text_2.setText(QC.translate('', 'after expiration of the selected interval.'))
-
-        self.help_text_layout.addWidget(self.help_text_1)
-        self.help_text_layout.addWidget(self.help_text_2)
+        self.help_text_1.setText(QC.translate('', 'Start subsequent actions after your requirements.')) 
 
         self.log_line = QWidget()
         self.ask_for_logging = QLabel()
@@ -105,7 +90,7 @@ class ExecSched(ElementMaster):
         # load config
 
         #self.selectMode.setCurrentIndex(mode_index)
-        self.selectMode.setCurrentIndex(2) #anpassen
+        self.selectMode.setCurrentIndex(1) #anpassen
 
         self.loadLastConfig()
 
@@ -128,26 +113,49 @@ class ExecSched(ElementMaster):
         self.basic_sched_layout.addWidget(self.selectMode)
         self.basic_sched_layout.addWidget(self.options_box)
         
-        """
-        self.basic_sched_layout.addWidget(self.offset_txt)
-        self.basic_sched_layout.addWidget(self.offset_input)
-        """
         self.basic_sched_layout.addWidget(self.log_line)
-        self.basic_sched_layout.addWidget(self.help_text)
+        self.basic_sched_layout.addWidget(self.help_text_1)
         self.basic_sched_layout.addStretch(1)
         self.basic_sched_layout.addWidget(self.confirm_button)
         self.basic_sched_edit.setLayout(self.basic_sched_layout)
         self.basic_sched_edit.show()
 
-    def weekdays(self):
 
-        logging.debug('weekdays() called')
+    def at_time(self):
 
-        self.weekday_input = QWidget()
-        self.weekday_layout = QVBoxLayout(self.weekday_input)
+        logging.debug('at_time() called')
+
+        self.at_time_input = QWidget()
+        self.at_time_layout = QVBoxLayout(self.at_time_input)
+
+        self.time_text = QLabel()
+        self.time_text.setText(QC.translate('', 'At:'))
+
+        self.time_input = QLineEdit()
+        regexp_validator = QRegExp('^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$')
+        self.time_validator = QRegExpValidator(regexp_validator)
+        self.time_input.setValidator(self.time_validator)
+        self.time_input.setPlaceholderText(QC.translate('', 'hh:mm'))
+
+        self.at_time_layout.addWidget(self.time_text)
+        self.at_time_layout.addWidget(self.time_input)
+
+        self.at_time_input.hide()
+        self.at_time_layout.addWidget(self.at_time_input)
+
+        self.at_time_input.hide()
+        self.options_box_layout.addWidget(self.at_time_input)
+
+    def on_weekdays(self):
+
+        logging.debug('on_weekdays() called')
+
+        self.on_weekdays_input = QWidget()
+        self.on_weekdays_layout = QVBoxLayout(self.on_weekdays_input)
+        
 
         self.weekday_txt = QLabel()
-        self.weekday_txt.setText(QC.translate('', 'Day of week:'))
+        self.weekday_txt.setText(QC.translate('', 'On:'))
 
         self.check_monday       = QCheckBox()
         self.check_tuesday      = QCheckBox()
@@ -200,15 +208,14 @@ class ExecSched(ElementMaster):
         self.sun_layout.addStretch(1)
 
         
+        self.on_weekdays_layout.addWidget(self.weekday_txt)
+        self.on_weekdays_layout.addWidget(self.mon_tue_wed)
+        self.on_weekdays_layout.addWidget(self.thu_fri_sat)
+        self.on_weekdays_layout.addWidget(self.sun)
 
-        self.weekday_layout.addWidget(self.weekday_txt)
-        self.weekday_layout.addWidget(self.mon_tue_wed)
-        self.weekday_layout.addWidget(self.thu_fri_sat)
-        self.weekday_layout.addWidget(self.sun)
+        self.on_weekdays_input.hide()
 
-        self.weekday_input.hide()
-
-        self.options_box_layout.addWidget(self.weekday_input)
+        self.options_box_layout.addWidget(self.on_weekdays_input)
 
     def interval(self):
 
@@ -242,21 +249,45 @@ class ExecSched(ElementMaster):
 
         self.options_box_layout.addWidget(self.interval_input)
 
-    def int_time(self):
+    def time_between(self):
 
-        logging.debug('int_time() called')
+        logging.debug('time_between() called')
 
-        self.int_time_input = QWidget()
-        self.int_time_layout = QVBoxLayout(self.int_time_input)
+        self.time_between_input = QWidget()
+        self.time_between_layout = QVBoxLayout(self.time_between_input)
 
-        self.int_time_txt = QLabel()
-        self.int_time_txt.setText(QC.translate('', 'Interval between times'))
+        self.time_between_txt = QLabel()
+        self.time_between_txt.setText(QC.translate('', 'Between'))
 
-        self.int_time_layout.addWidget(self.int_time_txt)
+        regexp_validator = QRegExp('^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$')
+        self.time_validator = QRegExpValidator(regexp_validator)
 
-        self.int_time_input.hide()
+        self.time_row = QWidget()
+        self.time_row_layout = QHBoxLayout(self.time_row)
 
-        self.options_box_layout.addWidget(self.int_time_input)
+        self.start_time_input = QLineEdit()
+        self.start_time_input.setValidator(self.time_validator)
+        self.start_time_input.setPlaceholderText(QC.translate('', 'hh:mm (default 00:00)'))
+
+        self.and_text = QLabel()
+        self.and_text.setText(QC.translate('', 'and'))
+
+        self.stop_time_input = QLineEdit()
+        self.stop_time_input.setValidator(self.time_validator)
+        self.stop_time_input.setPlaceholderText(QC.translate('', 'hh:mm (default 00:00)'))
+
+        
+        self.time_row_layout.addWidget(self.start_time_input)
+        self.time_row_layout.addWidget(self.and_text)
+        self.time_row_layout.addWidget(self.stop_time_input)
+
+
+        self.time_between_layout.addWidget(self.time_between_txt)
+        self.time_between_layout.addWidget(self.time_row)
+
+        self.time_between_input.hide()
+
+        self.options_box_layout.addWidget(self.time_between_input)
 
 
     def indexChanged(self, event):
@@ -266,15 +297,18 @@ class ExecSched(ElementMaster):
 
         if current_index     == 0:  # Interval
             self.interval_input.show()
-            self.weekday_input.hide()
-            self.int_time_input.hide()
+            self.at_time_input.hide()
+            self.time_between_input.hide()
+            self.on_weekdays_input.hide()
         elif current_index   == 1:  # Interval between times
             self.interval_input.show()
-            self.weekday_input.hide()
-            self.int_time_input.show()
+            self.time_between_input.show()
+            self.on_weekdays_input.show()
+            self.at_time_input.hide()
         elif current_index  == 2:   # At specific time
-            self.int_time_input.show()
-            self.weekday_input.show()
+            self.time_between_input.hide()
+            self.at_time_input.show()
+            self.on_weekdays_input.show()
             self.interval_input.hide()
 
     def loadLastConfig(self):
@@ -283,7 +317,43 @@ class ExecSched(ElementMaster):
 
         #logging.debug('loadLastConfig() called with ta_str = {}'.format(ta_str))
 
-        self.indexChanged(2)
+        self.indexChanged(1)
+
+    def parse_time(self, time_input):
+
+            if not time_input == '' :
+                try:
+                    hour, minute = time_input.split(':')  
+                    hour = int(hour)
+                    minute = int(minute)
+                except Exception as e:
+                    hour = int(time_input)
+                    minute = 0
+            else:
+                hour = 0
+                minute = 0
+
+            return (hour, minute)
+
+    def get_days(self):
+
+        logging.debug('get_days() called')
+
+        check_monday    = self.check_monday.isChecked()
+        check_tuesday   = self.check_tuesday.isChecked()
+        check_wednesday = self.check_wednesday.isChecked()
+        check_thursday  = self.check_thursday.isChecked()
+        check_friday    = self.check_friday.isChecked()
+        check_saturday  = self.check_saturday.isChecked()
+        check_sunday    = self.check_sunday.isChecked()
+
+        logging.debug('Mon {}, Tue {}, Wed {}, Thu {}, Fri {}, Sat {}, Sun {}'.format(
+            check_monday, check_tuesday, check_wednesday, check_thursday, check_friday,
+            check_saturday, check_sunday) )
+
+        return (check_monday, check_tuesday, check_wednesday,
+                   check_thursday, check_friday, check_saturday,
+                   check_sunday)
 
 
 
@@ -293,13 +363,49 @@ class ExecSched(ElementMaster):
         
         mode_index  = self.selectMode.currentIndex()
         log_state       = self.log_checkbox.isChecked()
-        try:
-            offset = int(self.offset_input.text())
-        except Exception as e:
-            offset = 0
+        # mode-index, mode-data, log_state
 
-        # interval-str, inteval-index, offset, log-state
-        self.config = (mode_index, offset, log_state)
+        if mode_index       == 0: #Interval
+
+            logging.debug('mode_index = 0')
+            repeat_val = self.repeat_val_input.text()
+            time_base = self.time_base_input.currentIndex()
+            # 0 = Seconds
+            # 1 = Minutes
+            # 2 = Hours
+
+            mode_data = (repeat_val, time_base)
+
+        elif mode_index     == 1: # Interval between times
+
+            logging.debug('mode_index = 1')
+
+            repeat_val = self.repeat_val_input.text()
+            time_base = self.time_base_input.currentIndex()
+            # 0 = Seconds
+            # 1 = Minutes
+            # 2 = Hours
+            start_time_input = self.start_time_input.text()
+            start_time = self.parse_time(start_time_input)
+
+            logging.debug('Start hour {} - Start minute {}'.format(start_time[0], start_time[1]))
+
+            stop_time_input = self.stop_time_input.text()
+            stop_time = self.parse_time(stop_time_input)
+
+            logging.debug('Stop hour {} - Stop minute {}'.format(stop_time[0], stop_time[1]))
+
+            active_days = self.get_days()
+
+            mode_data = (repeat_val, time_base, start_time, stop_time, active_days)
+
+        elif mode_index     == 2: # At specific time
+            logging.debug('mode_index = 2')
+
+        mode_data = None
+
+
+        self.config = (mode_index, mode_data, log_state)
 
         self.addFunction(BasicScheduler)
 
