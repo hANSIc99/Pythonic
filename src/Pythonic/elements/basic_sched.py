@@ -24,11 +24,11 @@ class ExecSched(ElementMaster):
         self.column = column
 
         mode_index = 0
-        offset  = 0
+        mode_data  = None
         log_state = False
 
         # interval-str, inteval-index, offset, log-state
-        self.config = (mode_index, offset, log_state)
+        self.config = (mode_index, mode_data, log_state)
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -53,7 +53,6 @@ class ExecSched(ElementMaster):
 
         logging.debug('edit() called ExecSched')
 
-        mode_index, offset, log_state = self.config
 
         self.basic_sched_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
@@ -88,18 +87,16 @@ class ExecSched(ElementMaster):
         self.log_line_layout.addStretch(1)
 
         # load config
+        self.loadLastConfig(self.config)
 
         #self.selectMode.setCurrentIndex(mode_index)
-        self.selectMode.setCurrentIndex(1) #anpassen
+        #self.selectMode.setCurrentIndex(1) #anpassen
 
-        self.loadLastConfig()
-
-        if log_state:
-            self.log_checkbox.setChecked(True)
-
+        
 
         self.basic_sched_edit = ElementEditor(self)
         self.basic_sched_edit.setWindowTitle(QC.translate('', 'Edit Basic Scheduler'))
+        self.basic_sched_edit.setMinimumHeight(550)
 
         # signals and slots
         self.confirm_button.clicked.connect(self.basic_sched_edit.closeEvent)
@@ -114,8 +111,8 @@ class ExecSched(ElementMaster):
         self.basic_sched_layout.addWidget(self.options_box)
         
         self.basic_sched_layout.addWidget(self.log_line)
-        self.basic_sched_layout.addWidget(self.help_text_1)
         self.basic_sched_layout.addStretch(1)
+        self.basic_sched_layout.addWidget(self.help_text_1)
         self.basic_sched_layout.addWidget(self.confirm_button)
         self.basic_sched_edit.setLayout(self.basic_sched_layout)
         self.basic_sched_edit.show()
@@ -311,13 +308,46 @@ class ExecSched(ElementMaster):
             self.on_weekdays_input.show()
             self.interval_input.hide()
 
-    def loadLastConfig(self):
+    def loadLastConfig(self, config):
 
-        #ta_str, ta_index, ta_config, log_state = self.config
+        mode_index, mode_data, log_state = self.config
+        logging.debug('loadLastConfig() called with mode_index = {}'.format(mode_index))
 
-        #logging.debug('loadLastConfig() called with ta_str = {}'.format(ta_str))
+        if log_state:
+            self.log_checkbox.setChecked(True)
 
-        self.indexChanged(1)
+        self.indexChanged(mode_index)
+        self.selectMode.setCurrentIndex(mode_index)
+
+        if not mode_data == None:
+
+            if mode_index       == 0: # Interval
+                repeat_val, time_base = mode_data
+
+                self.repeat_val_input.setText(repeat_val)
+                self.time_base_input.setCurrentIndex(time_base)
+
+            elif mode_index     == 1: # Interval between times
+
+                
+                repeat_val, time_base, start_time, stop_time, active_days = mode_data
+
+                self.repeat_val_input.setText(repeat_val)
+                self.time_base_input.setCurrentIndex(time_base)
+
+                self.start_time_input.setText('{:02d}:{:02d}'.format(start_time[0], start_time[1]))
+                self.stop_time_input.setText('{:02d}:{:02d}'.format(stop_time[0], stop_time[1]))
+
+                self.set_days(active_days)
+
+            elif mode_index     == 2: # At specific time
+
+                time_input, active_days = mode_data
+
+                self.time_input.setText('{:02d}:{:02d}'.format(time_input[0], time_input[1]))
+
+                self.set_days(active_days)
+
 
     def parse_time(self, time_input):
 
@@ -354,6 +384,16 @@ class ExecSched(ElementMaster):
         return (check_monday, check_tuesday, check_wednesday,
                    check_thursday, check_friday, check_saturday,
                    check_sunday)
+
+    def set_days(self, active_days):
+
+        self.check_monday.setChecked(active_days[0])
+        self.check_tuesday.setChecked(active_days[1])
+        self.check_wednesday.setChecked(active_days[2])
+        self.check_thursday.setChecked(active_days[3])
+        self.check_friday.setChecked(active_days[4])
+        self.check_saturday.setChecked(active_days[5])
+        self.check_sunday.setChecked(active_days[6])
 
 
 
@@ -402,8 +442,13 @@ class ExecSched(ElementMaster):
         elif mode_index     == 2: # At specific time
             logging.debug('mode_index = 2')
 
-        mode_data = None
+            time_input = self.time_input.text()
+            time_input = self.parse_time(time_input)
 
+            logging.debug('Hour {} - Minute {}'.format(time_input[0], time_input[1]))
+            active_days = self.get_days()
+
+            mode_data = (time_input, active_days)
 
         self.config = (mode_index, mode_data, log_state)
 
