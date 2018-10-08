@@ -464,20 +464,48 @@ class BasicScheduler(Function):
 
     def execute(self, record):
 
-        interval_str, interval_index, offset, log_state = self.config
 
-        if isinstance(record, tuple) and isinstance(record[0], datetime.datetime):
+        target_0 = (self.row+1, self.column)
+        target_1 = self.getPos()
+
+        if not self.config[1] == None:
             
-            while record[0] > datetime.datetime.now():
-                sleep(1)
+            mode_index, mode_data, log_state = self.config
 
-            record = record[1]
-            target = (self.row + 1, self.column)
-            log_txt = '{BASIC SCHEDULER}      '
+            if isinstance(record, tuple) and isinstance(record[0], datetime.datetime):
+                log_txt = 'Ja, datetime angekommen'
+
+                while record[0] > datetime.datetime.now():
+                    sleep(1)
+
+                offset = datetime.timedelta(seconds=5)
+                sync_time = datetime.datetime.now() + offset
+
+                record = (sync_time, record)
+
+            else:
+
+                # beim ersten start
+                # nur abfeuern im interval mode
+                log_txt = 'Nein, kein datetime object'
+
+                offset = datetime.timedelta(seconds=5)
+                sync_time = datetime.datetime.now() + offset
+
+                record = (sync_time, record)
+
             log_output = '>>>EXECUTE<<<'
+            output = 'output test'
 
-            result = Record(self.getPos(), target, record, log=log_state, log_txt=log_txt, log_output=log_output)
+            result = Record(self.getPos(), target_0, record, target_1, record, log=log_state, log_txt=log_txt, log_output=log_output)
 
+        else:
+            # sofort feuern, None = target_0
+
+            log_output = 'Missing configuration!'
+            result = Record(self.getPos(), None, record, log_output=log_output)
+
+        """
         else:
 
             client = Client('', '')
@@ -514,5 +542,6 @@ class BasicScheduler(Function):
             log_output = 'Execution starts in {}'.format(countdown)
 
             result = Record(self.getPos(), target, record, log=log_state, log_txt=log_txt, log_output=log_output)
+            """
 
         return result
