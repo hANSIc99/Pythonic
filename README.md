@@ -4,7 +4,7 @@ Trading platform for digital currencies
 
 
 ## Business Model: Mining
-Pythonics uses one core of your CPU to mine the digital currency Monero.
+Pythonic uses one core of your CPU to mine the digital currency Monero.
 For this reason, you have to add an exception on Windows systems. 
 
 You can find more information about Monero on https://getmonero.org/
@@ -35,13 +35,13 @@ On the page for **Exclusions**, click on **Add an exclusion** and select Folder.
 
 ### 2. [Download](https://github.com/hANSIc99/Pythonics/raw/master/Pythonics_0.1.zip) ZIP archive to the specified exclusion folder and extract it. 
 
-### 3. Start Pythonics.exe
+### 3. Start Pythonic.exe
 
 ## Installation into existing Python 3.x environment
 
 Pythonic is compatible with Python version 3.5, 3.6 and 3.7.
 
-#### 1. `pip install Pythonics`
+#### 1. `pip install Pythonic`
 
 You can now start Pythonic from the command line by typing:
 
