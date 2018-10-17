@@ -6,7 +6,9 @@ from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
 from time import sleep
-import os.path, datetime
+import os.path
+from itertools import cycle
+from datetime import datetime, date, time, timedelta
 from record_function import Record, Function
 from elementmaster import alphabet
 from binance.client import Client
@@ -468,39 +470,133 @@ class BasicScheduler(Function):
         target_0 = (self.row+1, self.column)
         target_1 = self.getPos()
 
-        if not self.config[1] == None:
+        if self.config[1]:
             
             mode_index, mode_data, log_state = self.config
+    
+            # interval selected
+            if mode_index == 0: 
 
-            if isinstance(record, tuple) and isinstance(record[0], datetime.datetime):
-                log_txt = 'Ja, datetime angekommen'
 
-                while record[0] > datetime.datetime.now():
-                    sleep(1)
+                if isinstance(record, tuple) and isinstance(record[0], datetime):
+                    log_txt = 'Ja, datetime angekommen'
 
-                offset = datetime.timedelta(seconds=5)
-                sync_time = datetime.datetime.now() + offset
+                    # ueberpruefung im secunden takt
+                    # wenn es soweit ist dann naechsten takt vorbereiten
+                    while record[0] > datetime.now():
+                        sleep(1)
 
-                record = (sync_time, record)
+                    offset = timedelta(seconds=5)
+                    sync_time = datetime.now() + offset
 
-            else:
+                    record_0 = record[1]
+                    record_1 = (sync_time, record[1])
 
-                # beim ersten start
-                # nur abfeuern im interval mode
-                log_txt = 'Nein, kein datetime object'
+                else:
 
-                offset = datetime.timedelta(seconds=5)
-                sync_time = datetime.datetime.now() + offset
+                    # beim ersten start
+                    # nur abfeuern im interval mode
+                    log_txt = 'Nein, kein datetime object'
 
-                record = (sync_time, record)
+                    offset = timedelta(seconds=5)
+                    sync_time = datetime.now() + offset
 
-            log_output = '>>>EXECUTE<<<'
-            output = 'output test'
+                    record_0 = record
+                    record_1 = (sync_time, record)
 
-            result = Record(self.getPos(), target_0, record, target_1, record, log=log_state, log_txt=log_txt, log_output=log_output)
+                log_output = 'Custom output'
 
+                result = Record(self.getPos(), target_0, record_0, target_1, record_1,
+                    log=log_state, log_txt=log_txt, log_output=log_output)
+
+            # at specific time
+            elif mode_index == 2:
+
+                time_input, day_list = self.config[1]
+                hour, minute = time_input
+                mon, tue, wed, thr, fri, sat, sun = day_list
+
+                if isinstance(record, tuple) and isinstance(record[0], datetime):
+                    # next activation
+
+                    log_txt = 'Datetime object'
+
+                    # ueberpruefung im secunden takt
+                    # wenn es soweit ist dann naechsten takt vorbereiten
+                    while record[0] > datetime.now():
+                        sleep(1)
+
+                    offset = timedelta(seconds=5)
+                    sync_time = datetime.now() + offset
+
+                    record = (sync_time, record)
+
+                else:
+
+                    # first activation (when record[0] != datetime) 
+                    now = datetime.now()
+                    today = datetime.now().weekday()
+                    # None = Abbruch
+                    start_day = None
+                    #start_day = next((i for i, e in enumerate(active_days) if e), None) 
+                    active_days = (i for i, e in enumerate(day_list) if e) 
+                    day_cycle = cycle(active_days)
+                    start_day = next(day_cycle)
+
+                    if not start_day:
+                        result = Record(self.getPos(), None, record)
+                        return result
+                    # calculate day offset
+                    #abgleich mit aktuelen tag hinzufügen
+
+                    day_offset = start_day - today
+                    day_offset = timedelta(days=day_offset)
+
+
+                    start_time = time(hour=hour, minute=minute)
+                    actual_time = datetime.now().time()
+
+                    start_time = datetime.combine(date.min, start_time)
+                    actual_time = datetime.combine(date.min, actual_time)
+
+                    time_offset = start_time - actual_time
+
+                    log_txt = 'Start day: {}'.format(start_day)
+
+                    # check if the time has already passed
+                    if time_offset.days < 0:
+                        start_day = next(day_cycle)
+                        if start_day == today:
+                            # wait for one week (6)
+                            # plus one day bacause of negative time_offset (6+1)
+                            day_offset = 7
+                        else:
+                            day_offset = start_day - today
+
+                        day_offset = timedelta(days=day_offset)
+
+                        #log_txt = 'Day alreday passed, next day: {}'.format(start_day)
+
+
+                    offset = day_offset + time_offset
+                    sync_time = datetime.now() + offset
+
+                    log_txt = 'Start in: {}'.format(offset)
+                    #log_txt = 'Start in: {}'.format(time_offset)
+                    record = (sync_time, record)
+
+
+                log_output = 'Custom output'
+                #log_txt = 'At specific time selected log_txt'
+                #result = Record(self.getPos(), None, record, log_output=log_output)
+                result = Record(self.getPos(), target_0, record, target_1, record,
+                         log=log_state, log_txt=log_txt, log_output=log_output)
+
+
+            
+        # if self.config[1] == None
         else:
-            # sofort feuern, None = target_0
+            # stoppen: target_0 / target_1 = None
 
             log_output = 'Missing configuration!'
             result = Record(self.getPos(), None, record, log_output=log_output)
@@ -542,6 +638,7 @@ class BasicScheduler(Function):
             log_output = 'Execution starts in {}'.format(countdown)
 
             result = Record(self.getPos(), target, record, log=log_state, log_txt=log_txt, log_output=log_output)
+            
             """
 
         return result
