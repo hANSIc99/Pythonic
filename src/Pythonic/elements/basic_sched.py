@@ -477,16 +477,28 @@ class BasicScheduler(Function):
             # interval selected
             if mode_index == 0: 
 
+                repeat_val, time_base = mode_data
+                # 0 = Seconds
+                # 1 = Minutes
+                # 2 = Hours
+                if time_base == 1:
+                    delta_t = 60
+                elif time_base == 2:
+                    delta_t = 3600
+                else:
+                    delta_t = 1
+
+                delta_t *= int(repeat_val)
 
                 if isinstance(record, tuple) and isinstance(record[0], datetime):
-                    log_txt = 'Ja, datetime angekommen'
 
                     # ueberpruefung im secunden takt
                     # wenn es soweit ist dann naechsten takt vorbereiten
+                    
                     while record[0] > datetime.now():
                         sleep(1)
 
-                    offset = timedelta(seconds=5)
+                    offset = timedelta(seconds=delta_t)
                     sync_time = datetime.now() + offset
 
                     record_0 = record[1]
@@ -496,22 +508,19 @@ class BasicScheduler(Function):
 
                     # beim ersten start
                     # nur abfeuern im interval mode
-                    log_txt = 'Nein, kein datetime object'
 
-                    offset = timedelta(seconds=5)
+                    offset = timedelta(seconds=delta_t)
                     sync_time = datetime.now() + offset
 
                     record_0 = record
                     record_1 = (sync_time, record)
 
-                log_output = 'Custom output'
 
                 result = Record(self.getPos(), target_0, record_0, target_1, record_1,
-                    log=log_state, log_txt=log_txt, log_output=log_output)
+                    log=log_state)
 
 
-             # interval between times   
-
+            # interval between times   
             elif mode_index == 1:
 
                 repeat_val, time_base, start_time, stop_time, day_list = self.config[1]
@@ -520,7 +529,36 @@ class BasicScheduler(Function):
                 stop_hour, stop_minute = stop_time
 
                 if isinstance(record, tuple) and isinstance(record[0], datetime):
-                    repeat_val = 1 # debug purpose
+
+                    if time_base == 1:
+                        delta_t = 60
+                    elif time_base == 2:
+                        delta_t = 3600
+                    else:
+                        delta_t = 1
+
+                    delta_t *= int(repeat_val)
+
+                    stop_time  = time(hour=stop_hour, minute=stop_minute)
+                    stop_time  = datetime.combine(date.today(), stop_time)
+
+                    while record[0] > datetime.now():
+                        sleep(1)
+
+                    offset = timedelta(seconds=delta_t)
+                    sync_time = datetime.now() + offset
+
+                    record_0 = record[1]
+                    record_1 = (sync_time, record[1])
+
+                    # when stop time is reached
+                    if sync_time > stop_time:
+                        # prevent fast firing at the end of the time frame
+                        sleep(delta_t)
+                        result = Record(self.getPos(), target_0, record_0, target_1, record_0, log=log_state)
+                    else:
+                        result = Record(self.getPos(), target_0, record_0, target_1, record_1, log=log_state)
+
                 else:
 
                     # first activation (when record[0] != datetime) 
@@ -562,7 +600,6 @@ class BasicScheduler(Function):
 
                     # check if the timeframe already passed
                     if start_day == today and start_time < now and stop_time > now:
-                        log_txt = 'Start immediately'
                         # start immediately, initialize timedelta with 0
                         day_offset = timedelta()
                         time_offset = timedelta()
@@ -583,12 +620,9 @@ class BasicScheduler(Function):
                     sync_time = datetime.now() + offset
 
                     log_txt = 'Start in: {}'.format(offset)
-                    #log_txt = 'Start in: {}'.format(active_days)
-                    record = (sync_time, record)
-                    #log_txt = 'Start time: {}'.format(start_time)
-                    record = None
+                    record_1 = (sync_time, record)
 
-                    result = Record(self.getPos(), target_0, record, target_1, record,
+                    result = Record(self.getPos(), None, None, target_1, record_1,
                              log=log_state, log_txt=log_txt)
 
  
@@ -602,18 +636,14 @@ class BasicScheduler(Function):
                 if isinstance(record, tuple) and isinstance(record[0], datetime):
 
                     # next activation
-                    #log_txt = 'Execution starts at {}'.format(record[0])
-
                     # check secondly if execution can be started
 
                     while record[0] > datetime.now():
                         sleep(1)
 
-
                     record = record[1]
 
-                    result = Record(self.getPos(), target_0, record,
-                             log=log_state)
+                    result = Record(self.getPos(), target_0, record, target_1, record, log=log_state)
 
                 else:
                     # first activation (when record[0] != datetime) 
@@ -672,9 +702,9 @@ class BasicScheduler(Function):
 
                     log_txt = 'Start in: {}'.format(offset)
                     #log_txt = 'Start in: {}'.format(active_days)
-                    record = (sync_time, record)
+                    record_1 = (sync_time, record)
 
-                    result = Record(self.getPos(), target_0, record, target_1, record,
+                    result = Record(self.getPos(), None, None, target_1, record_1,
                              log=log_state, log_txt=log_txt)
 
             
