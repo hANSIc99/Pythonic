@@ -514,13 +514,84 @@ class BasicScheduler(Function):
 
             elif mode_index == 1:
 
-                repeat_val, time_base, start_time, stop_time, active_days = self.config[1]
+                repeat_val, time_base, start_time, stop_time, day_list = self.config[1]
+
+                start_hour, start_minute = start_time
+                stop_hour, stop_minute = stop_time
 
                 if isinstance(record, tuple) and isinstance(record[0], datetime):
                     repeat_val = 1 # debug purpose
                 else:
 
+                    # first activation (when record[0] != datetime) 
+                    now = datetime.now()
+                    today = datetime.now().weekday()
+                    # None = Abbruch
+                    start_day = None
+                    #start_day = next((i for i, e in enumerate(active_days) if e), None) 
+                    active_days = list((i for i, e in enumerate(day_list) if e))
+                    day_cycle = cycle(active_days)
 
+                    #check if at least one day is aktivated
+                    if not active_days:
+                        result = Record(self.getPos(), None, record)
+                        return result
+
+                    # check the start day
+                    if any(i for i in active_days if i >= today):
+                        # start today or later in the week
+                        start_day = next(day_cycle)
+                        while start_day < today:
+                            start_day = next(day_cycle)
+                        day_offset = start_day - today
+                    else:
+                        # start the smallest day
+                        start_day = next(day_cycle)
+                        day_offset = 7 - today + start_day
+
+                    day_offset = timedelta(days=day_offset)
+
+
+                    start_time = time(hour=start_hour, minute=start_minute)
+                    stop_time  = time(hour=stop_hour, minute=stop_minute)
+
+                    start_time = datetime.combine(date.today(), start_time)
+                    stop_time  = datetime.combine(date.today(), stop_time)
+
+                    time_offset = start_time - now
+
+                    # check if the timeframe already passed
+                    if start_day == today and start_time < now and stop_time > now:
+                        log_txt = 'Start immediately'
+                        # start immediately, initialize timedelta with 0
+                        day_offset = timedelta()
+                        time_offset = timedelta()
+                    elif stop_time < now:
+                        # time already passed, start schedule next day in list
+                        start_day = next(day_cycle)
+                        # when the next cycle is today too
+                        if start_day == today:
+                            # wait for one week (6)
+                            # plus one day bacause of negative time_offset (6+1)
+                            day_offset = 7
+                        else:
+                            day_offset = start_day - today
+
+                        day_offset = timedelta(days=day_offset)
+
+                    offset = day_offset + time_offset
+                    sync_time = datetime.now() + offset
+
+                    log_txt = 'Start in: {}'.format(offset)
+                    #log_txt = 'Start in: {}'.format(active_days)
+                    record = (sync_time, record)
+                    #log_txt = 'Start time: {}'.format(start_time)
+                    record = None
+
+                    result = Record(self.getPos(), target_0, record, target_1, record,
+                             log=log_state, log_txt=log_txt)
+
+ 
 
             # at specific time
             elif mode_index == 2:
