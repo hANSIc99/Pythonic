@@ -509,30 +509,42 @@ class BasicScheduler(Function):
                 result = Record(self.getPos(), target_0, record_0, target_1, record_1,
                     log=log_state, log_txt=log_txt, log_output=log_output)
 
+
+             # interval between times   
+
+            elif mode_index == 1:
+
+                repeat_val, time_base, start_time, stop_time, active_days = self.config[1]
+
+                if isinstance(record, tuple) and isinstance(record[0], datetime):
+                    repeat_val = 1 # debug purpose
+                else:
+
+
+
             # at specific time
             elif mode_index == 2:
 
                 time_input, day_list = self.config[1]
                 hour, minute = time_input
-                mon, tue, wed, thr, fri, sat, sun = day_list
 
                 if isinstance(record, tuple) and isinstance(record[0], datetime):
+
                     # next activation
+                    #log_txt = 'Execution starts at {}'.format(record[0])
 
-                    log_txt = 'Datetime object'
+                    # check secondly if execution can be started
 
-                    # ueberpruefung im secunden takt
-                    # wenn es soweit ist dann naechsten takt vorbereiten
                     while record[0] > datetime.now():
                         sleep(1)
 
-                    offset = timedelta(seconds=5)
-                    sync_time = datetime.now() + offset
 
-                    record = (sync_time, record)
+                    record = record[1]
+
+                    result = Record(self.getPos(), target_0, record,
+                             log=log_state)
 
                 else:
-
                     # first activation (when record[0] != datetime) 
                     now = datetime.now()
                     today = datetime.now().weekday()
@@ -541,6 +553,12 @@ class BasicScheduler(Function):
                     #start_day = next((i for i, e in enumerate(active_days) if e), None) 
                     active_days = list((i for i, e in enumerate(day_list) if e))
                     day_cycle = cycle(active_days)
+
+                    #check if at least one day is aktivated
+                    if not active_days:
+                        result = Record(self.getPos(), None, record)
+                        return result
+
 
                     # check the start day
                     if any(i for i in active_days if i >= today):
@@ -556,15 +574,6 @@ class BasicScheduler(Function):
 
                     day_offset = timedelta(days=day_offset)
 
-                    """
-                    if not start_day:
-                        result = Record(self.getPos(), None, record)
-                        return result
-                    """
-                    # calculate day offset
-                    #abgleich mit aktuelen tag hinzufügen
-
-
 
                     start_time = time(hour=hour, minute=minute)
                     actual_time = datetime.now().time()
@@ -577,6 +586,7 @@ class BasicScheduler(Function):
                     # check if the time has already passed
                     if start_day == today and time_offset.days < 0:
                         start_day = next(day_cycle)
+                        # when the next cycle is today too
                         if start_day == today:
                             # wait for one week (6)
                             # plus one day bacause of negative time_offset (6+1)
@@ -586,9 +596,6 @@ class BasicScheduler(Function):
 
                         day_offset = timedelta(days=day_offset)
 
-                        #log_txt = 'Day alreday passed, next day: {}'.format(start_day)
-
-
                     offset = day_offset + time_offset
                     sync_time = datetime.now() + offset
 
@@ -596,60 +603,15 @@ class BasicScheduler(Function):
                     #log_txt = 'Start in: {}'.format(active_days)
                     record = (sync_time, record)
 
-
-                log_output = 'Custom output'
-                #log_txt = 'At specific time selected log_txt'
-                #result = Record(self.getPos(), None, record, log_output=log_output)
-                result = Record(self.getPos(), target_0, record, target_1, record,
-                         log=log_state, log_txt=log_txt, log_output=log_output)
-
+                    result = Record(self.getPos(), target_0, record, target_1, record,
+                             log=log_state, log_txt=log_txt)
 
             
-        # if self.config[1] == None
         else:
             # stoppen: target_0 / target_1 = None
 
             log_output = 'Missing configuration!'
             result = Record(self.getPos(), None, record, log_output=log_output)
 
-        """
-        else:
-
-            client = Client('', '')
-
-            try:
-                binance_time = client.get_server_time()
-            except Exception as e:
-                log_txt = '{{BINANCE SCHEDULER}}      Exception caught: {}'.format(str(e))
-                result = Record(self.getPos(), None, None, log=True, log_txt=log_txt)
-
-            binance_time = binance_time['serverTime']
-            binance_time /= 1000
-            binance_timestamp = datetime.datetime.fromtimestamp(binance_time)
-
-            offset = datetime.timedelta(seconds=offset)
-
-            ohlc_step = datetime.timedelta(minutes=ohlc_steps[interval_str])
-
-            date = datetime.datetime.now().date()
-            # 00:00 o'clock for the actual date
-            sync_time = datetime.datetime(date.year, date.month, date.day)
-
-            # while loop leaves when the next ohlc_step target time is found 
-            while sync_time < binance_timestamp:
-                sync_time += ohlc_step
-
-
-            sync_time += offset
-            countdown = sync_time - datetime.datetime.now()
-
-            target = self.getPos()
-            record = (sync_time, record)
-            log_txt = '{BINANCE SCHEDULER}      Synchronization successful'
-            log_output = 'Execution starts in {}'.format(countdown)
-
-            result = Record(self.getPos(), target, record, log=log_state, log_txt=log_txt, log_output=log_output)
-            
-            """
 
         return result
