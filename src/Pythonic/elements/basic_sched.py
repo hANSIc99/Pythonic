@@ -539,18 +539,31 @@ class BasicScheduler(Function):
                     # None = Abbruch
                     start_day = None
                     #start_day = next((i for i, e in enumerate(active_days) if e), None) 
-                    active_days = (i for i, e in enumerate(day_list) if e) 
+                    active_days = list((i for i, e in enumerate(day_list) if e))
                     day_cycle = cycle(active_days)
-                    start_day = next(day_cycle)
 
+                    # check the start day
+                    if any(i for i in active_days if i >= today):
+                        # start today or a day > as today
+                        start_day = next(day_cycle)
+                        while start_day < today:
+                            start_day = next(day_cycle)
+                        day_offset = start_day - today
+                    else:
+                        # start the smallest day
+                        start_day = next(day_cycle)
+                        day_offset = 7 - today + start_day
+
+                    day_offset = timedelta(days=day_offset)
+
+                    """
                     if not start_day:
                         result = Record(self.getPos(), None, record)
                         return result
+                    """
                     # calculate day offset
                     #abgleich mit aktuelen tag hinzufügen
 
-                    day_offset = start_day - today
-                    day_offset = timedelta(days=day_offset)
 
 
                     start_time = time(hour=hour, minute=minute)
@@ -561,10 +574,8 @@ class BasicScheduler(Function):
 
                     time_offset = start_time - actual_time
 
-                    log_txt = 'Start day: {}'.format(start_day)
-
                     # check if the time has already passed
-                    if time_offset.days < 0:
+                    if start_day == today and time_offset.days < 0:
                         start_day = next(day_cycle)
                         if start_day == today:
                             # wait for one week (6)
@@ -582,7 +593,7 @@ class BasicScheduler(Function):
                     sync_time = datetime.now() + offset
 
                     log_txt = 'Start in: {}'.format(offset)
-                    #log_txt = 'Start in: {}'.format(time_offset)
+                    #log_txt = 'Start in: {}'.format(active_days)
                     record = (sync_time, record)
 
 
