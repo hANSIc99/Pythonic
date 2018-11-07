@@ -54,6 +54,7 @@ class WorkingArea(QFrame):
         self.storage_bar = StorageBar()
         # grid contains the function blocks
         self.grid = QGridLayout()
+        
         self.flow_start = StartElement(0, 0)
         self.grid.addWidget(self.flow_start, 0, 0, Qt.AlignCenter)
         self.mastergrid.addWidget(self.storage_bar, 0, 1, Qt.AlignRight)
