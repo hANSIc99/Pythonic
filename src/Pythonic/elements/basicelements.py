@@ -8,9 +8,10 @@ from datetime import datetime
 from multiprocessing import Process
 from record_function import Record, Function
 from dropbox import DropBox
+from elements.basic_sched import ExecSched
 import os.path
 
-class StartElement(ElementMaster):
+class StartElement(ExecSched):
 
     pixmap_path = 'images/start.png'
     child_pos = (True, False)
@@ -18,10 +19,12 @@ class StartElement(ElementMaster):
     def __init__(self, row, column):
         self.row = row
         self.column = column
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), False, None)
+        #super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, None)
+        super().__init__(self.row, self.column)
 
-        self.addFunction(StartElementFunction)
+        #self.addFunction(StartElementFunction)
 
+    """
     def __setstate__(self, state):
         logging.debug('__setstate__() called StartElement')
         self.row, self.column = state
@@ -31,6 +34,7 @@ class StartElement(ElementMaster):
     def __getstate__(self):
         logging.debug('__getstate__() called StartElement')
         return (self.row, self.column)
+    """
 
 class StartElementFunction(Function):
 

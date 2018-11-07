@@ -12,9 +12,8 @@ from datetime import datetime, date, time, timedelta
 from record_function import Record, Function
 from elementmaster import alphabet
 from binance.client import Client
+from enum import Enum
 
-ohlc_steps = { '1m' : 1, '3m' : 3, '5m' : 5, '15m' : 15, '30m' : 30, '1h' : 60, '2h' : 120, '4h' : 240, '6h' : 360,
-        '8h' : 480, '12h' : 720, '1d' : 1440, '3d' : 4320, '1w' : 10080, '1M' : 40320 }
 
 class ExecSched(ElementMaster):
 
@@ -64,6 +63,7 @@ class ExecSched(ElementMaster):
 
         # https://github.com/sammchardy/python-binance/blob/master/binance/client.py
         self.selectMode = QComboBox()
+        self.selectMode.addItem(QC.translate('', 'None'), QVariant('none'))
         self.selectMode.addItem(QC.translate('', 'Interval'), QVariant('interval'))
         self.selectMode.addItem(QC.translate('', 'Interval between times'), QVariant('time_between'))
         self.selectMode.addItem(QC.translate('', 'At specific time'), QVariant('time'))
@@ -294,17 +294,22 @@ class ExecSched(ElementMaster):
         current_index = event
         logging.debug('indexChanged() called {}'.format(current_index))
 
-        if current_index     == 0:  # Interval
+        if current_index     == 0:  # None
+            self.interval_input.hide()
+            self.at_time_input.hide()
+            self.time_between_input.hide()
+            self.on_weekdays_input.hide()
+        if current_index     == 1:  # Interval
             self.interval_input.show()
             self.at_time_input.hide()
             self.time_between_input.hide()
             self.on_weekdays_input.hide()
-        elif current_index   == 1:  # Interval between times
+        elif current_index   == 2:  # Interval between times
             self.interval_input.show()
             self.time_between_input.show()
             self.on_weekdays_input.show()
             self.at_time_input.hide()
-        elif current_index  == 2:   # At specific time
+        elif current_index  == 3:   # At specific time
             self.time_between_input.hide()
             self.at_time_input.show()
             self.on_weekdays_input.show()
@@ -323,13 +328,13 @@ class ExecSched(ElementMaster):
 
         if not mode_data == None:
 
-            if mode_index       == 0: # Interval
+            if mode_index       == 1: # Interval
                 repeat_val, time_base = mode_data
 
                 self.repeat_val_input.setText(repeat_val)
                 self.time_base_input.setCurrentIndex(time_base)
 
-            elif mode_index     == 1: # Interval between times
+            elif mode_index     == 2: # Interval between times
 
                 
                 repeat_val, time_base, start_time, stop_time, active_days = mode_data
@@ -342,7 +347,7 @@ class ExecSched(ElementMaster):
 
                 self.set_days(active_days)
 
-            elif mode_index     == 2: # At specific time
+            elif mode_index     == 3: # At specific time
 
                 time_input, active_days = mode_data
 
@@ -407,7 +412,11 @@ class ExecSched(ElementMaster):
         log_state       = self.log_checkbox.isChecked()
         # mode-index, mode-data, log_state
 
-        if mode_index       == 0: #Interval
+        if mode_index         == 0: # None
+            
+            mode_data = None
+
+        elif mode_index       == 1: #Interval
 
             logging.debug('mode_index = 0')
             repeat_val = self.repeat_val_input.text()
@@ -418,7 +427,7 @@ class ExecSched(ElementMaster):
 
             mode_data = (repeat_val, time_base)
 
-        elif mode_index     == 1: # Interval between times
+        elif mode_index     == 2: # Interval between times
 
             logging.debug('mode_index = 1')
 
@@ -441,7 +450,7 @@ class ExecSched(ElementMaster):
 
             mode_data = (repeat_val, time_base, start_time, stop_time, active_days)
 
-        elif mode_index     == 2: # At specific time
+        elif mode_index     == 3: # At specific time
             logging.debug('mode_index = 2')
 
             time_input = self.time_input.text()
@@ -474,8 +483,14 @@ class BasicScheduler(Function):
             
             mode_index, mode_data, log_state = self.config
     
-            # interval selected
+            # None selected
             if mode_index == 0: 
+
+                log_txt = 'test'
+                result = Record(self.getPos(), target_0, record, log=log_state, log_output=log_txt)
+
+            # interval selected
+            elif mode_index == 1: 
 
                 repeat_val, time_base = mode_data
                 # 0 = Seconds
@@ -521,7 +536,7 @@ class BasicScheduler(Function):
 
 
             # interval between times   
-            elif mode_index == 1:
+            elif mode_index == 2:
 
                 repeat_val, time_base, start_time, stop_time, day_list = self.config[1]
 
@@ -628,7 +643,7 @@ class BasicScheduler(Function):
  
 
             # at specific time
-            elif mode_index == 2:
+            elif mode_index == 3:
 
                 time_input, day_list = self.config[1]
                 hour, minute = time_input
@@ -709,10 +724,8 @@ class BasicScheduler(Function):
 
             
         else:
-            # stoppen: target_0 / target_1 = None
 
-            log_output = 'Missing configuration!'
-            result = Record(self.getPos(), None, record, log_output=log_output)
+            result = Record(self.getPos(), target_0, record, log=self.config[2])
 
 
         return result
