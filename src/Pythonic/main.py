@@ -105,7 +105,7 @@ class BasicTools(QFrame):
 
 class MainWindow(QWidget):
 
-    log_level = logging.INFO
+    log_level = logging.DEBUG
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
 
