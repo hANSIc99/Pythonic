@@ -2,3 +2,16 @@ Check if ohlc_step dictionary in elements/binance_ohlc.py is still in use
 Change default output of startelement
 Add parking symbol do dropbox
 Translations
+
+
+Interval between times: fix load last config
+
+Scheduler function: interval every full ... 
+
+Basis Intervall (Sekunden, Minuten, Stunden)
+
+time MOD interval == 0:
+    execute
+else
+    sleep(1)
+

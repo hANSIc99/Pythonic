@@ -67,6 +67,8 @@ class ExecSched(ElementMaster):
         self.selectMode.addItem(QC.translate('', 'Interval'), QVariant('interval'))
         self.selectMode.addItem(QC.translate('', 'Interval between times'), QVariant('time_between'))
         self.selectMode.addItem(QC.translate('', 'At specific time'), QVariant('time'))
+        self.selectMode.addItem(QC.translate('', 'On every full interval'), QVariant('time'))
+        self.selectMode.addItem(QC.translate('', 'Full interval Between times'), QVariant('time'))
 
         self.options_box = QWidget()
         self.options_box_layout = QVBoxLayout(self.options_box)
@@ -74,6 +76,7 @@ class ExecSched(ElementMaster):
         self.at_time()
         self.time_between()
         self.on_weekdays()
+        self.full_interval()
 
 
         self.help_text_1 = QLabel()
@@ -98,7 +101,7 @@ class ExecSched(ElementMaster):
 
         self.basic_sched_edit = ElementEditor(self)
         self.basic_sched_edit.setWindowTitle(QC.translate('', 'Edit Basic Scheduler'))
-        self.basic_sched_edit.setMinimumHeight(550)
+        self.basic_sched_edit.setMinimumHeight(580)
 
         # signals and slots
         self.confirm_button.clicked.connect(self.basic_sched_edit.closeEvent)
@@ -107,7 +110,6 @@ class ExecSched(ElementMaster):
 
 
         
-
         self.basic_sched_layout.addWidget(self.sched_txt)
         self.basic_sched_layout.addWidget(self.selectMode)
         self.basic_sched_layout.addWidget(self.options_box)
@@ -138,9 +140,6 @@ class ExecSched(ElementMaster):
 
         self.at_time_layout.addWidget(self.time_text)
         self.at_time_layout.addWidget(self.time_input)
-
-        self.at_time_input.hide()
-        self.at_time_layout.addWidget(self.at_time_input)
 
         self.at_time_input.hide()
         self.options_box_layout.addWidget(self.at_time_input)
@@ -248,10 +247,27 @@ class ExecSched(ElementMaster):
 
         self.options_box_layout.addWidget(self.interval_input)
 
+    def full_interval(self):
+
+        logging.debug('full_interval() called')
+
+        self.full_interval_input = QWidget()
+        self.full_interval_layout = QVBoxLayout(self.full_interval_input)
+
+        self.description = QLabel()
+        self.description.setText(QC.translate('', 'For instance a 15 minute interval Executes' \
+                                    'every full\r\n15 minutes: 10:00, 10:15, 10:30, 10:45, ...'))
+
+        self.full_interval_layout.addWidget(self.description)
+
+        self.full_interval_input.hide()
+
+        self.options_box_layout.addWidget(self.full_interval_input)
+
+
     def time_between(self):
 
         logging.debug('time_between() called')
-
         self.time_between_input = QWidget()
         self.time_between_layout = QVBoxLayout(self.time_between_input)
 
@@ -299,21 +315,37 @@ class ExecSched(ElementMaster):
             self.at_time_input.hide()
             self.time_between_input.hide()
             self.on_weekdays_input.hide()
+            self.full_interval_input.hide()
         if current_index     == 1:  # Interval
             self.interval_input.show()
             self.at_time_input.hide()
             self.time_between_input.hide()
             self.on_weekdays_input.hide()
+            self.full_interval_input.hide()
         elif current_index   == 2:  # Interval between times
             self.interval_input.show()
             self.time_between_input.show()
             self.on_weekdays_input.show()
             self.at_time_input.hide()
+            self.full_interval_input.hide()
         elif current_index  == 3:   # At specific time
             self.time_between_input.hide()
             self.at_time_input.show()
             self.on_weekdays_input.show()
             self.interval_input.hide()
+            self.full_interval_input.hide()
+        elif current_index  == 4:   # full interval
+            self.time_between_input.hide()
+            self.at_time_input.hide()
+            self.on_weekdays_input.hide()
+            self.interval_input.show()
+            self.full_interval_input.show()
+        elif current_index  == 5:   # full interval between times
+            self.interval_input.show()
+            self.time_between_input.show()
+            self.on_weekdays_input.show()
+            self.at_time_input.hide()
+            self.full_interval_input.show()
 
     def loadLastConfig(self, config):
 
@@ -328,13 +360,13 @@ class ExecSched(ElementMaster):
 
         if not mode_data == None:
 
-            if mode_index       == 1: # Interval
+            if mode_index == 1 or mode_index == 4: # Interval or full interval
                 repeat_val, time_base = mode_data
 
                 self.repeat_val_input.setText(repeat_val)
                 self.time_base_input.setCurrentIndex(time_base)
 
-            elif mode_index     == 2: # Interval between times
+            elif mode_index == 2 or mode_index == 5: # Interval between times or full interval between times
 
                 
                 repeat_val, time_base, start_time, stop_time, active_days = mode_data
@@ -347,7 +379,7 @@ class ExecSched(ElementMaster):
 
                 self.set_days(active_days)
 
-            elif mode_index     == 3: # At specific time
+            elif mode_index == 3: # At specific time
 
                 time_input, active_days = mode_data
 
@@ -406,19 +438,19 @@ class ExecSched(ElementMaster):
 
     def edit_done(self):
 
-        logging.debug('edit_done() called BinanceSched')
         
         mode_index  = self.selectMode.currentIndex()
         log_state       = self.log_checkbox.isChecked()
+        logging.debug('edit_done() called BinanceSched, mode-index {}'.format(mode_index))
         # mode-index, mode-data, log_state
 
-        if mode_index         == 0: # None
+        if mode_index == 0: # None
             
             mode_data = None
 
-        elif mode_index       == 1: #Interval
+        elif mode_index == 1 or mode_index == 4 : #Interval or full interval
 
-            logging.debug('mode_index = 0')
+            logging.debug('mode_index = 1 or 4')
             repeat_val = self.repeat_val_input.text()
             time_base = self.time_base_input.currentIndex()
             # 0 = Seconds
@@ -427,9 +459,9 @@ class ExecSched(ElementMaster):
 
             mode_data = (repeat_val, time_base)
 
-        elif mode_index     == 2: # Interval between times
+        elif mode_index == 2 or mode_index == 5: # Interval between times or full interval between times
 
-            logging.debug('mode_index = 1')
+            logging.debug('mode_index = 2')
 
             repeat_val = self.repeat_val_input.text()
             time_base = self.time_base_input.currentIndex()
@@ -450,8 +482,8 @@ class ExecSched(ElementMaster):
 
             mode_data = (repeat_val, time_base, start_time, stop_time, active_days)
 
-        elif mode_index     == 3: # At specific time
-            logging.debug('mode_index = 2')
+        elif mode_index == 3: # At specific time
+            logging.debug('mode_index = 3')
 
             time_input = self.time_input.text()
             time_input = self.parse_time(time_input)
