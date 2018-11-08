@@ -61,14 +61,13 @@ class ExecSched(ElementMaster):
         self.sched_txt = QLabel()
         self.sched_txt.setText(QC.translate('', 'Choose the scheduler mode'))
 
-        # https://github.com/sammchardy/python-binance/blob/master/binance/client.py
         self.selectMode = QComboBox()
         self.selectMode.addItem(QC.translate('', 'None'), QVariant('none'))
         self.selectMode.addItem(QC.translate('', 'Interval'), QVariant('interval'))
         self.selectMode.addItem(QC.translate('', 'Interval between times'), QVariant('time_between'))
         self.selectMode.addItem(QC.translate('', 'At specific time'), QVariant('time'))
         self.selectMode.addItem(QC.translate('', 'On every full interval'), QVariant('time'))
-        self.selectMode.addItem(QC.translate('', 'Full interval Between times'), QVariant('time'))
+        self.selectMode.addItem(QC.translate('', 'Full interval between times'), QVariant('time'))
 
         self.options_box = QWidget()
         self.options_box_layout = QVBoxLayout(self.options_box)
@@ -366,8 +365,8 @@ class ExecSched(ElementMaster):
                 self.repeat_val_input.setText(repeat_val)
                 self.time_base_input.setCurrentIndex(time_base)
 
-            elif mode_index == 2 or mode_index == 5: # Interval between times or full interval between times
-
+            # Interval between times or full interval between times
+            elif mode_index == 2 or mode_index == 5: 
                 
                 repeat_val, time_base, start_time, stop_time, active_days = mode_data
 
@@ -518,11 +517,10 @@ class BasicScheduler(Function):
             # None selected
             if mode_index == 0: 
 
-                log_txt = 'test'
-                result = Record(self.getPos(), target_0, record, log=log_state, log_output=log_txt)
+                result = Record(self.getPos(), target_0, record, log=log_state)
 
-            # interval selected
-            elif mode_index == 1: 
+            # interval
+            elif mode_index == 1 : 
 
                 repeat_val, time_base = mode_data
                 # 0 = Seconds
@@ -542,14 +540,16 @@ class BasicScheduler(Function):
                     # ueberpruefung im secunden takt
                     # wenn es soweit ist dann naechsten takt vorbereiten
                     
+                    # regular interval
+                    # record[0] = sync_time of preceding call
                     while record[0] > datetime.now():
                         sleep(1)
 
-                    offset = timedelta(seconds=delta_t)
-                    sync_time = datetime.now() + offset
+                        offset = timedelta(seconds=delta_t)
+                        sync_time = datetime.now() + offset
 
-                    record_0 = record[1]
-                    record_1 = (sync_time, record[1])
+                        record_0 = record[1]
+                        record_1 = (sync_time, record[1])
 
                 else:
 
@@ -562,10 +562,11 @@ class BasicScheduler(Function):
                     record_0 = record
                     record_1 = (sync_time, record)
 
-
                 result = Record(self.getPos(), target_0, record_0, target_1, record_1,
-                    log=log_state)
+                        log=log_state)
 
+                
+                
 
             # interval between times   
             elif mode_index == 2:
@@ -602,9 +603,11 @@ class BasicScheduler(Function):
                     if sync_time > stop_time:
                         # prevent fast firing at the end of the time frame
                         sleep(delta_t)
-                        result = Record(self.getPos(), target_0, record_0, target_1, record_0, log=log_state)
+                        result = Record(self.getPos(), target_0, record_0,
+                                        target_1, record_0, log=log_state)
                     else:
-                        result = Record(self.getPos(), target_0, record_0, target_1, record_1, log=log_state)
+                        result = Record(self.getPos(), target_0, record_0,
+                                        target_1, record_1, log=log_state)
 
                 else:
 
@@ -690,7 +693,8 @@ class BasicScheduler(Function):
 
                     record = record[1]
 
-                    result = Record(self.getPos(), target_0, record, target_1, record, log=log_state)
+                    result = Record(self.getPos(), target_0,
+                            record, target_1, record, log=log_state)
 
                 else:
                     # first activation (when record[0] != datetime) 
@@ -754,7 +758,58 @@ class BasicScheduler(Function):
                     result = Record(self.getPos(), None, None, target_1, record_1,
                              log=log_state, log_txt=log_txt)
 
-            
+            # on every full interval
+            elif mode_index == 4:
+                # every full interval (modulo)
+                repeat_val, time_base = mode_data
+                t_now = datetime.now()
+                # 0 = Seconds
+                # 1 = Minutes
+                # 2 = Hours
+                if time_base == 1:
+                    modulo_numerator = t_now.minute
+                    delta_t = 60
+                elif time_base == 2:
+                    modulo_numerator = t_now.hour
+                    delta_t = 3600
+                else:
+                    modulo_numerator = t_now.second
+                    delta_t = 1
+
+                if isinstance(record, tuple) and isinstance(record[0], datetime):
+
+                    while record[0] > datetime.now():
+                        sleep(1)
+
+                    # BAUSTELLE
+                    # + Erste ausführung geht durch obwohl Bedingung nicht erfüllt
+                    while not datetime.now().second % int(repeat_val) == 0 :
+                            sleep(1)
+
+                    offset = timedelta(seconds=delta_t)
+                    sync_time = datetime.now() + offset
+
+                    record_0 = record[1] # regular execute
+                    record_1 = (sync_time, record[1]) #trigger next waiting phase
+
+                else:
+                    # first execution
+                    """
+                    offset = timedelta(seconds=1)
+                    if not datetime.now().second % int(repeat_val) == 0 :
+                        offset = timedelta(seconds=delta_t)
+
+                    sync_time = datetime.now() + offset
+                    """
+                    # get time and check for execution
+                    sync_time = datetime.now()
+
+                    record_1 = (sync_time, record)
+
+
+                result = Record(self.getPos(), target_1, record_1, log=log_state)
+
+
         else:
 
             result = Record(self.getPos(), target_0, record, log=self.config[2])
