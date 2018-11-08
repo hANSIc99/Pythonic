@@ -74,13 +74,15 @@ class GridOperator(QObject):
         # when the log fiel is set
         if prg_return.log:
             if prg_return.log_txt:
-                logging.info('Message {}|{} : {}'.format(prg_return.source[0], alphabet[prg_return.source[1]], prg_return.log_txt))
+                logging.info('Message {}|{} : {}'.format(prg_return.source[0],
+                            alphabet[prg_return.source[1]], prg_return.log_txt))
             if prg_return.log_output:
                 log = prg_return.log_output
             else:
                 log = prg_return.record_0
 
-            logging.info('Output  {}|{} : {}'.format(prg_return.source[0], alphabet[prg_return.source[1]], log))
+            logging.info('Output  {}|{} : {}'.format(prg_return.source[0],
+                        alphabet[prg_return.source[1]], log))
 
 
         # when the log button is enabled
