@@ -510,6 +510,16 @@ class BasicScheduler(Function):
         target_0 = (self.row+1, self.column)
         target_1 = self.getPos()
 
+        def modulo_time(interval):
+
+            while not datetime.now().second % int(interval) == 0 :
+                        sleep(1)
+
+        def threshold_time(threshold):
+
+            while threshold > datetime.now():
+                    sleep(1)
+
         if self.config[1]:
             
             mode_index, mode_data, log_state = self.config
@@ -542,14 +552,13 @@ class BasicScheduler(Function):
                     
                     # regular interval
                     # record[0] = sync_time of preceding call
-                    while record[0] > datetime.now():
-                        sleep(1)
+                    threshold_time(record[0])
 
-                        offset = timedelta(seconds=delta_t)
-                        sync_time = datetime.now() + offset
+                    offset = timedelta(seconds=delta_t)
+                    sync_time = datetime.now() + offset
 
-                        record_0 = record[1]
-                        record_1 = (sync_time, record[1])
+                    record_0 = record[1]
+                    record_1 = (sync_time, record[1])
 
                 else:
 
@@ -562,55 +571,71 @@ class BasicScheduler(Function):
                     record_0 = record
                     record_1 = (sync_time, record)
 
+                log_output = '>>>EXECUTE<<<'
                 result = Record(self.getPos(), target_0, record_0, target_1, record_1,
-                        log=log_state)
+                        log=log_state, log_output=log_output)
 
                 
                 
 
             # interval between times   
-            elif mode_index == 2:
+            elif mode_index == 2 or mode_index == 5:
 
                 repeat_val, time_base, start_time, stop_time, day_list = self.config[1]
 
                 start_hour, start_minute = start_time
                 stop_hour, stop_minute = stop_time
 
+                if time_base == 1:
+                    delta_t = 60
+                elif time_base == 2:
+                    delta_t = 3600
+                else:
+                    delta_t = 1
+
+                delta_t *= int(repeat_val)
+
                 if isinstance(record, tuple) and isinstance(record[0], datetime):
 
-                    if time_base == 1:
-                        delta_t = 60
-                    elif time_base == 2:
-                        delta_t = 3600
-                    else:
-                        delta_t = 1
-
-                    delta_t *= int(repeat_val)
 
                     stop_time  = time(hour=stop_hour, minute=stop_minute)
                     stop_time  = datetime.combine(date.today(), stop_time)
 
-                    while record[0] > datetime.now():
-                        sleep(1)
+                    if mode_index == 2:
+                        threshold_time(record[0])
+                    else:
+                        modulo_time(delta_t)
 
                     offset = timedelta(seconds=delta_t)
                     sync_time = datetime.now() + offset
 
+                    # payload data = record[1]
                     record_0 = record[1]
                     record_1 = (sync_time, record[1])
 
+                    log_output = '>>>EXECUTE<<<'
                     # when stop time is reached
                     if sync_time > stop_time:
                         # prevent fast firing at the end of the time frame
-                        sleep(delta_t)
+                        # caused by jumpgin between the two possible states: calc start time
+                        # and regular interval mode
+                        record_1 = (True, record[1])
+                        #sleep(delta_t)
+                        log_output = '>>>LAST EXECUTE<<<'
+                        target_0 = record_0 = None
+                        # go to else part 'first activation' to calculate the new start time
                         result = Record(self.getPos(), target_0, record_0,
-                                        target_1, record_0, log=log_state)
+                                        target_1, record_1, log=log_state, log_output=log_output)
+
                     else:
                         result = Record(self.getPos(), target_0, record_0,
-                                        target_1, record_1, log=log_state)
+                                        target_1, record_1, log=log_state, log_output=log_output)
 
                 else:
 
+                    if isinstance(record, tuple) and isinstance(record[0], bool):
+                        # prevent a fast firing after the last execution
+                        sleep(delta_t)
                     # first activation (when record[0] != datetime) 
                     now = datetime.now()
                     today = datetime.now().weekday()
@@ -668,12 +693,11 @@ class BasicScheduler(Function):
 
                     offset = day_offset + time_offset
                     sync_time = datetime.now() + offset
-
-                    log_txt = 'Start in: {}'.format(offset)
+                    log_output = 'Start in: {}'.format(offset)
                     record_1 = (sync_time, record)
 
                     result = Record(self.getPos(), None, None, target_1, record_1,
-                             log=log_state, log_txt=log_txt)
+                             log=log_state, log_output=log_output)
 
  
 
@@ -762,10 +786,12 @@ class BasicScheduler(Function):
             elif mode_index == 4:
                 # every full interval (modulo)
                 repeat_val, time_base = mode_data
-                t_now = datetime.now()
                 # 0 = Seconds
                 # 1 = Minutes
                 # 2 = Hours
+
+                t_now = datetime.now()
+
                 if time_base == 1:
                     modulo_numerator = t_now.minute
                     delta_t = 60
@@ -781,34 +807,28 @@ class BasicScheduler(Function):
                     while record[0] > datetime.now():
                         sleep(1)
 
-                    # BAUSTELLE
-                    # + Erste ausführung geht durch obwohl Bedingung nicht erfüllt
-                    while not datetime.now().second % int(repeat_val) == 0 :
-                            sleep(1)
+                    modulo_time(repeat_val)
 
                     offset = timedelta(seconds=delta_t)
                     sync_time = datetime.now() + offset
 
                     record_0 = record[1] # regular execute
                     record_1 = (sync_time, record[1]) #trigger next waiting phase
+                    
+                    log_output = '>>>EXECUTE<<<'
 
                 else:
-                    # first execution
-                    """
-                    offset = timedelta(seconds=1)
-                    if not datetime.now().second % int(repeat_val) == 0 :
-                        offset = timedelta(seconds=delta_t)
-
-                    sync_time = datetime.now() + offset
-                    """
+                    # first execution only
                     # get time and check for execution
                     sync_time = datetime.now()
-
                     record_1 = (sync_time, record)
+                    # overwrite existing information
+                    target_0 = None
+                    record_0 = None
+                    log_output = 'Initial time synchronization'
 
-
-                result = Record(self.getPos(), target_1, record_1, log=log_state)
-
+                result = Record(self.getPos(), target_0, record_0, target_1, record_1,
+                        log=log_state, log_output=log_output)
 
         else:
 
