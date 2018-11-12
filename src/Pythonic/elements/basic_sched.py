@@ -620,7 +620,6 @@ class BasicScheduler(Function):
                         # caused by jumpgin between the two possible states: calc start time
                         # and regular interval mode
                         record_1 = (True, record[1])
-                        #sleep(delta_t)
                         log_output = '>>>LAST EXECUTE<<<'
                         target_0 = record_0 = None
                         # go to else part 'first activation' to calculate the new start time
@@ -633,10 +632,11 @@ class BasicScheduler(Function):
 
                 else:
 
+                    # first activation (when record[0] != datetime) 
                     if isinstance(record, tuple) and isinstance(record[0], bool):
                         # prevent a fast firing after the last execution
                         sleep(delta_t)
-                    # first activation (when record[0] != datetime) 
+
                     now = datetime.now()
                     today = datetime.now().weekday()
                     # None = Abbruch
@@ -651,18 +651,36 @@ class BasicScheduler(Function):
                         return result
 
                     # check the start day
+                    # does not work when only the actual day is selected
+                    start_day = next(day_cycle)
                     if any(i for i in active_days if i >= today):
-                        # start today or later in the week
-                        start_day = next(day_cycle)
                         while start_day < today:
                             start_day = next(day_cycle)
                         day_offset = start_day - today
                     else:
+                        # BAUSTELLE
+                        # e.g. today = Thu, start = Tue
                         # start the smallest day
-                        start_day = next(day_cycle)
-                        day_offset = 7 - today + start_day
+                        #log_output = today
+                        #log_output = active_days
+                        #start_day = next(day_cycle)
+                        day_offset = 6 - today + start_day
 
                     day_offset = timedelta(days=day_offset)
+                    """
+                    if any(i for i in active_days if i >= today):
+                        # start today or later in the week
+                        #log_output = 'Later this week'
+                        start_day = next(day_cycle)
+                        while start_day < today:
+                            start_day = next(day_cycle)
+                        day_offset = start_day - today
+                        log_output = 'first: today {} day offset: {} start_day {}'.format(
+                                today, day_offset, start_day)
+                    for i in active_days:
+                        if today <= i:
+                            brea
+                    """
 
 
                     start_time = time(hour=start_hour, minute=start_minute)
@@ -775,12 +793,11 @@ class BasicScheduler(Function):
                     offset = day_offset + time_offset
                     sync_time = datetime.now() + offset
 
-                    log_txt = 'Start in: {}'.format(offset)
-                    #log_txt = 'Start in: {}'.format(active_days)
+                    log_output = 'Start in: {}'.format(offset)
                     record_1 = (sync_time, record)
 
                     result = Record(self.getPos(), None, None, target_1, record_1,
-                             log=log_state, log_txt=log_txt)
+                             log=log_state, log_output=log_output)
 
             # on every full interval
             elif mode_index == 4:
