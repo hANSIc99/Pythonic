@@ -512,8 +512,10 @@ class BasicScheduler(Function):
 
         def modulo_time(interval):
 
-            while not datetime.now().second % int(interval) == 0 :
-                        sleep(1)
+            while True:
+                sleep(0.8)
+                if datetime.now().second % int(interval) == 0:
+                    break;
 
         def threshold_time(threshold):
 
@@ -601,7 +603,8 @@ class BasicScheduler(Function):
                     stop_time  = time(hour=stop_hour, minute=stop_minute)
                     stop_time  = datetime.combine(date.today(), stop_time)
 
-                    if mode_index == 2:
+                    if mode_index == 2 or record[2]:
+                        # check for normal interval or the special flag for modulo time op
                         threshold_time(record[0])
                     else:
                         modulo_time(delta_t)
@@ -611,7 +614,7 @@ class BasicScheduler(Function):
 
                     # payload data = record[1]
                     record_0 = record[1]
-                    record_1 = (sync_time, record[1])
+                    record_1 = (sync_time, record[1], False)
 
                     log_output = '>>>EXECUTE<<<'
                     # when stop time is reached
@@ -626,7 +629,9 @@ class BasicScheduler(Function):
                         result = Record(self.getPos(), target_0, record_0,
                                         target_1, record_1, log=log_state, log_output=log_output)
 
+
                     else:
+                        log_output = len(record)
                         result = Record(self.getPos(), target_0, record_0,
                                         target_1, record_1, log=log_state, log_output=log_output)
 
@@ -636,10 +641,11 @@ class BasicScheduler(Function):
                     if isinstance(record, tuple) and isinstance(record[0], bool):
                         # prevent a fast firing after the last execution
                         sleep(delta_t)
+                        # change record to original
+                        record = record[1]
 
                     now = datetime.now()
                     today = datetime.now().weekday()
-                    # None = Abbruch
                     start_day = None
                     #start_day = next((i for i, e in enumerate(active_days) if e), None) 
                     active_days = list((i for i, e in enumerate(day_list) if e))
@@ -660,8 +666,6 @@ class BasicScheduler(Function):
                     else:
                         # e.g. today = Thu, start = Tue
                         # start the smallest day
-                        #log_output = today
-                        #log_output = active_days
                         # wait for one week (6)
                         # plus one day bacause of negative time_offset (6+1)
                         day_offset = 7 - today + start_day
@@ -684,8 +688,6 @@ class BasicScheduler(Function):
                         day_offset = timedelta()
                         time_offset = timedelta()
                     elif start_day == today and stop_time < now:
-                        #BAUSTELLE
-                        #log_output = 'Else day offset {}'.format(0)
                         # time already passed, start schedule next day in list
                         start_day = next(day_cycle)
                         # when the next cycle is today too
@@ -693,6 +695,9 @@ class BasicScheduler(Function):
                             # wait for one week (6)
                             # plus one day bacause of negative time_offset (6+1)
                             day_offset = 7
+                        elif start_day < today:
+                            # if the start day is next week
+                            day_offset = 7 - today + start_day
                         else:
                             day_offset = start_day - today
 
@@ -700,8 +705,11 @@ class BasicScheduler(Function):
 
                     offset = day_offset + time_offset
                     sync_time = datetime.now() + offset
-                    #log_output = 'Start in: {}'.format(offset)
-                    record_1 = (sync_time, record)
+                    log_output = 'Start in: {}'.format(offset)
+                    record_1 = (sync_time, record, False)
+                    if mode_index == 5:
+                        # special flag for module time operation
+                        record_1 =(sync_time, record, True)
 
                     result = Record(self.getPos(), None, None, target_1, record_1,
                              log=log_state, log_output=log_output)
