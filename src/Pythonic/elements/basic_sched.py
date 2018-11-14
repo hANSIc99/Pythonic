@@ -653,35 +653,20 @@ class BasicScheduler(Function):
                     # check the start day
                     # does not work when only the actual day is selected
                     start_day = next(day_cycle)
-                    if any(i for i in active_days if i >= today):
+                    if any(i >= today for i in active_days):
                         while start_day < today:
                             start_day = next(day_cycle)
                         day_offset = start_day - today
                     else:
-                        # BAUSTELLE
                         # e.g. today = Thu, start = Tue
                         # start the smallest day
                         #log_output = today
                         #log_output = active_days
-                        #start_day = next(day_cycle)
-                        day_offset = 6 - today + start_day
+                        # wait for one week (6)
+                        # plus one day bacause of negative time_offset (6+1)
+                        day_offset = 7 - today + start_day
 
                     day_offset = timedelta(days=day_offset)
-                    """
-                    if any(i for i in active_days if i >= today):
-                        # start today or later in the week
-                        #log_output = 'Later this week'
-                        start_day = next(day_cycle)
-                        while start_day < today:
-                            start_day = next(day_cycle)
-                        day_offset = start_day - today
-                        log_output = 'first: today {} day offset: {} start_day {}'.format(
-                                today, day_offset, start_day)
-                    for i in active_days:
-                        if today <= i:
-                            brea
-                    """
-
 
                     start_time = time(hour=start_hour, minute=start_minute)
                     stop_time  = time(hour=stop_hour, minute=stop_minute)
@@ -689,6 +674,8 @@ class BasicScheduler(Function):
                     start_time = datetime.combine(date.today(), start_time)
                     stop_time  = datetime.combine(date.today(), stop_time)
 
+                    # could be negative if stop_time < now
+                    # funktioniert nur wenn start_time > now
                     time_offset = start_time - now
 
                     # check if the timeframe already passed
@@ -696,7 +683,9 @@ class BasicScheduler(Function):
                         # start immediately, initialize timedelta with 0
                         day_offset = timedelta()
                         time_offset = timedelta()
-                    elif stop_time < now:
+                    elif start_day == today and stop_time < now:
+                        #BAUSTELLE
+                        #log_output = 'Else day offset {}'.format(0)
                         # time already passed, start schedule next day in list
                         start_day = next(day_cycle)
                         # when the next cycle is today too
@@ -711,7 +700,7 @@ class BasicScheduler(Function):
 
                     offset = day_offset + time_offset
                     sync_time = datetime.now() + offset
-                    log_output = 'Start in: {}'.format(offset)
+                    #log_output = 'Start in: {}'.format(offset)
                     record_1 = (sync_time, record)
 
                     result = Record(self.getPos(), None, None, target_1, record_1,
