@@ -65,7 +65,8 @@ class GridOperator(QObject):
 
 
         if(issubclass(prg_return.record_0.__class__, BaseException)):
-            logging.error('Target {}|{} Exception found: {}'.format(prg_return.source[0], alphabet[prg_return.source[1]], prg_return.record_0))
+            logging.error('Target {}|{} Exception found: {}'.format(prg_return.source[0],
+                alphabet[prg_return.source[1]], prg_return.record_0))
             element.highlightException()
             self.exceptwindow = ExceptWindow(str(prg_return.record_0), prg_return.source)
             self.exceptwindow.window_closed.connect(self.highlightStop)
@@ -145,6 +146,14 @@ class GridOperator(QObject):
     def stop_execution(self):
         logging.debug('stop_execution() called')
         self.stop_flag = True
+
+    def kill_proc(self):
+        logging.debug('kill_proc() called')
+
+        """
+        for proc in mp.current_process():
+            logging.info(proc.pid)
+        """
 
 
 class Executor(QRunnable):

@@ -11,6 +11,7 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen)
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
+import multiprocessing as mp
 
 class RunButton(QLabel):
 
@@ -33,7 +34,7 @@ class RunButton(QLabel):
 
 class StartDebugButton(QLabel):
 
-    startDebugHover = pyqtSignal(str, name='start_debug__hover')
+    startDebugHover = pyqtSignal(str, name='start_debug_hover')
 
     def __init__(self):
         super().__init__()
@@ -52,7 +53,7 @@ class StartDebugButton(QLabel):
 
 class StopExecButton(QLabel):
 
-    stopExecHover = pyqtSignal(str, name='stop_exec__hover')
+    stopExecHover = pyqtSignal(str, name='stop_exec_hover')
 
     def __init__(self):
         super().__init__()
@@ -69,6 +70,24 @@ class StopExecButton(QLabel):
         self.setStyleSheet('background-color: transparent')
         self.stopExecHover.emit('')
 
+class KillProcButton(QLabel):
+
+    killProcHover = pyqtSignal(str, name='kill_proc_hover')
+
+    def __init__(self):
+        super().__init__()
+        logging.debug('__init__() called StopExecButton')
+        self.setPixmap(QPixmap('images/kill.png').scaled(32, 32))
+        self.setStyleSheet('background-color: transparent')
+        self.setMargin(0)
+
+    def enterEvent(self, event):
+        self.setStyleSheet('background-color: dimgrey;') 
+        self.killProcHover.emit(QC.translate('', 'Kill running timers and child processes'))
+
+    def leaveEvent(self, event):
+        self.setStyleSheet('background-color: transparent')
+        self.killProcHover.emit('')
 
 class SaveAsButton(QLabel):
 
@@ -162,6 +181,7 @@ class MenuBar(QWidget):
     start_debug = pyqtSignal(name='start_debug')
     start_exec = pyqtSignal(name='start_exec')
     stop_exec = pyqtSignal(name='stop_execution')
+    kill_proc = pyqtSignal(name='kill_proc')
 
 
     def __init__(self):
@@ -191,6 +211,7 @@ class MenuBar(QWidget):
         self.run_button = RunButton()
         self.start_debug_button = StartDebugButton()
         self.stop_exec_button = StopExecButton()
+        self.kill_proc_button = KillProcButton()
 
         # change the icons background
 
@@ -208,6 +229,8 @@ class MenuBar(QWidget):
         self.new_file_button.newHover.connect(self.setInfoText)
         self.stop_exec_button.mousePressEvent = self.stop_execution
         self.stop_exec_button.stopExecHover.connect(self.setInfoText)
+        self.kill_proc_button.mousePressEvent = self.killProc
+        self.kill_proc_button.killProcHover.connect(self.setInfoText)
 
         self.iconBox.addWidget(self.new_file_button)
         self.iconBox.addWidget(self.open_file_button)
@@ -216,6 +239,7 @@ class MenuBar(QWidget):
         self.iconBox.addWidget(self.start_debug_button)
         self.iconBox.addWidget(self.run_button)
         self.iconBox.addWidget(self.stop_exec_button)
+        self.iconBox.addWidget(self.kill_proc_button)
         self.iconBox.addStretch(1)
         self.iconBox.setContentsMargins(3,3,0,0)
         self.setLayout(self.iconBox) 
@@ -276,5 +300,8 @@ class MenuBar(QWidget):
 
     def stop_execution(self, event):
         self.stop_exec.emit()
+
+    def killProc(self, event):
+        self.kill_proc.emit()
 
  
