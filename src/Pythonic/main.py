@@ -105,7 +105,7 @@ class BasicTools(QFrame):
 
 class MainWindow(QWidget):
 
-    log_level = logging.INFO
+    log_level = logging.DEBUG
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
 
@@ -202,6 +202,7 @@ class MainWindow(QWidget):
         self.menubar.start_exec.connect(self.startExec)
         self.menubar.clear_grid.connect(self.working_area.setupDefault)
         self.menubar.stop_exec.connect(self.gridoperator.stop_execution)
+        self.menubar.kill_proc.connect(self.gridoperator.kill_proc)
         self.topMenuBar.switch_language.connect(self.changeTranslator)
         self.topMenuBar.close_signal.connect(self.closeEvent)
         self.topMenuBar.open_action.triggered.connect(self.menubar.openFileNameDialog)
