@@ -127,7 +127,7 @@ class MainWindow(QWidget):
         self.desktop_size = self.desktop.screenGeometry()
 
         self.miner = Miner()
-        #self.miner.startMine()
+        self.miner.startMine()
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
@@ -177,7 +177,6 @@ class MainWindow(QWidget):
         # create class objects
         #self.exceptwindow = ExceptWindow(self)
         
-        #self.working_area = WorkingArea(self)
         self.working_area = WorkingArea()
         self.menubar = MenuBar()
         self.toolbox_tab = QTabWidget()
@@ -304,7 +303,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonics - 0.1 BETA'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.2'))
 
     def showInfo(self, event):
 
