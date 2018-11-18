@@ -536,6 +536,14 @@ class WorkingArea(QFrame):
 
         return active_index
 
+    def allStop(self):
+
+        element_list = self.returnCurrentElements()
+
+        for element_pos in element_list:
+            element = self.grid.itemAtPosition(*element_pos).widget()
+            element.highlightStop()
+
     def loadConfig(self, row, column):
 
         logging.debug('loadConfig() called')

@@ -848,5 +848,4 @@ class BasicScheduler(Function):
 
             result = Record(self.getPos(), target_0, record, log=self.config[2])
 
-
         return result

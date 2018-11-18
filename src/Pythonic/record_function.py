@@ -5,12 +5,13 @@ import logging
 from time import sleep
 from datetime import datetime
 from multiprocessing import Process
-import os.path
+import os
 
 # this object is switched between the elements and contains the targets and data
 class Record():
 
-    def __init__(self, source, target_0, record_0, target_1=None, record_1=None, log=False, log_txt=None, log_output=None):
+    def __init__(self, source, target_0, record_0,
+            target_1=None, record_1=None, log=False, log_txt=None, log_output=None):
 
         logging.debug('__init__() called Record')
         self.source   = source
@@ -21,15 +22,20 @@ class Record():
         self.log = log
         self.log_txt = log_txt
         self.log_output = log_output
+        self.pid = os.getpid()
     
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called Record')
-        self.source, self.target_0, self.target_1, self.record_0, self.record_1, self.log, self.log_txt, self.log_output = state
+        self.source, self.target_0, self.target_1, \
+            self.record_0, self.record_1, self.log, self.log_txt,\
+            self.log_output, self.pid = state
 
     def __getstate__(self):
         logging.debug('__getstate__() called Record')
-        return (self.source, self.target_0, self.target_1, self.record_0, self.record_1, self.log, self.log_txt, self.log_output)
+        return (self.source, self.target_0, self.target_1,
+                self.record_0, self.record_1, self.log, self.log_txt,
+                self.log_output, self.pid)
 
 
 class Function():
