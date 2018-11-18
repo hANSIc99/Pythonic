@@ -9,7 +9,7 @@ import multiprocessing as mp
 from record_function import Record
 from elementeditor import ElementEditor
 from elementmaster import alphabet
-import logging, sys, time, traceback, os
+import logging, sys, time, traceback, os, signal
 from exceptwindow import ExceptWindow
 from debugwindow import DebugWindow
 from datetime import datetime
@@ -19,6 +19,7 @@ class WorkerSignals(QObject):
     finished = pyqtSignal(object, name='element_finished' )
     except_sig = pyqtSignal(object, name='exception')
     proc_ret = pyqtSignal(object)
+    pid_sig = pyqtSignal(object)
 
 class GridOperator(QObject):
 
@@ -35,9 +36,11 @@ class GridOperator(QObject):
         self.threadpool = QThreadPool()
         self.b_debug_window = False
         self.pending_return = []
+        self.pid_register = []
         self.exec_pending.connect(self.checkPending)
         mp.set_start_method('spawn')
-        logging.debug('__init__() GridOperator, threadCount: {}'.format(self.threadpool.maxThreadCount()))
+        logging.debug('__init__() GridOperator, threadCount: {}'.format(
+            self.threadpool.maxThreadCount()))
 
     def startExec(self, start_pos, record=None):
 
@@ -54,14 +57,27 @@ class GridOperator(QObject):
         self.update_logger.emit()
         executor = Executor(element, record, self.delay)
         executor.signals.finished.connect(self.execDone)
+        executor.signals.pid_sig.connect(self.register_pid)
         element.highlightStart()
         self.threadpool.start(executor)
+
+    def register_pid(self, pid):
+        # register PID of spawned child process
+        self.pid_register.append(pid)
+        logging.debug('PID register: {}'.format(self.pid_register))
 
     def execDone(self, prg_return):
 
         logging.debug('execDone() called GridOperator from {}'.format(prg_return.source))
 
         element = self.grid.itemAtPosition(*prg_return.source).widget()
+
+        logging.debug('PID returned: {}'.format(prg_return.pid))
+        # remove returned pid from register
+        try:
+            self.pid_register.remove(prg_return.pid)
+        except Exception as e:
+            logging.error('De-registration of PID failed: {}'.format(e))
 
 
         if(issubclass(prg_return.record_0.__class__, BaseException)):
@@ -134,7 +150,8 @@ class GridOperator(QObject):
             self.startExec(prg_return.target_0, prg_return.record_0)
 
         if prg_return.target_1:
-            logging.debug('goNext() called with additional target_1: {}'.format(prg_return.target_1))
+            logging.debug('goNext() called with additional target_1: {}'.format(
+                prg_return.target_1))
             logging.debug('goNext() called with record_1: {}'.format(prg_return.record_1))
             self.startExec(prg_return.target_1, prg_return.record_1)
 
@@ -150,10 +167,11 @@ class GridOperator(QObject):
     def kill_proc(self):
         logging.debug('kill_proc() called')
 
-        """
-        for proc in mp.current_process():
-            logging.info(proc.pid)
-        """
+        for proc in self.pid_register:
+            os.kill(proc, signal.SIGTERM)
+            logging.info('Process killed, PID {}'.format(proc))
+
+        self.pid_register.clear()
 
 
 class Executor(QRunnable):
@@ -177,11 +195,13 @@ class Executor(QRunnable):
 
     def run(self):
 
-        logging.debug('run() called with target {} pid {} at {}'.format(self.element.getPos(), os.getpid(), datetime.now()))
+        logging.debug('run() called with target {} pid {} at {}'.format(
+            self.element.getPos(), os.getpid(), datetime.now()))
 
         self.start_proc(self.element.function, self.record, self.delay, 1)
 
-        logging.debug('run() returnded from {}, pid: {} returned at {}'.format(self.element.getPos(), os.getpid(), datetime.now()))
+        logging.debug('run() returnded from {}, pid: {} returned at {}'.format(
+            self.element.getPos(), os.getpid(), datetime.now()))
 
 
     def start_proc(self, function, record, delay, retries):
@@ -193,7 +213,7 @@ class Executor(QRunnable):
         p_0 = mp.Process(target=target_0, args=(function, record, feed_pipe_0, ))
 
         p_0.start()
-         
+        self.signals.pid_sig.emit(p_0.pid) 
         time.sleep(delay)
         
         result = return_pipe_0.recv()

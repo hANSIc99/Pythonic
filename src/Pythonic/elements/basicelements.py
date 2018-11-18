@@ -19,32 +19,7 @@ class StartElement(ExecSched):
     def __init__(self, row, column):
         self.row = row
         self.column = column
-        #super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, None)
         super().__init__(self.row, self.column)
-
-        #self.addFunction(StartElementFunction)
-
-    """
-    def __setstate__(self, state):
-        logging.debug('__setstate__() called StartElement')
-        self.row, self.column = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), False, None)
-        self.addFunction(StartElementFunction)
-
-    def __getstate__(self):
-        logging.debug('__getstate__() called StartElement')
-        return (self.row, self.column)
-    """
-
-class StartElementFunction(Function):
-
-    def __init__(self, config, b_debug, row, column):
-        super().__init__(config, b_debug, row, column)
-
-    def execute(self, record):
-        result = Record(self.getPos(), (self.row+1, self.column), record)
-        return result
-
 
 
 class ExecRB(ElementMaster):
