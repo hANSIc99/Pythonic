@@ -253,11 +253,14 @@ class ExecSched(ElementMaster):
         self.full_interval_input = QWidget()
         self.full_interval_layout = QVBoxLayout(self.full_interval_input)
 
-        self.description = QLabel()
-        self.description.setText(QC.translate('', 'For instance a 15 minute interval Executes' \
-                                    'every full\r\n15 minutes: 10:00, 10:15, 10:30, 10:45, ...'))
+        self.description_1 = QLabel()
+        self.description_1.setText(QC.translate('', 'For instance a 15 minute interval executes every full'))
+        
+        self.description_2 = QLabel()
+        self.description_2.setText(QC.translate('', '15 minutes: 10:00, 10:15, 10:30, 10:45, ...'))
 
-        self.full_interval_layout.addWidget(self.description)
+        self.full_interval_layout.addWidget(self.description_1)
+        self.full_interval_layout.addWidget(self.description_2)
 
         self.full_interval_input.hide()
 

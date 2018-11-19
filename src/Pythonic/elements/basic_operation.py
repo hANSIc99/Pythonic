@@ -48,10 +48,10 @@ class ExecOp(ElementMaster):
         self.op_edit.setWindowTitle(QC.translate('', 'Edit Basic Operation'))
 
         self.head_info = QLabel()
-        self.head_info.setText(QC.translate('', 'Enter your Python 3.6 code below:'))
+        self.head_info.setText(QC.translate('', 'Enter your Python 3 code below:'))
 
         self.help_text = QLabel()
-        self.help_text.setText(QC.translate('', 'Process your own Python 3.6 code.'))
+        self.help_text.setText(QC.translate('', 'Process your own Python 3 code.'))
 
         self.op_image = QLabel()
         self.op_image.setPixmap(QPixmap(self.pixmap_path))
