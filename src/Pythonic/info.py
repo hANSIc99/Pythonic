@@ -34,7 +34,7 @@ class InfoWindow(QWidget):
         self.link_row_layout.setAlignment(Qt.AlignLeft)
 
         self.link_line = QLabel()
-        self.link_line.setText(QC.translate('', 'Pythonics by '))
+        self.link_line.setText(QC.translate('', 'Pythonic by '))
 
         self.link = QLabel()
         self.link.setText('<a href="https://krypto-fuchs.de">https://krypto-fuchs.de</a>')

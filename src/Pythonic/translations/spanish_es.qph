@@ -1,5 +1,5 @@
 <!DOCTYPE QPH>
-<QPH language="es_ES" sourcelanguage="en_US">
+<QPH sourcelanguage="en_US" language="es_ES">
 <phrase>
     <source>Save as ...</source>
     <target>Guardar como ...</target>
@@ -69,7 +69,272 @@
     <target>Idioma</target>
 </phrase>
 <phrase>
+    <source>Help</source>
+    <target>Ayuda</target>
+</phrase>
+<phrase>
     <source>Info</source>
-    <target>Info</target>
+    <target>Información</target>
+</phrase>
+<phrase>
+    <source>New</source>
+    <target>Nuevo</target>
+</phrase>
+<phrase>
+    <source>Open</source>
+    <target>Abierto</target>
+</phrase>
+<phrase>
+    <source>Settings</source>
+    <target>Ajustes</target>
+</phrase>
+<phrase>
+    <source>Close</source>
+    <target>Cerrar</target>
+</phrase>
+<phrase>
+    <source>Edit Basic Scheduler</source>
+    <target>Editar planificador básico</target>
+</phrase>
+<phrase>
+    <source>None</source>
+    <target>Desactivado</target>
+</phrase>
+<phrase>
+    <source>Log output?</source>
+    <target>Salida de registro?</target>
+</phrase>
+<phrase>
+    <source>Enter your Python 3 code below:</source>
+    <target>Ingrese su código de Python 3.6 a continuación:</target>
+</phrase>
+<phrase>
+    <source>Interval between times</source>
+    <target>Intervalo entre ..</target>
+</phrase>
+<phrase>
+    <source>At specific time</source>
+    <target>A tiempo especifico</target>
+</phrase>
+<phrase>
+    <source>On every full interval</source>
+    <target>En cada intervalo completo</target>
+</phrase>
+<phrase>
+    <source>Full interval between</source>
+    <target>Intervalo completo entre</target>
+</phrase>
+<phrase>
+    <source>Monday</source>
+    <target>Lunes</target>
+</phrase>
+<phrase>
+    <source>Tuesday</source>
+    <target>Martes</target>
+</phrase>
+<phrase>
+    <source>Wednesday</source>
+    <target>Miércoles</target>
+</phrase>
+<phrase>
+    <source>Thursday</source>
+    <target>Jueves</target>
+</phrase>
+<phrase>
+    <source>Friday</source>
+    <target>Viernes</target>
+</phrase>
+<phrase>
+    <source>Saturday</source>
+    <target>Sabado</target>
+</phrase>
+<phrase>
+    <source>Sunday</source>
+    <target>Domingo</target>
+</phrase>
+<phrase>
+    <source>Every</source>
+    <target>Cada</target>
+</phrase>
+<phrase>
+    <source>For instance a 15 minute interval executes every full</source>
+    <target>Por ejemplo, un intervalo de 15 minutos se ejecuta cada</target>
+</phrase>
+<phrase>
+    <source>On:</source>
+    <target>El</target>
+</phrase>
+<phrase>
+    <source>15 minutes: 10:00, 10:15, 10:30, 10:45, ...</source>
+    <target>cuarto de hora completo: 10:00, 10:15, 10:30 ...</target>
+</phrase>
+<phrase>
+    <source>Start subsequent actions after your requirements.</source>
+    <target>Comience acciones posteriores después de sus requerimientos.</target>
+</phrase>
+<phrase>
+    <source>And</source>
+    <target>y</target>
+</phrase>
+<phrase>
+    <source>Seconds</source>
+    <target>Segundos</target>
+</phrase>
+<phrase>
+    <source>Minutes</source>
+    <target>Minutos</target>
+</phrase>
+<phrase>
+    <source>Hours</source>
+    <target>Horas</target>
+</phrase>
+<phrase>
+    <source>Choose the scheduler mode</source>
+    <target>Elija el modo programador</target>
+</phrase>
+<phrase>
+    <source>Between</source>
+    <target>Entre</target>
+</phrase>
+<phrase>
+    <source>At:</source>
+    <target>A las</target>
+</phrase>
+<phrase>
+    <source>Process your own Python 3 code.</source>
+    <target>Procesa tu propio código Python 3.</target>
+</phrase>
+<phrase>
+    <source>&quot;&quot;&quot; use the variable input to access data from previous elements &quot;&quot;&quot;</source>
+    <target>&quot;&quot;&quot; Usa la entrada variable para acceder a datos de elementos anteriores. &quot;&quot;&quot;</target>
+</phrase>
+<phrase>
+    <source>&quot;&quot;&quot; set the output variable to pass data to following elements &quot;&quot;&quot;</source>
+    <target>&quot;&quot;&quot; establece la variable de salida para pasar datos a los siguientes elementos &quot;&quot;&quot;</target>
+</phrase>
+<phrase>
+    <source>&quot;&quot;&quot; set the variable log_txt to adjust the logging text &quot;&quot;&quot;</source>
+    <target>&quot;&quot;&quot; establece la variable log_txt para ajustar el texto de registro &quot;&quot;&quot;</target>
+</phrase>
+<phrase>
+    <source>(Neuer Eintrag)</source>
+    <target>Editar operación básica</target>
+    <definition>Edit Basic Operation</definition>
+</phrase>
+<phrase>
+    <source>Edit Basic Operation</source>
+    <target>Editar operación básica</target>
+</phrase>
+<phrase>
+    <source>Go to element:</source>
+    <target>Ir al elemento:</target>
+</phrase>
+<phrase>
+    <source>Choose an element from the list</source>
+    <target>Elija un elemento de la lista</target>
+</phrase>
+<phrase>
+    <source>to which you want to return with the</source>
+    <target>al que desea volver</target>
+</phrase>
+<phrase>
+    <source>current input</source>
+    <target>con la entrada actual</target>
+</phrase>
+<phrase>
+    <source>Edit Return</source>
+    <target>Editar Retorno</target>
+</phrase>
+<phrase>
+    <source>Edit Process Branch</source>
+    <target>Rama de proceso de edición</target>
+</phrase>
+<phrase>
+    <source>Multiprocessing: Start new execution path.</source>
+    <target>Multiprocesamiento: Iniciar nueva ruta de ejecución.</target>
+</phrase>
+<phrase>
+    <source>Choose technical analysis function</source>
+    <target>Elija función de análisis técnico.</target>
+</phrase>
+<phrase>
+    <source>Find information about technical analysis on</source>
+    <target>Encuentre información sobre análisis técnico en</target>
+</phrase>
+<phrase>
+    <source>Enter time range MA</source>
+    <target>Introduzca el rango de tiempo MA</target>
+</phrase>
+<phrase>
+    <source>Enter time range EMA</source>
+    <target>Introduzca el rango de tiempo EMA</target>
+</phrase>
+<phrase>
+    <source>Enter MA period</source>
+    <target>Entrar en período de MA</target>
+</phrase>
+<phrase>
+    <source>Enter periods</source>
+    <target>Entrar periodos</target>
+</phrase>
+<phrase>
+    <source>Default value: 3</source>
+    <target>Valor por defecto: 3</target>
+</phrase>
+<phrase>
+    <source>Edit TA function</source>
+    <target>Editar la función TA</target>
+</phrase>
+<phrase>
+    <source>If INPUT is ...</source>
+    <target>Si la ENTRADA es ...</target>
+</phrase>
+<phrase>
+    <source>Greater than (&gt;) ...</source>
+    <target>Mayor que (&gt;) ...</target>
+</phrase>
+<phrase>
+    <source>Greater or equal than (&gt;=) ...</source>
+    <target>Mayor o igual que (&gt; =) ...</target>
+</phrase>
+<phrase>
+    <source>Less than (&lt;) ...</source>
+    <target>Menos que (&lt;) ...</target>
+</phrase>
+<phrase>
+    <source>Less or equal than (&lt;=) ...</source>
+    <target>Menos o igual que (&lt;=) ...</target>
+</phrase>
+<phrase>
+    <source>Equal to (==) ...</source>
+    <target>Igual a (==) ...</target>
+</phrase>
+<phrase>
+    <source>Not equal to (!=) ...</source>
+    <target>No es igual a (! =) ...</target>
+</phrase>
+<phrase>
+    <source>Negate query (if NOT ...)</source>
+    <target>Negar la consulta (si NO ...)</target>
+</phrase>
+<phrase>
+    <source>Edit Branch</source>
+    <target>Editar Rama</target>
+</phrase>
+<phrase>
+    <source>Leads the execution path</source>
+    <target>Dirige el camino de ejecución</target>
+</phrase>
+<phrase>
+    <source>according to the defined condition.</source>
+    <target>de acuerdo a la condición definida.</target>
+</phrase>
+<phrase>
+    <source>Put strings in quotation marks:</source>
+    <target>Poner cadenas entre comillas:</target>
+</phrase>
+<phrase>
+    <source>e.g. &quot;state_x&quot;</source>
+    <target>p.ej. &quot;estado_x&quot;</target>
 </phrase>
 </QPH>

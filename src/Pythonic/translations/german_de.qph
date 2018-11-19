@@ -1,16 +1,16 @@
 <!DOCTYPE QPH>
 <QPH sourcelanguage="en_US" language="de_DE">
 <phrase>
-    <source>Save as ...</source>
-    <target>Speichern unter ...</target>
+    <source>At specific time</source>
+    <target>Bestimmter Zeitpunkt</target>
 </phrase>
 <phrase>
     <source>Crypto Fox</source>
     <target>Krypto Fuchs</target>
 </phrase>
 <phrase>
-    <source>Save</source>
-    <target>Speichern</target>
+    <source>Interval between times</source>
+    <target>Interval im Zeitraum ..</target>
 </phrase>
 <phrase>
     <source>en</source>
@@ -85,12 +85,12 @@
     <target>Nein</target>
 </phrase>
 <phrase>
-    <source>Process your own Python 3.6 code.</source>
-    <target>Verarbeite deinen eigenen Python 3.6 code.</target>
+    <source>Process your own Python 3 code.</source>
+    <target>Verarbeite deinen eigenen Python 3 code.</target>
 </phrase>
 <phrase>
-    <source>Enter your Python 3.6 code below:</source>
-    <target>Gib deinen Python 3.6 code hier ein:</target>
+    <source>Enter your Python 3 code below:</source>
+    <target>Gib deinen Python 3 code hier ein:</target>
 </phrase>
 <phrase>
     <source>Log output?</source>
@@ -101,7 +101,7 @@
     <target>&quot;&quot;&quot; verwende die Variable input um auf die Ausgabe des voherigen Elementes zuzugreifen &quot;&quot;&quot;</target>
 </phrase>
 <phrase>
-    <source>&quot;&quot;&quot; set the output variable to pass data to following elements &quot;&quot;&quot;</source>
+    <source>&quot;&quot;&quot; set the output variable to pass data to following elements     &quot;&quot;&quot;</source>
     <target>&quot;&quot;&quot; nutze die Variable output um Daten an das nachfolgende Element weiterzugeben &quot;&quot;&quot; </target>
 </phrase>
 <phrase>
@@ -141,7 +141,7 @@
     <target>in Abhängigkeit der Abfrage.</target>
 </phrase>
 <phrase>
-    <source>Put string in quotation marks:</source>
+    <source>Put strings in quotation marks:</source>
     <target>Setze Strings in Anführungszeichen:</target>
 </phrase>
 <phrase>
@@ -225,20 +225,16 @@
     <target>Bearbeite Basisfunktion</target>
 </phrase>
 <phrase>
-    <source>New</source>
-    <target>Neu</target>
-</phrase>
-<phrase>
     <source>Open</source>
     <target>Öffnen</target>
 </phrase>
 <phrase>
-    <source>Save</source>
-    <target>Speichern</target>
+    <source>Interval</source>
+    <target>Intervall</target>
 </phrase>
 <phrase>
-    <source>Save as ...</source>
-    <target>Speichern unter ...</target>
+    <source>None</source>
+    <target>Deaktiviert</target>
 </phrase>
 <phrase>
     <source>Settings</source>
@@ -387,5 +383,105 @@
 <phrase>
     <source>Debug</source>
     <target>Debug</target>
+</phrase>
+<phrase>
+    <source>Save</source>
+    <target>Speichern</target>
+</phrase>
+<phrase>
+    <source>Save as ...</source>
+    <target>Speichern unter ...</target>
+</phrase>
+<phrase>
+    <source>On every full interval</source>
+    <target>Im Intervall zur volle Zeit</target>
+</phrase>
+<phrase>
+    <source>Full interval between times</source>
+    <target>Volle Intervalle im Zeitraum ...</target>
+</phrase>
+<phrase>
+    <source>Start subsequent actions after your requirements.</source>
+    <target>Aktiviere nachfolgende Elemente entsprechend deinen Anforderungen.</target>
+</phrase>
+<phrase>
+    <source>Seconds</source>
+    <target>Sekunden</target>
+</phrase>
+<phrase>
+    <source>Minutes</source>
+    <target>Minuten</target>
+</phrase>
+<phrase>
+    <source>Hours</source>
+    <target>Stunden</target>
+</phrase>
+<phrase>
+    <source>Monday</source>
+    <target>Montag</target>
+</phrase>
+<phrase>
+    <source>Tuesday</source>
+    <target>Dienstag</target>
+</phrase>
+<phrase>
+    <source>Wednesday</source>
+    <target>Mittwoch</target>
+</phrase>
+<phrase>
+    <source>Thursday</source>
+    <target>Donnerstag</target>
+</phrase>
+<phrase>
+    <source>Friday</source>
+    <target>Freitag</target>
+</phrase>
+<phrase>
+    <source>Saturday</source>
+    <target>Samstag</target>
+</phrase>
+<phrase>
+    <source>Sunday</source>
+    <target>Sonntag</target>
+</phrase>
+<phrase>
+    <source>On:</source>
+    <target>Am:</target>
+</phrase>
+<phrase>
+    <source>At:</source>
+    <target>Um:</target>
+</phrase>
+<phrase>
+    <source>For instance a 15 minute interval executes every full</source>
+    <target>Ein 15 Minuten Intervall aktiviert die Elemente </target>
+</phrase>
+<phrase>
+    <source>15 minutes: 10:00, 10:15, 10:30, 10:45, ...</source>
+    <target>zur vollen Viertlstunde: 10:00, 10:15, 10:30, ..</target>
+</phrase>
+<phrase>
+    <source>Every</source>
+    <target>Jede</target>
+</phrase>
+<phrase>
+    <source>Between</source>
+    <target>Zwischen</target>
+</phrase>
+<phrase>
+    <source>and</source>
+    <target>und</target>
+</phrase>
+<phrase>
+    <source>Choose the scheduler mode</source>
+    <target>Wähle den Scheduler</target>
+</phrase>
+<phrase>
+    <source>Kill running timers and child processes</source>
+    <target>Beende laufende Timer und Hintergrundprozesse</target>
+</phrase>
+<phrase>
+    <source>Edit Basic Scheduler</source>
+    <target>Bearbeite Scheduler</target>
 </phrase>
 </QPH>

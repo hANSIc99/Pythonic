@@ -89,7 +89,7 @@ class ExecBranch(ElementMaster):
         self.help_text_2.setText(QC.translate('', 'according to the defined condition.'))
 
         self.help_text_3 = QLabel()
-        self.help_text_3.setText(QC.translate('', 'Put string in quotation marks:'))
+        self.help_text_3.setText(QC.translate('', 'Put strings in quotation marks:'))
 
         self.help_text_4 = QLabel()
         self.help_text_4.setText(QC.translate('', 'e.g. "state_x"'))
