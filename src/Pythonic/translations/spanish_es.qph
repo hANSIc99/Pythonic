@@ -250,7 +250,7 @@
     <target>Rama de proceso de edición</target>
 </phrase>
 <phrase>
-    <source>Multiprocessing: Start new execution path.</source>
+    <source>Multiprocessing: Start a new execution path.</source>
     <target>Multiprocesamiento: Iniciar nueva ruta de ejecución.</target>
 </phrase>
 <phrase>
@@ -336,5 +336,201 @@
 <phrase>
     <source>e.g. &quot;state_x&quot;</source>
     <target>p.ej. &quot;estado_x&quot;</target>
+</phrase>
+<phrase>
+    <source>Milliseconds</source>
+    <target>Milisegundos</target>
+</phrase>
+<phrase>
+    <source>Retraso de depuración:</source>
+    <target>Retraso de depuración:</target>
+</phrase>
+<phrase>
+    <source>Edit Binance Scheduler</source>
+    <target>Editar Binance programador</target>
+</phrase>
+<phrase>
+    <source>Choose the scheduler interval</source>
+    <target>Elija el intervalo del planificador</target>
+</phrase>
+<phrase>
+    <source>1 Minute</source>
+    <target>1 Minuto</target>
+</phrase>
+<phrase>
+    <source>3 Minutes</source>
+    <target>3 Minutos</target>
+</phrase>
+<phrase>
+    <source>5 Minutes</source>
+    <target>5 Minutos</target>
+</phrase>
+<phrase>
+    <source>15 Minutes</source>
+    <target>15 Minutos</target>
+</phrase>
+<phrase>
+    <source>30 Minutes</source>
+    <target>30 Minutos</target>
+</phrase>
+<phrase>
+    <source>1 Hour</source>
+    <target>1 Hora</target>
+</phrase>
+<phrase>
+    <source>2 Hours</source>
+    <target>2 horas</target>
+</phrase>
+<phrase>
+    <source>4 Hours</source>
+    <target>4 Horas</target>
+</phrase>
+<phrase>
+    <source>6 Hours</source>
+    <target>6 Horas</target>
+</phrase>
+<phrase>
+    <source>8 Hours</source>
+    <target>8 Horas</target>
+</phrase>
+<phrase>
+    <source>12 Hours</source>
+    <target>12 Horas</target>
+</phrase>
+<phrase>
+    <source>1 Day</source>
+    <target>1 Día</target>
+</phrase>
+<phrase>
+    <source>Stop execution</source>
+    <target>Detener ejecucion</target>
+</phrase>
+<phrase>
+    <source>Kill running timers and child processes</source>
+    <target>Matar temporizadores y procesos secundarios.</target>
+</phrase>
+<phrase>
+    <source>Enter time offset [s] (default: 0; range: -999s to + 999s)</source>
+    <target>Ingrese el desplazamiento de tiempo [s] (predeterminado: 0; rango: -999s a + 999s)</target>
+</phrase>
+<phrase>
+    <source>Synchronize with Binance and execute subsequent modules</source>
+    <target>Sincronice con Binance y ejecute los módulos subsiguientes</target>
+</phrase>
+<phrase>
+    <source>after expiration of the selected interval.</source>
+    <target>después de la expiración del intervalo seleccionado.</target>
+</phrase>
+<phrase>
+    <source>e.g. &quot;XMRBTC&quot;</source>
+    <target>p.ej. &quot;XMRBTC&quot;</target>
+</phrase>
+<phrase>
+    <source>Choose the OHLC interval</source>
+    <target>Elija el intervalo OHLC</target>
+</phrase>
+<phrase>
+    <source>Outputs a Pandas dataframe in the following format:</source>
+    <target>Produce un marco de datos de Pandas en el siguiente formato:</target>
+</phrase>
+<phrase>
+    <source>Edit OHLC query</source>
+    <target>Editar consulta OHLC</target>
+</phrase>
+<phrase>
+    <source>Enter API key:</source>
+    <target>Introduzca la clave de la API:</target>
+</phrase>
+<phrase>
+    <source>Enter secret key:</source>
+    <target>Introduzca la clave secreta:</target>
+</phrase>
+<phrase>
+    <source>Buy</source>
+    <target>Comprar</target>
+</phrase>
+<phrase>
+    <source>Sell</source>
+    <target>Vender</target>
+</phrase>
+<phrase>
+    <source>Enter quantity:</source>
+    <target>Introduzca la cantidad:</target>
+</phrase>
+<phrase>
+    <source>Attention: Use a dot (&quot;.&quot;) as decimal seperator!</source>
+    <target>Atención: ¡Use un punto (&quot;.&quot;) Como separador decimal!</target>
+</phrase>
+<phrase>
+    <source>Limit Order</source>
+    <target>Orden de limite</target>
+</phrase>
+<phrase>
+    <source>Market Order</source>
+    <target>Orden del mercado</target>
+</phrase>
+<phrase>
+    <source>Stop Loss</source>
+    <target>Detener la pérdida de</target>
+</phrase>
+<phrase>
+    <source>Stop Loss Limit</source>
+    <target>Límite de Stop Loss</target>
+</phrase>
+<phrase>
+    <source>Take Profit</source>
+    <target>Tomar ganancias</target>
+</phrase>
+<phrase>
+    <source>Take Profit Limit</source>
+    <target>Tomar límite de beneficio</target>
+</phrase>
+<phrase>
+    <source>Limit Maker</source>
+    <target>Fabricante de límite</target>
+</phrase>
+<phrase>
+    <source>Test Order</source>
+    <target>Orden de prueba</target>
+</phrase>
+<phrase>
+    <source>Enter currency pair</source>
+    <target>Ingresar par de divisas</target>
+</phrase>
+<phrase>
+    <source>Test order without effect.</source>
+    <target>Orden de prueba sin efecto.</target>
+</phrase>
+<phrase>
+    <source>Price:</source>
+    <target>Precio:</target>
+</phrase>
+<phrase>
+    <source>Stop price:</source>
+    <target>Precio de parada:</target>
+</phrase>
+<phrase>
+    <source>Time in force:</source>
+    <target>Tiempo en vigor:</target>
+</phrase>
+<phrase>
+    <source>Good til canceled</source>
+    <target>Bueno hasta cancelado</target>
+</phrase>
+<phrase>
+    <source>Immediate or Cancel</source>
+    <target>Inmediato o Cancelar</target>
+</phrase>
+<phrase>
+    <source>Fill or Kill</source>
+    <target>Llenar o matar</target>
+</phrase>
+<phrase>
+    <source>Limit price:</source>
+    <target>Precio límite:</target>
+</phrase>
+<phrase>
+    <source>and</source>
+    <target>y</target>
 </phrase>
 </QPH>
