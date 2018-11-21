@@ -1,5 +1,5 @@
 <!DOCTYPE QPH>
-<QPH language="zh_CN" sourcelanguage="en_US">
+<QPH sourcelanguage="en_US" language="zh_CN">
 <phrase>
     <source>Save as ...</source>
     <target>另存为</target>
@@ -55,5 +55,149 @@
 <phrase>
     <source>File</source>
     <target>文件</target>
+</phrase>
+<phrase>
+    <source>Help</source>
+    <target>帮助</target>
+</phrase>
+<phrase>
+    <source>New</source>
+    <target>新</target>
+</phrase>
+<phrase>
+    <source>Open</source>
+    <target>开放</target>
+</phrase>
+<phrase>
+    <source>Settings</source>
+    <target>设置</target>
+</phrase>
+<phrase>
+    <source>Close</source>
+    <target>关闭</target>
+</phrase>
+<phrase>
+    <source>Debug delay:</source>
+    <target>调试延迟：</target>
+</phrase>
+<phrase>
+    <source>Milliseconds</source>
+    <target>毫秒</target>
+</phrase>
+<phrase>
+    <source>Ok</source>
+    <target>行</target>
+</phrase>
+<phrase>
+    <source>Stop execution</source>
+    <target>停止执行</target>
+</phrase>
+<phrase>
+    <source>Kill running timers and child processes</source>
+    <target>杀死正在运行的计时器和子进程</target>
+</phrase>
+<phrase>
+    <source>Choose the scheduler mode</source>
+    <target>选择调度程序模式</target>
+</phrase>
+<phrase>
+    <source>Log output?</source>
+    <target>记录输出？</target>
+</phrase>
+<phrase>
+    <source>None</source>
+    <target>无</target>
+</phrase>
+<phrase>
+    <source>Interval</source>
+    <target>间隔</target>
+</phrase>
+<phrase>
+    <source>Interval between times</source>
+    <target>时间间隔</target>
+</phrase>
+<phrase>
+    <source>Every</source>
+    <target>一切</target>
+</phrase>
+<phrase>
+    <source>Seconds</source>
+    <target>秒</target>
+</phrase>
+<phrase>
+    <source>Minutes</source>
+    <target>纪要</target>
+</phrase>
+<phrase>
+    <source>Hours</source>
+    <target>小时</target>
+</phrase>
+<phrase>
+    <source>On</source>
+    <target>在</target>
+</phrase>
+<phrase>
+    <source>Monday</source>
+    <target>星期一</target>
+</phrase>
+<phrase>
+    <source>Tuesday</source>
+    <target>星期二</target>
+</phrase>
+<phrase>
+    <source>At:</source>
+    <target>在:</target>
+</phrase>
+<phrase>
+    <source>Wednesday</source>
+    <target>星期三</target>
+</phrase>
+<phrase>
+    <source>Thursday</source>
+    <target>星期四</target>
+</phrase>
+<phrase>
+    <source>Friday</source>
+    <target>星期五</target>
+</phrase>
+<phrase>
+    <source>Saturday</source>
+    <target>星期六</target>
+</phrase>
+<phrase>
+    <source>Sunday</source>
+    <target>星期日</target>
+</phrase>
+<phrase>
+    <source>Start subsequent actions after you requirements.</source>
+    <target>在您的要求之后开始后续操作。</target>
+</phrase>
+<phrase>
+    <source>Edit Basic Scheduler</source>
+    <target>编辑基本调度程序</target>
+</phrase>
+<phrase>
+    <source>On:</source>
+    <target>上</target>
+</phrase>
+<phrase>
+    <source>Between</source>
+    <target>之间</target>
+</phrase>
+<phrase>
+    <source>And</source>
+    <target>和</target>
+</phrase>
+<phrase>
+    <source>Full interval between times</source>
+    <target>完整的时间间隔</target>
+</phrase>
+<phrase>
+    <source>On every full interval</source>
+    <target>在每个完整的间隔</target>
+</phrase>
+<phrase>
+    <source>At specific time</source>
+    <target>在特定时间</target>
 </phrase>
 </QPH>
