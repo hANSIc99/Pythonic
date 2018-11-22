@@ -169,7 +169,7 @@
     <target>星期日</target>
 </phrase>
 <phrase>
-    <source>Start subsequent actions after you requirements.</source>
+    <source>Start subsequent actions after your requirements.</source>
     <target>在您的要求之后开始后续操作。</target>
 </phrase>
 <phrase>
@@ -199,5 +199,185 @@
 <phrase>
     <source>At specific time</source>
     <target>在特定时间</target>
+</phrase>
+<phrase>
+    <source>For instance a 15 minute interval executes every full</source>
+    <target>例如，每隔15分钟执行一次15分</target>
+</phrase>
+<phrase>
+    <source>15 minutes: 10:00, 10:15, 10:30, 10:45, ...</source>
+    <target>钟的间隔：10：00,10：15,10：30,10：45，......</target>
+</phrase>
+<phrase>
+    <source>and</source>
+    <target>和</target>
+</phrase>
+<phrase>
+    <source>Greater than (&gt;) ...</source>
+    <target>大于（&gt;）......</target>
+</phrase>
+<phrase>
+    <source>Greater or equal than (&gt;=) ...</source>
+    <target>大于或等于（&gt; =）......</target>
+</phrase>
+<phrase>
+    <source>Less than (&lt;) ...</source>
+    <target>小于（&lt;）......</target>
+</phrase>
+<phrase>
+    <source>Less or equal than (&lt;=) ...</source>
+    <target>小于或等于（&lt;=）......</target>
+</phrase>
+<phrase>
+    <source>Equal to (==) ...</source>
+    <target>等于（==）......</target>
+</phrase>
+<phrase>
+    <source>NOT equal to (!=) ...</source>
+    <target>不等于（！=）......</target>
+</phrase>
+<phrase>
+    <source>according to the defined condition.</source>
+    <target>引导执行路径。</target>
+</phrase>
+<phrase>
+    <source>Leads the execution path</source>
+    <target>根据定义的条件 </target>
+</phrase>
+<phrase>
+    <source>Edit Branch</source>
+    <target>编辑分支</target>
+</phrase>
+<phrase>
+    <source>Yes</source>
+    <target>是</target>
+</phrase>
+<phrase>
+    <source>No</source>
+    <target>没有</target>
+</phrase>
+<phrase>
+    <source>if INPUT is ...</source>
+    <target>如果输入是......</target>
+</phrase>
+<phrase>
+    <source>Negate query (if NOT ... )</source>
+    <target>否定查询（如果不是......）</target>
+</phrase>
+<phrase>
+    <source>Edit Return</source>
+    <target>编辑返回</target>
+</phrase>
+<phrase>
+    <source>Choose an element from the list</source>
+    <target>从列表中选 </target>
+</phrase>
+<phrase>
+    <source>to which you want to return with the</source>
+    <target>择要使用当前输入</target>
+</phrase>
+<phrase>
+    <source>current input</source>
+    <target>返回的元素</target>
+</phrase>
+<phrase>
+    <source>Choose technical analysis function</source>
+    <target>选择技术分析功能</target>
+</phrase>
+<phrase>
+    <source>Find information about technical analysis on</source>
+    <target>查找有关技术分析的信息</target>
+</phrase>
+<phrase>
+    <source>Moving Average</source>
+    <target>移动平均线</target>
+</phrase>
+<phrase>
+    <source>Exponential Moving Average</source>
+    <target>指数移动平均线</target>
+</phrase>
+<phrase>
+    <source>Stochastic Oscillator %K</source>
+    <target>随机振荡器％K</target>
+</phrase>
+<phrase>
+    <source>Stochastic Oscillator %D</source>
+    <target>随机振荡器％D</target>
+</phrase>
+<phrase>
+    <source>Relative Strenght Index</source>
+    <target>相对强弱指数</target>
+</phrase>
+<phrase>
+    <source>Edit TA function</source>
+    <target>编辑技术分析功能</target>
+</phrase>
+<phrase>
+    <source>Enter time range MA</source>
+    <target>输入时间范围移动平均线</target>
+</phrase>
+<phrase>
+    <source>Enter MA period</source>
+    <target>输入移动平均期间</target>
+</phrase>
+<phrase>
+    <source>Enter periods</source>
+    <target>输入期间</target>
+</phrase>
+<phrase>
+    <source>Enter time range EMA</source>
+    <target>输入时间范围指数移动平均线</target>
+</phrase>
+<phrase>
+    <source>Default value: 3</source>
+    <target>默认值：3</target>
+</phrase>
+<phrase>
+    <source>1 Minute</source>
+    <target>1分钟</target>
+</phrase>
+<phrase>
+    <source>3 Minutes</source>
+    <target>3分钟</target>
+</phrase>
+<phrase>
+    <source>5 Minutes</source>
+    <target>5分钟</target>
+</phrase>
+<phrase>
+    <source>15 Minutes</source>
+    <target>15分钟</target>
+</phrase>
+<phrase>
+    <source>30 Minutes</source>
+    <target>30分钟</target>
+</phrase>
+<phrase>
+    <source>1 Hour</source>
+    <target>1小时</target>
+</phrase>
+<phrase>
+    <source>2 Hours</source>
+    <target>2小时</target>
+</phrase>
+<phrase>
+    <source>4 Hours</source>
+    <target>4个小时</target>
+</phrase>
+<phrase>
+    <source>6 Hours</source>
+    <target>6个小时</target>
+</phrase>
+<phrase>
+    <source>8 Hours</source>
+    <target>8小时</target>
+</phrase>
+<phrase>
+    <source>12 Hours</source>
+    <target>12小时</target>
+</phrase>
+<phrase>
+    <source>1 Day</source>
+    <target>1天</target>
 </phrase>
 </QPH>
