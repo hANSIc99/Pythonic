@@ -380,4 +380,160 @@
     <source>1 Day</source>
     <target>1天</target>
 </phrase>
+<phrase>
+    <source>Choose the OHLC interval</source>
+    <target>选择市场数据区间</target>
+</phrase>
+<phrase>
+    <source>(Neuer Eintrag)</source>
+    <target></target>
+</phrase>
+<phrase>
+    <source>Enter currency pair</source>
+    <target>输入货币对</target>
+</phrase>
+<phrase>
+    <source>Outputs a Pandas dataframe in the following format:</source>
+    <target>以下列格式输出Pandas数据帧：</target>
+</phrase>
+<phrase>
+    <source>Edit OHLC query</source>
+    <target>编辑市场数据查询</target>
+</phrase>
+<phrase>
+    <source>Enter API key:</source>
+    <target>输入API密钥：</target>
+</phrase>
+<phrase>
+    <source>Enter secret key:</source>
+    <target>输入密钥：</target>
+</phrase>
+<phrase>
+    <source>Buy</source>
+    <target>购买</target>
+</phrase>
+<phrase>
+    <source>Sell</source>
+    <target>卖</target>
+</phrase>
+<phrase>
+    <source>Limit Order</source>
+    <target>限价订单</target>
+</phrase>
+<phrase>
+    <source>e.g. &quot;XMRBTC&quot;</source>
+    <target>例如“XMRBTC”</target>
+</phrase>
+<phrase>
+    <source>Market Order</source>
+    <target>市场秩序</target>
+</phrase>
+<phrase>
+    <source>Stop Loss</source>
+    <target>止损</target>
+</phrase>
+<phrase>
+    <source>Stop Loss Limit</source>
+    <target>止损限制</target>
+</phrase>
+<phrase>
+    <source>Time in force:</source>
+    <target>有效期：</target>
+</phrase>
+<phrase>
+    <source>Price:</source>
+    <target>价钱：</target>
+</phrase>
+<phrase>
+    <source>Stop price:</source>
+    <target>止损价：</target>
+</phrase>
+<phrase>
+    <source>Attention: Use a dot (&quot;.&quot;) as decimal seperator!</source>
+    <target>注意：使用点（“。”）作为小数点分隔符！</target>
+</phrase>
+<phrase>
+    <source>Immediate or Cancel</source>
+    <target>立即或取消</target>
+</phrase>
+<phrase>
+    <source>Fill or Kill</source>
+    <target>填充或杀死</target>
+</phrase>
+<phrase>
+    <source>Enter quantity:</source>
+    <target>输入数量：</target>
+</phrase>
+<phrase>
+    <source>(Neuer Eintrag)</source>
+    <target></target>
+</phrase>
+<phrase>
+    <source>Take Profit</source>
+    <target>获利</target>
+</phrase>
+<phrase>
+    <source>Take Profit Limit</source>
+    <target>获利限额</target>
+</phrase>
+<phrase>
+    <source>Limit Maker</source>
+    <target>限制制造商</target>
+</phrase>
+<phrase>
+    <source>Test Order</source>
+    <target>测试订单</target>
+</phrase>
+<phrase>
+    <source>Test order without effect.</source>
+    <target>测试订单没有效果。</target>
+</phrase>
+<phrase>
+    <source>Place a Order</source>
+    <target>下订单</target>
+</phrase>
+<phrase>
+    <source>Good til canceled</source>
+    <target>好直到取消</target>
+</phrase>
+<phrase>
+    <source>Limit price:</source>
+    <target>限价：</target>
+</phrase>
+<phrase>
+    <source>Basic</source>
+    <target>基本</target>
+</phrase>
+<phrase>
+    <source>Choose the scheduler interval</source>
+    <target>选择调度程序间隔</target>
+</phrase>
+<phrase>
+    <source>Enter time offset [s] (default: 0; range: -999s to + 999s)</source>
+    <target>输入时间偏移[s]（默认值：0;范围：-999s到+ 999s）</target>
+</phrase>
+<phrase>
+    <source>Synchronize with Binance and execute subsequent modules</source>
+    <target>与Binance同步并在所选</target>
+</phrase>
+<phrase>
+    <source>after expiration of the selected interval.</source>
+    <target>间隔到期后执行后续模块。</target>
+</phrase>
+<phrase>
+    <source>Edit Binance Scheduler</source>
+    <target>编辑Binance调度程序</target>
+</phrase>
+<phrase>
+    <source>Put strings in quotation marks:</source>
+    <target>将字符串放在引号中：</target>
+</phrase>
+<phrase>
+    <source>e.g. &quot;state_x&quot;</source>
+    <target>例如“state_x”</target>
+</phrase>
+<phrase>
+    <source>Go to element:</source>
+    <target>转到元素：</target>
+</phrase>
 </QPH>

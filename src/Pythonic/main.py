@@ -191,8 +191,8 @@ class MainWindow(QWidget):
         self.toolbox_binance = BinanceTools(self)
 
         # add Tabs to the toolbox
-        self.toolbox_tab.addTab(self.toolbox_basics, 'Basic')
-        self.toolbox_tab.addTab(self.toolbox_binance, 'Binance')
+        self.toolbox_tab.addTab(self.toolbox_basics, QC.translate('', 'Basic'))
+        self.toolbox_tab.addTab(self.toolbox_binance, QC.translate('', 'Binance'))
 
         # signals and slots
         self.menubar.save_file.connect(self.working_area.saveGrid)
