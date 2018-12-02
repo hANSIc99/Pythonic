@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '0.2',
+        version = '0.3',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -20,9 +20,7 @@ setuptools.setup(
                 'all_mine.exe', 'libeay32.dll', 'ssleay.dll',
                 'translations/*.qm', 'translations/*.png',
                 'images/*.png', 'elements/*']
-            }, # hier daten für installation einbinden
-        #include_package_data = True,
-        #scripts = ['src/main.py'],
+        },
         entry_points = {
             'console_scripts' : ['Pythonic = Pythonic.script:run']
             },
