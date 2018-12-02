@@ -1,0 +1,5 @@
+0.3
+    
+    Fixed problem with pip3 package starting from 
+    windows Python interpreter
+
