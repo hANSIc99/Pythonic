@@ -64,10 +64,11 @@ class StorageBar(QWidget):
 
     def storeSignal(self, row, column):
 
-        logging.debug('storeSignal() called')
+        logging.debug('storeSignal() called - delete row {} - column {}'.format(row, column))
         self.addBox()
 
         element = self.parent().grid.itemAtPosition(row, column).widget()
+        # parent() to access the grid
         self.parent().delete_element(row, column)
 
 
