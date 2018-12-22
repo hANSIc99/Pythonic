@@ -137,7 +137,7 @@ class MainWindow(QWidget):
         month = self.log_date.strftime('%b')
         year = self.log_date.strftime('%Y')
         home_dict = str(Path.home())
-        file_path = '{}/Pythonics_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+        file_path = '{}/Pythonic_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
         self.ensure_file_path(file_path)
 
         file_handler = logging.FileHandler(file_path)
