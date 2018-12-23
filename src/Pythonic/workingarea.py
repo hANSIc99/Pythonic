@@ -70,24 +70,25 @@ class WorkingArea(QFrame):
         self.show()
 
     def regType(self, tool_tuple):
-        logging.debug('regType() called with type: {} outputs: {}'.format(tool_tuple[0], tool_tuple[1]))
+
+        logging.debug('regType() called with type: {} outputs: {}'.format(
+            tool_tuple[0], tool_tuple[1]))
         self.registered_types.append(tool_tuple)
 
 
-    def adElement(self, row, column, newType):
+    def addElement(self, row, column, newType):
 
         # deletes the placeholder where the new object was dropped
 
         # creating a new instance of the desired type
         new_type_str = 'new_type = ' + newType + '({},{})'.format(row, column)
-        logging.debug('tidyUp() called, new_type_str: {}'.format(new_type_str))
+        logging.debug('addElement() called, new_type_str: {}'.format(new_type_str))
         try:
             exec(new_type_str, globals())
         except Exception as e:
-            logging.error('Desired element type not found')
+            logging.error('addElement()- desired element type not found')
             logging.error(e)
             return
-        #new_type = newType(row, column) 
         # setup parent position
 
         # setting the parent element
@@ -106,7 +107,8 @@ class WorkingArea(QFrame):
         # connect delete button to related grid method
         new_type.del_sig.connect(self.delete_element)
         # create new placeholder at desired position
-        # ATTENTION: actual position can changer after this call, row and column are not valid anymore from here
+        # ATTENTION: actual position can changer after this call,
+        # row and column are not valid anymore from here
         outputs = dict(self.registered_types)[newType]
 
         if outputs > 0:
@@ -176,17 +178,20 @@ class WorkingArea(QFrame):
             row, col = pos
             element = self.grid.itemAtPosition(row, col)
             if element:
-                if isinstance(element.widget(), ExecRB) and isinstance(element.widget().parent_element, ExecR):
-                    print('element found at: ', (row, col))
+                if (isinstance(element.widget(), ExecRB) and 
+                    isinstance(element.widget().parent_element, ExecR)):
+                    logging.debug('element found at: ', (row, col))
                     #if self.checkLeft(row, col):
                     if self.stepLeft(row, col):
                         # repeat if a childTree was moved
-                        print('Looking again for child trees that can be moved !!!!!!!!!!!!!!!!!!!!!!!11')
-                        # find missing links for the purpose that this function can finde child trees again
+                        logging.debug('Looking again for child trees that can be moved ')
+                        # find missing links for the purpose that this function can find 
+                        #child trees again
                         self.findMissingLinks()
-                        # then call findmissinglinks() again to find for childTrees that can be shifted left another time
+                        # then call findmissinglinks() again to find for childtrees 
+                        #that can be shifted left another time
                         self.reduceGrid()
-                        #break
+                        
 
     def checkDeletion(self, target):
 
@@ -199,7 +204,7 @@ class WorkingArea(QFrame):
         bot_child_widget = bot_child.widget()
 
         if not isinstance(bot_child_widget, PlaceHolder):
-            print('checkDeletion() something else found than placeholder')
+            logging.debug('checkDeletion() something else found than placeholder')
             return False
         else:
             rb_child = [child for child in target.getChildPos() if 
@@ -239,16 +244,17 @@ class WorkingArea(QFrame):
         
         bot_target = self.grid.itemAtPosition(row, column)
         if bot_target:
-
+            # recurive call if there is already a element in the 
+            # defired poistion
             parent = self.grid.itemAtPosition(row-1, column).widget()
             self.moveColParent(parent)
             self.findMissingLinks()
             self.addPlaceholder(row, column +1)
         
         else:
-
+            # actual position is valid
             target = PlaceHolder(row, column)
-            target.func_drop.connect(self.adElement)
+            target.func_drop.connect(self.addElement)
             target.query_config.connect(self.loadConfig)
     
             # set child element
@@ -508,7 +514,7 @@ class WorkingArea(QFrame):
                 element.parent_element = parent
 
             if isinstance(element, PlaceHolder):
-                element.func_drop.connect(self.adElement)
+                element.func_drop.connect(self.addElement)
                 element.query_config.connect(self.loadConfig)
             else:
                 element.del_sig.connect(self.delete_element)
@@ -552,7 +558,12 @@ class WorkingArea(QFrame):
         element = self.grid.itemAtPosition(row, column).widget()
         element.config = self.storage_bar.returnConfig()
         # element was not pickled! 
-        # call __getstate__ and __addstate_ to update the function 
-        element.__setstate__(element.__getstate__())
+        # call __getstate__ and __addstate_ to update the function
+        # by calling addFunction of the elementmastern 
 
+        # the when the config has changed (or loaded from the dropbox) the function 
+        # of the element has to be reassigned with the new configuration
+
+        func_type = type(element.function)
+        element.addFunction(func_type)
 
