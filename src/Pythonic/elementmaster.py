@@ -84,15 +84,14 @@ class ElementMaster(QWidget):
         self.setLayout(self.layout)
 
         # when mouse is pressed on the symbol
-        #self.label.mousePressEvent = self.listChild
         self.label.mousePressEvent = self.mousePressEvent
         # when the debug_button is pressed
 
 
     def updateElementPos(self):
 
-        logging.debug('updateElementPos() called ElementMaster {} {}'.format(self.row, self.column))
-
+        logging.debug('updateElementPos() called ElementMaster {} {}'.format(
+            self.row, self.column))
 
         if not self.state_iconBar:
             return
@@ -136,11 +135,12 @@ class ElementMaster(QWidget):
 
         return (self.row, self.column)
 
-    def listChild(self, event):
+    def listChild(self):
         print('listChild() own type: ', self)
         print('listChild() own position: ', (self.getPos()))
         if self.parent_element:
-            print('listChild() parent element: ', (self.parent_element.row, self.parent_element.column))
+            print('listChild() parent element: ', (self.parent_element.row,
+                self.parent_element.column))
             print('listChild() parent type: ', self.parent_element)
         print('listChild() list logic child elements')
         try:
@@ -149,6 +149,7 @@ class ElementMaster(QWidget):
                 print('type: ', child)
         except:
             print('listChild() no childs yet')
+        print('func_type  = {}'.format(type(self.function)))
 
     def del_element(self):
         self.del_sig.emit(self.row, self.column)
@@ -187,6 +188,10 @@ class ElementMaster(QWidget):
                 border: 3px solid #ff0000; border-radius: 20px; }')
 
     def mousePressEvent(self, event):
+            
+        logging.debug('mousePressEvent() called')
+        # uncomment this for debugging purpose
+        #self.listChild()
 
         if event.buttons() != Qt.LeftButton:
             return
@@ -196,8 +201,6 @@ class ElementMaster(QWidget):
         mimeData = QMimeData()
         mime_text = str(self.row) + str(self.column) + str(self.__class__.__name__)
         mimeData.setText(mime_text)
-
-        pixmap = QPixmap('images/ExecOp.png').scaled(120, 60)
 
         drag = QDrag(self)
         drag.setMimeData(mimeData)

@@ -52,6 +52,7 @@ class DropBox(QWidget):
             except Exception as e:
                 logging.debug('dropEvent() Exception: {}'.format(str(e)))
                 return
+            # check if the element can be deleted
             if not self.parent.checkStore(row, column):
                 return
 
