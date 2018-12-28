@@ -1,3 +1,8 @@
+0.4
+
+    Fixed bug when using the parking area for 
+    programming elements
+
 0.3
     
     Fixed problem with pip3 package starting from 
