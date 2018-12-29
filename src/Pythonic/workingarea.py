@@ -19,6 +19,7 @@ from elements.basic_return      import ExecReturn
 from elements.basic_process     import ExecProcess
 from elements.basic_ta          import ExecTA
 from elements.basic_sched       import ExecSched
+from elements.basic_stack       import ExecStack
 from elements.binance_sched     import BinanceSched
 from elements.binance_ohlc      import BinanceOHLC
 from elements.binance_order     import BinanceOrder
