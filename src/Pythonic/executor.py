@@ -88,7 +88,7 @@ class GridOperator(QObject):
             self.exceptwindow.window_closed.connect(self.highlightStop)
             return
 
-        # when the log fiel is set
+        # when the log checkbox is activated
         if prg_return.log:
             if prg_return.log_txt:
                 logging.info('Message {}|{} : {}'.format(prg_return.source[0],

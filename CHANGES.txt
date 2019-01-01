@@ -1,3 +1,17 @@
+todo:
+
+    Adjust Basic-Op element description regarding
+    the output log behaviour
+
+    Add persistent data storage element Basic-Stack
+
+
+0.5
+
+    Basic-TA: Parameter in column name makes it now
+    possible to calculate several figures of the
+    same type
+
 0.4
 
     Fixed bug when using the parking area for 

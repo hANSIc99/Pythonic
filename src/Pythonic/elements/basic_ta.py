@@ -337,13 +337,15 @@ class TAFunction(Function):
 
             logging.warning('execute() - Moving Average selected - {}'.format(ta_config))
             function = 'Moving Averages'
-            record['ma'] = record['close'].rolling(window = ta_config[0], center=False).mean()
+            column_name = 'ma-{}'.format(ta_config[0])
+            record[column_name] = record['close'].rolling(window = ta_config[0], center=False).mean()
 
         elif ta_str == 'EMA':
 
             logging.warning('execute() - Exponential Moving Average selected - {}'.format(ta_config))
             function = 'Exponential Moving Averages'
-            record['ema'] = record['close'].ewm(span = ta_config[0], adjust=False).mean()
+            column_name = 'ema-{}'.format(ta_config[0])
+            record[column_name] = record['close'].ewm(span = ta_config[0], adjust=False).mean()
 
         elif ta_str == 'STOK':
 
@@ -355,8 +357,9 @@ class TAFunction(Function):
 
             logging.warning('execute() -  Stochastic Oscillator %D selected - {}'.format(ta_config))
             function = 'Stochastic Oscillator %D'
+            column_name = 'sto-{}'.format(ta_config[0])
             SOk = pd.Series((record['close'] - record['low']) / (record['high'] - record['low']), name = 'stok')
-            record['sto'] = SOk.ewm(span = ta_config[0], min_periods = ta_config[0] - 1).mean()
+            record[column_name] = SOk.ewm(span = ta_config[0], min_periods = ta_config[0] - 1).mean()
 
         elif ta_str == 'RSI':
 
@@ -393,7 +396,8 @@ class TAFunction(Function):
             PosDI = UpI.ewm(span = ta_config[0], min_periods = ta_config[0] - 1).mean()
             NegDI = DoI.ewm(span = ta_config[0], min_periods = ta_config[0] - 1).mean()
 
-            record['rsi'] = pd.Series(PosDI / (PosDI + NegDI))
+            column_name = 'rsi-{}'.format(ta_config[0])
+            record[column_name] = pd.Series(PosDI / (PosDI + NegDI))
 
         else:
 
