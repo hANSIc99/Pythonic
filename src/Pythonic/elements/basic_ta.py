@@ -244,7 +244,6 @@ class ExecTA(ElementMaster):
 
         self.variable_box.addWidget(self.rsi_input)
 
-
     def indexChanged(self, event):
 
         current_index = event
