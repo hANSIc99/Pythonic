@@ -1,7 +1,7 @@
 from elementmaster import ElementMaster, alphabet
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor
-from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QFileDialog, QPushButton, QStackedWidget)
+from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator
+from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QFileDialog, QPushButton, QStackedWidget, QLineEdit)
 from record_function import Record, Function
 from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
@@ -20,8 +20,13 @@ class ExecStack(ElementMaster):
         self.row = row
         self.column = column
 
-        # filename, log_state 
-        self.config = (None, False)
+        # filename, read_mode, write_mode, array_limits, log_state
+        self.filename = None
+        self.read_mode = 0
+        self.write_mode = 0
+        self.array_limits = None
+        self.log_state = False
+        self.config = (filename, read_mode, write_mode, array_limits, log_state)
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecStack called at row {}, column {}'.format(row, column))
@@ -45,7 +50,8 @@ class ExecStack(ElementMaster):
     def edit(self):
         logging.debug('edit() called ExecStack')
 
-        self.filename, log_state = self.config
+        # filename, read_mode, write_mode, array_limits, log_state
+        self.filename, self.read_mode, self.write_mode, self.array_limits, log_state = self.config
 
         self.returnEditLayout = QVBoxLayout()
 
@@ -64,16 +70,13 @@ class ExecStack(ElementMaster):
         self.file_button = QPushButton(QC.translate('', 'Choose file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
 
-        self.variable_box = QStackedWidget()
+        #self.variable_box = QStackedWidget()
         self.writeInput()
         self.readInput()
 
+
         self.mode_text = QLabel()
         self.mode_text.setText(QC.translate('', 'Select mode:'))
-
-        self.select_mode = QComboBox()
-        self.select_mode.addItem(QC.translate('', 'Write'), QVariant('w'))
-        self.select_mode.addItem(QC.translate('', 'Read'), QVariant('r'))
 
         self.help_text = QWidget()
         self.help_text_layout = QVBoxLayout(self.help_text)
@@ -111,27 +114,29 @@ class ExecStack(ElementMaster):
         self.log_line_layout.addStretch(1)
 
 
-        self.element_selector = QComboBox()
-        self.populateSelector()
-
         if log_state:
             self.log_checkbox.setChecked(True)
 
         self.confirm_button.clicked.connect(self.returnEdit.closeEvent)
-        self.select_mode.currentIndexChanged.connect(self.indexChanged)
         self.returnEdit.window_closed.connect(self.edit_done)
         self.returnEditLayout.addWidget(self.top_text)
         self.returnEditLayout.addWidget(self.filename_text)
         self.returnEditLayout.addWidget(self.file_button)
         self.returnEditLayout.addWidget(self.mode_text)
-        self.returnEditLayout.addWidget(self.select_mode)
-        self.returnEditLayout.addWidget(self.variable_box)
+        self.returnEditLayout.addWidget(self.write_input)
+        self.returnEditLayout.addWidget(self.read_input)
         self.returnEditLayout.addWidget(self.help_text)
         self.returnEditLayout.addStretch(1)
         self.returnEditLayout.addWidget(self.log_line)
         self.returnEditLayout.addWidget(self.confirm_button)
         self.returnEdit.setLayout(self.returnEditLayout)
         self.returnEdit.show()
+
+    def loadLastConfig(self):
+
+        self.select_read_mode.setCurrentIndex = self.read_mode
+        self.select_write_mode.setCurrentIndex = self.write_mode
+
 
     def ChooseFileDialog(self, event):    
         options = QFileDialog.Options()
@@ -145,21 +150,70 @@ class ExecStack(ElementMaster):
     def writeInput(self):
 
         self.write_input = QWidget()
-        self.write_layout = QHBoxLayout(self.write_input)
+        self.write_layout = QVBoxLayout(self.write_input)
+
+        self.write_mode = QWidget()
+        self.write_mode_layout = QHBoxLayout(self.write_mode)
+
+        self.array_config = QWidget()
+        self.array_config_layout = QHBoxLayout(self.array_config)
+
+        self.outpub_behaviour = QWidget()
+        self.output_behaviour_layout = QHBoxLayout()
 
         self.write_txt = QLabel()
         self.write_txt.setText(QC.translate('', 'Do this with input:'))
 
         self.select_write_mode = QComboBox()
+        self.select_write_mode.addItem(QC.translate('', 'Nothing'), QVariant('none'))
         self.select_write_mode.addItem(QC.translate('', 'Insert'), QVariant('i'))
         self.select_write_mode.addItem(QC.translate('', 'Append'), QVariant('a'))
 
+        # maximum array size
+        self.array_limits = QCheckBox()
+        self.array_limits.stateChanged.connect(self.toggleArrayLimits)
 
-        self.write_layout.addWidget(self.write_txt)
-        self.write_layout.addWidget(self.select_write_mode)
+        self.array_limit_txt = QLabel()
+        self.array_limit_txt.setText(QC.translate('', 'Max. array elements:'))
+
+        self.max_array_elements = QLineEdit()
+        self.max_array_elements.setValidator(QIntValidator(1, 999))
+        self.max_array_elements.setPlaceholderText(QC.translate('', 'Default value: 20'))
+
+        self.array_config_layout.addWidget(self.array_limits)
+        self.array_config_layout.addWidget(self.array_limit_txt)
+        self.array_config_layout.addWidget(self.max_array_elements)
 
 
-        self.variable_box.addWidget(self.write_input)
+
+        self.write_mode_layout.addWidget(self.write_txt)
+        self.write_mode_layout.addWidget(self.select_write_mode)
+        #self.write_layout.addWidget(self.array_limits)
+
+        self.write_layout.addWidget(self.write_mode)
+        self.write_layout.addWidget(self.array_config)
+
+        #self.variable_box.addWidget(self.write_input)
+
+    def toggleArrayLimits(self, event):
+
+        #einzeln aufrufen beim laden der config
+
+        if self.array_limits.isChecked():
+            self.enableArrLimits()
+        else:
+            self.diableArrLimits()
+            
+    def enableArrLimits(self):
+
+        self.max_array_elements.setEnabled(True)
+        self.max_array_elements.setPlaceholderText(QC.translate('', 'Default value: 20'))
+
+    def diableArrLimits(self):
+
+        self.max_array_elements.setEnabled(False)
+        self.max_array_elements.setPlaceholderText(QC.translate('', 'No Limit'))
+
 
     def readInput(self):
 
@@ -170,38 +224,26 @@ class ExecStack(ElementMaster):
         self.read_txt.setText(QC.translate('', 'Do this when triggered:'))
 
         self.select_read_mode = QComboBox()
-        self.select_read_mode.addItem(QC.translate('', 'First out'), QVariant('f'))
-        self.select_read_mode.addItem(QC.translate('', 'Last out'), QVariant('l'))
-        self.select_read_mode.addItem(QC.translate('', 'All out'), QVariant('a'))
+        self.select_read_mode.addItem(QC.translate('', 'Nothing'), QVariant('none'))
+        self.select_read_mode.addItem(QC.translate('', 'First out'), QVariant('fo'))
+        self.select_read_mode.addItem(QC.translate('', 'Last out'), QVariant('lo'))
+        self.select_read_mode.addItem(QC.translate('', 'All out'), QVariant('all'))
 
 
         self.read_layout.addWidget(self.read_txt)
         self.read_layout.addWidget(self.select_read_mode)
 
 
-        self.variable_box.addWidget(self.read_input)
-
-    def indexChanged(self, event):
-
-        current_index = event
-        logging.debug('indexChanged() called {}'.format(current_index))
-        self.variable_box.setCurrentIndex(current_index)
-
-
-    def populateSelector(self):
-
-        index = self.parent().returnCurrentElements()
-
-        for pos in index:
-            if self.getPos() != pos:
-                self.element_selector.addItem(
-                        '{} {}'.format(pos[0], alphabet[pos[1]]), QVariant(pos))
-
     def edit_done(self):
         logging.debug('edit_done() called ExecStack' )
+
         log_state = self.log_checkbox.isChecked()
+        write_mode = self.select_write_mode.currentIndex()
+        read_mode = self.select_read_mode.currentIndex()
+        array_limits = self.array_limits.isChecked()
         filename = self.filename
-        self.config = (filename, log_state)
+        # filename, read_mode, write_mode, array_limits, log_state
+        self.config = (filename, read_mode, write_mode, array_limits, log_state)
         self.addFunction(StackFunction)
 
 class StackFunction(Function):
