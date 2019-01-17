@@ -33,7 +33,8 @@ class BinanceOrder(ElementMaster):
         order_config = (0, )
         log_state = False
 
-        self.config = (pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, order_index, order_string, order_config, log_state)
+        self.config = (pub_key, prv_key, side_index, side_txt, symbol_txt, \
+                quantity, order_index, order_string, order_config, log_state)
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -58,7 +59,8 @@ class BinanceOrder(ElementMaster):
 
         logging.debug('edit() called BinanceOrder')
 
-        pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, order_index, order_string, order_config, log_state = self.config
+        pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, \
+                order_index, order_string, order_config, log_state = self.config
 
         self.binance_order_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
@@ -343,7 +345,8 @@ class BinanceOrder(ElementMaster):
 
     def loadLastConfig(self):
 
-        pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, order_index, order_string, order_config, log_state = self.config
+        pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, \
+                order_index, order_string, order_config, log_state = self.config
 
         if pub_key != '':
             

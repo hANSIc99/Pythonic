@@ -60,8 +60,8 @@ class BasicTools(QFrame):
         self.sched_tool.setPixmap(QPixmap('images/ExecSched.png').scaled(120, 60))
 
         # uncomment in future release
-        #self.stack_tool = MasterTool(self, 'ExecStack', 1)
-        #self.stack_tool.setPixmap(QPixmap('images/ExecStack.png').scaled(120, 60))
+        self.stack_tool = MasterTool(self, 'ExecStack', 1)
+        self.stack_tool.setPixmap(QPixmap('images/ExecStack.png').scaled(120, 60))
 
         self.layout_h.addWidget(self.op_tool)
         self.layout_h.addWidget(self.branch_tool)
@@ -69,7 +69,7 @@ class BasicTools(QFrame):
         self.layout_h.addWidget(self.proc_tool)
         self.layout_h.addWidget(self.ta_tool)
         self.layout_h.addWidget(self.sched_tool)
-        #self.layout_h.addWidget(self.stack_tool)
+        self.layout_h.addWidget(self.stack_tool)
         self.layout_h.addStretch(1)
 
         self.setLayout(self.layout_h)
@@ -105,11 +105,11 @@ class BasicTools(QFrame):
         self.reg_tool.emit(self.ta_tool.toolData())
         self.reg_tool.emit(self.sched_tool.toolData())
         #uncomment in future release
-        #self.reg_tool.emit(self.stack_tool.toolData())
+        self.reg_tool.emit(self.stack_tool.toolData())
 
 class MainWindow(QWidget):
 
-    log_level = logging.INFO
+    log_level = logging.DEBUG
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
 
