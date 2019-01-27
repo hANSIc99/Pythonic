@@ -20,7 +20,7 @@ class ExecStack(ElementMaster):
         self.row = row
         self.column = column
 
-        # filename, read_mode, write_mode, array_limits, log_state
+        # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
         filename = None
         read_mode = 0
         write_mode = 0
@@ -67,8 +67,10 @@ class ExecStack(ElementMaster):
         self.filename_text = QLabel()
         if self.filename:
             self.filename_text.setText(self.filename)
+        """
         else:
             self.filename_text.setText(QC.translate('', 'Filename'))
+        """
 
         self.file_button = QPushButton(QC.translate('', 'Choose file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
@@ -137,8 +139,6 @@ class ExecStack(ElementMaster):
         self.returnEdit.show()
 
     def loadLastConfig(self):
-
-        logging.info('loadLastConfig() read_mode Index: {}'.format(self.read_mode))
 
         self.select_read_mode.setCurrentIndex(self.read_mode)
         self.select_write_mode.setCurrentIndex(self.write_mode)
@@ -273,7 +273,6 @@ class ExecStack(ElementMaster):
         # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
         self.config = (filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state)
         self.addFunction(StackFunction)
-        logging.info('edit_done() read_mode: {}'.format(read_mode))
 
 class StackFunction(Function):
 
@@ -282,7 +281,39 @@ class StackFunction(Function):
 
     def execute(self, record):
 
-        log_txt = '{{BASIC STACK}}           Return to {}|{}'.format(self.config[0][0], alphabet[self.config[0][1]])
-        result = Record(self.getPos(), self.config[0], record, log=self.config[2], log_txt=log_txt)
+        # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
+        filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state = self.config
+
+        if not filename:
+            raise OSError(QC.translate('', 'Filename not specified'))
+
+        
+        if not n_array_limits:
+            n_array_limits = 20
+
+
+        if write_mode == 0: # Nothing
+            record = 'Nothing'
+        elif write_mode == 1: # Insert
+            record = 'Insert'
+        elif write_mode == 3: # Append
+            record = 'Append'
+
+        if read_mode == 0: # Nothing
+            record += ' Nothing'
+        elif read_mode == 1: # Pass through
+            record += ' pass throug'
+        elif read_mode == 2: # First Out
+            record += ' first out'
+        elif read_mode == 3: # Last out
+            record += ' last out'
+        elif read_mode == 4: # Last out
+            record += ' all out'
+
+        log_txt = '{{BASIC STACK}}           Return to {}|{} {} {}'.format(
+                filename, write_mode, b_array_limits, n_array_limits)
+
+        result = Record(self.getPos(), (self.row +1, self.column), record,
+                log=log_state, log_txt=log_txt)
         return result
 
