@@ -39,7 +39,8 @@ class DebugWindow(QWidget):
         self.info_string = QC.translate('', 'Debug info of element:')
         self.elementInfo = QLabel()
         self.elementInfo.setFont(self.headline)
-        self.elementInfo.setText(self.info_string + '{} {}'.format(self.source[0], alphabet[self.source[1]]))
+        self.elementInfo.setText(self.info_string + '{} {}'.format(self.source[0],
+            alphabet[self.source[1]]))
 
         self.debugMessage = QTextEdit()
         self.debugMessage.setReadOnly(True)
