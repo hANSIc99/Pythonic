@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidge
 from record_function import Record, Function
 from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
-import logging
+import logging, pickle
 from time import sleep
 from datetime import datetime
 from elementmaster import alphabet
@@ -24,10 +24,11 @@ class ExecStack(ElementMaster):
         filename = None
         read_mode = 0
         write_mode = 0
+        delete_read = False
         b_array_limits = False
         n_array_limits = None
         log_state = False
-        self.config = (filename, read_mode, write_mode,
+        self.config = (filename, read_mode, write_mode, delete_read,
                 b_array_limits, n_array_limits, log_state)
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -53,8 +54,8 @@ class ExecStack(ElementMaster):
         logging.debug('edit() called ExecStack')
 
         # filename, read_mode, write_mode, array_limits, log_state
-        self.filename, self.read_mode, self.write_mode, self.b_array_limits, \
-            self.n_array_limits, log_state = self.config
+        self.filename, self.read_mode, self.write_mode, self.delete_read, \
+                self.b_array_limits, self.n_array_limits, log_state = self.config
 
         self.returnEditLayout = QVBoxLayout()
 
@@ -77,7 +78,7 @@ class ExecStack(ElementMaster):
 
         #self.variable_box = QStackedWidget()
         self.writeInput()
-        self.readInput()
+        self.readOutput()
         self.loadLastConfig()
 
 
@@ -131,6 +132,7 @@ class ExecStack(ElementMaster):
         self.returnEditLayout.addWidget(self.mode_text)
         self.returnEditLayout.addWidget(self.write_input)
         self.returnEditLayout.addWidget(self.read_input)
+        self.returnEditLayout.addWidget(self.delete_read_widget)
         self.returnEditLayout.addWidget(self.help_text)
         self.returnEditLayout.addStretch(1)
         self.returnEditLayout.addWidget(self.log_line)
@@ -152,6 +154,11 @@ class ExecStack(ElementMaster):
         else:
             self.diableArrLimits()
             self.array_limits_cbox.setChecked(False)
+
+        if self.delete_read:
+            self.delete_read_checkbox.setChecked(True)
+        else:
+            self.delete_read_checkbox.setChecked(False)
 
 
     def ChooseFileDialog(self, event):    
@@ -224,6 +231,14 @@ class ExecStack(ElementMaster):
             self.enableArrLimits()
         else:
             self.diableArrLimits()
+
+    def toggleReadBehaviour(self, event):
+
+        if self.delete_read_checkbox.isChecked():
+            self.delete_read_checkbox.setChecked(True)
+        else:
+            self.delete_read_checkbox.setChecked(False)
+
             
     def enableArrLimits(self):
 
@@ -236,10 +251,13 @@ class ExecStack(ElementMaster):
         self.max_array_elements.setPlaceholderText(QC.translate('', 'Unlimited'))
 
 
-    def readInput(self):
+    def readOutput(self):
 
         self.read_input = QWidget()
         self.read_layout = QHBoxLayout(self.read_input)
+
+        self.delete_read_widget = QWidget()
+        self.delete_read_layout = QHBoxLayout(self.delete_read_widget)
 
         self.read_txt = QLabel()
         self.read_txt.setText(QC.translate('', 'Do this when triggered:'))
@@ -251,6 +269,16 @@ class ExecStack(ElementMaster):
         self.select_read_mode.addItem(QC.translate('', 'Last out'), QVariant('lo'))
         self.select_read_mode.addItem(QC.translate('', 'All out'), QVariant('all'))
 
+
+        # the delete_read widget is added in the edit() method
+        self.delete_read_txt = QLabel()
+        self.delete_read_txt.setText(QC.translate('', 'Delete object after read?'))
+
+        self.delete_read_checkbox = QCheckBox()
+        self.delete_read_checkbox.stateChanged.connect(self.toggleReadBehaviour)
+
+        self.delete_read_layout.addWidget(self.delete_read_txt)
+        self.delete_read_layout.addWidget(self.delete_read_checkbox)
 
         self.read_layout.addWidget(self.read_txt)
         self.read_layout.addWidget(self.select_read_mode)
@@ -268,10 +296,12 @@ class ExecStack(ElementMaster):
         write_mode = self.select_write_mode.currentIndex()
         read_mode = self.select_read_mode.currentIndex()
         b_array_limits = self.array_limits_cbox.isChecked()
+        delete_read = self.delete_read_checkbox.isChecked()
         n_array_limits
         filename = self.filename
         # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
-        self.config = (filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state)
+        self.config = (filename, read_mode, write_mode, delete_read, b_array_limits, \
+                n_array_limits, log_state)
         self.addFunction(StackFunction)
 
 class StackFunction(Function):
@@ -282,7 +312,8 @@ class StackFunction(Function):
     def execute(self, record):
 
         # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
-        filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state = self.config
+        filename, read_mode, write_mode, delete_read, b_array_limits, \
+                n_array_limits, log_state = self.config
 
         if not filename:
             raise OSError(QC.translate('', 'Filename not specified'))
@@ -291,27 +322,62 @@ class StackFunction(Function):
         if not n_array_limits:
             n_array_limits = 20
 
+        debug_text = ''
 
-        if write_mode == 0: # Nothing
-            record = 'Nothing'
-        elif write_mode == 1: # Insert
-            record = 'Insert'
-        elif write_mode == 3: # Append
-            record = 'Append'
+        try:
+            f = open(filename, 'wb+') 
+        except Exception as e:
+            return e
+
+
+        try:
+            # latin 1 for numpy arrays
+            stack = pickle.load(f)
+            debug_text = 'Pickle loaded'
+        except Exception as e:
+            # create new array
+            #return e
+            debug_text = 'pickle not loaded'
+            stack = []
+
+        f.close()
+
+
+
+        #if write_mode == 0: # Nothing
+            #record = 'Nothing'
+        if write_mode == 1: # Insert
+            #record = 'Insert'
+            stack.insert(0, record)
+        elif write_mode == 2: # Append
+            #record = 'Append'
+            stack.append(record)
 
         if read_mode == 0: # Nothing
-            record += ' Nothing'
-        elif read_mode == 1: # Pass through
-            record += ' pass throug'
+            #record += ' Nothing'
+            record = None
+        #elif read_mode == 1: # Pass through
+            # record = record
         elif read_mode == 2: # First Out
-            record += ' first out'
+            if delete_read:
+                record = stack.remove()
+            else:
+                record = stack[0]
         elif read_mode == 3: # Last out
-            record += ' last out'
-        elif read_mode == 4: # Last out
-            record += ' all out'
+            if delete_read:
+                record = stack.pop([])
+            else:
+                record = stack[0]
+        elif read_mode == 4: # All out
+            record = stack
+            if delete_read:
+                stack.clear()
+
+        with open(filename, 'wb') as f:
+            pickle.dump(stack, f)
 
         log_txt = '{{BASIC STACK}}           Return to {}|{} {} {}'.format(
-                filename, write_mode, b_array_limits, n_array_limits)
+                debug_text, delete_read, record, write_mode)
 
         result = Record(self.getPos(), (self.row +1, self.column), record,
                 log=log_state, log_txt=log_txt)
