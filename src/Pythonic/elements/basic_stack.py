@@ -9,12 +9,12 @@ import logging, pickle
 from time import sleep
 from datetime import datetime
 from elementmaster import alphabet
-import os.path
+import os
 
 class ExecStack(ElementMaster):
 
     pixmap_path = 'images/ExecStack.png'
-    child_pos = (False, False)
+    child_pos = (True, False)
 
     def __init__(self, row, column):
         self.row = row
@@ -325,9 +325,15 @@ class StackFunction(Function):
         debug_text = ''
 
         try:
-            f = open(filename, 'wb+') 
+            # if the file already exists
+            f = open(filename, 'rb+') 
         except Exception as e:
-            return e
+            try:
+                # create new file
+                f = open(filename, 'wb+')
+            except Exception as e:
+                # not writeable?
+                return e
 
 
         try:
@@ -340,9 +346,7 @@ class StackFunction(Function):
             debug_text = 'pickle not loaded'
             stack = []
 
-        f.close()
-
-
+        ##### WRITING #####
 
         #if write_mode == 0: # Nothing
             #record = 'Nothing'
@@ -353,28 +357,33 @@ class StackFunction(Function):
             #record = 'Append'
             stack.append(record)
 
+        ##### READING #####
+        f.seek(os.SEEK_SET) # go back to the start of the stream
+
+
         if read_mode == 0: # Nothing
             #record += ' Nothing'
             record = None
+
         #elif read_mode == 1: # Pass through
             # record = record
         elif read_mode == 2: # First Out
             if delete_read:
-                record = stack.remove()
+                record = stack.pop(0)
             else:
                 record = stack[0]
         elif read_mode == 3: # Last out
             if delete_read:
-                record = stack.pop([])
+                record = stack.pop()
             else:
-                record = stack[0]
+                record = stack[-1]
         elif read_mode == 4: # All out
-            record = stack
+            record = stack.copy()
             if delete_read:
                 stack.clear()
 
-        with open(filename, 'wb') as f:
-            pickle.dump(stack, f)
+        pickle.dump(stack, f)
+        f.close()
 
         log_txt = '{{BASIC STACK}}           Return to {}|{} {} {}'.format(
                 debug_text, delete_read, record, write_mode)
