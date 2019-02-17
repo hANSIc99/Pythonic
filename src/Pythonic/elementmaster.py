@@ -67,7 +67,7 @@ class ElementMaster(QWidget):
         self.layout.addWidget(self.icon_bar)
         self.icon_bar.del_sig.connect(self.del_element)
         self.icon_bar.edit_sig.connect(self.edit_element)
-        self.icon_bar.debug_sig.connect(self.toogle_debug)
+        self.icon_bar.debug_sig.connect(self.toggle_debug)
 
         # if not desired hide
         if not self.state_iconBar:
@@ -166,8 +166,8 @@ class ElementMaster(QWidget):
 
         self.label.setPixmap(self.pixmap.scaled(160, 80, Qt.KeepAspectRatio))
 
-    def toogle_debug(self, b_debug):
-        logging.debug('toogle_debug() called, b_debug set to {}'.format(b_debug))
+    def toggle_debug(self, b_debug):
+        logging.debug('toggle_debug() called, b_debug set to {}'.format(b_debug))
         self.b_debug = b_debug
         self.function.b_debug = b_debug
 

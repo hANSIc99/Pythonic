@@ -9,6 +9,7 @@ import logging, pickle
 from time import sleep
 from datetime import datetime
 from elementmaster import alphabet
+from elements.basic_stack_window import StackWindow
 import os
 
 class ExecStack(ElementMaster):
@@ -19,6 +20,8 @@ class ExecStack(ElementMaster):
     def __init__(self, row, column):
         self.row = row
         self.column = column
+
+        self.show_window = False
 
         # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
         filename = None
@@ -49,6 +52,17 @@ class ExecStack(ElementMaster):
 
     def openEditor(self):
         logging.debug('openEditor() called ExecStack')
+
+    def toggle_debug(self):
+        logging.error('toggle_debug() called OVERWRITTEN by basic_stack')
+        if not self.show_window:
+            self.show_window = True
+            self.stackWindow = StackWindow(self)
+            self.stackWindow.raiseWindow()
+        else:
+            self.show_window = False
+
+
 
     def edit(self):
         logging.debug('edit() called ExecStack')
