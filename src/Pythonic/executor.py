@@ -24,8 +24,8 @@ class WorkerSignals(QObject):
 
 class GridOperator(QObject):
 
-    update_logger = pyqtSignal(name='update_logger')
-    exec_pending  = pyqtSignal(name='exec_pending')
+    update_logger   = pyqtSignal(name='update_logger')
+    exec_pending    = pyqtSignal(name='exec_pending')
 
     def __init__(self, grid):
         super().__init__()
@@ -87,6 +87,8 @@ class GridOperator(QObject):
             self.exceptwindow = ExceptWindow(str(prg_return.record_0), prg_return.source)
             self.exceptwindow.window_closed.connect(self.highlightStop)
             return
+
+        ### proceed with regular execution ###
 
         # when the log checkbox is activated
         if prg_return.log:

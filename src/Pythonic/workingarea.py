@@ -393,7 +393,9 @@ class WorkingArea(QFrame):
 
         grid_cols = range(1, self.grid.columnCount())
         grid_rows = range(1, self.grid.rowCount())
-        #print('number of rows: {} number of columns: {}'.format(self.grid.rowCount(), self.grid.columnCount()))
+        logging.debug('number of rows: {} number of columns: {}'.format( 
+            self.grid.rowCount(), self.grid.columnCount()))
+
         index = ((row, column) for row in grid_rows for column in grid_cols)
 
         logging.debug('findMissingLinks() called')

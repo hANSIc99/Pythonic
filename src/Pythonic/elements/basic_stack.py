@@ -17,6 +17,8 @@ class ExecStack(ElementMaster):
     pixmap_path = 'images/ExecStack.png'
     child_pos = (True, False)
 
+    update_stack = pyqtSignal(name='update_stack')
+
     def __init__(self, row, column):
         self.row = row
         self.column = column
@@ -54,15 +56,30 @@ class ExecStack(ElementMaster):
         logging.debug('openEditor() called ExecStack')
 
     def toggle_debug(self):
-        logging.error('toggle_debug() called OVERWRITTEN by basic_stack')
-        if not self.show_window:
-            self.show_window = True
-            self.stackWindow = StackWindow(self)
-            self.stackWindow.raiseWindow()
-        else:
-            self.show_window = False
+        logging.debug('ExecStack::toggle_debug() called OVERWRITTEN method')
+        self.stackWindow = StackWindow(self)
+        # diable debug button
+        self.icon_bar.debug_button.debug_pressed.disconnect()
+        self.icon_bar.debug_button.disableMouseEvent()
+        # enable debug button when window is closed
+        self.stackWindow.closed.connect(self.reconnect_debug_button)
+        self.stackWindow.closed.connect(self.icon_bar.debug_button.enableMouseEvent)
+        # connect the update signal
+        self.update_stack.connect(self.stackWindow.updateStack)
+
+        self.stackWindow.raiseWindow()
+
+    def reconnect_debug_button(self):
+
+        self.icon_bar.debug_button.debug_pressed.connect(
+                self.icon_bar.click_debug_element)
 
 
+    def highlightStop(self):
+
+        logging.debug('ExecStack::highlightStop() called OVERWRITTEN method')
+        self.update_stack.emit()
+        super().highlightStop()
 
     def edit(self):
         logging.debug('edit() called ExecStack')
