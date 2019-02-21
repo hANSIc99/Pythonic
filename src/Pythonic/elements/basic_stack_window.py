@@ -11,6 +11,8 @@ import logging, sys, time, traceback
 
 class StackWindow(QWidget):
 
+    closed = pyqtSignal(name='StackWindow_closed')
+
     def __init__(self, parent):
 
         super().__init__(parent)
@@ -23,14 +25,11 @@ class StackWindow(QWidget):
         self.setMinimumSize(400, 300)
         self.setWindowFlags(Qt.Window)
         self.setWindowTitle(QC.translate('', 'Stack'))
-        self.setWindowModality(Qt.WindowModal)
+        #self.setWindowModality(Qt.WindowModal)
 
         self.confirm_button = QPushButton()
         self.confirm_button.setText(QC.translate('', 'Ok'))
         self.confirm_button.clicked.connect(self.close)
-        # BAUSTELLE
-        #self.confirm_button.clicked.connect(self.parent.toggle_debug)
-        #self.confirm_button.clicked.connect(self.parent.icon_bar.mousePressEvent) 
 
         self.headline = QFont("Arial", 10, QFont.Bold)
 
@@ -45,8 +44,6 @@ class StackWindow(QWidget):
         self.debugMessage.setReadOnly(True)
         self.debugMessage.setText('debugMessage')
 
-
-
         self.debugWindowLayout = QVBoxLayout()
         self.debugWindowLayout.addWidget(self.elementInfo)
         self.debugWindowLayout.addWidget(self.debugMessage)
@@ -56,5 +53,17 @@ class StackWindow(QWidget):
         self.setLayout(self.debugWindowLayout)   
         
         self.show()
+
+    def closeEvent(self, event):
+
+        logging.debug("QStackWindow::closeEvent() called")
+        self.closed.emit()
+
+    def updateStack(self):
+
+        logging.info('updateStack() called')
+        tmp_text = self.debugMessage.toPlainText()
+        tmp_text += ' a'
+        self.debugMessage.setText(tmp_text)
 
 

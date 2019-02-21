@@ -59,17 +59,43 @@ class DebugButton(QLabel):
                     border-style: solid; border-color: goldenrod; border-width: 1px')
 
     def mousePressEvent(self, event):
+
         if self.b_debug:
             self.b_debug = False
-            self.setStyleSheet('background-color: goldenrod; \
-                    border-style: solid; border-color: goldenrod; border-width: 1px')
-
+            self.disableStyleClicked()
+                
         else:
             self.b_debug = True
-            self.setStyleSheet('background-color: olivedrab; \
+            self.enableStyleClicked()
+            
+        self.debug_pressed.emit(self.b_debug)
+
+    def enableStyleClicked(self):
+
+        self.setStyleSheet('background-color: olivedrab; \
                     border-style: solid; border-color: olivedrab; border-width: 1px')
 
-        self.debug_pressed.emit(self.b_debug)
+        
+
+    def disableStyleClicked(self):
+
+        self.setStyleSheet('background-color: goldenrod; \
+                    border-style: solid; border-color: goldenrod; border-width: 1px')
+
+
+    def disableMouseEvent(self): # only called by basic StackWindow
+        
+        self.b_debug = True
+        self.enableStyleClicked()
+
+        self.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+    def enableMouseEvent(self): # only called by basic StackWindow
+
+        self.b_debug = False
+        self.disableStyleClicked()
+
+        self.setAttribute(Qt.WA_TransparentForMouseEvents, False)
 
 class DelButton(QLabel):
 
