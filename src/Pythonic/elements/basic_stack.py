@@ -335,6 +335,7 @@ class ExecStack(ElementMaster):
                 n_array_limits, log_state)
         self.addFunction(StackFunction)
 
+
 class StackFunction(Function):
 
     def __init__(self, config, b_debug, row, column):
