@@ -17,7 +17,7 @@ class ExecStack(ElementMaster):
     pixmap_path = 'images/ExecStack.png'
     child_pos = (True, False)
 
-    update_stack = pyqtSignal(name='update_stack')
+    update_stack = pyqtSignal(str, name='update_stack')
 
     def __init__(self, row, column):
         self.row = row
@@ -67,7 +67,8 @@ class ExecStack(ElementMaster):
         # connect the update signal
         self.update_stack.connect(self.stackWindow.updateStack)
 
-        self.stackWindow.raiseWindow()
+        # pass filename to the window
+        self.stackWindow.raiseWindow(self.config[0])
 
     def reconnect_debug_button(self):
 
@@ -78,7 +79,8 @@ class ExecStack(ElementMaster):
     def highlightStop(self):
 
         logging.debug('ExecStack::highlightStop() called OVERWRITTEN method')
-        self.update_stack.emit()
+        # pass filename
+        self.update_stack.emit(self.config[0])
         super().highlightStop()
 
     def edit(self):
