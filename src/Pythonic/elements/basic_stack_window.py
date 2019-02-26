@@ -7,17 +7,20 @@ from PyQt5.QtCore import QThread
 from elementmaster import alphabet
 import multiprocessing as mp
 from elementeditor import ElementEditor
-import logging, sys, time, traceback
+import logging, sys, time, traceback, pickle
+from time import localtime, strftime
 
 class StackItem(QListWidgetItem):
 
-    def __init__(self, parent, position):
+    def __init__(self, even, data, new):
 
-        super().__init__(parent)
-        self.parent = parent
-        self.setAttribute(Qt,WA_DeleteOnClose, True)
+        super().__init__()
+        self.setTextAlignment(Qt.AlignCenter)
+        self.setText(str(data))
 
-        self.setText(position)
+        if even:
+            self.setBackground(QBrush(QColor('lightgrey')))
+
 
 class StackWindow(QWidget):
 
@@ -28,8 +31,9 @@ class StackWindow(QWidget):
         super().__init__(parent)
         self.parent = parent
         self.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.timestamp = strftime('%H:%M:%S', localtime())
 
-    def raiseWindow(self):
+    def raiseWindow(self, filename):
 
         logging.debug('StackWindow() called')
         self.setMinimumSize(400, 300)
@@ -48,30 +52,52 @@ class StackWindow(QWidget):
         self.elementInfo.setFont(self.headline)
         #self.elementInfo.setText(self.info_string + '{} {}'.format(self.source[0],
             #alphabet[self.source[1]]))
-        self.elementInfo.setText('test 123')
-
-        #QListWidgetItem = Stack Element
-
-        self.stack_0 = QListWidgetItem()
-        self.stack_0.setBackground(QBrush(QColor('red')))
-        self.stack_0.setText('Stack 0')
-        self.stack_0.setTextAlignment(Qt.AlignCenter)
-
-        self.stack_1 = QListWidgetItem()
-        self.stack_1.setBackground(QBrush(QColor('green')))
-        self.stack_1.setText('Stack 1')
-
-        self.stack_2 = QListWidgetItem()
-        self.stack_2.setBackground(QBrush(QColor('yellow')))
-        self.stack_2.setText('Stack 2')
+        self.elementInfo.setText('Last update: {}'.format(self.timestamp))
 
         # Will contain the QListWidgetItems
         self.stackWidget = QListWidget()
+        #QListWidgetItem = Stack Element
+        #test_list = list(range(30))
 
-        self.stackWidget.insertItem(0, self.stack_0)
-        self.stackWidget.insertItem(0, self.stack_1)
-        self.stackWidget.insertItem(0, self.stack_2)
+        try:
+            with open(filename, 'rb') as stack_file:
+                logging.info('file opened successful')
+                stack = pickle.load(stack_file)
+                if not isinstance(stack, list):
+                    logging.error('StackWindow::raiseWindow() cannot iterate -  file is not a list - \
+                            file is type: {}'.format(type(stack_file)))
+                    self.closed.emit()
+                    return
+                for i in stack:
+            
+                    if i % 2 == 0: # even numbers
+                        is_even = True
+                        logging.info('List element even {}'.format(i))
+                    else: # uneven number
+                        is_even = False
+                        logging.info('List element uneven {}'.format(i))
 
+                    self.stackWidget.addItem(StackItem(is_even, i, True))
+
+        except Exception as e:
+            logging.error('StackWindow::raiseWindow() exception while opening file: {}'.format(e))
+            self.closed.emit()
+            return
+
+        """
+        for i in test_list:
+            
+            if i % 2 == 0: # even numbers
+                is_even = True
+                logging.info('List element even {}'.format(i))
+            else: # uneven number
+                is_even = False
+                logging.info('List element uneven {}'.format(i))
+
+            self.stackWidget.addItem(StackItem(is_even, i, True))
+        """
+
+               
         self.debugWindowLayout = QVBoxLayout()
         self.debugWindowLayout.addWidget(self.elementInfo)
         self.debugWindowLayout.addWidget(self.stackWidget)
@@ -87,11 +113,13 @@ class StackWindow(QWidget):
         logging.debug("QStackWindow::closeEvent() called")
         self.closed.emit()
 
-    def updateStack(self):
+    def updateStack(self, filename):
 
-        logging.info('updateStack() called')
-        tmp_text = self.debugMessage.toPlainText()
-        tmp_text += ' a'
-        self.debugMessage.setText(tmp_text)
+        # list neu einlesen
+
+        logging.info('StackWindow::updateStack() called with filename: {}'.format(
+            filename))
+        self.timestamp = strftime('%H:%M:%S', localtime())
+        self.elementInfo.setText('Last update: {}'.format(self.timestamp))
 
 
