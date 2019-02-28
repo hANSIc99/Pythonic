@@ -60,42 +60,11 @@ class StackWindow(QWidget):
         #test_list = list(range(30))
 
         try:
-            with open(filename, 'rb') as stack_file:
-                logging.info('file opened successful')
-                stack = pickle.load(stack_file)
-                if not isinstance(stack, list):
-                    logging.error('StackWindow::raiseWindow() cannot iterate -  file is not a list - \
-                            file is type: {}'.format(type(stack_file)))
-                    self.closed.emit()
-                    return
-                for i in stack:
-            
-                    if i % 2 == 0: # even numbers
-                        is_even = True
-                        logging.info('List element even {}'.format(i))
-                    else: # uneven number
-                        is_even = False
-                        logging.info('List element uneven {}'.format(i))
-
-                    self.stackWidget.addItem(StackItem(is_even, i, True))
-
+            self.restock(filename)
         except Exception as e:
             logging.error('StackWindow::raiseWindow() exception while opening file: {}'.format(e))
             self.closed.emit()
             return
-
-        """
-        for i in test_list:
-            
-            if i % 2 == 0: # even numbers
-                is_even = True
-                logging.info('List element even {}'.format(i))
-            else: # uneven number
-                is_even = False
-                logging.info('List element uneven {}'.format(i))
-
-            self.stackWidget.addItem(StackItem(is_even, i, True))
-        """
 
                
         self.debugWindowLayout = QVBoxLayout()
@@ -108,6 +77,40 @@ class StackWindow(QWidget):
         
         self.show()
 
+    def restock(self, filename):
+
+        logging.info('StackWindow::restock() called with filename: {}'.format(
+            filename))
+        if self.stackWidget.item(0) != None:
+            while self.stackWidget.count() != 0:
+                logging.info('Delete widget, count: {}'.format(self.stackWidget.count()))
+                #widget = self.stackWidget.item(0) #get the QListWidgetItem at row 0
+                #logging.info('widget type: {}'.format(type(widget)))
+                self.stackWidget.takeItem(0)
+                #widget.deleteLater()
+
+        with open(filename, 'rb') as stack_file:
+            logging.info('file opened successful')
+            stack = pickle.load(stack_file)
+            logging.info(stack)
+            if not isinstance(stack, list):
+                logging.error('StackWindow::raiseWindow() cannot iterate - \
+                        file is not a list - \
+                        file is type: {}'.format(type(stack_file)))
+                self.closed.emit()
+                return
+            for i, data in enumerate(stack):
+    
+                if i % 2 == 0: # even numbers
+                    is_even = True
+                    logging.info('List element even {}'.format(i))
+                else: # uneven number
+                    is_even = False
+                    logging.info('List element uneven {}'.format(i))
+
+                self.stackWidget.addItem(StackItem(is_even, data, True))
+
+        
     def closeEvent(self, event):
 
         logging.debug("QStackWindow::closeEvent() called")
@@ -115,11 +118,11 @@ class StackWindow(QWidget):
 
     def updateStack(self, filename):
 
-        # list neu einlesen
-
         logging.info('StackWindow::updateStack() called with filename: {}'.format(
             filename))
         self.timestamp = strftime('%H:%M:%S', localtime())
         self.elementInfo.setText('Last update: {}'.format(self.timestamp))
+        self.restock(filename)
+        self.stackWidget.update()
 
 
