@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy,
-        QStyleOption, QStyle, QPushButton, QTextEdit, QListWidgetItem, QListWidget)
+        QStyleOption, QStyle, QPushButton, QTextEdit, QListWidgetItem, QListWidget,
+        QSizePolicy)
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont, QColor, QBrush
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QPoint, QRect
 from PyQt5.QtCore import QCoreApplication as QC
@@ -56,6 +57,8 @@ class StackWindow(QWidget):
 
         # Will contain the QListWidgetItems
         self.stackWidget = QListWidget()
+        # BAUSTELLE
+        #self.stackWidget.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         #QListWidgetItem = Stack Element
         #test_list = list(range(30))
 
