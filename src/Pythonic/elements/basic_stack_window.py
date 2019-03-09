@@ -57,10 +57,6 @@ class StackWindow(QWidget):
 
         # Will contain the QListWidgetItems
         self.stackWidget = QListWidget()
-        # BAUSTELLE
-        #self.stackWidget.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
-        #QListWidgetItem = Stack Element
-        #test_list = list(range(30))
 
         try:
             self.restock(filename)
@@ -73,7 +69,6 @@ class StackWindow(QWidget):
         self.debugWindowLayout = QVBoxLayout()
         self.debugWindowLayout.addWidget(self.elementInfo)
         self.debugWindowLayout.addWidget(self.stackWidget)
-        self.debugWindowLayout.addStretch(1)
         self.debugWindowLayout.addWidget(self.confirm_button)
 
         self.setLayout(self.debugWindowLayout)   
@@ -87,31 +82,52 @@ class StackWindow(QWidget):
         if self.stackWidget.item(0) != None:
             while self.stackWidget.count() != 0:
                 logging.info('Delete widget, count: {}'.format(self.stackWidget.count()))
-                #widget = self.stackWidget.item(0) #get the QListWidgetItem at row 0
-                #logging.info('widget type: {}'.format(type(widget)))
                 self.stackWidget.takeItem(0)
                 #widget.deleteLater()
 
         with open(filename, 'rb') as stack_file:
             logging.info('file opened successful')
             stack = pickle.load(stack_file)
-            logging.info(stack)
             if not isinstance(stack, list):
                 logging.error('StackWindow::raiseWindow() cannot iterate - \
                         file is not a list - \
                         file is type: {}'.format(type(stack_file)))
                 self.closed.emit()
                 return
-            for i, data in enumerate(stack):
-    
-                if i % 2 == 0: # even numbers
-                    is_even = True
-                    logging.info('List element even {}'.format(i))
-                else: # uneven number
-                    is_even = False
-                    logging.info('List element uneven {}'.format(i))
 
-                self.stackWidget.addItem(StackItem(is_even, data, True))
+            logging.info("Lenght: {}".format(len(stack)))
+            if len(stack) <= 40:
+                for i, data in enumerate(stack):
+    
+                    if i % 2 == 0: # even numbers
+                        is_even = True
+                        logging.info('List element even {}'.format(i))
+                    else: # uneven number
+                        is_even = False
+                        logging.info('List element uneven {}'.format(i))
+
+                    self.stackWidget.addItem(StackItem(is_even, data, True))
+            else:
+                for i in range(0, 20):
+                    if i % 2 == 0: # even numbers
+                        is_even = True
+                        logging.info('List element even {}'.format(i))
+                    else: # uneven number
+                        is_even = False
+                        logging.info('List element uneven {}'.format(i))
+
+                    self.stackWidget.addItem(StackItem(is_even, stack[i], True))
+                ##### BAUSTELLE #######
+
+                for i in range(len(stack)-20, len(stack)):
+                    if i % 2 == 0: # even numbers
+                        is_even = True
+                        logging.info('List element even {}'.format(i))
+                    else: # uneven number
+                        is_even = False
+                        logging.info('List element uneven {}'.format(i))
+
+                    self.stackWidget.addItem(StackItem(is_even, stack[i], True))
 
         
     def closeEvent(self, event):
