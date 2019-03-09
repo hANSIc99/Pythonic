@@ -101,15 +101,10 @@ class ExecStack(ElementMaster):
         self.filename_text = QLabel()
         if self.filename:
             self.filename_text.setText(self.filename)
-        """
-        else:
-            self.filename_text.setText(QC.translate('', 'Filename'))
-        """
 
         self.file_button = QPushButton(QC.translate('', 'Choose file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
 
-        #self.variable_box = QStackedWidget()
         self.writeInput()
         self.readOutput()
         self.loadLastConfig()
@@ -121,9 +116,8 @@ class ExecStack(ElementMaster):
         self.help_text = QWidget()
         self.help_text_layout = QVBoxLayout(self.help_text)
 
-        # Option: Fixed size
         self.help_text_1 = QLabel()
-        # Liste
+        # List
         self.help_text_1.setText(QC.translate('', 'On input: Write / Read')) 
 
 
@@ -390,6 +384,14 @@ class StackFunction(Function):
         elif write_mode == 2: # Append
             #record = 'Append'
             stack.append(record)
+
+        ### CHECK FOR MAXIMUM LIST SIZE
+        if b_array_limits:
+            while len(stack) > n_array_limits: #delete more elements if necessary
+                if write_mode == 1: # delete last elements
+                    stack.pop()
+                if write_mode == 2: # delete first elements
+                    stack.pop(0)
 
         ##### READING #####
         f.seek(os.SEEK_SET) # go back to the start of the stream
