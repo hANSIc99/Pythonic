@@ -40,7 +40,6 @@ class StackWindow(QWidget):
         self.setMinimumSize(400, 300)
         self.setWindowFlags(Qt.Window)
         self.setWindowTitle(QC.translate('', 'Stack'))
-        #self.setWindowModality(Qt.WindowModal)
 
         self.confirm_button = QPushButton()
         self.confirm_button.setText(QC.translate('', 'Ok'))
@@ -51,8 +50,6 @@ class StackWindow(QWidget):
         self.info_string = QC.translate('', 'Debug info of element:')
         self.elementInfo = QLabel()
         self.elementInfo.setFont(self.headline)
-        #self.elementInfo.setText(self.info_string + '{} {}'.format(self.source[0],
-            #alphabet[self.source[1]]))
         self.elementInfo.setText('Last update: {}'.format(self.timestamp))
 
         # Will contain the QListWidgetItems
@@ -77,16 +74,13 @@ class StackWindow(QWidget):
 
     def restock(self, filename):
 
-        logging.info('StackWindow::restock() called with filename: {}'.format(
+        logging.debug('StackWindow::restock() called with filename: {}'.format(
             filename))
         if self.stackWidget.item(0) != None:
             while self.stackWidget.count() != 0:
-                logging.info('Delete widget, count: {}'.format(self.stackWidget.count()))
                 self.stackWidget.takeItem(0)
-                #widget.deleteLater()
 
         with open(filename, 'rb') as stack_file:
-            logging.info('file opened successful')
             stack = pickle.load(stack_file)
             if not isinstance(stack, list):
                 logging.error('StackWindow::raiseWindow() cannot iterate - \
@@ -95,37 +89,37 @@ class StackWindow(QWidget):
                 self.closed.emit()
                 return
 
-            logging.info("Lenght: {}".format(len(stack)))
             if len(stack) <= 40:
                 for i, data in enumerate(stack):
     
                     if i % 2 == 0: # even numbers
                         is_even = True
-                        logging.info('List element even {}'.format(i))
                     else: # uneven number
                         is_even = False
-                        logging.info('List element uneven {}'.format(i))
 
                     self.stackWidget.addItem(StackItem(is_even, data, True))
             else:
-                for i in range(0, 20):
+                for i in range(20): #print element 0 - 19
                     if i % 2 == 0: # even numbers
                         is_even = True
-                        logging.info('List element even {}'.format(i))
                     else: # uneven number
                         is_even = False
-                        logging.info('List element uneven {}'.format(i))
 
                     self.stackWidget.addItem(StackItem(is_even, stack[i], True))
-                ##### BAUSTELLE #######
+                # seperator element when the list is long
+                self.seperator_widget = QListWidgetItem()
+                self.seperator_widget.setTextAlignment(Qt.AlignCenter)
+                self.seperator_widget.setText("Element 21 - {} hidden".format(
+                    str(len(stack)-20)))
+                self.seperator_widget.setBackground(QBrush(QColor('#CCCC00')))
+                self.stackWidget.addItem(self.seperator_widget)
+
 
                 for i in range(len(stack)-20, len(stack)):
                     if i % 2 == 0: # even numbers
                         is_even = True
-                        logging.info('List element even {}'.format(i))
                     else: # uneven number
                         is_even = False
-                        logging.info('List element uneven {}'.format(i))
 
                     self.stackWidget.addItem(StackItem(is_even, stack[i], True))
 
@@ -137,7 +131,7 @@ class StackWindow(QWidget):
 
     def updateStack(self, filename):
 
-        logging.info('StackWindow::updateStack() called with filename: {}'.format(
+        logging.debug('StackWindow::updateStack() called with filename: {}'.format(
             filename))
         self.timestamp = strftime('%H:%M:%S', localtime())
         self.elementInfo.setText('Last update: {}'.format(self.timestamp))
