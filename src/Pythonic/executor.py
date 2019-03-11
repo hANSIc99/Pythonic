@@ -13,6 +13,7 @@ import logging, sys, time, traceback, os, signal
 from exceptwindow import ExceptWindow
 from debugwindow import DebugWindow
 from datetime import datetime
+from elements.basic_stack import ExecStack
 
 class WorkerSignals(QObject):
 
@@ -23,8 +24,8 @@ class WorkerSignals(QObject):
 
 class GridOperator(QObject):
 
-    update_logger = pyqtSignal(name='update_logger')
-    exec_pending  = pyqtSignal(name='exec_pending')
+    update_logger   = pyqtSignal(name='update_logger')
+    exec_pending    = pyqtSignal(name='exec_pending')
 
     def __init__(self, grid):
         super().__init__()
@@ -53,7 +54,6 @@ class GridOperator(QObject):
 
         if self.stop_flag:
             return
-
         self.update_logger.emit()
         executor = Executor(element, record, self.delay)
         executor.signals.finished.connect(self.execDone)
@@ -88,6 +88,8 @@ class GridOperator(QObject):
             self.exceptwindow.window_closed.connect(self.highlightStop)
             return
 
+        ### proceed with regular execution ###
+
         # when the log checkbox is activated
         if prg_return.log:
             if prg_return.log_txt:
@@ -102,7 +104,7 @@ class GridOperator(QObject):
                         alphabet[prg_return.source[1]], log))
 
 
-        # when the log button is enabled
+        # when the debug button is active
         if element.b_debug:
 
             if prg_return.log_output:
@@ -111,7 +113,15 @@ class GridOperator(QObject):
                 log_message = str(prg_return.record_0)
 
             logging.debug('execDone() b_debug_window = {}'.format(self.b_debug_window))
-            if not self.b_debug_window:
+            if isinstance(element, ExecStack):
+                    logging.debug('Special window for Exec stack element')
+                    element.highlightStop()
+                    self.goNext(prg_return)
+
+            # check if there is already an open debug window
+            elif not self.b_debug_window:
+
+
                 self.debugWindow = DebugWindow(log_message, prg_return.source)
                 self.debugWindow.proceed_execution.connect(lambda: self.proceedExec(prg_return))
                 self.debugWindow.raiseWindow()
@@ -190,6 +200,8 @@ class Executor(QRunnable):
 
     def raiseExcpetion(self, e):
 
+        # Bug, method is not called sometimes
+        logging.error('2. Exception caught!!!')
         exceptRecord = Record(self.element.getPos(), None, e)
         self.signals.finished.emit(exceptRecord)
 
@@ -205,7 +217,7 @@ class Executor(QRunnable):
 
 
     def start_proc(self, function, record, delay, retries):
-
+        # Bug: Sometimes the Exception windows isnt triggered
         logging.debug('start_proc() called with programm: {}'.format(function))
             
         return_pipe_0, feed_pipe_0 = mp.Pipe(duplex=False)
@@ -220,6 +232,7 @@ class Executor(QRunnable):
         p_0.join()
 
         if(issubclass(result.__class__, BaseException)):
+            logging.error('1. Exception caught!!!')
             self.signals.except_sig.emit(result)
         else:
             self.signals.finished.emit(result)
