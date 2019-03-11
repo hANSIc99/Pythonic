@@ -1,9 +1,7 @@
-todo:
-
-    Adjust Basic-Op element description regarding
-    the output log behaviour
-
-    Add persistent data storage element Basic-Stack
+0.6
+    
+    Basic Stack element added
+    Miner updated
 
 
 0.5
