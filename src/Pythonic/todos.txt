@@ -1,7 +1,0 @@
-Check if ohlc_step dictionary in elements/binance_ohlc.py is still in use
-Change default output of startelement
-Add parking symbol do dropbox
-Translations
-
-
-Button to kill all child processes
