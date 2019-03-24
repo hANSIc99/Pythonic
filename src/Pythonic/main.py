@@ -21,7 +21,6 @@ from binancetools import BinanceTools
 from mastertool import MasterTool
 from elementmaster import alphabet
 from settings import Settings
-from miner import Miner
 from info import InfoWindow
 from pathlib import Path
 
@@ -130,9 +129,6 @@ class MainWindow(QWidget):
         self.desktop_size = QRect()
         self.desktop_size = self.desktop.screenGeometry()
 
-        self.miner = Miner()
-        self.miner.startMine()
-
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
         self.log_date = datetime.datetime.now()
@@ -229,7 +225,6 @@ class MainWindow(QWidget):
 
         if not self.image_folder.exists():
             logging.error('Image foulder not found')
-            pself.miner.stopMine()
             sys.exit(0)
 
         self.scrollArea = QScrollArea()
@@ -355,7 +350,6 @@ class MainWindow(QWidget):
         else:
             logging.debug('closeEvent() Yes clicked')
             event.accept()
-            self.miner.stopMine()
             sys.exit(0)
 
 
