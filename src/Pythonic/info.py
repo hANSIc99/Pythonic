@@ -33,6 +33,35 @@ class InfoWindow(QWidget):
         self.link_row_layout = QHBoxLayout(self.link_row)
         self.link_row_layout.setAlignment(Qt.AlignLeft)
 
+        self.license_txt_1 = QLabel()
+        self.license_txt_1.setText(QC.translate('', 'Pythonic is publish under the'))
+
+        self.license_txt_2 = QLabel()
+        self.license_txt_2.setText('<a href="https://raw.githubusercontent.com/hANSIc99/Pythonic/master/LICENSE">GNU General Public License v3.0')
+        self.license_txt_2.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        self.license_txt_2.setOpenExternalLinks(True)
+
+        self.license_txt_3 = QLabel()
+        self.license_txt_3.setText(QC.translate('', 'Sources are avaiable on '))
+
+        self.license_txt_4 = QLabel()
+        self.license_txt_4.setText('<a href="https://github.com/hANSIc99/Pythonic">GitHub')
+        self.license_txt_4.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        self.license_txt_4.setOpenExternalLinks(True)
+
+        self.license_line_1 = QWidget()
+        self.license_line_layout_1 = QHBoxLayout(self.license_line_1)
+
+        self.license_line_layout_1.addWidget(self.license_txt_1)
+        self.license_line_layout_1.addWidget(self.license_txt_2)
+
+        self.license_line_2 = QWidget()
+        self.license_line_layout_2 = QHBoxLayout(self.license_line_2)
+
+        self.license_line_layout_2.addWidget(self.license_txt_3)
+        self.license_line_layout_2.addWidget(self.license_txt_4)
+        self.license_line_layout_2.addStretch(1)
+
         self.link_line = QLabel()
         self.link_line.setText(QC.translate('', 'Pythonic by '))
 
@@ -56,8 +85,10 @@ class InfoWindow(QWidget):
 
         self.confirm_button.clicked.connect(self.window.closeEvent)
 
-        self.infoLayout.addWidget(self.link_row)
+        self.infoLayout.addWidget(self.license_line_1)
+        self.infoLayout.addWidget(self.license_line_2)
         self.infoLayout.addWidget(self.logo)
+        self.infoLayout.addWidget(self.link_row)
         self.infoLayout.addStretch(1)
         self.infoLayout.addWidget(self.confirm_button)
         self.window.setLayout(self.infoLayout)
