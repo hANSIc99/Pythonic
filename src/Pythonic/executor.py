@@ -33,6 +33,7 @@ class GridOperator(QObject):
         logging.debug('__init__() called on GridOperator')
         self.grid = grid
         self.stop_flag = False
+        self.fastpath = False # fastpath is active when debug is diasbled
         self.retry_counter = 0
         self.delay = 0
         self.threadpool = QThreadPool()
@@ -155,12 +156,11 @@ class GridOperator(QObject):
 
     def goNext(self, prg_return):
 
-        b_fastpath = False
 
         if prg_return.target_0:
             logging.debug('goNext() called with next target_0: {}'.format(prg_return.target_0))
             logging.debug('goNext() called with record_0: {}'.format(prg_return.record_0))
-            if b_fastpath:
+            if self.fastpath:
                 new_rec = self.fastPath(prg_return.target_0, prg_return.record_0)
                 if new_rec: # check for ExecR or ExecRB
                     self.goNext(new_rec)
@@ -175,7 +175,7 @@ class GridOperator(QObject):
                 prg_return.target_1))
             logging.debug('goNext() called with record_1: {}'.format(prg_return.record_1))
 
-            if b_fastpath:
+            if self.fastpath:
                 new_rec = self.fastPath(prg_return.target_1, prg_return.record_1)
                 self.goNext(new_rec)
             else:
