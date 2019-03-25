@@ -289,6 +289,7 @@ class MainWindow(QWidget):
         logging.debug('startDebug() called MainWindow')
         target = (0, 0)
         self.gridoperator.stop_flag = False
+        self.gridoperator.fastpath = False
         self.gridoperator.delay = self.settings.delay / 1000
         self.gridoperator.startExec(target)
 
@@ -297,12 +298,13 @@ class MainWindow(QWidget):
         target = (0, 0)
         self.gridoperator.stop_flag = False
         self.gridoperator.delay = 0
+        self.gridoperator.fastpath = True
         self.gridoperator.startExec(target)
 
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.6'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.7'))
 
     def showInfo(self, event):
 
