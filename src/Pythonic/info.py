@@ -34,7 +34,7 @@ class InfoWindow(QWidget):
         self.link_row_layout.setAlignment(Qt.AlignLeft)
 
         self.license_txt_1 = QLabel()
-        self.license_txt_1.setText(QC.translate('', 'Pythonic is publish under the'))
+        self.license_txt_1.setText(QC.translate('', 'Pythonic is published under the'))
 
         self.license_txt_2 = QLabel()
         self.license_txt_2.setText('<a href="https://raw.githubusercontent.com/hANSIc99/Pythonic/master/LICENSE">GNU General Public License v3.0')
@@ -42,7 +42,7 @@ class InfoWindow(QWidget):
         self.license_txt_2.setOpenExternalLinks(True)
 
         self.license_txt_3 = QLabel()
-        self.license_txt_3.setText(QC.translate('', 'Sources are avaiable on '))
+        self.license_txt_3.setText(QC.translate('', 'Sources are avaiable on'))
 
         self.license_txt_4 = QLabel()
         self.license_txt_4.setText('<a href="https://github.com/hANSIc99/Pythonic">GitHub')
@@ -54,6 +54,7 @@ class InfoWindow(QWidget):
 
         self.license_line_layout_1.addWidget(self.license_txt_1)
         self.license_line_layout_1.addWidget(self.license_txt_2)
+        self.license_line_layout_1.addStretch(1)
 
         self.license_line_2 = QWidget()
         self.license_line_layout_2 = QHBoxLayout(self.license_line_2)
