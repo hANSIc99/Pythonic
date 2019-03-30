@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '0.6',
+        version = '0.7',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -16,9 +16,7 @@ setuptools.setup(
         packages = ['Pythonic'],
         package_dir = {'' : 'src'},
         package_data = { '' :
-            ['pools.txt', 'cpu.txt', 'config.txt', 'all_mine',
-                'all_mine.exe', 'libeay32.dll', 'ssleay.dll',
-                'translations/*.qm', 'translations/*.png',
+            ['translations/*.qm', 'translations/*.png',
                 'images/*.png', 'elements/*']
         },
         entry_points = {
