@@ -64,7 +64,7 @@ class InfoWindow(QWidget):
         self.license_line_layout_2.addStretch(1)
 
         self.link_line = QLabel()
-        self.link_line.setText(QC.translate('', 'Pythonic by '))
+        self.link_line.setText(QC.translate('', 'Pythonic by'))
 
         self.link = QLabel()
         self.link.setText('<a href="https://krypto-fuchs.de">https://krypto-fuchs.de</a>')
