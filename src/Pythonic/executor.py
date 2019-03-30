@@ -14,6 +14,7 @@ from exceptwindow import ExceptWindow
 from debugwindow import DebugWindow
 from datetime import datetime
 from elements.basic_stack import ExecStack
+from elements.basicelements import ExecRB, ExecR
 
 class WorkerSignals(QObject):
 
@@ -32,6 +33,7 @@ class GridOperator(QObject):
         logging.debug('__init__() called on GridOperator')
         self.grid = grid
         self.stop_flag = False
+        self.fastpath = False # fastpath is active when debug is diasbled
         self.retry_counter = 0
         self.delay = 0
         self.threadpool = QThreadPool()
@@ -80,6 +82,7 @@ class GridOperator(QObject):
             logging.error('De-registration of PID failed: {}'.format(e))
 
 
+        # if an execption occured
         if(issubclass(prg_return.record_0.__class__, BaseException)):
             logging.error('Target {}|{} Exception found: {}'.format(prg_return.source[0],
                 alphabet[prg_return.source[1]], prg_return.record_0))
@@ -112,15 +115,14 @@ class GridOperator(QObject):
             else:
                 log_message = str(prg_return.record_0)
 
-            logging.debug('execDone() b_debug_window = {}'.format(self.b_debug_window))
-            if isinstance(element, ExecStack):
-                    logging.debug('Special window for Exec stack element')
+            logging.debug('GridOperator::execDone() b_debug_window = {}'.format(self.b_debug_window))
+            if isinstance(element, ExecStack): # don't open the regular debug window
+                    logging.debug('GridOperator::execDone()Special window for Exec stack element')
                     element.highlightStop()
                     self.goNext(prg_return)
 
             # check if there is already an open debug window
             elif not self.b_debug_window:
-
 
                 self.debugWindow = DebugWindow(log_message, prg_return.source)
                 self.debugWindow.proceed_execution.connect(lambda: self.proceedExec(prg_return))
@@ -154,16 +156,44 @@ class GridOperator(QObject):
 
     def goNext(self, prg_return):
 
+
         if prg_return.target_0:
             logging.debug('goNext() called with next target_0: {}'.format(prg_return.target_0))
             logging.debug('goNext() called with record_0: {}'.format(prg_return.record_0))
-            self.startExec(prg_return.target_0, prg_return.record_0)
+            if self.fastpath:
+                new_rec = self.fastPath(prg_return.target_0, prg_return.record_0)
+                if new_rec: # check for ExecR or ExecRB
+                    self.goNext(new_rec)
+                else: # if nothing found: proceed as usual
+                    self.startExec(prg_return.target_0, prg_return.record_0)
+            else:
+                self.startExec(prg_return.target_0, prg_return.record_0)
 
         if prg_return.target_1:
+
             logging.debug('goNext() called with additional target_1: {}'.format(
                 prg_return.target_1))
             logging.debug('goNext() called with record_1: {}'.format(prg_return.record_1))
-            self.startExec(prg_return.target_1, prg_return.record_1)
+
+            if self.fastpath:
+                new_rec = self.fastPath(prg_return.target_1, prg_return.record_1)
+                self.goNext(new_rec)
+            else:
+                self.startExec(prg_return.target_1, prg_return.record_1)
+
+    def fastPath(self, target, record):
+
+            element = self.grid.itemAtPosition(*target).widget()
+            if isinstance(element, ExecRB): # jump to the next target
+                # record_1 -> record_0 when goNext() is called recursively
+                new_rec = Record(element.getPos(), (element.row+1, element.column), record)
+                return new_rec
+            elif isinstance(element, ExecR): # jump to the next target
+                # record_1 -> record_0 when goNext() is called recursively
+                new_rec = Record(element.getPos(), (element.row, element.column+1), record)
+                return new_rec
+            else:
+                return None
 
     def highlightStop(self, position):
         logging.debug('highlightStop() called for position {}'.format(position))
