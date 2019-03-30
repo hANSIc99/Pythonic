@@ -217,11 +217,6 @@
     <target>&quot;&quot;&quot; establece la variable log_txt para ajustar el texto de registro &quot;&quot;&quot;</target>
 </phrase>
 <phrase>
-    <source>(Neuer Eintrag)</source>
-    <target>Editar operación básica</target>
-    <definition>Edit Basic Operation</definition>
-</phrase>
-<phrase>
     <source>Edit Basic Operation</source>
     <target>Editar operación básica</target>
 </phrase>
@@ -532,5 +527,85 @@
 <phrase>
     <source>and</source>
     <target>y</target>
+</phrase>
+<phrase>
+    <source>Stack</source>
+    <target>Apilar</target>
+</phrase>
+<phrase>
+    <source>Choose file on hard disc for storing stack data:</source>
+    <target>Elija el archivo en el disco duro para almacenar los datos de la pila:</target>
+</phrase>
+<phrase>
+    <source>Configuration:</source>
+    <target>Configuración:</target>
+</phrase>
+<phrase>
+    <source>Do this with input:</source>
+    <target>Haga esto con la entrada:</target>
+</phrase>
+<phrase>
+    <source>Nothing</source>
+    <target>Nada</target>
+</phrase>
+<phrase>
+    <source>Insert</source>
+    <target>Insertar</target>
+</phrase>
+<phrase>
+    <source>Append</source>
+    <target>Adjuntar</target>
+</phrase>
+<phrase>
+    <source>Max. array elements:</source>
+    <target>Max. elementos de la matriz:</target>
+</phrase>
+<phrase>
+    <source>Unlimited</source>
+    <target>Llimitado</target>
+</phrase>
+<phrase>
+    <source>Default value: 20</source>
+    <target>Valor por defecto: 20</target>
+</phrase>
+<phrase>
+    <source>Pass through</source>
+    <target>Pasar por</target>
+</phrase>
+<phrase>
+    <source>Do this when triggered:</source>
+    <target>Haga esto cuando se active:</target>
+</phrase>
+<phrase>
+    <source>Select file:</source>
+    <target>Seleccione Archivo:</target>
+</phrase>
+<phrase>
+    <source>First out</source>
+    <target>Primero en salir</target>
+</phrase>
+<phrase>
+    <source>Last out</source>
+    <target>Durar</target>
+</phrase>
+<phrase>
+    <source>All out</source>
+    <target>Completamente</target>
+</phrase>
+<phrase>
+    <source>Delete object after read?</source>
+    <target>¿Eliminar objeto después de leer?</target>
+</phrase>
+<phrase>
+    <source>Pythonic is published under the</source>
+    <target>Pythonic se publica bajo la</target>
+</phrase>
+<phrase>
+    <source>Sources are avaiable on</source>
+    <target>Las fuentes están disponibles en</target>
+</phrase>
+<phrase>
+    <source>Pythonic by</source>
+    <target>Pythonic por</target>
 </phrase>
 </QPH>
