@@ -385,10 +385,6 @@
     <target>选择市场数据区间</target>
 </phrase>
 <phrase>
-    <source>(Neuer Eintrag)</source>
-    <target></target>
-</phrase>
-<phrase>
     <source>Enter currency pair</source>
     <target>输入货币对</target>
 </phrase>
@@ -465,10 +461,6 @@
     <target>输入数量：</target>
 </phrase>
 <phrase>
-    <source>(Neuer Eintrag)</source>
-    <target></target>
-</phrase>
-<phrase>
     <source>Take Profit</source>
     <target>获利</target>
 </phrase>
@@ -535,5 +527,85 @@
 <phrase>
     <source>Go to element:</source>
     <target>转到元素：</target>
+</phrase>
+<phrase>
+    <source>Choose file on hard disc for storing stack data:</source>
+    <target>选择硬盘上的文件来存储堆栈数据：</target>
+</phrase>
+<phrase>
+    <source>Configuration:</source>
+    <target>组态：</target>
+</phrase>
+<phrase>
+    <source>Select file</source>
+    <target>选择文件</target>
+</phrase>
+<phrase>
+    <source>Do this with input:</source>
+    <target>用输入执行此操作：</target>
+</phrase>
+<phrase>
+    <source>Nothing</source>
+    <target>没有</target>
+</phrase>
+<phrase>
+    <source>Insert</source>
+    <target>插入</target>
+</phrase>
+<phrase>
+    <source>Append</source>
+    <target>附加</target>
+</phrase>
+<phrase>
+    <source>Max. array elements:</source>
+    <target>最大。 数组元素：</target>
+</phrase>
+<phrase>
+    <source>Unlimited</source>
+    <target>无限</target>
+</phrase>
+<phrase>
+    <source>Do this when triggered:</source>
+    <target>触发时执行此操作：</target>
+</phrase>
+<phrase>
+    <source>Delete object after read?</source>
+    <target>读完后删除对象？</target>
+</phrase>
+<phrase>
+    <source>Pass through</source>
+    <target>通过</target>
+</phrase>
+<phrase>
+    <source>First out</source>
+    <target>首先出来</target>
+</phrase>
+<phrase>
+    <source>Last out</source>
+    <target>最后出来</target>
+</phrase>
+<phrase>
+    <source>All out</source>
+    <target>全力以赴</target>
+</phrase>
+<phrase>
+    <source>Default value: 20</source>
+    <target>默认值：20</target>
+</phrase>
+<phrase>
+    <source>Sources are available on</source>
+    <target>资料来源可用</target>
+</phrase>
+<phrase>
+    <source>Pythonic by</source>
+    <target>Pythonic开发的</target>
+</phrase>
+<phrase>
+    <source>Pythonic is published under the</source>
+    <target>Pythonic发表于</target>
+</phrase>
+<phrase>
+    <source>Stack</source>
+    <target>堆</target>
 </phrase>
 </QPH>

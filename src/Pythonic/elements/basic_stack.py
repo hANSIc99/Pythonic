@@ -96,13 +96,13 @@ class ExecStack(ElementMaster):
         self.returnEdit.setWindowTitle(QC.translate('', 'Stack'))
 
         self.top_text = QLabel()
-        self.top_text.setText(QC.translate('', 'Stack ...'))
+        self.top_text.setText(QC.translate('', 'Choose file on hard disc for storing stack data:'))
 
         self.filename_text = QLabel()
         if self.filename:
             self.filename_text.setText(self.filename)
 
-        self.file_button = QPushButton(QC.translate('', 'Choose file'))
+        self.file_button = QPushButton(QC.translate('', 'Select file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
 
         self.writeInput()
@@ -111,28 +111,28 @@ class ExecStack(ElementMaster):
 
 
         self.mode_text = QLabel()
-        self.mode_text.setText(QC.translate('', 'Select mode:'))
+        self.mode_text.setText(QC.translate('', 'Configuration:'))
 
         self.help_text = QWidget()
         self.help_text_layout = QVBoxLayout(self.help_text)
 
-        self.help_text_1 = QLabel()
+        #self.help_text_1 = QLabel()
         # List
-        self.help_text_1.setText(QC.translate('', 'On input: Write / Read')) 
+        #self.help_text_1.setText(QC.translate('', 'On input: Write / Read')) 
 
 
         # Input: Liste
-        self.help_text_2 = QLabel()
-        self.help_text_2.setText(QC.translate('', 'Insert /Append'))
+        #self.help_text_2 = QLabel()
+        #self.help_text_2.setText(QC.translate('', 'Insert /Append'))
 
         # Option: Remove output
         # Output: Liste: First Out /  Last Out / all Out 
-        self.help_text_3 = QLabel()
-        self.help_text_3.setText(QC.translate('', 'Help Text 3'))
+        #self.help_text_3 = QLabel()
+        #self.help_text_3.setText(QC.translate('', 'Help Text 3'))
 
-        self.help_text_layout.addWidget(self.help_text_1)
-        self.help_text_layout.addWidget(self.help_text_2)
-        self.help_text_layout.addWidget(self.help_text_3)
+        #self.help_text_layout.addWidget(self.help_text_1)
+        #self.help_text_layout.addWidget(self.help_text_2)
+        #self.help_text_layout.addWidget(self.help_text_3)
 
 
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
@@ -160,7 +160,7 @@ class ExecStack(ElementMaster):
         self.returnEditLayout.addWidget(self.write_input)
         self.returnEditLayout.addWidget(self.read_input)
         self.returnEditLayout.addWidget(self.delete_read_widget)
-        self.returnEditLayout.addWidget(self.help_text)
+        #self.returnEditLayout.addWidget(self.help_text)
         self.returnEditLayout.addStretch(1)
         self.returnEditLayout.addWidget(self.log_line)
         self.returnEditLayout.addWidget(self.confirm_button)
