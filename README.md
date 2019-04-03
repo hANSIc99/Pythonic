@@ -1,4 +1,4 @@
-<p align="center"><img src="logo/horizontal.png" alt="Pythonic" height="120px"></p>
+<p align="center"><img src="src/Pythonic/images/horizontal.png" alt="Pythonic" height="120px"></p>
 
 Trading platform for digital currencies
 ![Alt text](screenshot-1.png?raw=true "Screenshot 1")
