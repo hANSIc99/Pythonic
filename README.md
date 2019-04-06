@@ -1,7 +1,7 @@
 <p align="center"><img src="src/Pythonic/images/horizontal.png" alt="Pythonic" height="120px"></p>
 
 Trading platform for digital currencies
-![Alt text](screenshot-1.png?raw=true "Screenshot 1")
+![Alt text](screenshot-2.png?raw=true "Screenshot 1")
 
 
 ## Installation into existing Python 3.x environment

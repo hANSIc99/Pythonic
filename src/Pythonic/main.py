@@ -304,7 +304,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.7'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.8'))
 
     def showInfo(self, event):
 
