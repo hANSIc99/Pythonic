@@ -47,3 +47,12 @@ You can now start Pythonic from the command line by typing:
 
 #### 2. `./Pythonic`
 
+## Known Issues
+
+When you get the Python error message:
+`No module named 'urllib3.packages.six'`
+your distribution propably offern only an old version of **urlib3**.
+This command should fix the issue:
+
+`sudo python3 -m pip install requests urllib3 pyOpenSSL --force --upgrade`
+
