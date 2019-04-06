@@ -254,7 +254,7 @@
 </phrase>
 <phrase>
     <source>Synchronize with Binance and execute subsequent modules</source>
-    <target>Ausführung nachfolgender Elemente nach</target>
+    <target>Ausführung nachfolgender Elemente nach Synchronisierung mit Binance</target>
 </phrase>
 <phrase>
     <source>after expiration of the selected interval.</source>
@@ -483,5 +483,85 @@
 <phrase>
     <source>Edit Basic Scheduler</source>
     <target>Bearbeite Scheduler</target>
+</phrase>
+<phrase>
+    <source>Stack</source>
+    <target>Stapelspeicher</target>
+</phrase>
+<phrase>
+    <source>Select file</source>
+    <target>Wähle Datei</target>
+</phrase>
+<phrase>
+    <source>Configuration:</source>
+    <target>Konfiguration:</target>
+</phrase>
+<phrase>
+    <source>Do this with input:</source>
+    <target>Aktion bei Eingabe:</target>
+</phrase>
+<phrase>
+    <source>Nothing</source>
+    <target>Nichts</target>
+</phrase>
+<phrase>
+    <source>Insert</source>
+    <target>Einfügen</target>
+</phrase>
+<phrase>
+    <source>Append</source>
+    <target>Anhängen</target>
+</phrase>
+<phrase>
+    <source>Max. array elements:</source>
+    <target>Max. Anzahl Array Elemente:</target>
+</phrase>
+<phrase>
+    <source>Unlimited</source>
+    <target>Unbegrenzt</target>
+</phrase>
+<phrase>
+    <source>Default value: 20</source>
+    <target>Standardwert: 20</target>
+</phrase>
+<phrase>
+    <source>Do this when triggered:</source>
+    <target>Wenn Element getriggert:</target>
+</phrase>
+<phrase>
+    <source>Pass through</source>
+    <target>Durchleiten</target>
+</phrase>
+<phrase>
+    <source>First out</source>
+    <target>Rückgabe erster Eintrag</target>
+</phrase>
+<phrase>
+    <source>Last out</source>
+    <target>Rückgabe letzter Eintrag</target>
+</phrase>
+<phrase>
+    <source>All out</source>
+    <target>Alle Einträge ausgeben</target>
+</phrase>
+<phrase>
+    <source>Delete object after read?</source>
+    <target>Entferne Eintrag nach Rückgabe?</target>
+</phrase>
+<phrase>
+    <source>Choose file on hard disc for storing stack data:</source>
+    <target>Wähle Datei für Stapelspeicher:</target>
+</phrase>
+<phrase>
+    <source>Pythonic is published under the</source>
+    <target>Pythonic ist veröffentlicht unter der</target>
+</phrase>
+<phrase>
+    <source>Sources are available on</source>
+    <target>Quellen sind verfügbar auf</target>
+</phrase>
+<phrase>
+    <source>Pythonic by</source>
+    <target>Pythonic bereitgestellt durch</target>
 </phrase>
 </QPH>

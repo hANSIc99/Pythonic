@@ -42,7 +42,7 @@ class InfoWindow(QWidget):
         self.license_txt_2.setOpenExternalLinks(True)
 
         self.license_txt_3 = QLabel()
-        self.license_txt_3.setText(QC.translate('', 'Sources are avaiable on'))
+        self.license_txt_3.setText(QC.translate('', 'Sources are available on'))
 
         self.license_txt_4 = QLabel()
         self.license_txt_4.setText('<a href="https://github.com/hANSIc99/Pythonic">GitHub')
