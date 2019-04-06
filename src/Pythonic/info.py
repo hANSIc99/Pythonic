@@ -79,7 +79,7 @@ class InfoWindow(QWidget):
         self.logo_layout = QHBoxLayout(self.logo)
         self.logo_layout.setAlignment(Qt.AlignCenter)
         self.logo_label = QLabel()
-        self.logo_label.setPixmap(QPixmap('images/logo_rechts.png').scaled(200, 200))
+        self.logo_label.setPixmap(QPixmap('images/vertical.png').scaledToHeight(200))
         self.logo_layout.addWidget(self.logo_label)
 
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
