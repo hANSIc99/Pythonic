@@ -213,6 +213,13 @@ class MenuBar(QWidget):
         self.stop_exec_button = StopExecButton()
         self.kill_proc_button = KillProcButton()
 
+        # Logo
+        self.logo_horizontal = QLabel()
+        logo_height = self.save_as_button.pixmap().height() * 1.5
+        self.logo_horizontal.setPixmap(QPixmap('images/horizontal_blur.png').scaledToHeight(
+            logo_height))
+        self.logo_horizontal.pixmap()
+
         # change the icons background
 
         self.save_as_button.mousePressEvent = self.saveFileDialog
@@ -241,6 +248,7 @@ class MenuBar(QWidget):
         self.iconBox.addWidget(self.stop_exec_button)
         self.iconBox.addWidget(self.kill_proc_button)
         self.iconBox.addStretch(1)
+        self.iconBox.addWidget(self.logo_horizontal)
         self.iconBox.setContentsMargins(3,3,0,0)
         self.setLayout(self.iconBox) 
 
