@@ -1,47 +1,16 @@
-# Pythonic
+<p align="center"><img src="src/Pythonic/images/horizontal.png" alt="Pythonic" height="120px"></p>
+
 Trading platform for digital currencies
 ![Alt text](screenshot-1.png?raw=true "Screenshot 1")
 
-
-## Business Model: Mining
-Pythonic uses one core of your CPU to mine the digital currency Monero.
-For this reason, you have to add an exception on Windows systems. 
-
-You can find more information about Monero on https://getmonero.org/
-
-
-## Windows Setup
-
-### 1. Configure Windows Defender
-
-![Alt text](defender-01.png?raw=true "Step-1")
-
-Open the Windows Defender configuration, for example by searching for "Defender" in the start menu.
-
-
-![Alt text](defender-02.png?raw=true "Step-2")
-
-Go to the page for **Virus & threat protecton** and click on the link for **Virus & threat protecton settings**
-
-
-![Alt text](defender-03.png?raw=true "Step-3")
-
-Scroll down to **Exclusions** and click on the link **Add or remove exclusions**
-
-
-![Alt text](defender-04.png?raw=true "Step-4")
-
-On the page for **Exclusions**, click on **Add an exclusion** and select Folder. This will open the dialog for selecting a folder.
-
-### 2. [Download](https://github.com/hANSIc99/Pythonics/raw/master/Pythonics_0.1.zip) ZIP archive to the specified exclusion folder and extract it. 
-
-### 3. Start Pythonic.exe
 
 ## Installation into existing Python 3.x environment
 
 Pythonic is compatible with Python version 3.5, 3.6 and 3.7.
 
-#### 1. `pip install Pythonic`
+#### 1. `pip3 install Pythonic`
+
+or `python3 -m pip install Pythonic`
 
 You can now start Pythonic from the command line by typing:
 
@@ -49,10 +18,32 @@ You can now start Pythonic from the command line by typing:
 
 ## Known Issues
 
-When you get the Python error message:
-`No module named 'urllib3.packages.six'`
+### pip3: command not found
+On Ubuntu, **pip3** is not installed by default.
+Run `sudo apt install python3-pip` to install **pip3**.
+
+### No module named 'urllib3.packages.six'
+When you get this error message,
 your distribution propably offern only an old version of **urlib3**.
 This command should fix the issue:
 
 `sudo python3 -m pip install requests urllib3 pyOpenSSL --force --upgrade`
+
+### Python.h: no such file or directory
+Unfortunately the depency **python-binance** requires the
+depency **twisted** which requires the **python3-devel** package on your system.
+
+When you are facing this error message, run:
+
+`sudo dnf install python3-devel` (Fedora)
+
+`sudo zypper in python3-devel` (openSUSE)
+
+`sudo apk add python3-dev` (Alpine, ...)
+
+`apt-cyg install python3-devel` (Cygwin)
+
+`sudo apt-get install python3-dev`(Ubuntu, ...)
+
+`sudo yum install python37-devel` (Python 3.7)(CentOS, RHEL, ...)
 
