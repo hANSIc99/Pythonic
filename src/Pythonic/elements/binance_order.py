@@ -482,6 +482,7 @@ class BinanceOrder(ElementMaster):
             else:
 
                 stop_price_value = float(self.take_profit_limit_stop_price_input.text())
+        # TODO: Create Test Order
 
 
             logging.warning('Limit price: {}'.format(limit_price_value))
@@ -505,7 +506,8 @@ class BinanceOrder(ElementMaster):
         order_string    = self.selectOrder.currentData()
         log_state       = self.log_checkbox.isChecked()
 
-        self.config = (pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, order_index, order_string, order_config, log_state)
+        self.config = (pub_key, prv_key, side_index, side_txt, symbol_txt,
+                quantity, order_index, order_string, order_config, log_state)
 
         self.addFunction(BinanceOrderFunction)
 
@@ -520,7 +522,8 @@ class BinanceOrderFunction(Function):
     def execute(self, record):
 
         
-        pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, order_index, order_string, order_config, log_state = self.config
+        pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, \
+                order_index, order_string, order_config, log_state = self.config
 
         timeInForce = None
         stopPrice   = None
@@ -658,6 +661,7 @@ class BinanceOrderFunction(Function):
         logging.error('stopPrice = {}'.format(stopPrice))
 
         log_txt = '{BINANCE ORDER}          '
-        result = Record(self.getPos(), (self.row +1, self.column), order, log=log_state, log_txt=log_txt)
+        result = Record(self.getPos(), (self.row +1, self.column), order,
+                 log=log_state, log_txt=log_txt)
 
         return result
