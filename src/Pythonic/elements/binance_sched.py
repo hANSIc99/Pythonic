@@ -79,7 +79,8 @@ class BinanceSched(ElementMaster):
         self.selectInterval.setCurrentIndex(interval_index)
 
         self.offset_txt = QLabel()
-        self.offset_txt.setText(QC.translate('', 'Enter time offset [s] (default: 0; range: -999s to + 999s)'))
+        self.offset_txt.setText(QC.translate('',
+            'Enter time offset [s] (default: 0; range: -999s to + 999s)'))
 
         self.offset_input = QLineEdit()
         self.offset_input.setValidator(QIntValidator(-999, 999))
@@ -89,7 +90,8 @@ class BinanceSched(ElementMaster):
         self.help_text_layout = QVBoxLayout(self.help_text)
 
         self.help_text_1 = QLabel()
-        self.help_text_1.setText(QC.translate('', 'Synchronize with Binance and execute subsequent modules')) 
+        self.help_text_1.setText(QC.translate('',
+            'Synchronize with Binance and execute subsequent modules')) 
 
         self.help_text_2 = QLabel()
         self.help_text_2.setText(QC.translate('', 'after expiration of the selected interval.'))
