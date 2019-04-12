@@ -4,15 +4,13 @@ from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QRegExpValida
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
 from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
-import logging
+import logging, os.path
 from time import sleep
-import os.path
 from itertools import cycle
 from datetime import datetime, date, time, timedelta
-from record_function import Record, Function
-from elementmaster import alphabet
-from binance.client import Client
 from enum import Enum
+from Pythonic.record_function import Record, Function
+from Pythonic.elementmaster import alphabet
 
 
 class ExecSched(ElementMaster):

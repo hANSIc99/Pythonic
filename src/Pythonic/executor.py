@@ -6,15 +6,15 @@ from PyQt5.QtCore import QCoreApplication as QC
 from PyQt5.QtCore import QThread, QRunnable, QObject, QThreadPool
 from time import sleep
 import multiprocessing as mp
-from record_function import Record
-from elementeditor import ElementEditor
-from elementmaster import alphabet
 import logging, sys, time, traceback, os, signal
-from exceptwindow import ExceptWindow
-from debugwindow import DebugWindow
 from datetime import datetime
-from elements.basic_stack import ExecStack
-from elements.basicelements import ExecRB, ExecR
+from Pythonic.record_function import Record
+from Pythonic.elementeditor import ElementEditor
+from Pythonic.elementmaster import alphabet
+from Pythonic.exceptwindow import ExceptWindow
+from Pythonic.debugwindow import DebugWindow
+from Pythonic.elements.basic_stack import ExecStack
+from Pythonic.elements.basicelements import ExecRB, ExecR
 
 class WorkerSignals(QObject):
 

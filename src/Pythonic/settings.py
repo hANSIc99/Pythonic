@@ -12,7 +12,7 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
 
 from PyQt5.QtCore import QCoreApplication as QC
 import sys, logging
-from elementeditor import ElementEditor
+from Pythonic.elementeditor import ElementEditor
 
 class Settings(QWidget):
 

@@ -3,14 +3,14 @@ from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox,
                                 QPushButton)
-from record_function import Record, Function
-from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
+import os.path
 from time import sleep
 from datetime import datetime
-from elementmaster import alphabet
-import os.path
+from Pythonic.elementmaster import alphabet
+from Pythonic.elementeditor import ElementEditor
+from Pythonic.record_function import Record, Function
 
 class ExecReturn(ElementMaster):
 

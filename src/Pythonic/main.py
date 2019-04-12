@@ -8,21 +8,19 @@ from PyQt5.QtCore import (Qt, QMimeData, QByteArray, QDataStream, QPoint, QLocal
                          QThreadPool, QDir, pyqtSignal, pyqtSlot, QRect, QTranslator, QEvent)
 from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen, QPainter, QFont)
-
-from PyQt5.QtCore import QCoreApplication as QC
 import sys, logging, datetime, os
-#from defaultelements import StartElement, ExecRB, ExecR, ExecOp, ExecBranch, PlaceHolder
-import multiprocessing as mp
-from workingarea import WorkingArea
-from menubar import MenuBar
-from executor import GridOperator
-from top_menubar import topMenuBar
-from binancetools import BinanceTools
-from mastertool import MasterTool
-from elementmaster import alphabet
-from settings import Settings
-from info import InfoWindow
+from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
+import multiprocessing as mp
+from Pythonic.workingarea import WorkingArea
+from Pythonic.menubar import MenuBar
+from Pythonic.executor import GridOperator
+from Pythonic.top_menubar import topMenuBar
+from Pythonic.binancetools import BinanceTools
+from Pythonic.mastertool import MasterTool
+from Pythonic.elementmaster import alphabet
+from Pythonic.settings import Settings
+from Pythonic.info import InfoWindow
 
 
 class BasicTools(QFrame):

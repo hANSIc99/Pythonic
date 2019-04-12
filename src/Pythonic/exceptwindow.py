@@ -4,10 +4,10 @@ from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QPoint, QRect
 from PyQt5.QtCore import QCoreApplication as QC
 from PyQt5.QtCore import QThread
-from elementmaster import alphabet
 import multiprocessing as mp
-from elementeditor import ElementEditor
 import logging, sys, time, traceback
+from Pythonic.elementeditor import ElementEditor
+from Pythonic.elementmaster import alphabet
 
 
 class ExceptWindow(QWidget):

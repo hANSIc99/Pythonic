@@ -12,20 +12,20 @@ from PyQt5.QtCore import (Qt, QMimeData, QByteArray, QDataStream, QPoint,
 from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen)
 
-from elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
-from elements.basic_operation   import ExecOp
-from elements.basic_branch      import ExecBranch
-from elements.basic_return      import ExecReturn
-from elements.basic_process     import ExecProcess
-from elements.basic_ta          import ExecTA
-from elements.basic_sched       import ExecSched
-from elements.basic_stack       import ExecStack
-from elements.binance_sched     import BinanceSched
-from elements.binance_ohlc      import BinanceOHLC
-from elements.binance_order     import BinanceOrder
+from Pythonic.elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
+from Pythonic.elements.basic_operation   import ExecOp
+from Pythonic.elements.basic_branch      import ExecBranch
+from Pythonic.elements.basic_return      import ExecReturn
+from Pythonic.elements.basic_process     import ExecProcess
+from Pythonic.elements.basic_ta          import ExecTA
+from Pythonic.elements.basic_sched       import ExecSched
+from Pythonic.elements.basic_stack       import ExecStack
+from Pythonic.elements.binance_sched     import BinanceSched
+from Pythonic.elements.binance_ohlc      import BinanceOHLC
+from Pythonic.elements.binance_order     import BinanceOrder
 
-from elementmaster              import ElementMaster
-from storagebar                 import StorageBar
+from Pythonic.elementmaster              import ElementMaster
+from Pythonic.storagebar                 import StorageBar
 
 
 class WorkingArea(QFrame):
