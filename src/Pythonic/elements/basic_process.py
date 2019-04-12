@@ -5,8 +5,8 @@ from PyQt5.QtWidgets import (QVBoxLayout, QLabel, QTextEdit, QWidget,
         QComboBox, QCheckBox, QGridLayout, QSpacerItem, QLineEdit, QPushButton)
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
-from elementeditor import ElementEditor
-from record_function import Record, Function
+from Pythonic.elementeditor import ElementEditor
+from Pythonic.record_function import Record, Function
 
 
 class ExecProcess(ElementMaster):

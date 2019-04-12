@@ -11,7 +11,7 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen, QPainter, QFont)
 
 from PyQt5.QtCore import QCoreApplication as QC
-from element_iconbar import IconBar
+from Pythonic.element_iconbar import IconBar
 import sys, logging, os.path
 
 class DropBox(QWidget):

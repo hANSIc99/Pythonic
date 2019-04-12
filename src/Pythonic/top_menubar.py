@@ -11,10 +11,9 @@ from PyQt5.QtCore import QCoreApplication as QC
 from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen, QPainter, QIcon, QCloseEvent)
 import sys, logging, os
-#from defaultelements import StartElement, ExecRB, ExecR, ExecOp, ExecBranch, PlaceHolder
-from workingarea import WorkingArea
-from menubar import MenuBar
-from executor import Executor
+from Pythonic.workingarea import WorkingArea
+from Pythonic.menubar import MenuBar
+from Pythonic.executor import Executor
 
 class topMenuBar(QMenuBar):
 

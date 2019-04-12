@@ -12,11 +12,10 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
 
 from PyQt5.QtCore import QCoreApplication as QC
 import sys, logging
-#from defaultelements import StartElement, ExecRB, ExecR, ExecOp, ExecBranch, PlaceHolder
-from workingarea import WorkingArea
-from menubar import MenuBar
-from executor import Executor
-from top_menubar import topMenuBar
+from Pythonic.workingarea import WorkingArea
+from Pythonic.menubar import MenuBar
+from Pythonic.executor import Executor
+from Pythonic.top_menubar import topMenuBar
 
 
 class MasterTool(QLabel):

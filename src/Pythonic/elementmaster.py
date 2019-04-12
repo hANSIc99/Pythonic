@@ -7,7 +7,7 @@ from element_iconbar import IconBar
 from elementeditor import ElementEditor
 from time import sleep
 import logging, sys, traceback
-from record_function import Function
+from Pythonic.record_function import Function
 
 
 alphabet = { 0 : 'A', 1 : 'B', 2 : 'C', 3 : 'D', 4 : 'E', 5 : 'F', 6 : 'G', 7 : 'H', 8 : 'J',

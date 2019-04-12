@@ -1,17 +1,14 @@
-from elementmaster import ElementMaster
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QDoubleValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
 from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
-import logging
-from time import sleep
-import os.path, datetime
-from record_function import Record, Function
-from elementmaster import alphabet
-from binance.client import Client
+from pythonic_binance.client import Client
 import pandas as pd
-
+import os.path, datetime, logging
+from time import sleep
+from Pythonic.record_function import Record, Function
+from Pythonic.elementmaster import ElementMaster
 
 class BinanceOrder(ElementMaster):
 
