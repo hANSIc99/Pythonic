@@ -1,15 +1,14 @@
-from elementmaster import ElementMaster
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox
 from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
-import logging
+from pythonic_binance.client import Client
 from time import sleep
-import os.path, datetime
-from record_function import Record, Function
-from elementmaster import alphabet
-from binance.client import Client
+import os.path, datetime, logging
+from Pythonic.record_function import Record, Function
+from Pythonic.elementmaster import ElementMaster
+
 
 ohlc_steps = { '1m' : 1, '3m' : 3, '5m' : 5, '15m' : 15, '30m' : 30, '1h' : 60, '2h' : 120, '4h' : 240, '6h' : 360,
         '8h' : 480, '12h' : 720, '1d' : 1440, '3d' : 4320, '1w' : 10080, '1M' : 40320 }

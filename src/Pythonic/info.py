@@ -89,7 +89,7 @@ class InfoWindow(QWidget):
         self.infoLayout.addWidget(self.license_line_1)
         self.infoLayout.addWidget(self.license_line_2)
         self.infoLayout.addWidget(self.logo)
-        self.infoLayout.addWidget(self.link_row)
+        #self.infoLayout.addWidget(self.link_row)
         self.infoLayout.addStretch(1)
         self.infoLayout.addWidget(self.confirm_button)
         self.window.setLayout(self.infoLayout)

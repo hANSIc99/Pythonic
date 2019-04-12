@@ -1,15 +1,14 @@
-from elementmaster import ElementMaster
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox
-import logging
+import logging, os.path
 from time import sleep
 from datetime import datetime
 from multiprocessing import Process
-from record_function import Record, Function
-from dropbox import DropBox
-from elements.basic_sched import ExecSched
-import os.path
+from Pythonic.record_function import Record, Function
+from Pythonic.dropbox import DropBox
+from Pythonic.elements.basic_sched import ExecSched
+from Pythonic.elementmaster import ElementMaster
 
 class StartElement(ExecSched):
 
