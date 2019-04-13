@@ -123,8 +123,8 @@ class PlaceHolder(ElementMaster):
             logging.debug('PlaceHolder::dropEvent() mime data: {}'.format(e.mimeData().text()))
             logging.debug('PlaceHolder::dropEvent() event: {}'.format(e.source()))
             self.func_drop.emit(self.row, self.column, e.mimeData().text())
-            logging.debug('PlaceHolder::dropEvent() source: {}'.format(e.source()))
-            if isinstance(e.source(), DropBox):
+            # DropBox is of type <class 'sip.wrappertype'>
+            if (type(e.source()).__name__ == DropBox.__name__):
                 logging.debug('PlaceHolder::dropEvent() query config')
                 self.query_config.emit(self.row, self.column)
 

@@ -191,7 +191,7 @@ class ElementMaster(QWidget):
             
         logging.debug('ElementMaster::mousePressEvent() called')
         # uncomment this for debugging purpose
-        self.listChild()
+        #self.listChild()
 
         if event.buttons() != Qt.LeftButton:
             return
