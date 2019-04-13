@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFrame, QGridLayout, QMessageBox
+from PyQt5.QtWidgets import QFrame, QGridLayout, QMessageBox, QWidget #delete QWidget
 from PyQt5.QtCore import Qt, pyqtSignal
 
 from Pythonic.elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
@@ -31,7 +31,7 @@ class WorkingArea(QFrame):
         self.setAcceptDrops(True)
         self.setObjectName('workBackground')
         self.setStyleSheet('#workBackground { background-color: \
-                qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #366a97, stop: 0.5 silver, stop:1 #ffc634)}')
+        qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #366a97, stop: 0.5 silver, stop:1 #ffc634)}')
 
         # mastergrid enshures the right positioning of the function blocks
         # mastergrid is static and the grid inside can grow
@@ -429,7 +429,7 @@ class WorkingArea(QFrame):
             row, col = pos
             logging.debug('WorkingArea::saveGrid() check position: {} {}'.format(row, col))
             element = self.grid.itemAtPosition(row, col)
-            if element and isinstance(element.widget(), ElementMaster):
+            if element:
                 logging.debug('WorkingArea::saveGrid() element found at: {} {}'.format(row, col))
                 element_list.append(element.widget())
 
@@ -484,12 +484,24 @@ class WorkingArea(QFrame):
 
         # populate the grid
         for element in element_list:
+            
             row, col = element.getPos()
+            logging.debug('WorkingArea::loadGrid() ADD current element: row: {} col: {}'.format(
+                row, col))
+            logging.debug('WorkingArea::loadGrid() ADD element:{}'.format(
+                element))
+            logging.debug('WorkingArea::loadGrid() ADD element type:{}'.format(
+                type(element)))
+            logging.debug('WorkingArea::loadGrid() ADD issubclass widget:{}'.format(
+                issubclass(type(element), QWidget)))
+
             self.grid.addWidget(element, row, col)
 
         # second run: add child and parent relation
         for element in element_list:
             row, col = element.getPos()
+            logging.debug('WorkingArea::loadGrid() current element: row: {} col: {}'.format(
+                row, col))
 
             if element.child_pos[0]:
 
@@ -501,16 +513,33 @@ class WorkingArea(QFrame):
                 child = self.grid.itemAtPosition(row, col+1).widget()
                 element.setChild(child)
             
-            if isinstance(element, ExecR) or isinstance(element, ExecRB):
+            #if (type(e.source()).__name__ == DropBox.__name__):
+            #if isinstance(element, ExecR) or isinstance(element, ExecRB):
+
+
+            if (type(element).__name__ == ExecR.__name__ or
+                type(element).__name__ == ExecRB.__name__):
+                parent = self.grid.itemAtPosition(row, col-1)
+                logging.debug('WorkingArea::loadGrid() parent:{}'.format(
+                    parent))
+
+                logging.debug('WorkingArea::loadGrid() type parent:{}'.format(
+                    type(parent)))
+
+                logging.debug('WorkingArea::loadGrid() parent issubclass widget:{}'.format(
+                    issubclass(type(parent), QWidget)))
+
                 parent = self.grid.itemAtPosition(row, col-1).widget()
                 element.parent_element = parent
-            """
-            elif not isinstance(element, StartElement):
+            #elif not isinstance(element, StartElement):
+
+            elif (type(element).__name__ != StartElement.__name__):
                 parent = self.grid.itemAtPosition(row-1, col).widget()
                 element.parent_element = parent
-            """
 
-            if isinstance(element, PlaceHolder):
+            #if isinstance(element, PlaceHolder):
+
+            if (type(element).__name__ == PlaceHolder.__name__):    
                 element.func_drop.connect(self.addElement)
                 element.query_config.connect(self.loadConfig)
             else:
