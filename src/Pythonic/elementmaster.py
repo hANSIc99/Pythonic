@@ -23,7 +23,7 @@ class ElementMaster(QWidget):
 
     def __init__(self, row, column, pixmap, state_iconBar, config):
 
-        logging.debug('__init__() ElementMaster init called {}'.format((self.row, self.column)))
+        logging.debug('ElementMaster::__init__() called {}'.format((self.row, self.column)))
         super().__init__()
         self.row = row
         self.column = column
@@ -90,7 +90,7 @@ class ElementMaster(QWidget):
 
     def updateElementPos(self):
 
-        logging.debug('updateElementPos() called ElementMaster {} {}'.format(
+        logging.debug('ElementMaster::updateElementPos() called row: {}  column: {}'.format(
             self.row, self.column))
 
         if not self.state_iconBar:
@@ -155,7 +155,7 @@ class ElementMaster(QWidget):
         self.del_sig.emit(self.row, self.column)
 
     def edit_element(self):
-        logging.debug('edit_element() called MasterItem')
+        logging.debug('ElementMaster::edit_element() called MasterItem')
         self.edit_sig.emit()
 
     def alterPixmap(self, pixmap):
@@ -189,9 +189,9 @@ class ElementMaster(QWidget):
 
     def mousePressEvent(self, event):
             
-        logging.debug('mousePressEvent() called')
+        logging.debug('ElementMaster::mousePressEvent() called')
         # uncomment this for debugging purpose
-        #self.listChild()
+        self.listChild()
 
         if event.buttons() != Qt.LeftButton:
             return

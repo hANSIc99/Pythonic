@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QStyleOption, QStyle, QPushButton
-from PyQt5.QtGui import QPixmap, QPalette, QPainter, QPen, QPainterPath, QIcon
-
-from PyQt5.QtCore import Qt, pyqtSignal, QRectF, QSize 
+from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QSizePolicy, QStyleOption, QStyle
+from PyQt5.QtGui import QPixmap, QPainter
+from PyQt5.QtCore import Qt, pyqtSignal
 import logging
 
 class EditButton(QLabel):
