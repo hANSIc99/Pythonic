@@ -1,15 +1,6 @@
-from PyQt5.QtWidgets import (QWidget,
-                            QApplication,
-                            QFrame, QPushButton, QTextEdit,
-                            QHBoxLayout, QAction, QMainWindow,
-                            QVBoxLayout, QSizePolicy, QMenu, QMessageBox,
-                            QGridLayout, QSizeGrip, QTabWidget, QMenuBar,
-                            QLabel, QScrollArea, QGraphicsView, QGraphicsScene)
-from PyQt5.QtCore import (Qt, QMimeData, QByteArray, QDataStream, QPoint, QLocale,
-                         QThreadPool, QDir, pyqtSignal, pyqtSlot, QRect, QTranslator, QEvent)
-from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
-                        QScreen, QPainter, QFont)
-
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel
+from PyQt5.QtCore import Qt, QMimeData, pyqtSignal
+from PyQt5.QtGui import QDrag, QPixmap 
 from PyQt5.QtCore import QCoreApplication as QC
 from Pythonic.element_iconbar import IconBar
 import sys, logging, os.path
@@ -44,12 +35,12 @@ class DropBox(QWidget):
 
         ### neues widget an naechste position legen
         if e.mimeData().hasText():
-            logging.debug('mime data: {}'.format(e.mimeData().text()))
+            logging.debug('DropBox::dropEvent() mime data: {}'.format(e.mimeData().text()))
             try:
                 row = int(e.mimeData().text()[0])
                 column = int(e.mimeData().text()[1])
             except Exception as e:
-                logging.debug('dropEvent() Exception: {}'.format(str(e)))
+                logging.debug('DropBox::dropEvent() Exception: {}'.format(str(e)))
                 return
             # check if the element can be deleted
             if not self.parent.checkStore(row, column):
@@ -64,14 +55,14 @@ class DropBox(QWidget):
 
     def dragEnterEvent(self, e):
 
-        logging.debug('dragEnterEvent() at pos: {}'.format(e.pos()))
+        logging.debug('DropBox::dragEnterEvent() at pos: {}'.format(e.pos()))
         if e.mimeData().hasText():
-            logging.debug('mime data: {}'.format(e.mimeData().text()))
+            logging.debug('DropBox::dragEnterEvent() mime data: {}'.format(e.mimeData().text()))
             try:
                 row = int(e.mimeData().text()[0])
                 column = int(e.mimeData().text()[1])
             except Exception as e:
-                logging.debug('dragEnterEvent() Exception: {}'.format(str(e)))
+                logging.debug('DropBox::dragEnterEvent() Exception: {}'.format(str(e)))
                 return
 
             if not self.parent.checkStore(row, column):
@@ -84,13 +75,13 @@ class DropBox(QWidget):
 
     def dragLeaveEvent(self, e):
 
-        logging.debug('dragLeaveEvent() called')
+        logging.debug('DropBox::dragLeaveEvent() called')
         self.alterPixmap(QPixmap('images/tmp.png'))
         e.accept()
 
     def mousePressEvent(self, event):
         
-        logging.debug('mousePressEvent() called: {}'.format(event.pos()))
+        logging.debug('DropBox::mousePressEvent() called: {}'.format(event.pos()))
         try:
             mimeData = QMimeData()
             mimeData.setText(self.type)
@@ -100,7 +91,7 @@ class DropBox(QWidget):
             self.parent.tmp_element = self
 
         except Exception as e:
-            logging.error('Exception caught: {}'.format(str(e)))
+            logging.error('DropBox::mousePressEvent() Exception caught: {}'.format(str(e)))
             return
 
         drag = QDrag(self)
@@ -113,7 +104,7 @@ class DropBox(QWidget):
         else:
             self.show()
             self.label.setPixmap(self.label.pixmap())
-            logging.debug('mousePressEvent() dropped')
+            logging.debug('DropBox::mousePressEvent() dropped')
 
 
     def alterPixmap(self, pixmap):
@@ -121,6 +112,6 @@ class DropBox(QWidget):
         self.label.setPixmap(pixmap.scaled(160, 80))
 
     def destroy(self):
-        logging.debug('destroy() called DropBox: {}'.format(self))
+        logging.debug('DropBox::destroy() called DropBox: {}'.format(self))
         self.deleteLater()
 

@@ -1,16 +1,5 @@
-import logging, pickle
-from PyQt5.QtWidgets import (QWidget,
-                            QApplication,
-                            QFrame,
-                            QHBoxLayout,
-                            QVBoxLayout,
-                            QGridLayout,
-                            QLabel,
-                            QMessageBox)
-from PyQt5.QtCore import (Qt, QMimeData, QByteArray, QDataStream, QPoint,
-                                     QDir, pyqtSignal, pyqtSlot)
-from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
-                        QScreen)
+from PyQt5.QtWidgets import QFrame, QGridLayout, QMessageBox
+from PyQt5.QtCore import Qt, pyqtSignal
 
 from Pythonic.elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
 from Pythonic.elements.basic_operation   import ExecOp
@@ -27,6 +16,7 @@ from Pythonic.elements.binance_order     import BinanceOrder
 from Pythonic.elementmaster              import ElementMaster
 from Pythonic.storagebar                 import StorageBar
 
+import logging, pickle
 
 class WorkingArea(QFrame):
 
@@ -181,11 +171,12 @@ class WorkingArea(QFrame):
             if element:
                 if (isinstance(element.widget(), ExecRB) and 
                     isinstance(element.widget().parent_element, ExecR)):
-                    logging.debug('element found at: ', (row, col))
+                    logging.debug('WorkingArea::reduceGrid() element found at: ', (row, col))
                     #if self.checkLeft(row, col):
                     if self.stepLeft(row, col):
                         # repeat if a childTree was moved
-                        logging.debug('Looking again for child trees that can be moved ')
+                        logging.debug('WorkingArea::reduceGrid() Looking again for child trees \
+                                that can be moved ')
                         # find missing links for the purpose that this function can find 
                         #child trees again
                         self.findMissingLinks()
@@ -196,7 +187,7 @@ class WorkingArea(QFrame):
 
     def checkDeletion(self, target):
 
-        logging.debug('checkDeletion() called')
+        logging.debug('WorkingArea::checkDeletion() called')
         
         bot_child = self.grid.itemAtPosition(target.row + 1, target.column)
         if not bot_child:
@@ -256,6 +247,7 @@ class WorkingArea(QFrame):
             # actual position is valid
             target = PlaceHolder(row, column)
             target.func_drop.connect(self.addElement)
+            logging.debug('################# connected')
             target.query_config.connect(self.loadConfig)
     
             # set child element
@@ -379,9 +371,10 @@ class WorkingArea(QFrame):
         row, column = candidate.getPos()
         self.checkRight(row, column)
 
-        logging.debug('moveElement() moveElement called at row: {} column:  {}'.format(row, column))
-        logging.debug('moveElement() candidate type: {}'.format(type(candidate)))
-        logging.debug('moveElement() add candidate to position: {}'.format(row, column+1))
+        logging.debug('WorkingArea::moveElement() moveElement called at row: {} column:  {}'.format(
+            row, column))
+        logging.debug('WorkingArea::moveElement() candidate type: {}'.format(type(candidate)))
+        logging.debug('WorkingArea::moveElement() add candidate to position: {}'.format(row, column+1))
         # setze child elemente neu
         #element = self.grid.itemAtPosition(row, column)
         #element = element.widget()
@@ -393,23 +386,22 @@ class WorkingArea(QFrame):
 
         grid_cols = range(1, self.grid.columnCount())
         grid_rows = range(1, self.grid.rowCount())
-        logging.debug('number of rows: {} number of columns: {}'.format( 
+        logging.debug('WorkingArea::findMissingLinks() number of rows: {} number of columns: {}'.format( 
             self.grid.rowCount(), self.grid.columnCount()))
 
         index = ((row, column) for row in grid_rows for column in grid_cols)
 
-        logging.debug('findMissingLinks() called')
         for pos in index:
             row, col = pos
-            logging.debug('check position: {}'.format(row, col))
+            logging.debug('WorkingArea::findMissingLinks() check position: {}'.format(row, col))
             element = self.grid.itemAtPosition(row, col)
             if element and isinstance(element.widget(), ExecRB):
-                logging.debug('element is RB: {} '.format(row, col))
+                logging.debug('WorkingArea::findMissingLinks() element is RB: {} '.format(row, col))
                 element_col = element.widget().column
                 parent_col  = element.widget().parent_element.column
 
                 if element_col - parent_col > 1:
-                    logging.debug('missing link at: {}'.format(pos))
+                    logging.debug('WorkingArea::findMissingLinks() missing link at: {}'.format(pos))
                     link = ExecR(row, col-1)
                     link.setChild(element.widget())
                     
@@ -425,7 +417,7 @@ class WorkingArea(QFrame):
 
     def saveGrid(self, filename):
 
-        logging.debug('saveGrid() called with fileName {}'.format(filename))
+        logging.debug('WorkingArea::saveGrid() called with fileName {}'.format(filename))
         grid_cols = range(0, self.grid.columnCount())
         grid_rows = range(0, self.grid.rowCount())
 
@@ -435,10 +427,10 @@ class WorkingArea(QFrame):
 
         for pos in index:
             row, col = pos
-            logging.debug('saveGrid() check position: {} {}'.format(row, col))
+            logging.debug('WorkingArea::saveGrid() check position: {} {}'.format(row, col))
             element = self.grid.itemAtPosition(row, col)
             if element and isinstance(element.widget(), ElementMaster):
-                logging.debug('saveGrid() element found at: {} {}'.format(row, col))
+                logging.debug('WorkingArea::saveGrid() element found at: {} {}'.format(row, col))
                 element_list.append(element.widget())
 
         with open(filename, 'wb') as save_file:
@@ -512,9 +504,11 @@ class WorkingArea(QFrame):
             if isinstance(element, ExecR) or isinstance(element, ExecRB):
                 parent = self.grid.itemAtPosition(row, col-1).widget()
                 element.parent_element = parent
+            """
             elif not isinstance(element, StartElement):
                 parent = self.grid.itemAtPosition(row-1, col).widget()
                 element.parent_element = parent
+            """
 
             if isinstance(element, PlaceHolder):
                 element.func_drop.connect(self.addElement)
@@ -555,7 +549,7 @@ class WorkingArea(QFrame):
 
     def loadConfig(self, row, column):
 
-        logging.debug('loadConfig() called')
+        logging.debug('WorkingArea::loadConfig() called')
         # when this function is called, storabar will delete the placeholder
 
         element = self.grid.itemAtPosition(row, column).widget()

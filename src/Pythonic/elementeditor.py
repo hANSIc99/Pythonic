@@ -1,10 +1,6 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor
-from PyQt5.QtWidgets import (QVBoxLayout, QLabel, QTextEdit, QWidget,
-        QComboBox, QCheckBox, QGridLayout, QSpacerItem, QLineEdit, QPushButton)
-from PyQt5.QtCore import QCoreApplication as QC
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtWidgets import QWidget
 import logging
-from time import sleep
 
 class ElementEditor(QWidget):
 
