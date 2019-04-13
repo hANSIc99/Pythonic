@@ -1,6 +1,14 @@
 <p align="center"><img src="src/Pythonic/images/horizontal.png" alt="Pythonic" height="120px"></p>
 
-Trading platform for digital currencies
+## Trading platform for digital currencies
+
+[<img src="https://img.shields.io/pypi/l/Pythonic.svg">](https://github.com/hANSIc99/Pythonic)
+[<img src="https://img.shields.io/pypi/pyversions/Pythonic.svg">](https://pypi.org/project/Pythonic/)
+[<img src="https://img.shields.io/pypi/format/Pythonic.svg">](https://pypi.org/project/Pythonic/)
+[<img src="https://img.shields.io/github/last-commit/hANSIc99/Pythonic.svg">](https://github.com/hANSIc99/Pythonic)
+[<img src="https://img.shields.io/badge/platform-Windows%20Linux%20Mac-blueviolet.svg">](https://github.com/hANSIc99/Pythonic)
+
+
 ![Alt text](screenshot-3.png?raw=true "Screenshot")
 
 
@@ -8,13 +16,15 @@ Trading platform for digital currencies
 
 Pythonic is compatible with Python version 3.5, 3.6 and 3.7.
 
-#### 1. `pip3 install Pythonic`
+### 1. Install [Python 3.7](https://www.python.org/)
+
+#### 2. `pip3 install Pythonic`
 
 or `python3 -m pip install Pythonic`
 
 You can now start Pythonic from the command line by typing:
 
-#### 2. `./Pythonic`
+#### 3. `./Pythonic`
 
 ## Known Issues
 
@@ -29,21 +39,4 @@ This command should fix the issue:
 
 `sudo python3 -m pip install requests urllib3 pyOpenSSL --force --upgrade`
 
-### Python.h: no such file or directory
-Unfortunately the depency **python-binance** requires the
-depency **twisted** which requires the **python3-devel** package on your system.
-
-When you are facing this error message, run:
-
-`sudo dnf install python3-devel` (Fedora)
-
-`sudo zypper in python3-devel` (openSUSE)
-
-`sudo apk add python3-dev` (Alpine, ...)
-
-`apt-cyg install python3-devel` (Cygwin)
-
-`sudo apt-get install python3-dev`(Ubuntu, ...)
-
-`sudo yum install python37-devel` (Python 3.7)(CentOS, RHEL, ...)
 
