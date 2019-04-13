@@ -41,7 +41,7 @@ class WorkingArea(QFrame):
         self.setAcceptDrops(True)
         self.setObjectName('workBackground')
         self.setStyleSheet('#workBackground { background-color: \
-                qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 silver, stop:1 #ff5900)}')
+                qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #366a97, stop: 0.5 silver, stop:1 #ffc634)}')
 
         # mastergrid enshures the right positioning of the function blocks
         # mastergrid is static and the grid inside can grow
