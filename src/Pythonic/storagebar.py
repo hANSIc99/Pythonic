@@ -26,7 +26,12 @@ class StorageBar(QWidget):
         self.box_frame.setContentsMargins(0, 0, 0, 0)
         self.icon_bar = QWidget()
         self.icon_bar_spacer = QWidget()
-        self.icon_bar.setStyleSheet('background-color: rgba(204, 51, 0, 0.5)')
+        self.icon_bar.setStyleSheet('background-color: rgba(77, 103, 125, 0.5);\
+                border-radius: 10px')
+        #self.icon_bar.setStyleSheet('background-color: \
+        #        qlineargradient(x1:0.5 y1:0, x2:0.5 y2:1, stop:0 #646464, stop:1 #366a97);\
+        #        border-radius: 10px')
+
 
         policy = QSizePolicy()
         policy.setRetainSizeWhenHidden(True)
