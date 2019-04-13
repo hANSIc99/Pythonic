@@ -23,7 +23,6 @@ class DropBox(QWidget):
         super().__init__()
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.parent = parent
-        #self.setMinimumSize(100, 100)
         self.label = QLabel()
         self.label.setPixmap(QPixmap('images/tmp.png').scaled(160, 80))
         self.setAcceptDrops(True)
