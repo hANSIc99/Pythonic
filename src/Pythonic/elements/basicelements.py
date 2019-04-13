@@ -120,19 +120,20 @@ class PlaceHolder(ElementMaster):
     def dropEvent(self, e):
 
         if e.mimeData().hasText():
-            logging.debug('mime data: {}'.format(e.mimeData().text()))
-            logging.debug('event: {}'.format(e.source()))
+            logging.debug('PlaceHolder::dropEvent() mime data: {}'.format(e.mimeData().text()))
+            logging.debug('PlaceHolder::dropEvent() event: {}'.format(e.source()))
             self.func_drop.emit(self.row, self.column, e.mimeData().text())
+            logging.debug('PlaceHolder::dropEvent() source: {}'.format(e.source()))
             if isinstance(e.source(), DropBox):
-                logging.debug('dropEvent() query config')
+                logging.debug('PlaceHolder::dropEvent() query config')
                 self.query_config.emit(self.row, self.column)
 
     def dragEnterEvent(self, e):
 
-        logging.debug('dragEnterEvent() at pos: {}'.format(e.pos()))
+        logging.debug('PlaceHolder::dragEnterEvent() at pos: {}'.format(e.pos()))
         if e.mimeData().hasText():
-            logging.debug('mime data: {}'.format(e.mimeData().text()))
-            logging.debug('event: {}'.format(e))
+            logging.debug('PlaceHolder::dragLeaveEvent() mime data: {}'.format(e.mimeData().text()))
+            logging.debug('PlaceHolder::dragEnterEvent() event: {}'.format(e))
             newImg = 'images/' +  e.mimeData().text() + '.png'
             if os.path.isfile(newImg):
                 self.alterPixmap(QPixmap(newImg))

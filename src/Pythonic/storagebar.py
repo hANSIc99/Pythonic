@@ -69,7 +69,7 @@ class StorageBar(QWidget):
 
     def storeSignal(self, row, column):
 
-        logging.debug('storeSignal() called - delete row {} - column {}'.format(row, column))
+        logging.debug('StorageBar::storeSignal() called - delete row {} - column {}'.format(row, column))
         self.addBox()
 
         element = self.parent().grid.itemAtPosition(row, column).widget()
@@ -85,13 +85,14 @@ class StorageBar(QWidget):
 
     def saveConfig(self, row, column):
 
-        logging.debug('saveConfig() called')
+        logging.debug('StorageBar::saveConfig() called')
 
         element = self.parent().grid.itemAtPosition(row, column).widget()
         return element.config
 
     def returnConfig(self):
 
+        logging.debug('StorageBar::returnConfig() called')
         self.tmp_element.destroy()
         return self.tmp_config
     

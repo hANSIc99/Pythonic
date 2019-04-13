@@ -1,16 +1,12 @@
-from PyQt5.QtWidgets import (QWidget, QApplication,
-                            QFrame, QPushButton, QTextEdit,
-                            QHBoxLayout, QAction, QMainWindow,
-                            QVBoxLayout, QSizePolicy, QMenu, QMessageBox,
-                            QGridLayout, QSizeGrip, QTabWidget, QMenuBar,
-                            QLabel, QScrollArea, QGraphicsView, QGraphicsScene)
-from PyQt5.QtCore import (Qt, QMimeData, QByteArray, QDataStream, QPoint, QLocale,
-                         QThreadPool, QDir, pyqtSignal, pyqtSlot, QRect, QTranslator, QEvent)
-from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
-                        QScreen, QPainter, QFont)
-import sys, logging, datetime, os
+from PyQt5.QtWidgets import (QWidget, QApplication, QFrame, QHBoxLayout,
+                            QVBoxLayout, QSizePolicy, QMessageBox,
+                            QSizeGrip, QTabWidget, QLabel, QScrollArea)
+from PyQt5.QtCore import (Qt, QMimeData, QLocale, QThreadPool, QDir,
+                              pyqtSignal, QRect, QTranslator, QEvent)
+from PyQt5.QtGui import (QDrag, QPixmap, QPainter, QScreen, QFont)
 from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
+import sys, logging, datetime, os
 import multiprocessing as mp
 from Pythonic.workingarea import WorkingArea
 from Pythonic.menubar import MenuBar
@@ -106,7 +102,7 @@ class BasicTools(QFrame):
 
 class MainWindow(QWidget):
 
-    log_level = logging.INFO
+    log_level = logging.DEBUG
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
 
