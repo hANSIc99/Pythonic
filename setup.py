@@ -31,6 +31,7 @@ setuptools.setup(
             'Programming Language :: Python :: 3 :: Only',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
             'Development Status :: 4 - Beta',
             'Intended Audience :: Financial and Insurance Industry',
             'Intended Audience :: End Users/Desktop',
