@@ -608,4 +608,16 @@
     <source>Pythonic by</source>
     <target>Pythonic por</target>
 </phrase>
+<phrase>
+    <source>Last update:</source>
+    <target>Última actualización:</target>
+</phrase>
+<phrase>
+    <source>Element</source>
+    <target>Elemento</target>
+</phrase>
+<phrase>
+    <source>hidden</source>
+    <target>oculto</target>
+</phrase>
 </QPH>

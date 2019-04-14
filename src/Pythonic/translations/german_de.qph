@@ -564,4 +564,16 @@
     <source>Pythonic by</source>
     <target>Pythonic bereitgestellt durch</target>
 </phrase>
+<phrase>
+    <source>Element</source>
+    <target>Element</target>
+</phrase>
+<phrase>
+    <source>hidden</source>
+    <target>versteckt</target>
+</phrase>
+<phrase>
+    <source>Last update:</source>
+    <target>Letztes update:</target>
+</phrase>
 </QPH>
