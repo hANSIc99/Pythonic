@@ -10,6 +10,7 @@ from PyQt5.QtCore import (Qt, QMimeData, QByteArray, QDataStream, QPoint,
 from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen)
 from PyQt5.QtCore import QCoreApplication as QC
+from pathlib import Path
 import logging
 import multiprocessing as mp
 
@@ -19,7 +20,7 @@ class RunButton(QLabel):
 
     def __init__(self):
         super().__init__()
-        logging.debug('__init__() called runButton')
+        logging.debug('RunButton::__init__() called')
         self.setPixmap(QPixmap('images/run.png').scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
@@ -38,7 +39,7 @@ class StartDebugButton(QLabel):
 
     def __init__(self):
         super().__init__()
-        logging.debug('__init__() called StartDebugButton')
+        logging.debug('StartDebugButton::__init__() called')
         self.setPixmap(QPixmap('images/start_debug.png').scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
@@ -57,7 +58,7 @@ class StopExecButton(QLabel):
 
     def __init__(self):
         super().__init__()
-        logging.debug('__init__() called StopExecButton')
+        logging.debug('StopExecButton::__init__() called')
         self.setPixmap(QPixmap('images/stop_exec.png').scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
@@ -76,7 +77,7 @@ class KillProcButton(QLabel):
 
     def __init__(self):
         super().__init__()
-        logging.debug('__init__() called StopExecButton')
+        logging.debug('KillProcButton::__init__() called')
         self.setPixmap(QPixmap('images/kill.png').scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
@@ -95,7 +96,7 @@ class SaveAsButton(QLabel):
 
     def __init__(self):
         super().__init__()
-        logging.debug('__init__() called SaveAsButton')
+        logging.debug('SaveAsButton::__init__() called')
         self.setPixmap(QPixmap('images/save_as.png').scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
@@ -114,7 +115,7 @@ class SaveButton(QLabel):
 
     def __init__(self):
         super().__init__()
-        logging.debug('__init__() called SaveButton')
+        logging.debug('SaveButton::__init__() called')
         self.setPixmap(QPixmap('images/save.png').scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
@@ -134,7 +135,7 @@ class OpenFile(QLabel):
 
     def __init__(self):
         super().__init__()
-        logging.debug('__init__() called OpenFile')
+        logging.debug('OpenFile::__init__() called')
         self.setPixmap(QPixmap('images/open_file.png').scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
 
@@ -153,7 +154,7 @@ class NewFile(QLabel):
 
     def __init__(self):
         super().__init__()
-        logging.debug('__init__() called NewFile')
+        logging.debug('NewFile::__init__() called')
         self.setPixmap(QPixmap('images/new_file.png').scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
 
@@ -198,6 +199,8 @@ class MenuBar(QWidget):
 
         self.icon_bar.setSizePolicy(policy)
 
+        #home directory of the user
+        self.home_dict = str(Path.home())
 
         # widget which contains the icons
         self.iconBox = QHBoxLayout(self.icon_bar)
@@ -254,32 +257,35 @@ class MenuBar(QWidget):
 
     def openFileNameDialog(self, event):    
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self, QC.translate('', 'Open workflow'), "","All Files (*);;Python Files (*.py)", options=options)
+        #options |= QFileDialog.DontUseNativeDialog
+
+        fileName, _ = QFileDialog.getOpenFileName(self, QC.translate('', 'Open workflow'),
+                self.home_dict,"All Files (*);;Pythonic Files (*.pyc)", options=options)
         if fileName:
-            logging.debug('openFileNameDialog() called with filename: {}'.format(fileName))
+            logging.debug('MenuBar::openFileNameDialog() called with filename: {}'.format(fileName))
             self.load_file.emit(fileName)
 
     def saveFileDialog(self, event):    
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, QC.translate('', 'Save as ...'),"","All Files (*);;Text Files (*.txt)", options=options)
+        #options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self, QC.translate('', 'Save as ...'),
+                self.home_dict,"All Files (*);;Pythonic Files (*.pyc)", options=options)
         if fileName:
-            logging.debug('saveFileDialog() called with filename: {}'.format(fileName))
+            logging.debug('MenuBar::saveFileDialog() called with filename: {}'.format(fileName))
             self.filename = fileName
             self.save_file.emit(fileName)
 
     def simpleSave(self, event):
 
         if self.filename:
-            logging.debug('simpleSave() grid can be saved in {}'.format(self.filename))
+            logging.debug('MenuBar::simpleSave() grid can be saved in {}'.format(self.filename))
             self.save_file.emit(self.filename)
         else:
-            logging.debug('simpleSave() no former filename found')
+            logging.debug('MenuBar::simpleSave() no former filename found')
             self.saveFileDialog(event)
 
     def saveQuestion(self, event):
-        logging.debug('saveQuestion() called')
+        logging.debug('MenuBar::saveQuestion() called')
         messageBox = QMessageBox()
         messageBox.setWindowTitle(QC.translate('','New workflow'))
         messageBox.setIcon(QMessageBox.Warning)
@@ -294,16 +300,16 @@ class MenuBar(QWidget):
             self.clear_grid.emit()
 
     def setInfoText(self, text):
-        logging.debug('setInfoText() called MenuBar')
-        logging.debug('setInfoText() text: {}'.format(text))
+        logging.debug('MenuBar::setInfoText() called MenuBar')
+        logging.debug('MenuBar::setInfoText() text: {}'.format(text))
         self.set_info_text.emit(text)
 
     def startDebug(self, event):
-        logging.debug('startDebug() called MenuBar')
+        logging.debug('MenuBar::startDebug() called MenuBar')
         self.start_debug.emit()
 
     def startExec(self, event):
-        logging.debug('startExec() called MenuBar')
+        logging.debug('MenuBar::startExec() called MenuBar')
         self.start_exec.emit()
 
     def stop_execution(self, event):

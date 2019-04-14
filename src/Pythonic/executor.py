@@ -14,6 +14,7 @@ from Pythonic.elementmaster import alphabet
 from Pythonic.exceptwindow import ExceptWindow
 from Pythonic.debugwindow import DebugWindow
 from Pythonic.elements.basic_stack import ExecStack
+from Pythonic.elements.basic_sched import ExecSched
 from Pythonic.elements.basicelements import ExecRB, ExecR
 
 class WorkerSignals(QObject):
@@ -107,7 +108,7 @@ class GridOperator(QObject):
                         alphabet[prg_return.source[1]], log))
 
 
-        # when the debug button is active
+        # when the debug button on the element is active
         if element.b_debug:
 
             if prg_return.log_output:
@@ -116,10 +117,12 @@ class GridOperator(QObject):
                 log_message = str(prg_return.record_0)
 
             logging.debug('GridOperator::execDone() b_debug_window = {}'.format(self.b_debug_window))
+
             if isinstance(element, ExecStack): # don't open the regular debug window
-                    logging.debug('GridOperator::execDone()Special window for Exec stack element')
-                    element.highlightStop()
-                    self.goNext(prg_return)
+
+                logging.debug('GridOperator::execDone()Special window for Exec stack element')
+                element.highlightStop()
+                self.goNext(prg_return)
 
             # check if there is already an open debug window
             elif not self.b_debug_window:
@@ -127,9 +130,12 @@ class GridOperator(QObject):
                 self.debugWindow = DebugWindow(log_message, prg_return.source)
                 self.debugWindow.proceed_execution.connect(lambda: self.proceedExec(prg_return))
                 self.debugWindow.raiseWindow()
+
+                #if not element.self_sync:
                 self.b_debug_window = True
+
             else:
-                # Aktuellen stand für erneute ausführung vormerken
+
                 self.pending_return.append(prg_return)
 
         else:
@@ -140,7 +146,7 @@ class GridOperator(QObject):
 
     def checkPending(self):
 
-        logging.debug('checkPending() called')
+        logging.debug('GridOperator::checkPending() called')
         
         if self.pending_return:
             prg_return = self.pending_return.pop(0)
@@ -158,9 +164,11 @@ class GridOperator(QObject):
 
 
         if prg_return.target_0:
-            logging.debug('goNext() called with next target_0: {}'.format(prg_return.target_0))
-            logging.debug('goNext() called with record_0: {}'.format(prg_return.record_0))
+            logging.debug('GridOperator::goNext() called with next target_0: {}'.format(prg_return.target_0))
+            logging.debug('GridOperator::goNext() called with record_0: {}'.format(prg_return.record_0))
+
             if self.fastpath:
+                
                 new_rec = self.fastPath(prg_return.target_0, prg_return.record_0)
                 if new_rec: # check for ExecR or ExecRB
                     self.goNext(new_rec)
@@ -171,30 +179,41 @@ class GridOperator(QObject):
 
         if prg_return.target_1:
 
-            logging.debug('goNext() called with additional target_1: {}'.format(
+            logging.debug('GridOperator::goNext() called with additional target_1: {}'.format(
                 prg_return.target_1))
-            logging.debug('goNext() called with record_1: {}'.format(prg_return.record_1))
+            logging.debug('GridOperator::goNext() called with record_1: {}'.format(prg_return.record_1))
 
-            if self.fastpath:
+            # self_sync is true on basic_sched and binancesched
+            self_sync = self.grid.itemAtPosition(*prg_return.target_1).widget().self_sync
+
+            if self.fastpath and not self_sync:
                 new_rec = self.fastPath(prg_return.target_1, prg_return.record_1)
+                logging.debug('GridOperator::goNext() execption here')
+                logging.debug('GridOperator::goNext() new_rec: {}'.format(new_rec))
                 self.goNext(new_rec)
             else:
                 self.startExec(prg_return.target_1, prg_return.record_1)
 
     def fastPath(self, target, record):
 
-            element = self.grid.itemAtPosition(*target).widget()
-            if isinstance(element, ExecRB): # jump to the next target
-                # record_1 -> record_0 when goNext() is called recursively
-                new_rec = Record(element.getPos(), (element.row+1, element.column), record)
-                return new_rec
-            elif isinstance(element, ExecR): # jump to the next target
-                # record_1 -> record_0 when goNext() is called recursively
-                new_rec = Record(element.getPos(), (element.row, element.column+1), record)
-                return new_rec
-            else:
-                return None
+        logging.debug('GridOperator::fastPath() check row: {} col: {}'.format(*target))
+        element = self.grid.itemAtPosition(*target).widget()
 
+        if isinstance(element, ExecRB): # jump to the next target
+            # record_1 -> record_0 when goNext() is called recursively
+            # returning only target_0 and record_0
+            new_rec = Record(element.getPos(), (element.row+1, element.column), record)
+            return new_rec
+        elif isinstance(element, ExecR): # jump to the next target
+            #hier testen ob target fings
+            # record_1 -> record_0 when goNext() is called recursively
+            # returning only target_0 and record_0
+            new_rec = Record(element.getPos(), (element.row, element.column+1), record)
+            return new_rec
+        else:
+            return None
+
+            
     def highlightStop(self, position):
         logging.debug('highlightStop() called for position {}'.format(position))
         element = self.grid.itemAtPosition(*position).widget()
@@ -219,7 +238,7 @@ class Executor(QRunnable):
 
     def __init__(self, element, record, delay):
         super().__init__()
-        logging.debug('__init__() called on Executor')
+        logging.debug('Executor::__init__() called')
         self.element = element
         self.record = record
         self.stop_flag = False
@@ -231,24 +250,24 @@ class Executor(QRunnable):
     def raiseExcpetion(self, e):
 
         # Bug, method is not called sometimes
-        logging.error('2. Exception caught!!!')
+        logging.error('Executor::raiseExcpetion() 2. Exception caught!!!')
         exceptRecord = Record(self.element.getPos(), None, e)
         self.signals.finished.emit(exceptRecord)
 
     def run(self):
 
-        logging.debug('run() called with target {} pid {} at {}'.format(
+        logging.debug('Executor::run() called with target {} pid {} at {}'.format(
             self.element.getPos(), os.getpid(), datetime.now()))
 
         self.start_proc(self.element.function, self.record, self.delay, 1)
 
-        logging.debug('run() returnded from {}, pid: {} returned at {}'.format(
+        logging.debug('Executor::run() returnded from {}, pid: {} returned at {}'.format(
             self.element.getPos(), os.getpid(), datetime.now()))
 
 
     def start_proc(self, function, record, delay, retries):
         # Bug: Sometimes the Exception windows isnt triggered
-        logging.debug('start_proc() called with programm: {}'.format(function))
+        logging.debug('Executor::start_proc() called with programm: {}'.format(function))
             
         return_pipe_0, feed_pipe_0 = mp.Pipe(duplex=False)
 
@@ -262,13 +281,14 @@ class Executor(QRunnable):
         p_0.join()
 
         if(issubclass(result.__class__, BaseException)):
-            logging.error('1. Exception caught!!!')
+            logging.error('Executor::start_proc() 1. Exception caught!!!')
             self.signals.except_sig.emit(result)
         else:
             self.signals.finished.emit(result)
         
 
 def target_0(function, record, feed_pipe):
+
     try:
         #execute the callback function
         #element = return_pipe.recv()
