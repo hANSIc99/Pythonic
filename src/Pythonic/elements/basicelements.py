@@ -90,7 +90,7 @@ class ExecRFunction(Function):
 class PlaceHolder(ElementMaster):
 
     # function is connected to add_func() of Workingarea
-    func_drop = pyqtSignal(int, int, str, name='func_block_drop')
+    func_drop = pyqtSignal(int, int, str, str, name='func_block_drop')
     query_config = pyqtSignal(int, int, name='query_config')
     pixmap_path = 'images/placeholder.png'
     child_pos = (False, False)
@@ -122,11 +122,13 @@ class PlaceHolder(ElementMaster):
         if e.mimeData().hasText():
             logging.debug('PlaceHolder::dropEvent() mime data: {}'.format(e.mimeData().text()))
             logging.debug('PlaceHolder::dropEvent() event: {}'.format(e.source()))
-            self.func_drop.emit(self.row, self.column, e.mimeData().text())
+            self.func_drop.emit(self.row, self.column, e.mimeData().text(), type(e.source()).__name__)
             # DropBox is of type <class 'sip.wrappertype'>
+            """
             if (type(e.source()).__name__ == DropBox.__name__):
                 logging.debug('PlaceHolder::dropEvent() query config')
                 self.query_config.emit(self.row, self.column)
+            """
 
     def dragEnterEvent(self, e):
 
