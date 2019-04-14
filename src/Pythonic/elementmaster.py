@@ -21,7 +21,7 @@ class ElementMaster(QWidget):
     edit_sig = pyqtSignal(name='edit_element')
     #function position updaten wenn eigene position verschoben wird
 
-    def __init__(self, row, column, pixmap, state_iconBar, config):
+    def __init__(self, row, column, pixmap, state_iconBar, config, self_sync=False):
 
         logging.debug('ElementMaster::__init__() called {}'.format((self.row, self.column)))
         super().__init__()
@@ -29,6 +29,7 @@ class ElementMaster(QWidget):
         self.column = column
         self.setMinimumSize(240, 130)
         self.state_iconBar = state_iconBar
+        self.self_sync = self_sync # for elements like basic_sched or binancesched
         self.config = config
 
         
@@ -191,7 +192,7 @@ class ElementMaster(QWidget):
             
         logging.debug('ElementMaster::mousePressEvent() called')
         # uncomment this for debugging purpose
-        self.listChild()
+        #self.listChild()
 
         if event.buttons() != Qt.LeftButton:
             return

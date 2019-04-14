@@ -30,7 +30,8 @@ class BinanceSched(ElementMaster):
         # interval-str, inteval-index, offset, log-state
         self.config = (interval_str, interval_index, offset, log_state)
 
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        # self_sync = True (last True)
+        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
         super().edit_sig.connect(self.edit)
         logging.debug('BinanceSched called at row {}, column {}'.format(row, column))
         self.addFunction(BinanceScheduler)
@@ -38,7 +39,8 @@ class BinanceSched(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called BinanceSched')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        # interval-str, inteval-index, offset, log-state
+        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
         super().edit_sig.connect(self.edit)
         self.addFunction(BinanceScheduler)
 

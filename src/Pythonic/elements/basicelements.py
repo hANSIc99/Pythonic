@@ -91,7 +91,7 @@ class PlaceHolder(ElementMaster):
 
     # function is connected to add_func() of Workingarea
     func_drop = pyqtSignal(int, int, str, str, name='func_block_drop')
-    query_config = pyqtSignal(int, int, name='query_config')
+    #query_config = pyqtSignal(int, int, name='query_config')
     pixmap_path = 'images/placeholder.png'
     child_pos = (False, False)
 

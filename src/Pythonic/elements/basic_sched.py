@@ -29,28 +29,30 @@ class ExecSched(ElementMaster):
         # interval-str, inteval-index, offset, log-state
         self.config = (mode_index, mode_data, log_state)
 
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        # self_sync = True
+        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
         super().edit_sig.connect(self.edit)
-        logging.debug('ExecSched called at row {}, column {}'.format(row, column))
+        logging.debug('ExecSched::__init__() called at row {}, column {}'.format(row, column))
         self.addFunction(BasicScheduler)
 
     def __setstate__(self, state):
-        logging.debug('__setstate__() called ExecSched')
-        self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        logging.debug('ExecSched::__setstate__() called')
+        self.row, self.column, self.config  = state
+        # self-self_sync = True
+        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
         super().edit_sig.connect(self.edit)
         self.addFunction(BasicScheduler)
 
     def __getstate__(self):
-        logging.debug('__getstate__() called ExecSched')
+        logging.debug('ExecSched::__getstate__() called')
         return (self.row, self.column, self.config)
 
     def openEditor(self):
-        logging.debug('openEditor() called ExecSched')
+        logging.debug('ExecSched::openEditor() called')
 
     def edit(self):
 
-        logging.debug('edit() called ExecSched')
+        logging.debug('ExecSched::edit() called')
 
 
         self.basic_sched_layout = QVBoxLayout()
@@ -503,7 +505,7 @@ class BasicScheduler(Function):
     def __init(self, config, b_debug, row, column):
 
         super().__init__(config, b_debug, row, column)
-        logging.debug('__init__() called BasicScheduler')
+        logging.debug('BasicScheduler::__init__() called')
 
     def execute(self, record):
 
