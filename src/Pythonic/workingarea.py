@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFrame, QGridLayout, QMessageBox, QWidget #delete QWidget
+from PyQt5.QtWidgets import QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 
 from Pythonic.elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
@@ -104,9 +104,21 @@ class WorkingArea(QFrame):
         # ABKÜRZUNG MÖGLICH BAUSTELLE (LoadCOnfig muss nicht aufgerufen werden oder
         # nur mit element als argument
         if source == DropBox.__name__ :
-            self.loadConfig(row, column)
-            logging.debug('WorkingArea::addElement() source = DropBox') 
+            #self.loadConfig(row, column)
             logging.debug('WorkingArea::addElement() config: {}'.format(new_type)) 
+            #element = new_type
+            #element = self.grid.itemAtPosition(row, column).widget()
+            new_type.config = self.storage_bar.returnConfig()
+            # element was not pickled! 
+            # call __getstate__ and __addstate_ to update the function
+            # by calling addFunction of the elementmastern 
+
+            # the when the config has changed (or loaded from the dropbox) the function 
+            # of the element has to be reassigned with the new configuration
+
+            func_type = type(new_type.function)
+            logging.debug('WorkingArea::loadConfig() function type: {}'.format(func_type))
+            new_type.addFunction(func_type)
 
         # add second placeholder in case of a added branch function
         # connect delete button to related grid method
@@ -263,21 +275,12 @@ class WorkingArea(QFrame):
             # actual position is valid
             target = PlaceHolder(row, column)
             target.func_drop.connect(self.addElement)
-            #logging.debug('WorkingArea::addPlaceholder() query_config connected')
-            #target.query_config.connect(self.loadConfig)
     
             # set child element
             parent = self.grid.itemAtPosition(row-1, column).widget()
             target.parent_element = parent
             parent.setChild(target)
             self.grid.addWidget(target, row, column, Qt.AlignCenter)
-
-            # query config
-            # aktuelle posiition bei rekursiven aufruf nicht berücksichtigt
-            #logging.debug('WorkingArea::addPlaceholder() query_config connected')
-            #logging.debug('WorkingArea::addPlaceholder() query_config at {} {}'.format(
-            #    row, column))
-            #target.query_config.connect(self.loadConfig)
 
     def checkRight(self, row, column):
 
@@ -515,8 +518,6 @@ class WorkingArea(QFrame):
                 element))
             logging.debug('WorkingArea::loadGrid() ADD element type:{}'.format(
                 type(element)))
-            logging.debug('WorkingArea::loadGrid() ADD issubclass widget:{}'.format(
-                issubclass(type(element), QWidget)))
 
             self.grid.addWidget(element, row, col)
 
@@ -536,9 +537,6 @@ class WorkingArea(QFrame):
                 child = self.grid.itemAtPosition(row, col+1).widget()
                 element.setChild(child)
             
-            #if (type(e.source()).__name__ == DropBox.__name__):
-            #if isinstance(element, ExecR) or isinstance(element, ExecRB):
-
 
             if (type(element).__name__ == ExecR.__name__ or
                 type(element).__name__ == ExecRB.__name__):
@@ -549,8 +547,6 @@ class WorkingArea(QFrame):
                 logging.debug('WorkingArea::loadGrid() type parent:{}'.format(
                     type(parent)))
 
-                logging.debug('WorkingArea::loadGrid() parent issubclass widget:{}'.format(
-                    issubclass(type(parent), QWidget)))
 
                 parent = self.grid.itemAtPosition(row, col-1).widget()
                 element.parent_element = parent
@@ -564,7 +560,7 @@ class WorkingArea(QFrame):
 
             if (type(element).__name__ == PlaceHolder.__name__):    
                 element.func_drop.connect(self.addElement)
-                element.query_config.connect(self.loadConfig)
+                #element.query_config.connect(self.loadConfig)
             else:
                 element.del_sig.connect(self.delete_element)
 
@@ -598,24 +594,4 @@ class WorkingArea(QFrame):
         for element_pos in element_list:
             element = self.grid.itemAtPosition(*element_pos).widget()
             element.highlightStop()
-
-    def loadConfig(self, row, column):
-
-        logging.debug('WorkingArea::loadConfig() called row: {} col: {}'.format(
-            row, column))
-        # when this function is called, storabar will delete the placeholder
-
-        element = self.grid.itemAtPosition(row, column).widget()
-        element.config = self.storage_bar.returnConfig()
-        logging.debug('WorkingArea::loadConfig() config: {}'.format(element.config))
-        # element was not pickled! 
-        # call __getstate__ and __addstate_ to update the function
-        # by calling addFunction of the elementmastern 
-
-        # the when the config has changed (or loaded from the dropbox) the function 
-        # of the element has to be reassigned with the new configuration
-
-        func_type = type(element.function)
-        logging.debug('WorkingArea::loadConfig() function type: {}'.format(func_type))
-        element.addFunction(func_type)
 
