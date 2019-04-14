@@ -608,4 +608,16 @@
     <source>Stack</source>
     <target>堆</target>
 </phrase>
+<phrase>
+    <source>Last update:</source>
+    <target>最后更新：</target>
+</phrase>
+<phrase>
+    <source>Element</source>
+    <target>元件</target>
+</phrase>
+<phrase>
+    <source>hidden</source>
+    <target>隐</target>
+</phrase>
 </QPH>

@@ -50,7 +50,9 @@ class StackWindow(QWidget):
         self.info_string = QC.translate('', 'Debug info of element:')
         self.elementInfo = QLabel()
         self.elementInfo.setFont(self.headline)
-        self.elementInfo.setText('Last update: {}'.format(self.timestamp))
+        self.elementInfoText = QC.translate('', 'Last update:')
+        self.elementInfoText += ' {}'.format(self.timestamp)
+        self.elementInfo.setText(self.elementInfoText)
 
         # Will contain the QListWidgetItems
         self.stackWidget = QListWidget()
@@ -109,8 +111,10 @@ class StackWindow(QWidget):
                 # seperator element when the list is long
                 self.seperator_widget = QListWidgetItem()
                 self.seperator_widget.setTextAlignment(Qt.AlignCenter)
-                self.seperator_widget.setText("Element 21 - {} hidden".format(
-                    str(len(stack)-20)))
+                self.seperatorwidgettext = QC.translate('', 'Element')
+                self.seperatorwidgettext += ' 21 - {} '.format(str(len(stack)-20))
+                self.seperatorwidgettext += QC.translate('', 'hidden')
+                self.seperator_widget.setText(self.seperatorwidgettext)
                 self.seperator_widget.setBackground(QBrush(QColor('#CCCC00')))
                 self.stackWidget.addItem(self.seperator_widget)
 
