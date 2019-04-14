@@ -15,6 +15,7 @@ from Pythonic.elements.binance_order     import BinanceOrder
 
 from Pythonic.elementmaster              import ElementMaster
 from Pythonic.storagebar                 import StorageBar
+from Pythonic.dropbox                    import DropBox
 
 import logging, pickle
 
@@ -67,7 +68,10 @@ class WorkingArea(QFrame):
         self.registered_types.append(tool_tuple)
 
 
-    def addElement(self, row, column, newType):
+    def addElement(self, row, column, newType, source):
+
+        logging.debug('WorkingArea::addElement() source: {}'.format(source)) 
+        # source argument for elements with a config
 
         # deletes the placeholder where the new object was dropped
 
@@ -80,6 +84,8 @@ class WorkingArea(QFrame):
             logging.error('addElement()- desired element type not found')
             logging.error(e)
             return
+
+        
         # setup parent position
 
         # setting the parent element
@@ -93,6 +99,14 @@ class WorkingArea(QFrame):
         new_type.parent_element = parent
 
         self.grid.addWidget(new_type, row, column, Qt.AlignCenter)
+
+        # load config when source was dropbox
+        # ABKÜRZUNG MÖGLICH BAUSTELLE (LoadCOnfig muss nicht aufgerufen werden oder
+        # nur mit element als argument
+        if source == DropBox.__name__ :
+            self.loadConfig(row, column)
+            logging.debug('WorkingArea::addElement() source = DropBox') 
+            logging.debug('WorkingArea::addElement() config: {}'.format(new_type)) 
 
         # add second placeholder in case of a added branch function
         # connect delete button to related grid method
@@ -171,7 +185,7 @@ class WorkingArea(QFrame):
             if element:
                 if (isinstance(element.widget(), ExecRB) and 
                     isinstance(element.widget().parent_element, ExecR)):
-                    logging.debug('WorkingArea::reduceGrid() element found at: ', (row, col))
+                    logging.debug('WorkingArea::reduceGrid() element found at: {} {}'.format(row, col))
                     #if self.checkLeft(row, col):
                     if self.stepLeft(row, col):
                         # repeat if a childTree was moved
@@ -242,19 +256,28 @@ class WorkingArea(QFrame):
             self.moveColParent(parent)
             self.findMissingLinks()
             self.addPlaceholder(row, column +1)
+            # update position of placeholder for query config ?
+
         
         else:
             # actual position is valid
             target = PlaceHolder(row, column)
             target.func_drop.connect(self.addElement)
-            logging.debug('################# connected')
-            target.query_config.connect(self.loadConfig)
+            #logging.debug('WorkingArea::addPlaceholder() query_config connected')
+            #target.query_config.connect(self.loadConfig)
     
             # set child element
             parent = self.grid.itemAtPosition(row-1, column).widget()
             target.parent_element = parent
             parent.setChild(target)
             self.grid.addWidget(target, row, column, Qt.AlignCenter)
+
+            # query config
+            # aktuelle posiition bei rekursiven aufruf nicht berücksichtigt
+            #logging.debug('WorkingArea::addPlaceholder() query_config connected')
+            #logging.debug('WorkingArea::addPlaceholder() query_config at {} {}'.format(
+            #    row, column))
+            #target.query_config.connect(self.loadConfig)
 
     def checkRight(self, row, column):
 
@@ -347,7 +370,7 @@ class WorkingArea(QFrame):
         self.moveColParent(candidate)
 
     def moveColParent(self, candidate):
-        #print('checkColParent()')
+
         parent_row, parent_col = candidate.parent_element.getPos()
         #parent_element = self.grid.itemAtPosition(parent_row, parent_col).widget()
         if parent_col == candidate.column:
@@ -578,11 +601,13 @@ class WorkingArea(QFrame):
 
     def loadConfig(self, row, column):
 
-        logging.debug('WorkingArea::loadConfig() called')
+        logging.debug('WorkingArea::loadConfig() called row: {} col: {}'.format(
+            row, column))
         # when this function is called, storabar will delete the placeholder
 
         element = self.grid.itemAtPosition(row, column).widget()
         element.config = self.storage_bar.returnConfig()
+        logging.debug('WorkingArea::loadConfig() config: {}'.format(element.config))
         # element was not pickled! 
         # call __getstate__ and __addstate_ to update the function
         # by calling addFunction of the elementmastern 
@@ -591,5 +616,6 @@ class WorkingArea(QFrame):
         # of the element has to be reassigned with the new configuration
 
         func_type = type(element.function)
+        logging.debug('WorkingArea::loadConfig() function type: {}'.format(func_type))
         element.addFunction(func_type)
 
