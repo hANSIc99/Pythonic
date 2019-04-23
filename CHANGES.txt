@@ -1,3 +1,15 @@
+0.8
+
+    Design update
+    Depencies changed
+    Bug fixed: activating elements from parking area
+    in fastpath mode
+
+0.7
+
+    Minder removed
+    Fastpath active when clicking on RUN mode
+
 0.6
     
     Basic Stack element added
