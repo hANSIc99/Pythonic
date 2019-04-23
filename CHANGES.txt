@@ -1,6 +1,6 @@
 0.8
 
-    Design update
+    Design updated
     Depencies changed
     Bug fixed: activating elements from parking area
     in fastpath mode
