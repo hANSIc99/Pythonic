@@ -12,6 +12,7 @@ from Pythonic.elements.basic_stack       import ExecStack
 from Pythonic.elements.binance_sched     import BinanceSched
 from Pythonic.elements.binance_ohlc      import BinanceOHLC
 from Pythonic.elements.binance_order     import BinanceOrder
+from Pythonic.elements.conn_mail         import ConnMail
 
 from Pythonic.elementmaster              import ElementMaster
 from Pythonic.storagebar                 import StorageBar
@@ -197,7 +198,8 @@ class WorkingArea(QFrame):
             if element:
                 if (isinstance(element.widget(), ExecRB) and 
                     isinstance(element.widget().parent_element, ExecR)):
-                    logging.debug('WorkingArea::reduceGrid() element found at: {} {}'.format(row, col))
+                    logging.debug('WorkingArea::reduceGrid() element found at: {} {}'.format(
+                        row, col))
                     #if self.checkLeft(row, col):
                     if self.stepLeft(row, col):
                         # repeat if a childTree was moved
@@ -397,10 +399,11 @@ class WorkingArea(QFrame):
         row, column = candidate.getPos()
         self.checkRight(row, column)
 
-        logging.debug('WorkingArea::moveElement() moveElement called at row: {} column:  {}'.format(
-            row, column))
+        logging.debug('WorkingArea::moveElement() moveElement called at row: {} column:  {}'
+                .format(row, column))
         logging.debug('WorkingArea::moveElement() candidate type: {}'.format(type(candidate)))
-        logging.debug('WorkingArea::moveElement() add candidate to position: {}'.format(row, column+1))
+        logging.debug('WorkingArea::moveElement() add candidate to position: {}'
+                .format(row, column+1))
         # setze child elemente neu
         #element = self.grid.itemAtPosition(row, column)
         #element = element.widget()
@@ -412,8 +415,8 @@ class WorkingArea(QFrame):
 
         grid_cols = range(1, self.grid.columnCount())
         grid_rows = range(1, self.grid.rowCount())
-        logging.debug('WorkingArea::findMissingLinks() number of rows: {} number of columns: {}'.format( 
-            self.grid.rowCount(), self.grid.columnCount()))
+        logging.debug('WorkingArea::findMissingLinks() number of rows: {} number of columns: {}'
+                .format(self.grid.rowCount(), self.grid.columnCount()))
 
         index = ((row, column) for row in grid_rows for column in grid_cols)
 
@@ -422,7 +425,8 @@ class WorkingArea(QFrame):
             logging.debug('WorkingArea::findMissingLinks() check position: {}'.format(row, col))
             element = self.grid.itemAtPosition(row, col)
             if element and isinstance(element.widget(), ExecRB):
-                logging.debug('WorkingArea::findMissingLinks() element is RB: {} '.format(row, col))
+                logging.debug('WorkingArea::findMissingLinks() element is RB: {} '
+                        .format(row, col))
                 element_col = element.widget().column
                 parent_col  = element.widget().parent_element.column
 
