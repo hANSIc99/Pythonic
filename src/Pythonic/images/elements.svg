@@ -15,7 +15,7 @@
    viewBox="0 0 744.09448819 1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.4 (unknown)"
    sodipodi:docname="elements.svg">
   <defs
      id="defs4">
@@ -1448,9 +1448,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.88"
-     inkscape:cx="256.66279"
-     inkscape:cy="469.90391"
+     inkscape:zoom="2.6587214"
+     inkscape:cx="261.18083"
+     inkscape:cy="922.36242"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1462,7 +1462,7 @@
      inkscape:snap-smooth-nodes="false"
      inkscape:snap-midpoints="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-height="1043"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -1877,6 +1877,259 @@
          id="g4843" />
       <g
          id="g4845" />
+    </g>
+    <g
+       id="g5472"
+       inkscape:export-xdpi="89.444443"
+       inkscape:export-ydpi="89.444443">
+      <g
+         transform="matrix(0.09471154,0,0,0.09471154,477.53552,210.26036)"
+         id="g5231">
+        <g
+           id="g5174">
+          <g
+             id="g5172">
+            <path
+               inkscape:connector-curvature="0"
+               d="M 467,61 H 45 C 20.218,61 0,81.196 0,106 v 300 c 0,24.72 20.128,45 45,45 h 422 c 24.72,0 45,-20.128 45,-45 V 106 C 512,81.28 491.872,61 467,61 Z M 460.786,91 256.954,294.833 51.359,91 Z M 30,399.788 V 112.069 l 144.479,143.24 z M 51.213,421 195.783,276.43 246.44,326.652 c 5.864,5.814 15.327,5.795 21.167,-0.046 L 317,277.213 460.787,421 Z M 482,399.787 338.213,256 482,112.212 Z"
+               id="path5170" />
+          </g>
+        </g>
+        <g
+           id="g5176" />
+        <g
+           id="g5178" />
+        <g
+           id="g5180" />
+        <g
+           id="g5182" />
+        <g
+           id="g5184" />
+        <g
+           id="g5186" />
+        <g
+           id="g5188" />
+        <g
+           id="g5190" />
+        <g
+           id="g5192" />
+        <g
+           id="g5194" />
+        <g
+           id="g5196" />
+        <g
+           id="g5198" />
+        <g
+           id="g5200" />
+        <g
+           id="g5202" />
+        <g
+           id="g5204" />
+      </g>
+      <g
+         transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)"
+         id="g4789-6"
+         style="image-rendering:optimizeQuality">
+        <rect
+           style="fill:none;stroke:none;stroke-width:0.99070722;stroke-opacity:1"
+           id="rect4136-3-2-3-3-7-6-2"
+           width="252.91667"
+           height="117.51819"
+           x="581.07605"
+           y="-100.00729"
+           inkscape:export-filename="/home/stephan/Bilder/order.png"
+           inkscape:export-xdpi="89.444427"
+           inkscape:export-ydpi="89.444427" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4.55722427;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 706.75379,17.504083 c 0,-21.5099902 0,-21.5099902 0,-21.5099902"
+           id="path4173-7-6-6-6-3-2-8"
+           inkscape:connector-curvature="0"
+           inkscape:export-filename="/home/stephan/Bilder/order.png"
+           inkscape:export-xdpi="89.444427"
+           inkscape:export-ydpi="89.444427" />
+        <rect
+           style="fill:none;stroke:#000000;stroke-width:4.55722427;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4213-1-7-7-6-6-9"
+           width="213.19093"
+           height="74.498131"
+           x="600.9389"
+           y="-78.497223"
+           inkscape:export-filename="/home/stephan/Bilder/order.png"
+           inkscape:export-xdpi="89.444427"
+           inkscape:export-ydpi="89.444427" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4.55722427;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 706.75381,-78.504017 c 0,-21.510023 0,-21.510023 0,-21.510023"
+           id="path4173-7-5-8-5-5-1-1-7"
+           inkscape:connector-curvature="0"
+           inkscape:export-filename="/home/stephan/Bilder/order.png"
+           inkscape:export-xdpi="89.444427"
+           inkscape:export-ydpi="89.444427" />
+      </g>
+    </g>
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4817-3"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4819-6"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4821-1"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4823-2"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4825-9"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4827-3"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4829-1"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4831-9"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4833-4"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4835-7"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4837-8"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4839-4"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4841-5"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4843-0"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       style="image-rendering:optimizeQuality"
+       id="g4845-3"
+       transform="matrix(0.63654891,0,0,0.68070652,87.707333,262.38006)" />
+    <g
+       id="g1699"
+       inkscape:export-xdpi="89.44442"
+       inkscape:export-ydpi="89.44442">
+      <g
+         transform="matrix(0.63654891,0,0,0.68070652,-146.1914,169.37191)"
+         id="g4789-6-1"
+         style="image-rendering:optimizeQuality">
+        <rect
+           style="fill:none;stroke:none;stroke-width:0.99070722;stroke-opacity:1"
+           id="rect4136-3-2-3-3-7-6-2-8"
+           width="252.91667"
+           height="117.51819"
+           x="581.07605"
+           y="-100.00729"
+           inkscape:export-filename="/home/stephan/Bilder/order.png"
+           inkscape:export-xdpi="89.444427"
+           inkscape:export-ydpi="89.444427" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4.55722427;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 706.75379,17.504083 c 0,-21.5099902 0,-21.5099902 0,-21.5099902"
+           id="path4173-7-6-6-6-3-2-8-7"
+           inkscape:connector-curvature="0"
+           inkscape:export-filename="/home/stephan/Bilder/order.png"
+           inkscape:export-xdpi="89.444427"
+           inkscape:export-ydpi="89.444427" />
+        <rect
+           style="fill:none;stroke:#000000;stroke-width:4.55722427;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4213-1-7-7-6-6-9-9"
+           width="213.19093"
+           height="74.498131"
+           x="600.9389"
+           y="-78.497223"
+           inkscape:export-filename="/home/stephan/Bilder/order.png"
+           inkscape:export-xdpi="89.444427"
+           inkscape:export-ydpi="89.444427" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4.55722427;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 706.75381,-78.504017 c 0,-21.510023 0,-21.510023 0,-21.510023"
+           id="path4173-7-5-8-5-5-1-1-7-2"
+           inkscape:connector-curvature="0"
+           inkscape:export-filename="/home/stephan/Bilder/order.png"
+           inkscape:export-xdpi="89.444427"
+           inkscape:export-ydpi="89.444427" />
+      </g>
+      <g
+         transform="matrix(0.06975407,0,0,0.06975407,238.91343,121.59912)"
+         id="g1674">
+        <g
+           id="g1618">
+	<path
+   inkscape:connector-curvature="0"
+   d="M 488.426,197.019 H 475.2 v -63.816 c 0,-0.401 -0.063,-0.799 -0.116,-1.205 -0.021,-2.534 -0.827,-5.023 -2.562,-6.992 L 366.325,3.691 C 366.293,3.66 366.262,3.649 366.24,3.618 365.607,2.911 364.869,2.32 364.089,1.814 363.858,1.656 363.625,1.527 363.383,1.392 362.707,1.026 361.99,0.717 361.252,0.496 c -0.2,-0.053 -0.38,-0.135 -0.58,-0.19 C 359.87,0.119 359.037,0 358.193,0 H 97.2 C 85.282,0 75.6,9.693 75.6,21.601 V 197.014 H 62.377 c -17.049,0 -30.873,13.818 -30.873,30.87 v 160.542 c 0,17.044 13.824,30.876 30.873,30.876 H 75.601 V 529.2 c 0,11.907 9.682,21.601 21.6,21.601 h 356.4 c 11.907,0 21.6,-9.693 21.6,-21.601 V 419.302 h 13.226 c 17.044,0 30.871,-13.827 30.871,-30.87 V 227.89 C 519.297,210.838 505.47,197.019 488.426,197.019 Z M 97.2,21.605 h 250.193 v 110.51 c 0,5.967 4.841,10.8 10.8,10.8 H 453.6 v 54.108 H 97.2 Z m 309.267,342.378 h -26.104 l -1.751,-46.464 c -0.527,-14.598 -1.055,-32.236 -1.055,-49.895 h -0.517 c -3.691,15.485 -8.596,32.782 -13.163,47.015 l -14.354,47.366 h -20.851 l -12.625,-47.002 c -3.85,-14.228 -7.889,-31.524 -10.694,-47.374 h -0.348 c -0.707,16.397 -1.234,35.129 -2.1,50.253 l -2.114,46.111 H 276.08 l 7.535,-121.395 h 35.575 l 11.569,40.521 c 3.691,14.048 7.362,29.183 9.999,43.416 h 0.521 c 3.344,-14.054 7.356,-30.074 11.222,-43.585 l 12.614,-40.353 h 34.879 z M 174.438,265.642 v -23.058 h 90.77 v 23.058 h -32.239 v 98.342 h -26.821 v -98.342 z m -85.035,47.553 v 50.788 H 62.604 V 242.584 h 26.799 v 46.654 h 43.999 v -46.654 h 26.645 V 363.983 H 133.402 V 313.189 H 89.403 Z M 453.601,523.353 H 97.2 V 419.302 h 356.4 v 104.051 z m 47.186,-159.37 H 427.001 V 242.584 h 26.811 v 98.339 h 46.976 v 23.06 z"
+   id="path1616" />
+
+</g>
+        <g
+           id="g1620">
+</g>
+        <g
+           id="g1622">
+</g>
+        <g
+           id="g1624">
+</g>
+        <g
+           id="g1626">
+</g>
+        <g
+           id="g1628">
+</g>
+        <g
+           id="g1630">
+</g>
+        <g
+           id="g1632">
+</g>
+        <g
+           id="g1634">
+</g>
+        <g
+           id="g1636">
+</g>
+        <g
+           id="g1638">
+</g>
+        <g
+           id="g1640">
+</g>
+        <g
+           id="g1642">
+</g>
+        <g
+           id="g1644">
+</g>
+        <g
+           id="g1646">
+</g>
+        <g
+           id="g1648">
+</g>
+      </g>
     </g>
   </g>
   <g
@@ -2319,14 +2572,15 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot5577"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"><flowRegion
+       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"><flowRegion
          id="flowRegion5579"><rect
            id="rect5581"
            width="263.21429"
            height="172.14285"
            x="451.42856"
            y="597.16254" /></flowRegion><flowPara
-         id="flowPara5583" /></flowRoot>    <rect
+         id="flowPara5583"
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <rect
        style="fill:none;stroke:none;stroke-width:0.99070722;stroke-opacity:1"
        id="rect4136-3-2-3"
        width="160.99384"
