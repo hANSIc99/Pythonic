@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
+from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, pyqtSlot, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QDoubleValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
 from elementeditor import ElementEditor
@@ -21,19 +21,21 @@ class ConnMail(ElementMaster):
         self.row = row
         self.column = column
 
-        pub_key = None
-        prv_key = None
-        side_index = 0
-        side_txt = 'BUY'
-        symbol_txt = None
-        quantity = 0.0
-        order_index = 0
-        order_string = 'MARKET'
-        order_config = (0, )
-        log_state = False
+        recipient       = None
+        sender          = None
+        credentials     = None
+        server_url      = None
+        server_port     = '465'
+        input_opt_index = 0
+        input_opt_data  = None
+        pass_input      = False
+        message_state   = False
+        log_state       = False
 
-        self.config = (pub_key, prv_key, side_index, side_txt, symbol_txt, \
-                quantity, order_index, order_string, order_config, log_state)
+        # recipient, sender, credentials, server_url, server_port,
+        # input_opt_index, input_opt_data, pass_input, message_state, log_state
+        self.config = (recipient, sender, credentials, server_url, server_port,
+                input_opt_index, input_opt_data, pass_input, message_state, log_state)
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -57,28 +59,50 @@ class ConnMail(ElementMaster):
     def edit(self):
 
         logging.debug('ConnMail::edit()')
+        # recipient, sender, credentials, server_url, server_port,
+        # input_opt_index, input_opt_data, pass_input, message_state, log_state
+
 
         pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, \
                 order_index, order_string, order_config, log_state = self.config
 
-        self.binance_order_layout = QVBoxLayout()
+        self.conn_mail_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 
         self.recipient_address_txt = QLabel()
         self.recipient_address_txt.setText(QC.translate('', 'Recipient address:'))
         self.recipient_address_input = QLineEdit()
+        self.recipient_address_input.setPlaceholderText(
+                QC.translate('', 'Separate addresses with spaces'))
 
         self.sender_address_txt = QLabel()
         self.sender_address_txt.setText(QC.translate('', 'Enter sender address:'))
         self.sender_address_input = QLineEdit()
+        self.sender_address_input.setPlaceholderText(QC.translate('', 'user@example.com'))
 
         self.credentials_txt = QLabel()
         self.credentials_txt.setText(QC.translate('', 'Enter credentials:'))
         self.credentials_input = QLineEdit()
+        self.credentials_input.setEchoMode(QLineEdit.Password)
 
         self.subject_txt = QLabel()
         self.subject_txt.setText(QC.translate('', 'Enter subject:'))
         self.subject_input = QLineEdit()
+
+        self.server_txt = QLabel()
+        self.server_txt.setText(QC.translate('', 'Enter server URL and port number:'))
+
+        self.server_input_line = QWidget()
+        self.server_input_line_layout = QHBoxLayout(self.server_input_line)
+        self.server_url_input = QLineEdit()
+        self.server_url_input.setPlaceholderText(QC.translate('', 'e.g. smtp.gmail.com'))
+        self.server_port_input = QLineEdit()
+        self.server_port_input.setMaximumWidth(50)
+        self.server_port_input.setValidator(QIntValidator(0, 9999))
+        self.server_port_input.setText('465')
+        self.server_input_line_layout.addWidget(self.server_url_input)
+        self.server_input_line_layout.addWidget(self.server_port_input)
+
 
         self.message_box_line = QWidget()
         self.message_box_txt = QLabel()
@@ -112,65 +136,6 @@ class ConnMail(ElementMaster):
         self.pass_input_line_layout.addWidget(self.pass_input_txt)
         self.pass_input_line_layout.addWidget(self.pass_input_check)
 
-        """
-        self.symbol_txt = QLabel()
-        self.symbol_txt.setText(QC.translate('', 'Enter currency pair'))
-
-        self.order_data_line = QWidget()
-        self.order_data_layout = QHBoxLayout(self.order_data_line)
-        """
-
-        """ 
-        checkbox: Use input in message => wenn aktiviert, wird der input an
-        den message text gehangen
-        input = attachment
-        input = message txt
-        checkbox: forward inout to output
-
-        checkbox: activate message text
-
-        in
-        attachment
-        self.order_side = QComboBox()
-        self.order_side.addItem(QC.translate('', 'Buy'), QVariant('BUY'))
-        self.order_side.addItem(QC.translate('', 'Sell'), QVariant('SELL'))
-
-        self.symbol_input = QLineEdit()
-        self.symbol_input.setPlaceholderText(QC.translate('', 'e.g. "XMRBTC"'))
-
-        self.order_data_layout.addWidget(self.order_side)
-        self.order_data_layout.addWidget(self.symbol_input)
-
-        self.quantity_txt = QLabel()
-        self.quantity_txt.setText(QC.translate('', 'Enter quantity:'))
-
-        if symbol_txt:
-            self.symbol_input.setText(symbol_txt)
-
-        self.quantity_input = QLineEdit()
-        self.quantity_input.setValidator(QDoubleValidator(999999, -999999, 8))
-
-        self.selectOrder = QComboBox()
-        self.selectOrder.addItem(QC.translate('', 'Limit Order'), QVariant('LIMIT'))
-        self.selectOrder.addItem(QC.translate('', 'Market Order'), QVariant('MARKET'))
-        self.selectOrder.addItem(QC.translate('', 'Stop Loss'), QVariant('STOP_LOSS'))
-        self.selectOrder.addItem(QC.translate('', 'Stop Loss Limit'), QVariant('STOP_LOSS_LIMIT'))
-        self.selectOrder.addItem(QC.translate('', 'Take Profit'), QVariant('TAKE_PROFIT'))
-        self.selectOrder.addItem(QC.translate('', 'Take Profit Limit'), QVariant('TAKE_PROFIT_LIMIT'))
-        self.selectOrder.addItem(QC.translate('', 'Limit Maker'), QVariant('LIMIT_MAKER'))
-        self.selectOrder.addItem(QC.translate('', 'Test Order'), QVariant('TEST'))
-
-        self.order_box = QStackedWidget()
-        self.limitOrder()
-        self.marketOrder()
-        self.stopLoss()
-        self.stopLossLimit()
-        self.takeProfit()
-        self.takeProfitLimit()
-        self.limitMaker()
-        self.testOrder()
-        self.loadLastConfig()
-        """
         self.help_txt = QLabel()
         self.help_txt.setText(QC.translate('', 'Only encrypted connections are allowed'))
 
@@ -188,203 +153,82 @@ class ConnMail(ElementMaster):
             self.log_checkbox.setChecked(True)
 
 
-        self.binance_order_edit = ElementEditor(self)
-        self.binance_order_edit.setWindowTitle(QC.translate('', 'Place a Order'))
-        #self.binance_order_edit.setMinimumSize(240, 330)
+        self.conn_mail_edit = ElementEditor(self)
+        self.conn_mail_edit.setWindowTitle(QC.translate('', 'Place a Order'))
+        #self.conn_mail_edit.setMinimumSize(240, 330)
 
         # signals and slots
-        self.confirm_button.clicked.connect(self.binance_order_edit.closeEvent)
-        self.binance_order_edit.window_closed.connect(self.edit_done)
-        #self.selectOrder.currentIndexChanged.connect(self.indexChanged)
+        self.confirm_button.clicked.connect(self.conn_mail_edit.closeEvent)
+        self.conn_mail_edit.window_closed.connect(self.edit_done)
+        self.message_box_checkbox.stateChanged.connect(self.toggle_message_box)
 
-        self.binance_order_layout.addWidget(self.recipient_address_txt)
-        self.binance_order_layout.addWidget(self.recipient_address_input)
-        self.binance_order_layout.addWidget(self.sender_address_txt)
-        self.binance_order_layout.addWidget(self.sender_address_input)
-        self.binance_order_layout.addWidget(self.credentials_txt)
-        self.binance_order_layout.addWidget(self.credentials_input)
-        self.binance_order_layout.addWidget(self.message_box_line)
-        self.binance_order_layout.addWidget(self.message_txt_input)
-        self.binance_order_layout.addWidget(self.input_option_line)
-        self.binance_order_layout.addWidget(self.pass_input_line)
-        """
-        self.binance_order_layout.addWidget(self.quantity_txt)
-        self.binance_order_layout.addWidget(self.quantity_input)
-        self.binance_order_layout.addWidget(self.selectOrder)
-        """
-        #self.binance_order_layout.addStretch(1)
-        #self.binance_order_layout.addWidget(self.order_box)
-        self.binance_order_layout.addWidget(self.help_txt)
-        self.binance_order_layout.addWidget(self.log_line)
-        self.binance_order_layout.addWidget(self.confirm_button)
-        self.binance_order_edit.setLayout(self.binance_order_layout)
-        self.binance_order_edit.show()
+        # load existing config
+        
+
+        self.conn_mail_layout.addWidget(self.recipient_address_txt)
+        self.conn_mail_layout.addWidget(self.recipient_address_input)
+        self.conn_mail_layout.addWidget(self.sender_address_txt)
+        self.conn_mail_layout.addWidget(self.sender_address_input)
+        self.conn_mail_layout.addWidget(self.credentials_txt)
+        self.conn_mail_layout.addWidget(self.credentials_input)
+        self.conn_mail_layout.addWidget(self.server_txt)
+        self.conn_mail_layout.addWidget(self.server_input_line)
+        self.conn_mail_layout.addWidget(self.message_box_line)
+        self.conn_mail_layout.addWidget(self.message_txt_input)
+        self.conn_mail_layout.addWidget(self.input_option_line)
+        self.conn_mail_layout.addWidget(self.pass_input_line)
+
+        self.conn_mail_layout.addWidget(self.help_txt)
+        self.conn_mail_layout.addWidget(self.log_line)
+        self.conn_mail_layout.addWidget(self.confirm_button)
+        self.conn_mail_edit.setLayout(self.conn_mail_layout)
+        self.conn_mail_edit.show()
+        
+
+    def toggle_message_box(self, event):
+
+        logging.error('State changed {}'.format(event))
+        if event == 0:
+            self.message_txt_input.setDisabled(True)
+        else:
+            self.message_txt_input.setDisabled(False)
+
 
     def loadLastConfig(self):
 
-        pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, \
-                order_index, order_string, order_config, log_state = self.config
+        # recipient, sender, credentials, server_url, server_port,
+        # input_opt_index, input_opt_data, pass_input, message_state, log_state
 
-        if pub_key != '':
-            
-            self.pub_key_input.setText(pub_key)
+        recipient, sender, credentials, server_url, server_port, \
+                input_opt_index, input_opt_data, pass_input, message_state, \
+                log_state = self.config
 
-        if prv_key != '':
-
-            self.prv_key_input.setText(prv_key)
-
-        self.quantity_input.setText('{:.8f}'.format(quantity))
-
-        logging.debug('loadLastConfig() called with order_string = {}'.format(order_string))
-
-        self.selectOrder.setCurrentIndex(order_index)
-        self.order_box.setCurrentIndex(order_index)
-        self.order_side.setCurrentIndex(side_index)
-
-        if order_string == 'LIMIT':
-            self.limit_time_in_force_input.setCurrentIndex(order_config[1])
-            self.limit_price_input.setText('{:.8f}'.format(order_config[2]))
-        elif order_string == 'STOP_LOSS':
-            self.stop_loss_price_input.setText('{:.8f}'.format(order_config[0]))
-        elif order_string == 'STOP_LOSS_LIMIT':
-            self.stop_loss_limit_time_in_force_input.setCurrentIndex(order_config[1])
-            self.stop_loss_limit_price_input.setText('{:.8f}'.format(order_config[2]))
-            self.stop_loss_limit_stop_price_input.setText('{:.8f}'.format(order_config[3]))
-        elif order_string == 'TAKE_PROFIT':
-            self.take_profit_stop_price_input.setText('{:.8f}'.format(order_config[0]))
-        elif order_string == 'TAKE_PROFIT_LIMIT':
-            self.take_profit_limit_time_in_force_input.setCurrentIndex(order_config[1])
-            self.take_profit_limit_price_input.setText('{:.8f}'.format(order_config[2]))
-            self.take_profit_limit_stop_price_input.setText('{:.8f}'.format(order_config[3]))
 
 
     def edit_done(self):
 
         logging.debug('ConnMail::edit_done() called')
 
-        order_config = None
+        recipient       = self.recipient_address_input.text()
+        sender          = self.sender_address_input.text()
+        credentials     = self.credentials_input.text() 
+        server_url      = self.server_url_input.text()
+        server_port     = self.server_port_input.text()
+        input_opt_index = self.input_options.currentIndex()
+        input_opt_data  = self.input_options.currentData()
 
-        if self.selectOrder.currentData() == 'LIMIT':
-
-            tif_string  = self.limit_time_in_force_input.currentData()
-            tif_index   = self.limit_time_in_force_input.currentIndex()
-
-
-            if self.limit_price_input.text() == '':
-
-                limit_price_value = 0.0
-
-            else:
-
-                limit_price_value = float(self.limit_price_input.text())
-
-            logging.warning('limit price: {}'.format(limit_price_value))
-
-            order_config = (tif_string, tif_index, limit_price_value)
-
-        elif self.selectOrder.currentData() == 'STOP_LOSS':
-
-            if self.stop_loss_price_input.text() == '':
-
-                stop_price_value = 0.0
-
-            else:
-
-                stop_price_value = float(self.stop_loss_price_input.text())
-
-            logging.warning('stop price: {}'.format(stop_price_value))
-
-            order_config = (stop_price_value, )
-
-        elif self.selectOrder.currentData() == 'STOP_LOSS_LIMIT':
-
-            tif_string  = self.stop_loss_limit_time_in_force_input.currentData()
-            tif_index   = self.stop_loss_limit_time_in_force_input.currentIndex()
-
-
-            if self.stop_loss_limit_price_input.text() == '':
-
-                limit_price_value = 0.0
-
-            else:
-
-                limit_price_value = float(self.stop_loss_limit_price_input.text())
-
-            if self.stop_loss_limit_stop_price_input.text() == '':
-
-                stop_price_value = 0.0
-
-            else:
-
-                stop_price_value = float(self.stop_loss_limit_stop_price_input.text())
-
-
-            logging.warning('Limit price: {}'.format(limit_price_value))
-            logging.warning('Stop price: {}'.format(stop_price_value))
-
-            order_config = (tif_string, tif_index, limit_price_value, stop_price_value)
-
-        elif self.selectOrder.currentData() == 'TAKE_PROFIT':
-
-            if self.take_profit_stop_price_input.text() == '':
-
-                stop_price_value = 0.0
-
-            else:
-
-                stop_price_value = float(self.take_profit_stop_price_input.text())
-
-            logging.warning('Stop price: {}'.format(stop_price_value))
-
-            order_config = (stop_price_value, )
-
-        elif self.selectOrder.currentData() == 'TAKE_PROFIT_LIMIT':
-
-            tif_string  = self.take_profit_limit_time_in_force_input.currentData()
-            tif_index   = self.take_profit_limit_time_in_force_input.currentIndex()
-
-
-            if self.take_profit_limit_price_input.text() == '':
-
-                limit_price_value = 0.0
-
-            else:
-
-                limit_price_value = float(self.take_profit_limit_price_input.text())
-
-            if self.take_profit_limit_stop_price_input.text() == '':
-
-                stop_price_value = 0.0
-
-            else:
-
-                stop_price_value = float(self.take_profit_limit_stop_price_input.text())
-        # TODO: Create Test Order
-
-
-            logging.warning('Limit price: {}'.format(limit_price_value))
-            logging.warning('Stop price: {}'.format(stop_price_value))
-
-            order_config = (tif_string, tif_index, limit_price_value, stop_price_value)
-
-
-        pub_key     = self.pub_key_input.text()
-        prv_key     = self.prv_key_input.text()
-        side_index  = self.order_side.currentIndex()
-        side_txt    = self.order_side.currentData()
-        symbol_txt  = self.symbol_input.text()
-
-        if self.quantity_input.text() == '':
-            quantity = 0.0
-        else:
-            quantity    = float(self.quantity_input.text())
-
-        order_index     = self.selectOrder.currentIndex()
-        order_string    = self.selectOrder.currentData()
+        pass_input      = self.pass_input_check.isChecked()
+        message_state   = self.message_box_checkbox.isChecked()   
         log_state       = self.log_checkbox.isChecked()
 
-        self.config = (pub_key, prv_key, side_index, side_txt, symbol_txt,
-                quantity, order_index, order_string, order_config, log_state)
+        if self.message_txt_input.toPlainText() == '':
+            message_txt = None
+        else:
+            message_txt = self.message_txt.toPlainText()
+        # recipient, sender, credentials, server_url, server_port,
+        # input_opt_index, input_opt_data, pass_input, message_state, log_state
+        self.config = (recipient, sender, credentials, server_url, server_port,
+                input_opt_index, input_opt_data, pass_input, message_state, log_state)
 
         self.addFunction(ConnMailFunction)
 
@@ -398,144 +242,14 @@ class ConnMailFunction(Function):
 
     def execute(self, record):
 
-        
-        pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, \
-                order_index, order_string, order_config, log_state = self.config
+        # recipient, sender, credentials, server_url, server_port,
+        # input_opt_index, input_opt_data, pass_input, message_state, log_state
 
-        timeInForce = None
-        stopPrice   = None
-        price       = None
+        recipient, sender, credentials, server_url, server_port, \
+                input_opt_index, input_opt_data, pass_input, message_state, \
+                log_state = self.config
 
-        client = Client(pub_key, prv_key)
-
-        if order_string == 'MARKET':
-
-            if isinstance(record, dict):
-                if 'quantity' in record: 
-                    quantity = record['quantity']
-
-            order = client.create_order(
-                    symbol      = symbol_txt,
-                    side        = side_txt,
-                    type        = order_string,
-                    quantity    = '{:.8f}'.format(quantity),
-                    )
-
-        elif order_string == 'LIMIT':
-
-            timeInForce = order_config[0]
-            price       = '{:.8f}'.format(order_config[2])
-
-            if isinstance(record, dict):
-                if 'price' in record: 
-                    price = '{:.8f}'.format(record['price'])
-                if 'quantity' in record: 
-                    quantity = record['quantity']
-
-            order = client.create_order(
-                    symbol      = symbol_txt,
-                    side        = side_txt,
-                    type        = order_string,
-                    quantity    = '{:.8f}'.format(quantity),
-                    timeInForce = timeInForce,
-                    price       = price,
-                    )
-
-        elif order_string == 'STOP_LOSS':
-
-            stopPrice   = '{:.8f}'.format(order_config[0])
-
-            if isinstance(record, dict):
-                if 'stopPrice' in record: 
-                    stopPrice = '{:.8f}'.format(record['stopPrice'])
-                if 'quantity' in record: 
-                    quantity = record['quantity']
-
-            order = client.create_order(
-                    symbol      = symbol_txt,
-                    side        = side_txt,
-                    type        = order_string,
-                    quantity    = '{:.8f}'.format(quantity),
-                    stopPrice   = stopPrice
-                    )
-
-        elif order_string == 'STOP_LOSS_LIMIT':
-
-            timeInForce = order_config[0]
-            price       = '{:.8f}'.format(order_config[2])
-            stopPrice   = '{:.8f}'.format(order_config[3])
-
-            if isinstance(record, dict):
-                if 'price' in record: 
-                    price = '{:.8f}'.format(record['price'])
-                if 'stopPrice' in record: 
-                    stopPrice = '{:.8f}'.format(record['stopPrice'])
-                if 'quantity' in record: 
-                    quantity = record['quantity']
-
-
-            order = client.create_order(
-                    symbol      = symbol_txt,
-                    side        = side_txt,
-                    type        = order_string,
-                    quantity    = '{:.8f}'.format(quantity),
-                    timeInForce = timeInForce,
-                    price       = price,
-                    stopPrice   = stopPrice
-                    )
-
-        elif order_string == 'TAKE_PROFIT':
-
-            stopPrice   = '{:.8f}'.format(order_config[0])
-
-            if isinstance(record, dict):
-                if 'stopPrice' in record: 
-                    stopPrice = '{:.8f}'.format(record['stopPrice'])
-                if 'quantity' in record: 
-                    quantity = record['quantity']
-
-
-
-            order = client.create_order(
-                    symbol      = symbol_txt,
-                    side        = side_txt,
-                    type        = order_string,
-                    quantity    = '{:.8f}'.format(quantity),
-                    stopPrice   = stopPrice
-                    )
-
-        elif order_string == 'TAKE_PROFIT_LIMIT':
-
-            timeInForce = order_config[0]
-            price       = '{:.8f}'.format(order_config[2])
-            stopPrice   = '{:.8f}'.format(order_config[3])
-
-            if isinstance(record, dict):
-                if 'price' in record: 
-                    price = '{:.8f}'.format(record['price'])
-                if 'stopPrice' in record: 
-                    stopPrice = '{:.8f}'.format(record['stopPrice'])
-                if 'quantity' in record: 
-                    quantity = record['quantity']
-
-            order = client.create_order(
-                    symbol      = symbol_txt,
-                    side        = side_txt,
-                    type        = order_string,
-                    quantity    = '{:.8f}'.format(quantity),
-                    timeInForce = timeInForce,
-                    price       = price,
-                    stopPrice   = stopPrice
-                    )
-
-        logging.error('Order: {}'.format(order)) 
-        logging.error('symbol = {}'.format(symbol_txt))
-        logging.error('side = {}'.format(side_txt))
-        logging.error('type = {}'.format(order_string))
-        logging.error('quantity = {}'.format(quantity))
-        logging.error('timeInForce = {}'.format(timeInForce))
-        logging.error('price = {}'.format(price))
-        logging.error('stopPrice = {}'.format(stopPrice))
+       
 
         log_txt = '{BINANCE ORDER}          '
         result = Record(self.getPos(), (self.row +1, self.column), order,
