@@ -30,12 +30,13 @@ class ConnMail(ElementMaster):
         input_opt_data  = None
         pass_input      = False
         message_state   = False
+        message_txt     = None
         log_state       = False
 
         # recipient, sender, credentials, server_url, server_port,
-        # input_opt_index, input_opt_data, pass_input, message_state, log_state
-        self.config = (recipient, sender, credentials, server_url, server_port,
-                input_opt_index, input_opt_data, pass_input, message_state, log_state)
+        # input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state
+        self.config = (recipient, sender, credentials, server_url, server_port, input_opt_index,
+                input_opt_data, pass_input, message_state, message_txt, log_state)
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -59,13 +60,7 @@ class ConnMail(ElementMaster):
     def edit(self):
 
         logging.debug('ConnMail::edit()')
-        # recipient, sender, credentials, server_url, server_port,
-        # input_opt_index, input_opt_data, pass_input, message_state, log_state
-
-
-        pub_key, prv_key, side_index, side_txt, symbol_txt, quantity, \
-                order_index, order_string, order_config, log_state = self.config
-
+        
         self.conn_mail_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 
@@ -149,12 +144,9 @@ class ConnMail(ElementMaster):
         self.log_line_layout.addWidget(self.log_checkbox)
         self.log_line_layout.addStretch(1)
 
-        if log_state:
-            self.log_checkbox.setChecked(True)
-
-
+        
         self.conn_mail_edit = ElementEditor(self)
-        self.conn_mail_edit.setWindowTitle(QC.translate('', 'Place a Order'))
+        self.conn_mail_edit.setWindowTitle(QC.translate('', 'Send E-Mail'))
         #self.conn_mail_edit.setMinimumSize(240, 330)
 
         # signals and slots
@@ -163,7 +155,7 @@ class ConnMail(ElementMaster):
         self.message_box_checkbox.stateChanged.connect(self.toggle_message_box)
 
         # load existing config
-        
+        self.loadLastConfig() 
 
         self.conn_mail_layout.addWidget(self.recipient_address_txt)
         self.conn_mail_layout.addWidget(self.recipient_address_input)
@@ -201,7 +193,45 @@ class ConnMail(ElementMaster):
 
         recipient, sender, credentials, server_url, server_port, \
                 input_opt_index, input_opt_data, pass_input, message_state, \
-                log_state = self.config
+                message_txt, log_state = self.config
+
+        if message_state:
+            self.toggle_message_box(2)
+            self.message_box_checkbox.setChecked(True)
+        else:
+            self.toggle_message_box(0)
+            self.message_box_checkbox.setChecked(False)
+
+        if pass_input:
+            self.pass_input_check.setChecked(True)
+        else:
+            self.pass_input_check.setChecked(False)
+
+        if recipient:
+            self.recipient_address_input.setText(recipient)
+
+        if sender:
+            self.sender_address_input.setText(sender)
+
+        if credentials:
+            self.credentials_input.setText(credentials)
+
+        if server_url:
+            self.server_url_input.setText(server_url)
+
+        if server_port:
+            self.server_port_input.setText(server_port)
+        
+        if message_txt:
+            self.message_txt_input.setPlainText(message_txt)
+
+        if log_state:
+            self.log_checkbox.setChecked(True)
+        else:
+            self.log_checkbox.setChecked(False)
+
+        self.input_options.setCurrentIndex(input_opt_index)
+
 
 
 
@@ -224,11 +254,11 @@ class ConnMail(ElementMaster):
         if self.message_txt_input.toPlainText() == '':
             message_txt = None
         else:
-            message_txt = self.message_txt.toPlainText()
+            message_txt = self.message_txt_input.toPlainText()
         # recipient, sender, credentials, server_url, server_port,
-        # input_opt_index, input_opt_data, pass_input, message_state, log_state
+        # input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state
         self.config = (recipient, sender, credentials, server_url, server_port,
-                input_opt_index, input_opt_data, pass_input, message_state, log_state)
+                input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state)
 
         self.addFunction(ConnMailFunction)
 
@@ -243,11 +273,11 @@ class ConnMailFunction(Function):
     def execute(self, record):
 
         # recipient, sender, credentials, server_url, server_port,
-        # input_opt_index, input_opt_data, pass_input, message_state, log_state
+        # input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state
 
         recipient, sender, credentials, server_url, server_port, \
                 input_opt_index, input_opt_data, pass_input, message_state, \
-                log_state = self.config
+                message_txt, log_state = self.config
 
        
 
