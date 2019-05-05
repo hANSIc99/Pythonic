@@ -182,10 +182,16 @@ class BinanceOrder(ElementMaster):
         self.limit_price_input = QLineEdit()
         self.limit_price_input.setValidator(QDoubleValidator(999999, -999999, 8))
 
+        self.limit_input_params = QLabel()
+        self.limit_input_params.setText(
+                '{\'price\' : 12.345, \'quantity\' : 0.005, \'type\' : \'GTC\'/\'IOC\'/\'FOK\'}')
+
         self.limit_layout.addWidget(self.limit_time_in_force_txt)
         self.limit_layout.addWidget(self.limit_time_in_force_input)
         self.limit_layout.addWidget(self.limit_price_txt)
         self.limit_layout.addWidget(self.limit_price_input)
+        self.limit_layout.addWidget(self.limit_input_params)
+
 
         self.order_box.addWidget(self.limit_input)
 
@@ -202,8 +208,14 @@ class BinanceOrder(ElementMaster):
         self.stop_loss_price_input = QLineEdit()
         self.stop_loss_price_input.setValidator(QDoubleValidator(999999, -999999, 8))
 
+        self.stop_loss_params = QLabel()
+        self.stop_loss_params.setText(
+                '{\'stopPrice\' : 12.345, \'quantity\' : 0.005}')
+
+
         self.stop_loss_layout.addWidget(self.stop_loss_price_txt)
         self.stop_loss_layout.addWidget(self.stop_loss_price_input)
+        self.stop_loss_layout.addWidget(self.stop_loss_params)
         self.stop_loss_layout.addStretch(1)
 
         self.order_box.addWidget(self.stop_loss_input)
@@ -237,12 +249,17 @@ class BinanceOrder(ElementMaster):
         self.stop_loss_limit_stop_price_input = QLineEdit()
         self.stop_loss_limit_stop_price_input.setValidator(QDoubleValidator(999999, -999999, 8))
 
+        self.stop_loss_limit_params = QLabel()
+        self.stop_loss_limit_params.setText(
+                '{\'price\' : 12.345, \'stopPrice\': 12.345, \'quantity\' : 0.005, \'type\' : \'GTC\'/\'IOC\'/\'FOK\'}')
+
         self.stop_loss_limit_layout.addWidget(self.stop_loss_limit_time_in_force_txt)
         self.stop_loss_limit_layout.addWidget(self.stop_loss_limit_time_in_force_input)
         self.stop_loss_limit_layout.addWidget(self.stop_loss_limit_price_txt)
         self.stop_loss_limit_layout.addWidget(self.stop_loss_limit_price_input)
         self.stop_loss_limit_layout.addWidget(self.stop_loss_limit_stop_price_txt)
         self.stop_loss_limit_layout.addWidget(self.stop_loss_limit_stop_price_input)
+        self.stop_loss_limit_layout.addWidget(self.stop_loss_limit_params)
 
         self.order_box.addWidget(self.stop_loss_limit_input)
 
@@ -259,8 +276,14 @@ class BinanceOrder(ElementMaster):
         self.take_profit_stop_price_input = QLineEdit()
         self.take_profit_stop_price_input.setValidator(QDoubleValidator(999999, -999999, 8))
 
+        self.take_profit_params = QLabel()
+        self.take_profit_params.setText(
+                '{\'stopPrice\': 12.345, \'quantity\' : 0.005}')
+
+
         self.take_profit_layout.addWidget(self.take_profit_stop_price)
         self.take_profit_layout.addWidget(self.take_profit_stop_price_input)
+        self.take_profit_layout.addWidget(self.take_profit_params)
         self.take_profit_layout.addStretch(1)
 
         self.order_box.addWidget(self.take_profit_input)
@@ -293,12 +316,17 @@ class BinanceOrder(ElementMaster):
         self.take_profit_limit_stop_price_input = QLineEdit()
         self.take_profit_limit_stop_price_input.setValidator(QDoubleValidator(999999, -999999, 8))
 
+        self.take_profit_limit_params = QLabel()
+        self.take_profit_limit_params.setText(
+                '{\'price\' : 12.345, \'stopPrice\': 12.345, \'quantity\' : 0.005, \'type\' : \'GTC\'/\'IOC\'/\'FOK\'}')
+
         self.take_profit_limit_layout.addWidget(self.take_profit_limit_time_in_force_txt)
         self.take_profit_limit_layout.addWidget(self.take_profit_limit_time_in_force_input)
         self.take_profit_limit_layout.addWidget(self.take_profit_limit_price)
         self.take_profit_limit_layout.addWidget(self.take_profit_limit_price_input)
         self.take_profit_limit_layout.addWidget(self.take_profit_limit_stop_price)
         self.take_profit_limit_layout.addWidget(self.take_profit_limit_stop_price_input)
+        self.take_profit_limit_layout.addWidget(self.take_profit_limit_params)
 
         self.order_box.addWidget(self.take_profit_limit_input)
 
@@ -306,8 +334,14 @@ class BinanceOrder(ElementMaster):
 
         logging.debug('marketOrder() called')
 
+        self.market_params = QLabel()
+        self.market_params.setText(
+                '{\'quantity\' : 0.005}')
+
         self.market_input = QWidget()
-        self.market_layout = QHBoxLayout(self.market_input)
+        self.market_layout = QVBoxLayout(self.market_input)
+        self.market_layout.addWidget(self.market_params)
+        self.market_layout.addStretch(1)
 
         self.order_box.addWidget(self.market_input)
 
@@ -315,9 +349,15 @@ class BinanceOrder(ElementMaster):
 
         logging.debug('limitMaker() called')
 
-        self.limit_maker_input = QWidget()
-        self.limit_maker_layout = QHBoxLayout(self.limit_maker_input)
+        self.limit_maker_params = QLabel()
+        self.limit_maker_params.setText(
+                '{\'quantity\' : 0.005}')
 
+        self.limit_maker_input = QWidget()
+        self.limit_maker_layout = QVBoxLayout(self.limit_maker_input)
+        self.limit_maker_layout.addWidget(self.limit_maker_params)
+        self.limit_maker_layout.addStretch(1)
+        
         self.order_box.addWidget(self.limit_maker_input)
 
 
@@ -647,6 +687,13 @@ class BinanceOrderFunction(Function):
                     price       = price,
                     stopPrice   = stopPrice
                     )
+
+        elif order_string == 'LIMIT_MAKER':
+            # TO BE DONE
+            price       = '{:.8f}'.format(order_config[2])
+        elif order_string == 'TEST':
+            # TO BE DONE
+            price       = '{:.8f}'.format(order_config[2])
 
         logging.error('Order: {}'.format(order)) 
         logging.error('symbol = {}'.format(symbol_txt))
