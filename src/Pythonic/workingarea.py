@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFrame, QGridLayout, QMessageBox
+from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 
 from Pythonic.elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
@@ -528,9 +528,7 @@ class WorkingArea(QFrame):
         # second run: add child and parent relation
         for element in element_list:
             row, col = element.getPos()
-            logging.debug('WorkingArea::loadGrid() current element: row: {} col: {}'.format(
-                row, col))
-
+                
             if element.child_pos[0]:
 
                 child = self.grid.itemAtPosition(row+1, col).widget()
@@ -582,7 +580,8 @@ class WorkingArea(QFrame):
             row, col = pos
             logging.debug('saveGrid() check position: {} {}'.format(row, col))
             element = self.grid.itemAtPosition(row, col)
-            if element and isinstance(element.widget(), ElementMaster):
+            #if element and isinstance(element.widget(), ElementMaster):
+            if type(element) is QWidgetItem:
                 logging.debug('saveGrid() element found at: {} {}'.format(row, col))
                 element_widget = element.widget()
                 if element_widget.state_iconBar:
