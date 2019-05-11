@@ -9,8 +9,9 @@ import os.path, datetime, logging
 from time import sleep
 from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
-
-from smtplib import SMTP
+from email.message import EmailMessage
+#from smtplib import SMTP
+import smtplib, ssl
 
 class ConnMail(ElementMaster):
 
@@ -23,9 +24,10 @@ class ConnMail(ElementMaster):
 
         recipient       = None
         sender          = None
-        credentials     = None
+        password        = None
         server_url      = None
         server_port     = '465'
+        subject         = None
         input_opt_index = 0
         input_opt_data  = None
         pass_input      = False
@@ -33,10 +35,10 @@ class ConnMail(ElementMaster):
         message_txt     = None
         log_state       = False
 
-        # recipient, sender, credentials, server_url, server_port,
+        # recipient, sender, password, server_url, server_port, subject
         # input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state
-        self.config = (recipient, sender, credentials, server_url, server_port, input_opt_index,
-                input_opt_data, pass_input, message_state, message_txt, log_state)
+        self.config = (recipient, sender, password, server_url, server_port, subject,
+                input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state)
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -75,10 +77,10 @@ class ConnMail(ElementMaster):
         self.sender_address_input = QLineEdit()
         self.sender_address_input.setPlaceholderText(QC.translate('', 'user@example.com'))
 
-        self.credentials_txt = QLabel()
-        self.credentials_txt.setText(QC.translate('', 'Enter credentials:'))
-        self.credentials_input = QLineEdit()
-        self.credentials_input.setEchoMode(QLineEdit.Password)
+        self.password_txt = QLabel()
+        self.password_txt.setText(QC.translate('', 'Enter password:'))
+        self.password_input = QLineEdit()
+        self.password_input.setEchoMode(QLineEdit.Password)
 
         self.subject_txt = QLabel()
         self.subject_txt.setText(QC.translate('', 'Enter subject:'))
@@ -97,6 +99,7 @@ class ConnMail(ElementMaster):
         self.server_port_input.setText('465')
         self.server_input_line_layout.addWidget(self.server_url_input)
         self.server_input_line_layout.addWidget(self.server_port_input)
+
 
 
         self.message_box_line = QWidget()
@@ -121,6 +124,12 @@ class ConnMail(ElementMaster):
         self.input_option_line_layout = QHBoxLayout(self.input_option_line)
         self.input_option_line_layout.addWidget(self.input_option_txt)
         self.input_option_line_layout.addWidget(self.input_options)
+
+        self.input_params_1 = QLabel()
+        self.input_params_1.setText('Note: Input configuration dict has priority')
+        self.input_params_2 = QLabel()
+        self.input_params_2.setText(
+                '{\'subject\' : \'Hello\', \'message\' : \'World!\'}')
 
 
         self.pass_input_line = QWidget()
@@ -161,13 +170,17 @@ class ConnMail(ElementMaster):
         self.conn_mail_layout.addWidget(self.recipient_address_input)
         self.conn_mail_layout.addWidget(self.sender_address_txt)
         self.conn_mail_layout.addWidget(self.sender_address_input)
-        self.conn_mail_layout.addWidget(self.credentials_txt)
-        self.conn_mail_layout.addWidget(self.credentials_input)
+        self.conn_mail_layout.addWidget(self.password_txt)
+        self.conn_mail_layout.addWidget(self.password_input)
         self.conn_mail_layout.addWidget(self.server_txt)
         self.conn_mail_layout.addWidget(self.server_input_line)
+        self.conn_mail_layout.addWidget(self.subject_txt)
+        self.conn_mail_layout.addWidget(self.subject_input)
         self.conn_mail_layout.addWidget(self.message_box_line)
         self.conn_mail_layout.addWidget(self.message_txt_input)
         self.conn_mail_layout.addWidget(self.input_option_line)
+        self.conn_mail_layout.addWidget(self.input_params_1)
+        self.conn_mail_layout.addWidget(self.input_params_2)
         self.conn_mail_layout.addWidget(self.pass_input_line)
 
         self.conn_mail_layout.addWidget(self.help_txt)
@@ -179,7 +192,7 @@ class ConnMail(ElementMaster):
 
     def toggle_message_box(self, event):
 
-        logging.error('State changed {}'.format(event))
+        logging.debug('ConnMail::toggle_message_box() called')
         if event == 0:
             self.message_txt_input.setDisabled(True)
         else:
@@ -188,10 +201,10 @@ class ConnMail(ElementMaster):
 
     def loadLastConfig(self):
 
-        # recipient, sender, credentials, server_url, server_port,
+        # recipient, sender, password, server_url, server_port, subject
         # input_opt_index, input_opt_data, pass_input, message_state, log_state
 
-        recipient, sender, credentials, server_url, server_port, \
+        recipient, sender, password, server_url, server_port, subject, \
                 input_opt_index, input_opt_data, pass_input, message_state, \
                 message_txt, log_state = self.config
 
@@ -213,14 +226,17 @@ class ConnMail(ElementMaster):
         if sender:
             self.sender_address_input.setText(sender)
 
-        if credentials:
-            self.credentials_input.setText(credentials)
+        if password:
+            self.password_input.setText(password)
 
         if server_url:
             self.server_url_input.setText(server_url)
 
         if server_port:
             self.server_port_input.setText(server_port)
+
+        if subject:
+            self.subject_input.setText(subject)
         
         if message_txt:
             self.message_txt_input.setPlainText(message_txt)
@@ -241,9 +257,10 @@ class ConnMail(ElementMaster):
 
         recipient       = self.recipient_address_input.text()
         sender          = self.sender_address_input.text()
-        credentials     = self.credentials_input.text() 
+        password        = self.password_input.text() 
         server_url      = self.server_url_input.text()
         server_port     = self.server_port_input.text()
+        subject         = self.subject_input.text()
         input_opt_index = self.input_options.currentIndex()
         input_opt_data  = self.input_options.currentData()
 
@@ -255,9 +272,9 @@ class ConnMail(ElementMaster):
             message_txt = None
         else:
             message_txt = self.message_txt_input.toPlainText()
-        # recipient, sender, credentials, server_url, server_port,
+        # recipient, sender, password, server_url, server_port, subject
         # input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state
-        self.config = (recipient, sender, credentials, server_url, server_port,
+        self.config = (recipient, sender, password, server_url, server_port, subject,
                 input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state)
 
         self.addFunction(ConnMailFunction)
@@ -272,17 +289,46 @@ class ConnMailFunction(Function):
 
     def execute(self, record):
 
-        # recipient, sender, credentials, server_url, server_port,
+        # recipient, sender, password, server_url, server_port, subject
         # input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state
 
-        recipient, sender, credentials, server_url, server_port, \
+        recipient, sender, password, server_url, server_port, subject, \
                 input_opt_index, input_opt_data, pass_input, message_state, \
                 message_txt, log_state = self.config
 
-       
+        if input_opt_index == 1: # Use input as message txt
+            message_state = True
+            message_txt = str(record)
 
-        log_txt = '{BINANCE ORDER}          '
-        result = Record(self.getPos(), (self.row +1, self.column), order,
+
+        if isinstance(record, dict):
+                if 'subject' in record: 
+                    subject = record['subject']
+                if 'message' in record: 
+                    message_state = True
+                    message_txt = record['message']
+
+        rcp_list = recipient.split(' ')
+
+        msg = EmailMessage()
+        msg['Subject']  = subject
+        msg['From']     = sender
+        msg['To'] = ', '.join(rcp_list)
+        if message_state:
+            msg.set_content = message_txt # BAUSTELLE
+
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP_SSL(server_url, server_port, context=context) as server:
+            server.login(sender, password)
+            server.send_message(msg)
+            """
+            for rcp in rcp_list:
+                server.sendmail(sender, rcp, message)
+            """
+
+        log_txt = '{Message send}           '
+        result = Record(self.getPos(), (self.row +1, self.column), rcp_list,
                  log=log_state, log_txt=log_txt)
 
         return result
