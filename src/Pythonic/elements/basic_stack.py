@@ -420,9 +420,7 @@ class StackFunction(Function):
         pickle.dump(stack, f)
         f.close()
 
-        log_txt = '{{BASIC STACK}}           Return to {}|{} {} {}'.format(
-                debug_text, delete_read, record, write_mode)
-
+        log_txt = '{BASIC STACK}            '
         result = Record(self.getPos(), (self.row +1, self.column), record,
                 log=log_state, log_txt=log_txt)
         return result
