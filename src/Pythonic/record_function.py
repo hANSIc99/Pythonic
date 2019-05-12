@@ -11,7 +11,7 @@ import os
 class Record():
 
     def __init__(self, source, target_0, record_0,
-            target_1=None, record_1=None, log=False, log_txt=None, log_output=None):
+            target_1=None, record_1=None, log=False, log_txt=None, log_output=False):
 
         logging.debug('__init__() called Record')
         self.source   = source

@@ -13,6 +13,7 @@ from Pythonic.menubar import MenuBar
 from Pythonic.executor import GridOperator
 from Pythonic.top_menubar import topMenuBar
 from Pythonic.binancetools import BinanceTools
+from Pythonic.connectivitytools import ConnectivityTools
 from Pythonic.mastertool import MasterTool
 from Pythonic.elementmaster import alphabet
 from Pythonic.settings import Settings
@@ -183,10 +184,12 @@ class MainWindow(QWidget):
 
         self.toolbox_basics = BasicTools(self)
         self.toolbox_binance = BinanceTools(self)
+        self.toolbox_connectivity = ConnectivityTools(self)
 
         # add Tabs to the toolbox
         self.toolbox_tab.addTab(self.toolbox_basics, QC.translate('', 'Basic'))
         self.toolbox_tab.addTab(self.toolbox_binance, QC.translate('', 'Binance'))
+        self.toolbox_tab.addTab(self.toolbox_connectivity, QC.translate('', 'Connectivity'))
 
         # signals and slots
         self.menubar.save_file.connect(self.working_area.saveGrid)
@@ -207,6 +210,7 @@ class MainWindow(QWidget):
         self.topMenuBar.settings_action.triggered.connect(self.settings.show)
         self.topMenuBar.info_action.triggered.connect(self.showInfo)
         self.toolbox_binance.reg_tool.connect(self.working_area.regType)
+        self.toolbox_connectivity.reg_tool.connect(self.working_area.regType)
         self.toolbox_basics.reg_tool.connect(self.working_area.regType)
         self.gridoperator.update_logger.connect(self.update_logfile)
 
@@ -214,6 +218,7 @@ class MainWindow(QWidget):
         # register tools
         self.toolbox_binance.register_tools()
         self.toolbox_basics.register_tools()
+        self.toolbox_connectivity.register_tools()
 
         self.image_folder = QDir('images')
 
@@ -298,7 +303,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.8'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.9'))
 
     def showInfo(self, event):
 
@@ -314,7 +319,7 @@ class MainWindow(QWidget):
             month = now.strftime('%b')
             year = now.strftime('%Y')
             home_dict = str(Path.home())
-            file_path = '{}/Pythonics_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+            file_path = '{}/Pythonic_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
             self.ensure_file_path(file_path)
             file_handler = logging.FileHandler(file_path)
             file_handler.setLevel(self.log_level)

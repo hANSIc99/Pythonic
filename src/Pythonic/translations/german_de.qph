@@ -576,4 +576,68 @@
     <source>Last update:</source>
     <target>Letztes update:</target>
 </phrase>
+<phrase>
+    <source>Recipient address:</source>
+    <target>Empfänger Adresse:</target>
+</phrase>
+<phrase>
+    <source>Separate addresses with spaces</source>
+    <target>Trenne mehrerer Adressen mit Leerzeichen</target>
+</phrase>
+<phrase>
+    <source>Enter password:</source>
+    <target>Passworteingabe:</target>
+</phrase>
+<phrase>
+    <source>Enter server URL and port number:</source>
+    <target>Eingabe Server URL und Port-Nummer:</target>
+</phrase>
+<phrase>
+    <source>e.g. smtp.gamil.com</source>
+    <target>z.B. smtp.gmail.com</target>
+</phrase>
+<phrase>
+    <source>Enter subject:</source>
+    <target>Betreff:</target>
+</phrase>
+<phrase>
+    <source>Activate user defined message text?</source>
+    <target>Eingabe benutzerdefinierter Text?</target>
+</phrase>
+<phrase>
+    <source>Use input as:</source>
+    <target>Verarbeite Eingabe als:</target>
+</phrase>
+<phrase>
+    <source>Message text</source>
+    <target>E-Mail Text</target>
+</phrase>
+<phrase>
+    <source>Attachment (String)</source>
+    <target>Anhang (String)</target>
+</phrase>
+<phrase>
+    <source>Attachment (Pickle)</source>
+    <target>Anhang (Pickle)</target>
+</phrase>
+<phrase>
+    <source>Note: Input configuration dict has priority</source>
+    <target>Hinweis: Konfigurations-Dict als Eingang hat vorrang!</target>
+</phrase>
+<phrase>
+    <source>Pass input forward?</source>
+    <target>Leite Eingang durch?</target>
+</phrase>
+<phrase>
+    <source>Only encrypted connections are allowed</source>
+    <target>Nur verschlüsselte Verbindungen sind erlaubt</target>
+</phrase>
+<phrase>
+    <source>Send E-Mail</source>
+    <target>Versende E-Mail</target>
+</phrase>
+<phrase>
+    <source>Filename:</source>
+    <target>Dateiname:</target>
+</phrase>
 </QPH>
