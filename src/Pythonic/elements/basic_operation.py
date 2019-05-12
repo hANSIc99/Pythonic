@@ -75,12 +75,18 @@ class ExecOp(ElementMaster):
         if self.config[1]:
             self.code_input.setPlainText(self.config[1])
         else:
-            self.placeholder_1 = QC.translate('', '""" use the variable input to access data from previous elements """')
-            self.placeholder_2 = QC.translate('', '""" set the output variable to pass data to following elements """')
-            self.placeholder_3 = QC.translate('', '""" set the variable log_txt to adjust the logging text """')
-            self.code_input.setPlaceholderText(self.placeholder_1 + '\r\n\r\n' + 'print(input)\r\n\r\n' +
-                                               self.placeholder_2 + '\r\n\r\n' + 'output = 5\r\n\r\n' + 
-                                               self.placeholder_3 + '\r\n\r\n' + 'log_txt = "debug text"')
+            self.placeholder_1 = QC.translate('',
+                    '""" use the variable input to access data from previous elements """')
+            self.placeholder_2 = QC.translate('',
+                    '""" set the output variable to pass data to following elements """')
+            self.placeholder_3 = QC.translate('',
+                    '""" set the variable log_txt to adjust the logging text """')
+            self.code_input.setPlaceholderText(self.placeholder_1 + '\r\n\r\n' +
+                                               'print(input)\r\n\r\n' +
+                                               self.placeholder_2 +
+                                               '\r\n\r\n' + 'output = 5\r\n\r\n' + 
+                                               self.placeholder_3 + '\r\n\r\n' +
+                                               'log_txt = "debug text"')
 
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 

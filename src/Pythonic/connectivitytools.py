@@ -1,14 +1,13 @@
 from PyQt5.QtWidgets import QFrame, QHBoxLayout 
 from PyQt5.QtCore import Qt, QMimeData, QDir, pyqtSignal
-from PyQt5.QtGui import QDrag, QPixmap, QPainter, QColor
+from PyQt5.QtGui import QDrag, QPixmap, QPainter,QColor
 import sys, logging
 from Pythonic.workingarea import WorkingArea
 from Pythonic.mastertool import MasterTool
 
+class ConnectivityTools(QFrame):
 
-class BinanceTools(QFrame):
-
-    reg_tool = pyqtSignal(tuple, name='register_tool_binance')
+    reg_tool = pyqtSignal(tuple, name='register_tool_connectivity')
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -25,18 +24,14 @@ class BinanceTools(QFrame):
             
         self.layout_h = QHBoxLayout()
 
-        self.scheduler = MasterTool(self, 'BinanceSched', 1)
-        self.scheduler.setPixmap(QPixmap('images/BinanceSched.png').scaled(120, 60))
+        self.e_mail = MasterTool(self, 'ConnMail', 1)
+        self.e_mail.setPixmap(QPixmap('images/ConnMail.png').scaled(120, 60))
 
-        self.ohlc = MasterTool(self, 'BinanceOHLC', 1)
-        self.ohlc.setPixmap(QPixmap('images/BinanceOHLC.png').scaled(120, 60))
+        #self.rest = MasterTool(self, 'ConnREST', 1)
+        #self.rest.setPixmap(QPixmap('images/ConnREST.png').scaled(120, 60))
 
-        self.order = MasterTool(self, 'BinanceOrder', 1)
-        self.order.setPixmap(QPixmap('images/BinanceOrder.png').scaled(120, 60))
-
-        self.layout_h.addWidget(self.scheduler)
-        self.layout_h.addWidget(self.ohlc)
-        self.layout_h.addWidget(self.order)
+        self.layout_h.addWidget(self.e_mail)
+        #self.layout_h.addWidget(self.rest)
         self.layout_h.addStretch(1)
 
         self.setLayout(self.layout_h)
@@ -72,9 +67,8 @@ class BinanceTools(QFrame):
             child.setPixmap(pixmap)
 
     def register_tools(self):
-        logging.debug('BinanceTools::register_tools() called')
-        self.reg_tool.emit(self.scheduler.toolData())
-        self.reg_tool.emit(self.ohlc.toolData())
-        self.reg_tool.emit(self.order.toolData())
+        logging.debug('ConnectivityTools::register_tools() called')
+        self.reg_tool.emit(self.e_mail.toolData())
+        #self.reg_tool.emit(self.rest.toolData())
 
 

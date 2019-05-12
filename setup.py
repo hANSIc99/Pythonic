@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '0.8',
+        version = '0.9',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -22,7 +22,7 @@ setuptools.setup(
         entry_points = {
             'console_scripts' : ['Pythonic = Pythonic.script:run']
             },
-        python_requires = '>=3.5',
+        python_requires = '>=3.6',
         install_requires = [
             'PyQt5>=5.6,<=5.8.2',
             'pandas>=0.20.3',
