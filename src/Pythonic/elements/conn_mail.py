@@ -10,8 +10,9 @@ from time import sleep
 from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
 from email.message import EmailMessage
+from email.contentmanager import raw_data_manager
 #from smtplib import SMTP
-import smtplib, ssl
+import smtplib, ssl, pickle
 
 class ConnMail(ElementMaster):
 
@@ -30,15 +31,16 @@ class ConnMail(ElementMaster):
         subject         = None
         input_opt_index = 0
         input_opt_data  = None
+        filename        = None
         pass_input      = False
         message_state   = False
         message_txt     = None
         log_state       = False
 
         # recipient, sender, password, server_url, server_port, subject
-        # input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state
+        # input_opt_index, input_opt_data, filename, pass_input, message_state, message_txt, log_state
         self.config = (recipient, sender, password, server_url, server_port, subject,
-                input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state)
+                input_opt_index, input_opt_data, filename, pass_input, message_state, message_txt, log_state)
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -120,10 +122,21 @@ class ConnMail(ElementMaster):
         self.input_options = QComboBox()
         self.input_options.addItem(QC.translate('', 'None'))
         self.input_options.addItem(QC.translate('', 'Message txt'))
-        self.input_options.addItem(QC.translate('', 'Attachement'))
+        self.input_options.addItem(QC.translate('', 'Attachement (String)'))
+        self.input_options.addItem(QC.translate('', 'Attachement (Pickle)'))
         self.input_option_line_layout = QHBoxLayout(self.input_option_line)
         self.input_option_line_layout.addWidget(self.input_option_txt)
         self.input_option_line_layout.addWidget(self.input_options)
+
+        self.filename_input_line = QWidget()
+        self.filename_input_line_layout = QHBoxLayout(self.filename_input_line)
+        self.filename_input_txt = QLabel()
+        self.filename_input_txt.setText(QC.translate('', 'Filename:'))
+        self.filename_input = QLineEdit()
+        self.filename_input.setPlaceholderText(QC.translate('', 'filename.txt'))
+        self.filename_input_line_layout.addWidget(self.filename_input_txt)
+        self.filename_input_line_layout.addWidget(self.filename_input)
+
 
         self.input_params_1 = QLabel()
         self.input_params_1.setText('Note: Input configuration dict has priority')
@@ -162,7 +175,7 @@ class ConnMail(ElementMaster):
         self.confirm_button.clicked.connect(self.conn_mail_edit.closeEvent)
         self.conn_mail_edit.window_closed.connect(self.edit_done)
         self.message_box_checkbox.stateChanged.connect(self.toggle_message_box)
-
+        self.input_options.currentIndexChanged.connect(self.indexChanged)
         # load existing config
         self.loadLastConfig() 
 
@@ -179,6 +192,7 @@ class ConnMail(ElementMaster):
         self.conn_mail_layout.addWidget(self.message_box_line)
         self.conn_mail_layout.addWidget(self.message_txt_input)
         self.conn_mail_layout.addWidget(self.input_option_line)
+        self.conn_mail_layout.addWidget(self.filename_input_line)
         self.conn_mail_layout.addWidget(self.input_params_1)
         self.conn_mail_layout.addWidget(self.input_params_2)
         self.conn_mail_layout.addWidget(self.pass_input_line)
@@ -198,14 +212,24 @@ class ConnMail(ElementMaster):
         else:
             self.message_txt_input.setDisabled(False)
 
+    def indexChanged(self, event):
+
+        current_index = event
+        logging.debug('ConnMail::indexChanged() called: {}'.format(event))
+        if event == 2 or event == 3:
+            self.filename_input_line.setVisible(True)
+        else:
+            self.filename_input_line.setVisible(False)
+
+
 
     def loadLastConfig(self):
 
         # recipient, sender, password, server_url, server_port, subject
-        # input_opt_index, input_opt_data, pass_input, message_state, log_state
+        # input_opt_index, input_opt_data, filename, pass_input, message_state, log_state
 
         recipient, sender, password, server_url, server_port, subject, \
-                input_opt_index, input_opt_data, pass_input, message_state, \
+                input_opt_index, input_opt_data, filename, pass_input, message_state, \
                 message_txt, log_state = self.config
 
         if message_state:
@@ -214,6 +238,7 @@ class ConnMail(ElementMaster):
         else:
             self.toggle_message_box(0)
             self.message_box_checkbox.setChecked(False)
+
 
         if pass_input:
             self.pass_input_check.setChecked(True)
@@ -241,12 +266,16 @@ class ConnMail(ElementMaster):
         if message_txt:
             self.message_txt_input.setPlainText(message_txt)
 
+        if filename:
+            self.filename_input.setText(filename)
+
         if log_state:
             self.log_checkbox.setChecked(True)
         else:
             self.log_checkbox.setChecked(False)
 
         self.input_options.setCurrentIndex(input_opt_index)
+        self.indexChanged(input_opt_index)
 
 
 
@@ -263,6 +292,7 @@ class ConnMail(ElementMaster):
         subject         = self.subject_input.text()
         input_opt_index = self.input_options.currentIndex()
         input_opt_data  = self.input_options.currentData()
+        filename        = self.filename_input.text()
 
         pass_input      = self.pass_input_check.isChecked()
         message_state   = self.message_box_checkbox.isChecked()   
@@ -273,9 +303,9 @@ class ConnMail(ElementMaster):
         else:
             message_txt = self.message_txt_input.toPlainText()
         # recipient, sender, password, server_url, server_port, subject
-        # input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state
+        # input_opt_index, input_opt_data, filename, pass_input, message_state, message_txt, log_state
         self.config = (recipient, sender, password, server_url, server_port, subject,
-                input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state)
+                input_opt_index, input_opt_data, filename, pass_input, message_state, message_txt, log_state)
 
         self.addFunction(ConnMailFunction)
 
@@ -290,18 +320,22 @@ class ConnMailFunction(Function):
     def execute(self, record):
 
         # recipient, sender, password, server_url, server_port, subject
-        # input_opt_index, input_opt_data, pass_input, message_state, message_txt, log_state
+        # input_opt_index, input_opt_data, filename, pass_input, message_state, message_txt, log_state
 
         recipient, sender, password, server_url, server_port, subject, \
-                input_opt_index, input_opt_data, pass_input, message_state, \
+                input_opt_index, input_opt_data, filename, pass_input, message_state, \
                 message_txt, log_state = self.config
 
         if input_opt_index == 1: # Use input as message txt
-            message_state = True
-            message_txt = str(record)
+            if message_state: # In case there is already a message, append input
+                message_txt += '\n\n'
+                message_txt += str(record)
+            else:
+                message_state = True
+                message_txt = str(record)
 
 
-        if isinstance(record, dict):
+        if isinstance(record, dict): # Dictionary has always priority
                 if 'subject' in record: 
                     subject = record['subject']
                 if 'message' in record: 
@@ -310,12 +344,28 @@ class ConnMailFunction(Function):
 
         rcp_list = recipient.split(' ')
 
+        # Message constructor
         msg = EmailMessage()
         msg['Subject']  = subject
         msg['From']     = sender
         msg['To'] = ', '.join(rcp_list)
+        msg.set_default_type('text/plain')
         if message_state:
-            msg.set_content = message_txt # BAUSTELLE
+            msg.set_content(message_txt)
+
+        # Attachment
+
+        if input_opt_index == 2: # Attach input object as string
+            if not filename:
+                filename = 'filename.txt'
+            msg.add_attachment(str(record), 'text/plain', filename=filename)
+
+        if input_opt_index == 3: # Attach input object as binary
+            attachement = pickle.dumps(record)
+            if not filename:
+                filename = 'filename.txt'
+            msg.add_attachment(attachement, maintype='application', subtype='octet-stream',
+                    filename='filename.bin')
 
         context = ssl.create_default_context()
 
