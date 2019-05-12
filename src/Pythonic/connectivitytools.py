@@ -27,11 +27,11 @@ class ConnectivityTools(QFrame):
         self.e_mail = MasterTool(self, 'ConnMail', 1)
         self.e_mail.setPixmap(QPixmap('images/ConnMail.png').scaled(120, 60))
 
-        self.rest = MasterTool(self, 'ConnREST', 1)
-        self.rest.setPixmap(QPixmap('images/ConnREST.png').scaled(120, 60))
+        #self.rest = MasterTool(self, 'ConnREST', 1)
+        #self.rest.setPixmap(QPixmap('images/ConnREST.png').scaled(120, 60))
 
         self.layout_h.addWidget(self.e_mail)
-        self.layout_h.addWidget(self.rest)
+        #self.layout_h.addWidget(self.rest)
         self.layout_h.addStretch(1)
 
         self.setLayout(self.layout_h)
@@ -69,6 +69,6 @@ class ConnectivityTools(QFrame):
     def register_tools(self):
         logging.debug('ConnectivityTools::register_tools() called')
         self.reg_tool.emit(self.e_mail.toolData())
-        self.reg_tool.emit(self.rest.toolData())
+        #self.reg_tool.emit(self.rest.toolData())
 
 
