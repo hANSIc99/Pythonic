@@ -22,7 +22,7 @@ setuptools.setup(
         entry_points = {
             'console_scripts' : ['Pythonic = Pythonic.script:run']
             },
-        python_requires = '>=3.5',
+        python_requires = '>=3.6',
         install_requires = [
             'PyQt5>=5.6,<=5.8.2',
             'pandas>=0.20.3',
