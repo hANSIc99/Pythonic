@@ -11,6 +11,7 @@ from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
 from email.message import EmailMessage
 from email.contentmanager import raw_data_manager
+from sys import getsizeof
 #from smtplib import SMTP
 import smtplib, ssl, pickle
 
@@ -372,13 +373,13 @@ class ConnMailFunction(Function):
         with smtplib.SMTP_SSL(server_url, server_port, context=context) as server:
             server.login(sender, password)
             server.send_message(msg)
-            """
-            for rcp in rcp_list:
-                server.sendmail(sender, rcp, message)
-            """
+        
+        if not pass_input:
+            record = None
 
-        log_txt = '{Message send}           '
-        result = Record(self.getPos(), (self.row +1, self.column), rcp_list,
-                 log=log_state, log_txt=log_txt)
+        log_txt = '{Message send succesfull}'
+        log_output = '{} bytes send'.format(getsizeof(msg.__str__()))
+        result = Record(self.getPos(), (self.row +1, self.column), record,
+                 log=log_state, log_txt=log_txt, log_output=log_output)
 
         return result
