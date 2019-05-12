@@ -1,3 +1,9 @@
+0.9
+
+    E-Mail connectivity element added
+    Fixed bug in basic return element under windows
+    Removed Python 3.5 from supported versions
+    
 0.8
 
     Design updated

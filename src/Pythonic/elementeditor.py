@@ -13,10 +13,10 @@ class ElementEditor(QWidget):
         self.setWindowModality(Qt.WindowModal)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
 
-        logging.debug('__init__() called ElementEditor')
+        logging.debug('ElementEditor::__init__() called')
 
     def closeEvent(self, event):
-        logging.debug('closeEvent() called ElementEditor')
+        logging.debug('ElementEditor::closeEvent() called')
         self.window_closed.emit()
         self.hide()
 
