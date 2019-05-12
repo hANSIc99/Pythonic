@@ -118,10 +118,10 @@ class ConnMail(ElementMaster):
 
         self.input_option_line = QWidget()
         self.input_option_txt = QLabel()
-        self.input_option_txt.setText(QC.translate('', 'Use input as: '))
+        self.input_option_txt.setText(QC.translate('', 'Use input as:'))
         self.input_options = QComboBox()
         self.input_options.addItem(QC.translate('', 'None'))
-        self.input_options.addItem(QC.translate('', 'Message txt'))
+        self.input_options.addItem(QC.translate('', 'Message text'))
         self.input_options.addItem(QC.translate('', 'Attachement (String)'))
         self.input_options.addItem(QC.translate('', 'Attachement (Pickle)'))
         self.input_option_line_layout = QHBoxLayout(self.input_option_line)
@@ -139,7 +139,7 @@ class ConnMail(ElementMaster):
 
 
         self.input_params_1 = QLabel()
-        self.input_params_1.setText('Note: Input configuration dict has priority')
+        self.input_params_1.setText(QC.translate('', 'Note: Input configuration dict has priority'))
         self.input_params_2 = QLabel()
         self.input_params_2.setText(
                 '{\'subject\' : \'Hello\', \'message\' : \'World!\'}')
