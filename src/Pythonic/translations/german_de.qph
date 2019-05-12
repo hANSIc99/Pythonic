@@ -601,7 +601,7 @@
     <target>Betreff:</target>
 </phrase>
 <phrase>
-    <source>Activate user defined message txt?</source>
+    <source>Activate user defined message text?</source>
     <target>Eingabe benutzerdefinierter Text?</target>
 </phrase>
 <phrase>
@@ -613,11 +613,11 @@
     <target>E-Mail Text</target>
 </phrase>
 <phrase>
-    <source>Attachement (String)</source>
+    <source>Attachment (String)</source>
     <target>Anhang (String)</target>
 </phrase>
 <phrase>
-    <source>Attachement (Pickle)</source>
+    <source>Attachment (Pickle)</source>
     <target>Anhang (Pickle)</target>
 </phrase>
 <phrase>
@@ -635,5 +635,9 @@
 <phrase>
     <source>Send E-Mail</source>
     <target>Versende E-Mail</target>
+</phrase>
+<phrase>
+    <source>Filename:</source>
+    <target>Dateiname:</target>
 </phrase>
 </QPH>
