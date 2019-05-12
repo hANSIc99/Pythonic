@@ -620,4 +620,72 @@
     <source>hidden</source>
     <target>隐</target>
 </phrase>
+<phrase>
+    <source>Only encrypted connections are allowed</source>
+    <target>仅允许加密连接</target>
+</phrase>
+<phrase>
+    <source>Send E-Mail</source>
+    <target>发送电子邮件</target>
+</phrase>
+<phrase>
+    <source>Recipient address:</source>
+    <target>收件人地址：</target>
+</phrase>
+<phrase>
+    <source>Separate addresses with spaces</source>
+    <target>用空格分隔地址</target>
+</phrase>
+<phrase>
+    <source>Enter sender address:</source>
+    <target>输入发件人地址：</target>
+</phrase>
+<phrase>
+    <source>Enter password:</source>
+    <target>输入密码：</target>
+</phrase>
+<phrase>
+    <source>Enter server URL and port number:</source>
+    <target>输入服务器URL和端口号：</target>
+</phrase>
+<phrase>
+    <source>e.g. smtp.gmail.com</source>
+    <target>例如smtp.gmail.com</target>
+</phrase>
+<phrase>
+    <source>Enter subject:</source>
+    <target>输入主题：</target>
+</phrase>
+<phrase>
+    <source>Activate user defined message text?</source>
+    <target>激活用户定义的消息文本？</target>
+</phrase>
+<phrase>
+    <source>Use input as:</source>
+    <target>使用输入为：</target>
+</phrase>
+<phrase>
+    <source>Attachment (String)</source>
+    <target>附件（字符串）</target>
+</phrase>
+<phrase>
+    <source>Attachment (Pickle)</source>
+    <target>附件（泡菜）</target>
+</phrase>
+<phrase>
+    <source>Filename:</source>
+    <target>文件名：</target>
+</phrase>
+<phrase>
+    <source>Note: Input configuration dict has priority</source>
+    <target>注意：输入配置dict具有优先权</target>
+</phrase>
+<phrase>
+    <source>Pass input forward?</source>
+    <target>传递输入？</target>
+</phrase>
+<phrase>
+    <source>Message text</source>
+    <target>消息文本</target>
+</phrase>
 </QPH>
