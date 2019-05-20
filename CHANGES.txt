@@ -1,3 +1,9 @@
+0.10
+
+    Required pythonic_binance changed
+    Removed depency dateparser
+    Installation instructions updated
+
 0.9
 
     E-Mail connectivity element added
