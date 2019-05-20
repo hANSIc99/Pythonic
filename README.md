@@ -14,7 +14,7 @@
 
 ## Installation into existing Python 3.x environment
 
-Pythonic is compatible with Python version 3.5, 3.6 and 3.7.
+Pythonic is compatible with Python version 3.6 and 3.7.
 
 ### 1. Install [Python 3.7](https://www.python.org/)
 
