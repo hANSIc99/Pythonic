@@ -14,13 +14,23 @@
 
 ## Installation into existing Python 3.x environment
 
-Pythonic is compatible with Python version 3.5, 3.6 and 3.7.
+Pythonic is compatible with Python version 3.6 and 3.7.
 
-### 1. Install [Python 3.7](https://www.python.org/)
+#### 1. Install [Python 3.7](https://www.python.org/)
 
-#### 2. `pip3 install Pythonic`
+#### 2a. [Linux]
 
-or `python3 -m pip install Pythonic`
+On Linux based systems,
+run `sudo pip3 install Pythonic`
+or `sudo python3 -m pip install Pythonic`
+
+In general, root-rights are not required but when you run without it, the start script under
+`/usr/local/bin/` won't get installed.
+
+#### 2b. [Windows]
+
+On Windows, open the command line or the Powershell and type:
+`pip3 install Pythonic`
 
 You can now start Pythonic from the command line by typing:
 
@@ -34,7 +44,7 @@ Run `sudo apt install python3-pip` to install **pip3**.
 
 ### No module named 'urllib3.packages.six'
 When you get this error message,
-your distribution propably offern only an old version of **urlib3**.
+your distribution propably offers only an old version of **urlib3**.
 This command should fix the issue:
 
 `sudo python3 -m pip install requests urllib3 pyOpenSSL --force --upgrade`
