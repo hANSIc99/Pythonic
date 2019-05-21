@@ -1,6 +1,6 @@
 <p align="center"><img src="src/Pythonic/images/horizontal.png" alt="Pythonic" height="120px"></p>
 
-## Trading platform for digital currencies
+## Graphical Python programming for trading and automation
 
 [<img src="https://img.shields.io/pypi/l/Pythonic.svg">](https://github.com/hANSIc99/Pythonic)
 [<img src="https://img.shields.io/pypi/pyversions/Pythonic.svg">](https://pypi.org/project/Pythonic/)
