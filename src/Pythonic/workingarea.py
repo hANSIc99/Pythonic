@@ -13,6 +13,7 @@ from Pythonic.elements.binance_sched     import BinanceSched
 from Pythonic.elements.binance_ohlc      import BinanceOHLC
 from Pythonic.elements.binance_order     import BinanceOrder
 from Pythonic.elements.conn_mail         import ConnMail
+from Pythonic.elements.conn_rest         import ConnREST
 
 from Pythonic.elementmaster              import ElementMaster
 from Pythonic.storagebar                 import StorageBar

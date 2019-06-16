@@ -103,7 +103,7 @@ class BasicTools(QFrame):
 
 class MainWindow(QWidget):
 
-    log_level = logging.INFO
+    log_level = logging.DEBUG
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
 
@@ -303,7 +303,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.10'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.11'))
 
     def showInfo(self, event):
 

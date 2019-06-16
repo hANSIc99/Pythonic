@@ -45,7 +45,7 @@ class ConnMail(ElementMaster):
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
-        logging.debug('BinanceOrder called at row {}, column {}'.format(row, column))
+        logging.debug('ConnMail::__init__() called at row {}, column {}'.format(row, column))
         self.addFunction(ConnMailFunction)
 
     def __setstate__(self, state):
@@ -316,7 +316,7 @@ class ConnMailFunction(Function):
     def __init(self, config, b_debug, row, column):
 
         super().__init__(config, b_debug, row, column)
-        logging.debug('__init__() called BinanceOHLCFUnction')
+        logging.debug('ConnMailFunction::__init__() called')
 
     def execute(self, record):
 
