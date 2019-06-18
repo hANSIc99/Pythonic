@@ -8,16 +8,17 @@ from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
 import sys, logging, datetime, os
 import multiprocessing as mp
-from Pythonic.workingarea import WorkingArea
-from Pythonic.menubar import MenuBar
-from Pythonic.executor import GridOperator
-from Pythonic.top_menubar import topMenuBar
-from Pythonic.binancetools import BinanceTools
-from Pythonic.connectivitytools import ConnectivityTools
-from Pythonic.mastertool import MasterTool
-from Pythonic.elementmaster import alphabet
-from Pythonic.settings import Settings
-from Pythonic.info import InfoWindow
+from Pythonic.workingarea               import WorkingArea
+from Pythonic.menubar                   import MenuBar
+from Pythonic.executor                  import GridOperator
+from Pythonic.top_menubar               import topMenuBar
+from Pythonic.binancetools              import BinanceTools
+from Pythonic.connectivitytools         import ConnectivityTools
+from Pythonic.mastertool                import MasterTool
+from Pythonic.elementmaster             import alphabet
+from Pythonic.settings                  import Settings
+from Pythonic.info                      import InfoWindow
+from Pythonic.storagebar                import StorageBar
 
 
 class BasicTools(QFrame):
@@ -171,14 +172,20 @@ class MainWindow(QWidget):
 
         # create class objects
         #self.exceptwindow = ExceptWindow(self)
+
+        self.wrk_area_arr = []
         
         self.working_area = WorkingArea()
+        self.storagebar = StorageBar(self.wrk_area_arr)
         self.menubar = MenuBar()
         self.toolbox_tab = QTabWidget()
         self.toolbox_tab.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
         self.topMenuBar = topMenuBar()
         self.settings = Settings()
         self.infoWindow = InfoWindow()
+
+        # Baustelle
+        self.wrk_area_arr.append(self.working_area)
 
         self.gridoperator = GridOperator(self.working_area.grid)
 
@@ -231,10 +238,17 @@ class MainWindow(QWidget):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setMinimumSize(300, 300)
 
+        self.bottom_area = QWidget()
+        self.bottom_area_layout = QHBoxLayout(self.bottom_area)
+        self.bottom_area_layout.addWidget(self.scrollArea)
+        self.bottom_area_layout.addWidget(self.storagebar)
+
+
         self.layout_v.addWidget(self.topMenuBar)
         self.layout_v.addWidget(self.menubar)
         self.layout_v.addWidget(self.toolbox_tab)
-        self.layout_v.addWidget(self.scrollArea)
+        #self.layout_v.addWidget(self.scrollArea)
+        self.layout_v.addWidget(self.bottom_area)
 
         self.main_widget = QWidget()
         self.main_widget.setLayout(self.layout_v)
