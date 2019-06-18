@@ -5,7 +5,7 @@ from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 from pythonic_binance.client import Client
 import pandas as pd
-import os.path, datetime, logging, requests
+import os.path, datetime, logging, requests, json
 from time import sleep
 from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
@@ -13,7 +13,6 @@ from email.message import EmailMessage
 from email.contentmanager import raw_data_manager
 from sys import getsizeof
 #from smtplib import SMTP
-import smtplib, ssl, pickle
 
 class ConnREST(ElementMaster):
 
@@ -55,9 +54,7 @@ class ConnREST(ElementMaster):
 
         logging.debug('ConnREST::edit()')
         
-        # pass_input, url, log_state
-        pass_input, url, log_state = self.config
-
+        
 
 
         self.conn_rest_layout = QVBoxLayout()
@@ -70,6 +67,7 @@ class ConnREST(ElementMaster):
         self.pass_input_line_layout = QHBoxLayout(self.pass_input_line)
         self.pass_input_line_layout.addWidget(self.pass_input_txt)
         self.pass_input_line_layout.addWidget(self.pass_input_check)
+        self.pass_input_line_layout.addStretch(1)
 
 
         self.url_address_txt = QLabel()
@@ -77,6 +75,9 @@ class ConnREST(ElementMaster):
         self.url_address_input = QLineEdit()
         self.url_address_input.setPlaceholderText(
                 QC.translate('', 'https://www.bitstamp.net/api/ticker/'))
+
+        self.help_text_1 = QLabel()
+        self.help_text_1.setText(QC.translate('', 'GET answer is transformerd to Python list object'))
 
         
 
@@ -99,13 +100,30 @@ class ConnREST(ElementMaster):
         self.conn_mail_edit.window_closed.connect(self.edit_done)
         self.pass_input_check.stateChanged.connect(self.toggle_url_input)
 
+        # load config
+        self.loadLastConfig()
+
         self.conn_rest_layout.addWidget(self.pass_input_line)
         self.conn_rest_layout.addWidget(self.url_address_txt)
         self.conn_rest_layout.addWidget(self.url_address_input)
+        self.conn_rest_layout.addWidget(self.help_text_1)
         self.conn_rest_layout.addWidget(self.log_line)
         self.conn_rest_layout.addWidget(self.confirm_button)
         self.conn_mail_edit.setLayout(self.conn_rest_layout)
         self.conn_mail_edit.show()
+
+    def loadLastConfig(self):
+
+        logging.debug('ConnREST::loadLastConfig() called')
+        # pass_input, url, log_state
+        pass_input, url, log_state = self.config
+
+        self.pass_input_check.setChecked(pass_input)        
+        self.log_checkbox.setChecked(log_state)
+
+        if url:
+            self.url_address_input.setText(url)
+
         
 
     def toggle_url_input(self, event):
@@ -144,8 +162,20 @@ class ConnRESTFunction(Function):
 
         # pass_input, url, log_state
         pass_input, url, log_state = self.config
-        log_output = '{} bytes send'.format(getsizeof(msg.__str__()))
+
+        if pass_input:
+            recv_string = requests.get(str(record))
+        else:
+            recv_string = requests.get(url)
+
+        record = json.loads(recv_string.text)
+
+
+        log_txt = '{REST call succesfull}'
+        log_output = '{} bytes received'.format(getsizeof(recv_string.text))
+
         result = Record(self.getPos(), (self.row +1, self.column), record,
                  log=log_state, log_txt=log_txt, log_output=log_output)
 
+        
         return result

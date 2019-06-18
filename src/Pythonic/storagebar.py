@@ -16,7 +16,8 @@ import sys, logging
 
 class StorageBar(QWidget):
 
-    load_config = pyqtSignal(int, int, object, name='load_config')
+    #load_config = pyqtSignal(int, int, object, name='load_config')
+    forward_config = pyqtSignal('PyQt_PyObject', name='push_config')
 
     def __init__(self, working_areas=None):
 
@@ -58,6 +59,9 @@ class StorageBar(QWidget):
         self.setLayout(self.box_frame) 
         self.addBox()
 
+        # temporary config store when an elements config is 
+        # parked as a dropbox. tmp_config holds the config 
+        # before the element is destroyed
         self.tmp_config = None
         self.tmp_element = None
 
@@ -104,10 +108,13 @@ class StorageBar(QWidget):
 
         return element.config
 
-    def returnConfig(self):
+    def finishDropBox(self):
 
-        logging.debug('StorageBar::returnConfig() called')
+        logging.debug('StorageBar::finishDropBox() called')
         self.tmp_element.destroy()
-        return self.tmp_config
-    
+
+    def loadConfig(self):
+
+        logging.debug('StorageBar::loadConfig() called')
+        self.forward_config.emit(self.tmp_config)
 
