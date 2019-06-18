@@ -220,6 +220,8 @@ class MainWindow(QWidget):
         self.toolbox_connectivity.reg_tool.connect(self.working_area.regType)
         self.toolbox_basics.reg_tool.connect(self.working_area.regType)
         self.gridoperator.update_logger.connect(self.update_logfile)
+        self.storagebar.forward_config.connect(self.working_area.receiveConfig)
+        self.working_area.finish_dropbox.connect(self.storagebar.finishDropBox)
 
 
         # register tools
@@ -238,10 +240,16 @@ class MainWindow(QWidget):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setMinimumSize(300, 300)
 
+        self.scroll_dropBox = QScrollArea()
+        self.scroll_dropBox.setWidget(self.storagebar)
+        self.scroll_dropBox.setWidgetResizable(True)
+        self.scroll_dropBox.setMaximumWidth(270)
+
         self.bottom_area = QWidget()
         self.bottom_area_layout = QHBoxLayout(self.bottom_area)
         self.bottom_area_layout.addWidget(self.scrollArea)
-        self.bottom_area_layout.addWidget(self.storagebar)
+        self.bottom_area_layout.addWidget(self.scroll_dropBox)
+        #self.bottom_area_layout.addWidget(self.storagebar)
 
 
         self.layout_v.addWidget(self.topMenuBar)
