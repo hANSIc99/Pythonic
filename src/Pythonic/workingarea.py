@@ -16,7 +16,6 @@ from Pythonic.elements.conn_mail         import ConnMail
 from Pythonic.elements.conn_rest         import ConnREST
 
 from Pythonic.elementmaster              import ElementMaster
-from Pythonic.storagebar                 import StorageBar
 from Pythonic.dropbox                    import DropBox
 
 import logging, pickle
@@ -25,6 +24,7 @@ class WorkingArea(QFrame):
 
     func_blocks = {}
     return_grid = pyqtSignal('PyQt_PyObject', name='return_grid')
+    finish_dropbox = pyqtSignal(name='finish_dropbox')
 
     def __init__(self):
         super().__init__()
@@ -45,13 +45,11 @@ class WorkingArea(QFrame):
         #self.mastergrid.setContentsMargins(0, 0, 0, 0)
         #self.mastergrid.setSpacing(0)
 
-        self.storage_bar = StorageBar()
         # grid contains the function blocks
         self.grid = QGridLayout()
         
         self.flow_start = StartElement(0, 0)
         self.grid.addWidget(self.flow_start, 0, 0, Qt.AlignCenter)
-        self.mastergrid.addWidget(self.storage_bar, 0, 1, Qt.AlignRight)
         self.addPlaceholder(1, 0)
 
         # grid is a component of the mastergrid due to display formatting
@@ -110,8 +108,8 @@ class WorkingArea(QFrame):
             logging.debug('WorkingArea::addElement() config: {}'.format(new_type)) 
             #element = new_type
             #element = self.grid.itemAtPosition(row, column).widget()
-            #BAUSTELLE - returnConfig() von globaler storagebar nutzen
-            new_type.config = self.storage_bar.returnConfig()
+            new_type.config = self.tmp_config
+            self.finish_dropbox.emit()
             # element was not pickled! 
             # call __getstate__ and __addstate_ to update the function
             # by calling addFunction of the elementmastern 
@@ -152,6 +150,14 @@ class WorkingArea(QFrame):
             # place new placeholder under 'right-bottom' element
             self.addPlaceholder(row+1, column+1)
             self.findMissingLinks()
+
+    def receiveConfig(self, config):
+
+        # method is called on mouspress at dropbox->storagebar
+        # parked config is loaded into workingarea instance memory
+
+        logging.debug('WorkingArea::receiveConfig() called')
+        self.tmp_config = config
 
 
     def destroyElement(self, target):
