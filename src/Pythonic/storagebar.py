@@ -18,9 +18,10 @@ class StorageBar(QWidget):
 
     load_config = pyqtSignal(int, int, object, name='load_config')
 
-    def __init__(self):
+    def __init__(self, working_areas=None):
 
         super().__init__()
+        self.wrk_areas = working_areas
         self.setMinimumWidth(200)
         self.box_frame = QVBoxLayout()
         self.box_frame.setContentsMargins(0, 0, 0, 0)
@@ -73,22 +74,34 @@ class StorageBar(QWidget):
             row, column))
         self.addBox()
 
-        element = self.parent().grid.itemAtPosition(row, column).widget()
-        # parent() to access the grid
-        self.parent().delete_element(row, column)
+        if self.wrk_areas:
+            #element = self.wrk_areas[0].grid.itemAtPosition(row, column).widget()
+            self.wrk_areas[0].delete_element(row, column)
+
+        else:
+            #element = self.parent().grid.itemAtPosition(row, column).widget()
+            # parent() to access the grid
+            self.parent().delete_element(row, column)
 
 
     def checkStore(self, row, column):
 
-        element = self.parent().grid.itemAtPosition(row, column).widget()
-
-        return self.parent().checkDeletion(element)
+        if self.wrk_areas:
+            element = self.wrk_areas[0].grid.itemAtPosition(row, column).widget()
+            return self.wrk_areas[0].checkDeletion(element)
+        else:
+            element = self.parent().grid.itemAtPosition(row, column).widget()
+            return self.parent().checkDeletion(element)
 
     def saveConfig(self, row, column):
 
         logging.debug('StorageBar::saveConfig() called')
 
-        element = self.parent().grid.itemAtPosition(row, column).widget()
+        if self.wrk_areas:
+            element = self.wrk_areas[0].grid.itemAtPosition(row, column).widget()
+        else:
+            element = self.parent().grid.itemAtPosition(row, column).widget()
+
         return element.config
 
     def returnConfig(self):

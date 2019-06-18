@@ -27,7 +27,7 @@ setuptools.setup(
             'PyQt5>=5.6,<=5.8.2',
             'pandas>=0.20.3',
             'pythonic-binance>=0.7.2',
-            'requests>=2.22.0'],
+            'requests>=2.21.0'],
         classifiers = [
             'Programming Language :: Python :: 3 :: Only',
             'Programming Language :: Python :: 3.6',

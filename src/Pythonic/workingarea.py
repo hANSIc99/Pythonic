@@ -110,6 +110,7 @@ class WorkingArea(QFrame):
             logging.debug('WorkingArea::addElement() config: {}'.format(new_type)) 
             #element = new_type
             #element = self.grid.itemAtPosition(row, column).widget()
+            #BAUSTELLE - returnConfig() von globaler storagebar nutzen
             new_type.config = self.storage_bar.returnConfig()
             # element was not pickled! 
             # call __getstate__ and __addstate_ to update the function
