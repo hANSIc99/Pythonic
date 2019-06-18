@@ -85,11 +85,11 @@ class DropBox(QWidget):
         try:
             mimeData = QMimeData()
             mimeData.setText(self.type)
-            # load config into memory
-
+            # load config into memory tmp_config of storabar
             self.parent.tmp_config = self.config
             self.parent.tmp_element = self
-
+            # push config to active workingarea
+            self.parent.loadConfig() 
         except Exception as e:
             logging.error('DropBox::mousePressEvent() Exception caught: {}'.format(str(e)))
             return
