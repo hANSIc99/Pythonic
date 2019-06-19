@@ -77,7 +77,7 @@ class ConnREST(ElementMaster):
                 QC.translate('', 'https://www.bitstamp.net/api/ticker/'))
 
         self.help_text_1 = QLabel()
-        self.help_text_1.setText(QC.translate('', 'GET answer is transformerd to Python list object'))
+        self.help_text_1.setText(QC.translate('', 'GET answer is transformed to Python list object'))
 
         
 
@@ -93,7 +93,7 @@ class ConnREST(ElementMaster):
 
         
         self.conn_mail_edit = ElementEditor(self)
-        self.conn_mail_edit.setWindowTitle(QC.translate('', 'REST call'))
+        self.conn_mail_edit.setWindowTitle(QC.translate('', 'REST (GET)'))
 
         # signals and slots
         self.confirm_button.clicked.connect(self.conn_mail_edit.closeEvent)
