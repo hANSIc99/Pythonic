@@ -640,4 +640,12 @@
     <source>Filename:</source>
     <target>Dateiname:</target>
 </phrase>
+<phrase>
+    <source>Use input string as URL?</source>
+    <target>Eingangdaten als String für URL?</target>
+</phrase>
+<phrase>
+    <source>GET answer is transformed to Python list object</source>
+    <target>GET-Antwort wird in Python List umgewandelt</target>
+</phrase>
 </QPH>

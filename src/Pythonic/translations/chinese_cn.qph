@@ -688,4 +688,12 @@
     <source>Message text</source>
     <target>消息文本</target>
 </phrase>
+<phrase>
+    <source>GET answer is transformed to Python list object</source>
+    <target>GET答案转换为Python列表对象</target>
+</phrase>
+<phrase>
+    <source>Use input string as URL?</source>
+    <target>使用输入字符串作为URL？</target>
+</phrase>
 </QPH>

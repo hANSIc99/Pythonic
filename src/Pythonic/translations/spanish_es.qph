@@ -688,4 +688,12 @@
     <source>Only encrypted connections are allowed</source>
     <target>Solo se permiten conexiones encriptadas</target>
 </phrase>
+<phrase>
+    <source>Use input string as URL?</source>
+    <target>¿Usar cadena de entrada como URL?</target>
+</phrase>
+<phrase>
+    <source>GET answer is transformed to Python list object</source>
+    <target>La respuesta GET se transforma en el objeto de lista de Python</target>
+</phrase>
 </QPH>
