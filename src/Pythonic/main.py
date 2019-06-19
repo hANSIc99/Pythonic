@@ -8,16 +8,17 @@ from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
 import sys, logging, datetime, os
 import multiprocessing as mp
-from Pythonic.workingarea import WorkingArea
-from Pythonic.menubar import MenuBar
-from Pythonic.executor import GridOperator
-from Pythonic.top_menubar import topMenuBar
-from Pythonic.binancetools import BinanceTools
-from Pythonic.connectivitytools import ConnectivityTools
-from Pythonic.mastertool import MasterTool
-from Pythonic.elementmaster import alphabet
-from Pythonic.settings import Settings
-from Pythonic.info import InfoWindow
+from Pythonic.workingarea               import WorkingArea
+from Pythonic.menubar                   import MenuBar
+from Pythonic.executor                  import GridOperator
+from Pythonic.top_menubar               import topMenuBar
+from Pythonic.binancetools              import BinanceTools
+from Pythonic.connectivitytools         import ConnectivityTools
+from Pythonic.mastertool                import MasterTool
+from Pythonic.elementmaster             import alphabet
+from Pythonic.settings                  import Settings
+from Pythonic.info                      import InfoWindow
+from Pythonic.storagebar                import StorageBar
 
 
 class BasicTools(QFrame):
@@ -171,14 +172,20 @@ class MainWindow(QWidget):
 
         # create class objects
         #self.exceptwindow = ExceptWindow(self)
+
+        self.wrk_area_arr = []
         
         self.working_area = WorkingArea()
+        self.storagebar = StorageBar(self.wrk_area_arr)
         self.menubar = MenuBar()
         self.toolbox_tab = QTabWidget()
         self.toolbox_tab.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
         self.topMenuBar = topMenuBar()
         self.settings = Settings()
         self.infoWindow = InfoWindow()
+
+        # Baustelle
+        self.wrk_area_arr.append(self.working_area)
 
         self.gridoperator = GridOperator(self.working_area.grid)
 
@@ -213,6 +220,8 @@ class MainWindow(QWidget):
         self.toolbox_connectivity.reg_tool.connect(self.working_area.regType)
         self.toolbox_basics.reg_tool.connect(self.working_area.regType)
         self.gridoperator.update_logger.connect(self.update_logfile)
+        self.storagebar.forward_config.connect(self.working_area.receiveConfig)
+        self.working_area.finish_dropbox.connect(self.storagebar.finishDropBox)
 
 
         # register tools
@@ -231,10 +240,23 @@ class MainWindow(QWidget):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setMinimumSize(300, 300)
 
+        self.scroll_dropBox = QScrollArea()
+        self.scroll_dropBox.setWidget(self.storagebar)
+        self.scroll_dropBox.setWidgetResizable(True)
+        self.scroll_dropBox.setMaximumWidth(270)
+
+        self.bottom_area = QWidget()
+        self.bottom_area_layout = QHBoxLayout(self.bottom_area)
+        self.bottom_area_layout.addWidget(self.scrollArea)
+        self.bottom_area_layout.addWidget(self.scroll_dropBox)
+        #self.bottom_area_layout.addWidget(self.storagebar)
+
+
         self.layout_v.addWidget(self.topMenuBar)
         self.layout_v.addWidget(self.menubar)
         self.layout_v.addWidget(self.toolbox_tab)
-        self.layout_v.addWidget(self.scrollArea)
+        #self.layout_v.addWidget(self.scrollArea)
+        self.layout_v.addWidget(self.bottom_area)
 
         self.main_widget = QWidget()
         self.main_widget.setLayout(self.layout_v)
@@ -303,7 +325,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.10'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.11'))
 
     def showInfo(self, event):
 
