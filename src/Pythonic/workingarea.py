@@ -20,6 +20,7 @@ from Pythonic.dropbox                    import DropBox
 
 import logging, pickle
 
+#class WorkingArea(QFrame):
 class WorkingArea(QFrame):
 
     func_blocks = {}
@@ -485,7 +486,7 @@ class WorkingArea(QFrame):
             row, col = pos
             
             if(self.grid.itemAtPosition(row, col)):
-                logging.debug('loadGrid() element deleted: {} {} '.format(row, col))
+                logging.debug('WorkingArea::clearGrid() element deleted: {} {} '.format(row, col))
                 self.destroyElement(self.grid.itemAtPosition(row, col).widget())
 
     def setupDefault(self):
@@ -500,7 +501,7 @@ class WorkingArea(QFrame):
 
     def loadGrid(self, filename):
 
-        logging.debug('loadGrid() called with filename {}'.format(filename))
+        logging.debug('WorkingArea::loadGrid() called with filename {}'.format(filename))
         
         try:
             f = open(filename, 'rb')

@@ -42,7 +42,6 @@ class GridOperator(QObject):
         self.pending_return = []
         self.pid_register = []
         self.exec_pending.connect(self.checkPending)
-        mp.set_start_method('spawn')
         logging.debug('__init__() GridOperator, threadCount: {}'.format(
             self.threadpool.maxThreadCount()))
 
