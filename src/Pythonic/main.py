@@ -247,12 +247,7 @@ class MainWindow(QWidget):
         self.menubar.clear_grid.connect(self.setupDefault)
 
         for i in range(5):
-            # laden und speichern muss noch angepasst werden
-            #self.menubar.load_file.connect(self.wrk_area_arr[i].loadGrid)
-            #self.menubar.save_file.connect(self.wrk_area_arr[i].saveGrid)
-            #self.menubar.clear_grid.connect(self.wrk_area_arr[i].setupDefault)
-            #self.menubar.kill_proc.connect(self.wrk_area_arr[i].allStop)
-
+            
             self.toolbox_binance.reg_tool.connect(self.wrk_area_arr[i].regType)
             self.toolbox_connectivity.reg_tool.connect(self.wrk_area_arr[i].regType)
             self.toolbox_basics.reg_tool.connect(self.wrk_area_arr[i].regType)
@@ -261,6 +256,7 @@ class MainWindow(QWidget):
             self.wrk_area_arr[i].finish_dropbox.connect(self.storagebar.finishDropBox)
 
             self.grd_ops_arr[i].update_logger.connect(self.update_logfile)
+            self.wrk_area_arr[i].query_grid_config_wrk.connect(self.queryGridConfiguration)
 
 
         # register tools
@@ -289,13 +285,11 @@ class MainWindow(QWidget):
         self.bottom_area_layout = QHBoxLayout(self.bottom_area)
         self.bottom_area_layout.addWidget(self.scrollArea)
         self.bottom_area_layout.addWidget(self.scroll_dropBox)
-        #self.bottom_area_layout.addWidget(self.storagebar)
 
 
         self.layout_v.addWidget(self.topMenuBar)
         self.layout_v.addWidget(self.menubar)
         self.layout_v.addWidget(self.toolbox_tab)
-        #self.layout_v.addWidget(self.scrollArea)
         self.layout_v.addWidget(self.bottom_area)
 
         self.main_widget = QWidget()
@@ -324,6 +318,14 @@ class MainWindow(QWidget):
 
         self.setLayout(self.main_layout)
         self.setGeometry(self.x_position, self.y_position, self.width, self.height)
+
+    def queryGridConfiguration(self):
+
+        logging.debug('MainWindow::queryGridConfiguration() called')
+        result = []
+        for wrk_area in self.wrk_area_arr:
+            result.append(wrk_area.returnCurrentElements())
+        self.focus_grid.receiveGridConfiguration(result)
 
     def wrkIndexChanged(self, index):
 
