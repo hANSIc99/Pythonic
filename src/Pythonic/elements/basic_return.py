@@ -112,7 +112,8 @@ class ExecReturn(ElementMaster):
 
     def edit_done(self):
         logging.debug('edit_done() called ExecReturn' )
-        self.config = (self.element_selector.currentData(), self.element_selector.currentIndex(), self.log_checkbox.isChecked())
+        self.config = (self.element_selector.currentData(), self.element_selector.currentIndex(),
+                self.log_checkbox.isChecked())
         self.addFunction(ReturnFunction)
 
 class ReturnFunction(Function):
@@ -122,7 +123,8 @@ class ReturnFunction(Function):
 
     def execute(self, record):
 
-        log_txt = '{{BASIC RETURN}}           Return to {}|{}'.format(self.config[0][0], alphabet[self.config[0][1]])
+        log_txt = '{{BASIC RETURN}}           Return to {}|{}'.format(self.config[0][0],
+                alphabet[self.config[0][1]])
         result = Record(self.getPos(), self.config[0], record, log=self.config[2], log_txt=log_txt)
         return result
 
