@@ -17,6 +17,8 @@ class ExecReturn(ElementMaster):
     pixmap_path = 'images/ExecReturn.png'
     child_pos = (False, False)
 
+    query_grid_config = pyqtSignal(name='query_grid_config')
+
     def __init__(self, row, column):
         self.row = row
         self.column = column
@@ -42,6 +44,7 @@ class ExecReturn(ElementMaster):
 
     def openEditor(self):
         logging.debug('openEditor() called ExecReturn')
+
 
     def edit(self):
         logging.debug('edit() called ExecReturn')
@@ -91,6 +94,9 @@ class ExecReturn(ElementMaster):
         if self.config[2]:
             self.log_checkbox.setChecked(True)
 
+        # emmiting signal
+        self.query_grid_config.emit()
+
         self.confirm_button.clicked.connect(self.returnEdit.closeEvent)
         self.returnEdit.window_closed.connect(self.edit_done)
         self.returnEditLayout.addWidget(self.top_text)
@@ -101,6 +107,10 @@ class ExecReturn(ElementMaster):
         self.returnEditLayout.addWidget(self.confirm_button)
         self.returnEdit.setLayout(self.returnEditLayout)
         self.returnEdit.show()
+
+    def baustelle(self, config):
+
+        logging.debug('ExecReturn::baustelle config: {}'.format(config))
 
     def populateSelector(self):
 
