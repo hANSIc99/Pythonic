@@ -28,6 +28,7 @@ class GridOperator(QObject):
 
     update_logger   = pyqtSignal(name='update_logger')
     exec_pending    = pyqtSignal(name='exec_pending')
+    switch_grid     = pyqtSignal('PyQt_PyObject', name='switch_grid')
 
     def __init__(self, grid):
         super().__init__()
@@ -160,6 +161,15 @@ class GridOperator(QObject):
         self.goNext(prg_return)
 
     def goNext(self, prg_return):
+
+        # check is target_0 includes a diffrent grid 
+        # ExecReturn elemenot
+        if prg_return.target_0 and len(prg_return.target_0) == 3:
+            logging.debug('################################# len: {}'.format(len(prg_return.target_0)))
+            self.switch_grid.emit(prg_return)
+            logging.debug('GridOperator::goNext() - target_0: {}'.format(prg_return.target_0))
+            self.switch_grid.emit(prg_return)
+            return
 
 
         if prg_return.target_0:

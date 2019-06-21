@@ -256,6 +256,7 @@ class MainWindow(QWidget):
             self.wrk_area_arr[i].finish_dropbox.connect(self.storagebar.finishDropBox)
 
             self.grd_ops_arr[i].update_logger.connect(self.update_logfile)
+            self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
             self.wrk_area_arr[i].query_grid_config_wrk.connect(self.queryGridConfiguration)
 
 
@@ -318,6 +319,10 @@ class MainWindow(QWidget):
 
         self.setLayout(self.main_layout)
         self.setGeometry(self.x_position, self.y_position, self.width, self.height)
+
+    def receiveTarget(self, prg_return):
+
+        logging.debug('MainWindow::receiveTarget() called')
 
     def queryGridConfiguration(self):
 
@@ -399,7 +404,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.11'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.12'))
 
     def showInfo(self, event):
 
