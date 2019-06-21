@@ -164,12 +164,13 @@ class GridOperator(QObject):
 
         # check is target_0 includes a diffrent grid 
         # ExecReturn elemenot
+        """
         if prg_return.target_0 and len(prg_return.target_0) == 3:
             logging.debug('################################# len: {}'.format(len(prg_return.target_0)))
             self.switch_grid.emit(prg_return)
             logging.debug('GridOperator::goNext() - target_0: {}'.format(prg_return.target_0))
-            self.switch_grid.emit(prg_return)
             return
+        """
 
 
         if prg_return.target_0:
@@ -177,6 +178,11 @@ class GridOperator(QObject):
             logging.debug('GridOperator::goNext() called with record_0: {}'.format(prg_return.record_0))
 
             if self.fastpath:
+
+                if len(prg_return.target_0) == 3: # switch grid, go over main
+                    # fastpath = True
+                    self.switch_grid.emit((prg_return, True))
+                    return
                 
                 new_rec = self.fastPath(prg_return.target_0, prg_return.record_0)
                 if new_rec: # check for ExecR or ExecRB
@@ -184,6 +190,12 @@ class GridOperator(QObject):
                 else: # if nothing found: proceed as usual
                     self.startExec(prg_return.target_0, prg_return.record_0)
             else:
+
+                if len(prg_return.target_0) == 3: # switch grid, go over main
+                    # fastpath = False
+                    self.switch_grid.emit((prg_return, False))
+                    return
+
                 self.startExec(prg_return.target_0, prg_return.record_0)
 
         if prg_return.target_1:
