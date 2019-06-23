@@ -12,6 +12,7 @@ from Pythonic.workingarea               import WorkingArea
 from Pythonic.menubar                   import MenuBar
 from Pythonic.executor                  import GridOperator
 from Pythonic.top_menubar               import topMenuBar
+from Pythonic.basictools                import BasicTools
 from Pythonic.binancetools              import BinanceTools
 from Pythonic.connectivitytools         import ConnectivityTools
 from Pythonic.mastertool                import MasterTool
@@ -20,87 +21,6 @@ from Pythonic.settings                  import Settings
 from Pythonic.info                      import InfoWindow
 from Pythonic.storagebar                import StorageBar
 
-
-class BasicTools(QFrame):
-
-    reg_tool = pyqtSignal(tuple, name='register_tool_basic')
-
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.initUI()
-
-    def initUI(self):
-
-        self.setStyleSheet('background-color: silver')
-        image_folder = QDir('images')
-
-        self.layout_h = QHBoxLayout()
-
-        self.op_tool = MasterTool(self, 'ExecOp', 1)
-        self.op_tool.setPixmap(QPixmap('images/ExecOp.png').scaled(120, 60))
-
-        self.branch_tool = MasterTool(self, 'ExecBranch', 2)
-        self.branch_tool.setPixmap(QPixmap('images/ExecBranch.png').scaled(120, 60))
-
-        self.return_tool = MasterTool(self, 'ExecReturn', 0)
-        self.return_tool.setPixmap(QPixmap('images/ExecReturn.png').scaled(120, 60))
-
-        self.proc_tool = MasterTool(self, 'ExecProcess', 2)
-        self.proc_tool.setPixmap(QPixmap('images/ExecProcess.png').scaled(120, 60))
-
-        self.ta_tool = MasterTool(self, 'ExecTA', 1)
-        self.ta_tool.setPixmap(QPixmap('images/ExecTA.png').scaled(120, 60))
-
-        self.sched_tool = MasterTool(self, 'ExecSched', 1)
-        self.sched_tool.setPixmap(QPixmap('images/ExecSched.png').scaled(120, 60))
-
-        # uncomment in future release
-        self.stack_tool = MasterTool(self, 'ExecStack', 1)
-        self.stack_tool.setPixmap(QPixmap('images/ExecStack.png').scaled(120, 60))
-
-        self.layout_h.addWidget(self.op_tool)
-        self.layout_h.addWidget(self.branch_tool)
-        self.layout_h.addWidget(self.return_tool)
-        self.layout_h.addWidget(self.proc_tool)
-        self.layout_h.addWidget(self.ta_tool)
-        self.layout_h.addWidget(self.sched_tool)
-        self.layout_h.addWidget(self.stack_tool)
-        self.layout_h.addStretch(1)
-
-        self.setLayout(self.layout_h)
-
-    def mousePressEvent(self, event):
-
-        child = self.childAt(event.pos())
-        if not child:
-            return
-
-        mimeData = QMimeData()
-        mimeData.setText(child.type)
-
-        logging.debug('mousePressEvent() called: {}'.format(event.pos()))
-        drag = QDrag(self)
-        drag.setPixmap(child.pixmap())
-        drag.setMimeData(mimeData)
-        drag.setHotSpot(event.pos() - child.pos())
-
-        if drag.exec_(Qt.CopyAction | Qt.MoveAction, Qt.CopyAction) == Qt.MoveAction:
-            child.close()
-        else:
-            child.show()
-            child.setPixmap(child.pixmap())
-
-    def register_tools(self):
-
-        logging.debug('register_tools() called BasicTools')
-        self.reg_tool.emit(self.op_tool.toolData())
-        self.reg_tool.emit(self.branch_tool.toolData())
-        self.reg_tool.emit(self.return_tool.toolData())
-        self.reg_tool.emit(self.proc_tool.toolData())
-        self.reg_tool.emit(self.ta_tool.toolData())
-        self.reg_tool.emit(self.sched_tool.toolData())
-        #uncomment in future release
-        self.reg_tool.emit(self.stack_tool.toolData())
 
 class MainWindow(QWidget):
 
@@ -115,6 +35,7 @@ class MainWindow(QWidget):
         self.threadpool = QThreadPool()
         self.initUI()
         self.setAttribute(Qt.WA_DeleteOnClose)
+        mp.set_start_method('spawn')
 
     def initUI(self):
 
@@ -173,10 +94,29 @@ class MainWindow(QWidget):
         # create class objects
         #self.exceptwindow = ExceptWindow(self)
 
-        self.wrk_area_arr = []
-        
-        self.working_area = WorkingArea()
-        self.storagebar = StorageBar(self.wrk_area_arr)
+        self.wrk_area_arr   = []
+        self.wrk_tabs_arr   = []
+        self.grd_ops_arr    = []
+        self.working_tabs = QTabWidget()
+        self.working_tabs.setMinimumSize(300, 300)
+        for i in range(5):
+
+            self.wrk_area_arr.append(WorkingArea())
+            self.wrk_tabs_arr.append(QScrollArea())
+            self.wrk_tabs_arr[i].setWidget(self.wrk_area_arr[i])
+            self.wrk_tabs_arr[i].setWidgetResizable(True)
+
+            #self.working_tabs.addTab(self.wrk_area_arr[i], QC.translate('', 'Grid {}'.format(i)))
+            self.working_tabs.addTab(self.wrk_tabs_arr[i], QC.translate('', 'Grid {}'.format(i + 1)))
+
+            self.grd_ops_arr.append(GridOperator(self.wrk_area_arr[i].grid))
+
+        # init reference for the current grid which is in focus
+        self.focus_grid = self.wrk_area_arr[0]
+        self.wrk_tab_index = 0
+
+        #self.working_area = WorkingArea()
+        self.storagebar = StorageBar(self)
         self.menubar = MenuBar()
         self.toolbox_tab = QTabWidget()
         self.toolbox_tab.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
@@ -184,10 +124,8 @@ class MainWindow(QWidget):
         self.settings = Settings()
         self.infoWindow = InfoWindow()
 
-        # Baustelle
-        self.wrk_area_arr.append(self.working_area)
-
-        self.gridoperator = GridOperator(self.working_area.grid)
+        
+        #self.gridoperator = GridOperator(self)
 
         self.toolbox_basics = BasicTools(self)
         self.toolbox_binance = BinanceTools(self)
@@ -199,15 +137,16 @@ class MainWindow(QWidget):
         self.toolbox_tab.addTab(self.toolbox_connectivity, QC.translate('', 'Connectivity'))
 
         # signals and slots
-        self.menubar.save_file.connect(self.working_area.saveGrid)
-        self.menubar.load_file.connect(self.working_area.loadGrid)
+        #self.menubar.save_file.connect(self.working_area.saveGrid)
+        #self.menubar.load_file.connect(self.working_area.loadGrid)
         self.menubar.set_info_text.connect(self.setInfoText)
         self.menubar.start_debug.connect(self.startDebug)
         self.menubar.start_exec.connect(self.startExec)
-        self.menubar.clear_grid.connect(self.working_area.setupDefault)
-        self.menubar.stop_exec.connect(self.gridoperator.stop_execution)
-        self.menubar.kill_proc.connect(self.gridoperator.kill_proc)
-        self.menubar.kill_proc.connect(self.working_area.allStop)
+        #self.menubar.clear_grid.connect(self.working_area.setupDefault)
+        #self.menubar.stop_exec.connect(self.gridoperator.stop_execution)
+        #self.menubar.kill_proc.connect(self.gridoperator.kill_proc)
+        #self.menubar.kill_proc.connect(self.working_area.allStop)
+        #self.gridoperator.update_logger.connect(self.update_logfile)
         self.topMenuBar.switch_language.connect(self.changeTranslator)
         self.topMenuBar.close_signal.connect(self.closeEvent)
         self.topMenuBar.open_action.triggered.connect(self.menubar.openFileNameDialog)
@@ -216,12 +155,30 @@ class MainWindow(QWidget):
         self.topMenuBar.new_action.triggered.connect(self.menubar.saveQuestion)
         self.topMenuBar.settings_action.triggered.connect(self.settings.show)
         self.topMenuBar.info_action.triggered.connect(self.showInfo)
-        self.toolbox_binance.reg_tool.connect(self.working_area.regType)
-        self.toolbox_connectivity.reg_tool.connect(self.working_area.regType)
-        self.toolbox_basics.reg_tool.connect(self.working_area.regType)
-        self.gridoperator.update_logger.connect(self.update_logfile)
-        self.storagebar.forward_config.connect(self.working_area.receiveConfig)
-        self.working_area.finish_dropbox.connect(self.storagebar.finishDropBox)
+        self.working_tabs.currentChanged.connect(self.wrkIndexChanged)
+        #self.toolbox_binance.reg_tool.connect(self.working_area.regType)
+        #self.toolbox_connectivity.reg_tool.connect(self.working_area.regType)
+        #self.toolbox_basics.reg_tool.connect(self.working_area.regType)
+        #self.storagebar.forward_config.connect(self.working_area.receiveConfig)
+        #self.working_area.finish_dropbox.connect(self.storagebar.finishDropBox)
+        self.menubar.stop_exec.connect(self.stopExecution)
+        self.menubar.kill_proc.connect(self.killProcesses)
+        self.menubar.load_file.connect(self.loadGrid)
+        self.menubar.save_file.connect(self.saveGrid)
+        self.menubar.clear_grid.connect(self.setupDefault)
+
+        for i in range(5):
+            
+            self.toolbox_binance.reg_tool.connect(self.wrk_area_arr[i].regType)
+            self.toolbox_connectivity.reg_tool.connect(self.wrk_area_arr[i].regType)
+            self.toolbox_basics.reg_tool.connect(self.wrk_area_arr[i].regType)
+            # hier auch noch anpassen
+            self.storagebar.forward_config.connect(self.wrk_area_arr[i].receiveConfig)
+            self.wrk_area_arr[i].finish_dropbox.connect(self.storagebar.finishDropBox)
+
+            self.grd_ops_arr[i].update_logger.connect(self.update_logfile)
+            self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
+            self.wrk_area_arr[i].query_grid_config_wrk.connect(self.queryGridConfiguration)
 
 
         # register tools
@@ -236,7 +193,8 @@ class MainWindow(QWidget):
             sys.exit(0)
 
         self.scrollArea = QScrollArea()
-        self.scrollArea.setWidget(self.working_area)
+        #self.scrollArea.setWidget(self.working_area)
+        self.scrollArea.setWidget(self.working_tabs)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setMinimumSize(300, 300)
 
@@ -249,13 +207,11 @@ class MainWindow(QWidget):
         self.bottom_area_layout = QHBoxLayout(self.bottom_area)
         self.bottom_area_layout.addWidget(self.scrollArea)
         self.bottom_area_layout.addWidget(self.scroll_dropBox)
-        #self.bottom_area_layout.addWidget(self.storagebar)
 
 
         self.layout_v.addWidget(self.topMenuBar)
         self.layout_v.addWidget(self.menubar)
         self.layout_v.addWidget(self.toolbox_tab)
-        #self.layout_v.addWidget(self.scrollArea)
         self.layout_v.addWidget(self.bottom_area)
 
         self.main_widget = QWidget()
@@ -285,6 +241,65 @@ class MainWindow(QWidget):
         self.setLayout(self.main_layout)
         self.setGeometry(self.x_position, self.y_position, self.width, self.height)
 
+    def receiveTarget(self, data):
+
+        prg_return, fastpath = data
+        grid, *pos = prg_return.target_0
+        logging.debug('MainWindow::receiveTarget() called {}'.format(pos))
+        logging.debug('MainWindow::receiveTarget() called fp {}'.format(fastpath))
+        # go to goNext() in the target grid
+        # set fastpath variable
+        self.grd_ops_arr[grid].stop_flag = False
+        self.grd_ops_arr[grid].fastpath = fastpath
+        # remove grid from target_0 
+        prg_return.target_0 = pos
+        if fastpath:
+            self.grd_ops_arr[grid].delay = 0
+        else:
+            self.grd_ops_arr[grid].delay = self.settings.delay / 1000
+
+        self.grd_ops_arr[grid].goNext(prg_return)
+
+    def queryGridConfiguration(self):
+
+        logging.debug('MainWindow::queryGridConfiguration() called')
+        result = []
+        for wrk_area in self.wrk_area_arr:
+            result.append(wrk_area.returnCurrentElements())
+        self.focus_grid.receiveGridConfiguration(result)
+
+    def wrkIndexChanged(self, index):
+
+        logging.debug('MainWindow::wrkIndexChanged() called with index {}'.format(index))
+        self.wrk_tab_index = index
+        self.focus_grid = self.wrk_area_arr[index]
+
+    def loadGrid(self, filename):
+
+        logging.debug('MainWindow::loadGrid() called')
+        self.wrk_area_arr[self.wrk_tab_index].loadGrid(filename)
+
+    def saveGrid(self, filename):
+
+        logging.debug('MainWindow::saveGrid() called')
+        self.wrk_area_arr[self.wrk_tab_index].saveGrid(filename)
+
+    def setupDefault(self):
+
+        logging.debug('MainWindow::setupDefault() called')
+        self.wrk_area_arr[self.wrk_tab_index].setupDefault()
+
+    def stopExecution(self):
+
+        logging.debug('MainWindow::stopExecution() called')
+        self.grd_ops_arr[self.wrk_tab_index].stop_execution()
+
+    def killProcesses(self):
+
+        logging.debug('MainWindow::killProcesses() called')
+        self.grd_ops_arr[self.wrk_tab_index].kill_proc()
+        self.wrk_area_arr[self.wrk_tab_index].allStop()
+
     def changeTranslator(self, fileName):
 
         #QC.removeTranslator(self.translator)
@@ -307,25 +322,25 @@ class MainWindow(QWidget):
         self.infoText.setText(text)
 
     def startDebug(self):
-        logging.debug('startDebug() called MainWindow')
+        logging.debug('MainWindow::startDebug() called')
         target = (0, 0)
-        self.gridoperator.stop_flag = False
-        self.gridoperator.fastpath = False
-        self.gridoperator.delay = self.settings.delay / 1000
-        self.gridoperator.startExec(target)
+        self.grd_ops_arr[self.wrk_tab_index].stop_flag = False
+        self.grd_ops_arr[self.wrk_tab_index].fastpath = False
+        self.grd_ops_arr[self.wrk_tab_index].delay = self.settings.delay / 1000
+        self.grd_ops_arr[self.wrk_tab_index].startExec(target)
 
     def startExec(self):
-        logging.debug('startExec() called MainWindow')
+        logging.debug('MainWindow::startExec() called')
         target = (0, 0)
-        self.gridoperator.stop_flag = False
-        self.gridoperator.delay = 0
-        self.gridoperator.fastpath = True
-        self.gridoperator.startExec(target)
+        self.grd_ops_arr[self.wrk_tab_index].stop_flag = False
+        self.grd_ops_arr[self.wrk_tab_index].delay = 0
+        self.grd_ops_arr[self.wrk_tab_index].fastpath = True
+        self.grd_ops_arr[self.wrk_tab_index].startExec(target)
 
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.11'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.12'))
 
     def showInfo(self, event):
 

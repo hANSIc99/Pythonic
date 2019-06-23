@@ -25,6 +25,8 @@ class WorkingArea(QFrame):
     func_blocks = {}
     return_grid = pyqtSignal('PyQt_PyObject', name='return_grid')
     finish_dropbox = pyqtSignal(name='finish_dropbox')
+    query_grid_config_wrk = pyqtSignal(name='query_grid_config_wrk')
+    pass_grid_config = pyqtSignal('PyQt_PyObject', name='return_grid')
 
     def __init__(self):
         super().__init__()
@@ -77,11 +79,11 @@ class WorkingArea(QFrame):
 
         # creating a new instance of the desired type
         new_type_str = 'new_type = ' + newType + '({},{})'.format(row, column)
-        logging.debug('addElement() called, new_type_str: {}'.format(new_type_str))
+        logging.debug('WorkingArea::addElement() called, new_type_str: {}'.format(new_type_str))
         try:
             exec(new_type_str, globals())
         except Exception as e:
-            logging.error('addElement()- desired element type not found')
+            logging.error('WorkingArea::addElement()- desired element type not found')
             logging.error(e)
             return
 
@@ -100,11 +102,8 @@ class WorkingArea(QFrame):
 
         self.grid.addWidget(new_type, row, column, Qt.AlignCenter)
 
-        # load config when source was dropbox
-        # ABKÜRZUNG MÖGLICH BAUSTELLE (LoadCOnfig muss nicht aufgerufen werden oder
         # nur mit element als argument
         if source == DropBox.__name__ :
-            #self.loadConfig(row, column)
             logging.debug('WorkingArea::addElement() config: {}'.format(new_type)) 
             #element = new_type
             #element = self.grid.itemAtPosition(row, column).widget()
@@ -120,6 +119,12 @@ class WorkingArea(QFrame):
             func_type = type(new_type.function)
             logging.debug('WorkingArea::loadConfig() function type: {}'.format(func_type))
             new_type.addFunction(func_type)
+
+        if type(new_type).__name__ == ExecReturn.__name__:
+            logging.debug('WorkingArea::addElement() ExecReturn element found')
+            # connecting signals for passing grid configuration
+            new_type.query_grid_config.connect(self.queryGridConfiguration)
+            self.pass_grid_config.connect(new_type.baustelle)
 
         # add second placeholder in case of a added branch function
         # connect delete button to related grid method
@@ -150,6 +155,16 @@ class WorkingArea(QFrame):
             # place new placeholder under 'right-bottom' element
             self.addPlaceholder(row+1, column+1)
             self.findMissingLinks()
+
+    def queryGridConfiguration(self):
+
+        logging.debug('WorkingArea::queryGridConfiguration() called')
+        self.query_grid_config_wrk.emit()
+
+    def receiveGridConfiguration(self, config):
+
+        logging.debug('WorkingArea::receiveGridConfiguration() called')
+        self.pass_grid_config.emit(config)
 
     def receiveConfig(self, config):
 
@@ -485,7 +500,7 @@ class WorkingArea(QFrame):
             row, col = pos
             
             if(self.grid.itemAtPosition(row, col)):
-                logging.debug('loadGrid() element deleted: {} {} '.format(row, col))
+                logging.debug('WorkingArea::clearGrid() element deleted: {} {} '.format(row, col))
                 self.destroyElement(self.grid.itemAtPosition(row, col).widget())
 
     def setupDefault(self):
@@ -500,7 +515,7 @@ class WorkingArea(QFrame):
 
     def loadGrid(self, filename):
 
-        logging.debug('loadGrid() called with filename {}'.format(filename))
+        logging.debug('WorkingArea::loadGrid() called with filename {}'.format(filename))
         
         try:
             f = open(filename, 'rb')
