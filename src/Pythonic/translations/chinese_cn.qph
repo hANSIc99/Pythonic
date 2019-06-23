@@ -696,4 +696,8 @@
     <source>Use input string as URL?</source>
     <target>使用输入字符串作为URL？</target>
 </phrase>
+<phrase>
+    <source>Go to grid:</source>
+    <target>转到网格 :</target>
+</phrase>
 </QPH>

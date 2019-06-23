@@ -89,17 +89,9 @@ class ExecReturn(ElementMaster):
         self.log_line_layout.addStretch(1)
 
 
-        #self.element_selector = QComboBox()
         self.element_selector = QStackedWidget()
-        #self.populateSelector()
 
         self.grid_selector = QComboBox()
-        """
-        if self.config[1]:
-            self.element_selector.setCurrentIndex(self.config[1])
-        if self.config[2]:
-            self.log_checkbox.setChecked(True)
-        """
 
         # emmiting signal
         self.query_grid_config.emit()
@@ -126,7 +118,7 @@ class ExecReturn(ElementMaster):
 
         logging.debug('ExecReturn::baustelle config: {}'.format(config))
         for index, wrk_area in enumerate(config):
-            self.grid_selector.addItem('Grid {}'.format(index))
+            self.grid_selector.addItem('Grid {}'.format(index + 1))
 
             self.wrk_selectors_arr.append(QComboBox())
             self.element_selector.addWidget(self.wrk_selectors_arr[index])
@@ -138,14 +130,6 @@ class ExecReturn(ElementMaster):
         logging.debug('ExecReturn::gridIndexChanged() called: {}'.format(index))
         self.element_selector.setCurrentIndex(index)
 
-
-    def populateSelector(self):
-
-        index = self.parent().returnCurrentElements()
-
-        for pos in index:
-            if self.getPos() != pos:
-                self.element_selector.addItem('{} {}'.format(pos[0], alphabet[pos[1]]), QVariant(pos))
 
     def loadLastConfig(self):
 

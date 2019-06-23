@@ -24,7 +24,7 @@ from Pythonic.storagebar                import StorageBar
 
 class MainWindow(QWidget):
 
-    log_level = logging.DEBUG
+    log_level = logging.INFO
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
 
@@ -107,7 +107,7 @@ class MainWindow(QWidget):
             self.wrk_tabs_arr[i].setWidgetResizable(True)
 
             #self.working_tabs.addTab(self.wrk_area_arr[i], QC.translate('', 'Grid {}'.format(i)))
-            self.working_tabs.addTab(self.wrk_tabs_arr[i], QC.translate('', 'Grid {}'.format(i)))
+            self.working_tabs.addTab(self.wrk_tabs_arr[i], QC.translate('', 'Grid {}'.format(i + 1)))
 
             self.grd_ops_arr.append(GridOperator(self.wrk_area_arr[i].grid))
 
