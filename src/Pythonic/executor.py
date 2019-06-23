@@ -21,13 +21,14 @@ class WorkerSignals(QObject):
 
     finished = pyqtSignal(object, name='element_finished' )
     except_sig = pyqtSignal(object, name='exception')
-    proc_ret = pyqtSignal(object)
+    #proc_ret = pyqtSignal(object)
     pid_sig = pyqtSignal(object)
 
 class GridOperator(QObject):
 
     update_logger   = pyqtSignal(name='update_logger')
     exec_pending    = pyqtSignal(name='exec_pending')
+    switch_grid     = pyqtSignal('PyQt_PyObject', name='switch_grid')
 
     def __init__(self, grid):
         super().__init__()
@@ -42,7 +43,6 @@ class GridOperator(QObject):
         self.pending_return = []
         self.pid_register = []
         self.exec_pending.connect(self.checkPending)
-        mp.set_start_method('spawn')
         logging.debug('__init__() GridOperator, threadCount: {}'.format(
             self.threadpool.maxThreadCount()))
 
@@ -162,12 +162,19 @@ class GridOperator(QObject):
 
     def goNext(self, prg_return):
 
+        # check is target_0 includes a diffrent grid 
+        # ExecReturn elemenot
 
         if prg_return.target_0:
             logging.debug('GridOperator::goNext() called with next target_0: {}'.format(prg_return.target_0))
             logging.debug('GridOperator::goNext() called with record_0: {}'.format(prg_return.record_0))
 
             if self.fastpath:
+
+                if len(prg_return.target_0) == 3: # switch grid, go over main
+                    # fastpath = True
+                    self.switch_grid.emit((prg_return, True))
+                    return
                 
                 new_rec = self.fastPath(prg_return.target_0, prg_return.record_0)
                 if new_rec: # check for ExecR or ExecRB
@@ -175,6 +182,12 @@ class GridOperator(QObject):
                 else: # if nothing found: proceed as usual
                     self.startExec(prg_return.target_0, prg_return.record_0)
             else:
+
+                if len(prg_return.target_0) == 3: # switch grid, go over main
+                    # fastpath = False
+                    self.switch_grid.emit((prg_return, False))
+                    return
+
                 self.startExec(prg_return.target_0, prg_return.record_0)
 
         if prg_return.target_1:
