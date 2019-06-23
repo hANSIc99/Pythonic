@@ -21,7 +21,7 @@ class WorkerSignals(QObject):
 
     finished = pyqtSignal(object, name='element_finished' )
     except_sig = pyqtSignal(object, name='exception')
-    proc_ret = pyqtSignal(object)
+    #proc_ret = pyqtSignal(object)
     pid_sig = pyqtSignal(object)
 
 class GridOperator(QObject):
@@ -164,14 +164,6 @@ class GridOperator(QObject):
 
         # check is target_0 includes a diffrent grid 
         # ExecReturn elemenot
-        """
-        if prg_return.target_0 and len(prg_return.target_0) == 3:
-            logging.debug('################################# len: {}'.format(len(prg_return.target_0)))
-            self.switch_grid.emit(prg_return)
-            logging.debug('GridOperator::goNext() - target_0: {}'.format(prg_return.target_0))
-            return
-        """
-
 
         if prg_return.target_0:
             logging.debug('GridOperator::goNext() called with next target_0: {}'.format(prg_return.target_0))

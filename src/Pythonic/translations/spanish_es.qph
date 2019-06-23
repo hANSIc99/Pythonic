@@ -696,4 +696,8 @@
     <source>GET answer is transformed to Python list object</source>
     <target>La respuesta GET se transforma en el objeto de lista de Python</target>
 </phrase>
+<phrase>
+    <source>Go to grid:</source>
+    <target>Ir a la cuadrícula:</target>
+</phrase>
 </QPH>

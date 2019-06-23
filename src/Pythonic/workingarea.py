@@ -20,7 +20,6 @@ from Pythonic.dropbox                    import DropBox
 
 import logging, pickle
 
-#class WorkingArea(QFrame):
 class WorkingArea(QFrame):
 
     func_blocks = {}
@@ -123,6 +122,7 @@ class WorkingArea(QFrame):
 
         if type(new_type).__name__ == ExecReturn.__name__:
             logging.debug('WorkingArea::addElement() ExecReturn element found')
+            # connecting signals for passing grid configuration
             new_type.query_grid_config.connect(self.queryGridConfiguration)
             self.pass_grid_config.connect(new_type.baustelle)
 

@@ -648,4 +648,28 @@
     <source>GET answer is transformed to Python list object</source>
     <target>GET-Antwort wird in Python List umgewandelt</target>
 </phrase>
+<phrase>
+    <source>Grid 1</source>
+    <target>Raster 1</target>
+</phrase>
+<phrase>
+    <source>Grid 2</source>
+    <target>Raster 2</target>
+</phrase>
+<phrase>
+    <source>Grid 3</source>
+    <target>Raster 3</target>
+</phrase>
+<phrase>
+    <source>Grid 4</source>
+    <target>Raster 4</target>
+</phrase>
+<phrase>
+    <source>Grid 5</source>
+    <target>Raster 5</target>
+</phrase>
+<phrase>
+    <source>Go to grid:</source>
+    <target>Springe zu Raster:</target>
+</phrase>
 </QPH>
