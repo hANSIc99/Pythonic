@@ -19,10 +19,10 @@ class StorageBar(QWidget):
     #load_config = pyqtSignal(int, int, object, name='load_config')
     forward_config = pyqtSignal('PyQt_PyObject', name='push_config')
 
-    def __init__(self, working_areas=None):
+    def __init__(self, parent=None):
 
-        super().__init__()
-        self.wrk_areas = working_areas
+        super().__init__(parent)
+        self.parent = parent
         self.setMinimumWidth(200)
         self.box_frame = QVBoxLayout()
         self.box_frame.setContentsMargins(0, 0, 0, 0)
@@ -33,7 +33,6 @@ class StorageBar(QWidget):
         #self.icon_bar.setStyleSheet('background-color: \
         #        qlineargradient(x1:0.5 y1:0, x2:0.5 y2:1, stop:0 #646464, stop:1 #366a97);\
         #        border-radius: 10px')
-
 
         policy = QSizePolicy()
         policy.setRetainSizeWhenHidden(True)
@@ -78,33 +77,20 @@ class StorageBar(QWidget):
             row, column))
         self.addBox()
 
-        if self.wrk_areas:
-            #element = self.wrk_areas[0].grid.itemAtPosition(row, column).widget()
-            self.wrk_areas[0].delete_element(row, column)
+        self.parent.focus_grid.delete_element(row, column)
 
-        else:
-            #element = self.parent().grid.itemAtPosition(row, column).widget()
-            # parent() to access the grid
-            self.parent().delete_element(row, column)
 
 
     def checkStore(self, row, column):
 
-        if self.wrk_areas:
-            element = self.wrk_areas[0].grid.itemAtPosition(row, column).widget()
-            return self.wrk_areas[0].checkDeletion(element)
-        else:
-            element = self.parent().grid.itemAtPosition(row, column).widget()
-            return self.parent().checkDeletion(element)
+            element = self.parent.focus_grid.grid.itemAtPosition(row, column).widget()
+            return self.parent.focus_grid.checkDeletion(element)
 
     def saveConfig(self, row, column):
 
         logging.debug('StorageBar::saveConfig() called')
 
-        if self.wrk_areas:
-            element = self.wrk_areas[0].grid.itemAtPosition(row, column).widget()
-        else:
-            element = self.parent().grid.itemAtPosition(row, column).widget()
+        element = self.parent.focus_grid.grid.itemAtPosition(row, column).widget()
 
         return element.config
 

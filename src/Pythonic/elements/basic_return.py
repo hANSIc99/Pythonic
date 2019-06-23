@@ -2,7 +2,7 @@ from elementmaster import ElementMaster, alphabet
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox,
-                                QPushButton)
+                                QPushButton, QStackedWidget)
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
 import os.path
@@ -17,12 +17,14 @@ class ExecReturn(ElementMaster):
     pixmap_path = 'images/ExecReturn.png'
     child_pos = (False, False)
 
+    query_grid_config = pyqtSignal(name='query_grid_config')
+
     def __init__(self, row, column):
         self.row = row
         self.column = column
 
-        # currentdata, currentindex, ischecked
-        self.config = (None, None, False)
+        # grid, wrk_selecctor_index, wrk_pos, ischecked
+        self.config = (0, 0, (0,0), False)
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecReturn called at row {}, column {}'.format(row, column))
@@ -43,6 +45,7 @@ class ExecReturn(ElementMaster):
     def openEditor(self):
         logging.debug('openEditor() called ExecReturn')
 
+
     def edit(self):
         logging.debug('edit() called ExecReturn')
         self.returnEditLayout = QVBoxLayout()
@@ -50,8 +53,11 @@ class ExecReturn(ElementMaster):
         self.returnEdit = ElementEditor(self)
         self.returnEdit.setWindowTitle(QC.translate('', 'Edit Return'))
 
-        self.top_text = QLabel()
-        self.top_text.setText(QC.translate('', 'Go to element:'))
+        self.grid_text = QLabel()
+        self.grid_text.setText(QC.translate('', 'Go to grid:'))
+
+        self.element_text = QLabel()
+        self.element_text.setText(QC.translate('', 'Go to element:'))
 
         self.help_text = QWidget()
         self.help_text_layout = QVBoxLayout(self.help_text)
@@ -83,17 +89,21 @@ class ExecReturn(ElementMaster):
         self.log_line_layout.addStretch(1)
 
 
-        self.element_selector = QComboBox()
-        self.populateSelector()
+        self.element_selector = QStackedWidget()
 
-        if self.config[1]:
-            self.element_selector.setCurrentIndex(self.config[1])
-        if self.config[2]:
-            self.log_checkbox.setChecked(True)
+        self.grid_selector = QComboBox()
+
+        # emmiting signal
+        self.query_grid_config.emit()
+        self.grid_selector.currentIndexChanged.connect(self.gridIndexChanged)
+
+        self.loadLastConfig()
 
         self.confirm_button.clicked.connect(self.returnEdit.closeEvent)
         self.returnEdit.window_closed.connect(self.edit_done)
-        self.returnEditLayout.addWidget(self.top_text)
+        self.returnEditLayout.addWidget(self.grid_text)
+        self.returnEditLayout.addWidget(self.grid_selector)
+        self.returnEditLayout.addWidget(self.element_text)
         self.returnEditLayout.addWidget(self.element_selector)
         self.returnEditLayout.addWidget(self.log_line)
         self.returnEditLayout.addWidget(self.help_text)
@@ -102,17 +112,41 @@ class ExecReturn(ElementMaster):
         self.returnEdit.setLayout(self.returnEditLayout)
         self.returnEdit.show()
 
-    def populateSelector(self):
+    def baustelle(self, config):
 
-        index = self.parent().returnCurrentElements()
+        self.wrk_selectors_arr = []
 
-        for pos in index:
-            if self.getPos() != pos:
-                self.element_selector.addItem('{} {}'.format(pos[0], alphabet[pos[1]]), QVariant(pos))
+        logging.debug('ExecReturn::baustelle config: {}'.format(config))
+        for index, wrk_area in enumerate(config):
+            self.grid_selector.addItem('Grid {}'.format(index + 1))
+
+            self.wrk_selectors_arr.append(QComboBox())
+            self.element_selector.addWidget(self.wrk_selectors_arr[index])
+            for pos in wrk_area:
+                self.wrk_selectors_arr[index].addItem('{} {}'.format(pos[0], alphabet[pos[1]]), QVariant(pos))
+
+    def gridIndexChanged(self, index):
+
+        logging.debug('ExecReturn::gridIndexChanged() called: {}'.format(index))
+        self.element_selector.setCurrentIndex(index)
+
+
+    def loadLastConfig(self):
+
+        grid, wrk_selecctor_index, wrk_pos, log_state = self.config
+
+        self.grid_selector.setCurrentIndex(grid)
+        self.element_selector.setCurrentIndex(grid)
+        self.wrk_selectors_arr[grid].setCurrentIndex(wrk_selecctor_index)
+        self.log_checkbox.setChecked(log_state)
 
     def edit_done(self):
         logging.debug('edit_done() called ExecReturn' )
-        self.config = (self.element_selector.currentData(), self.element_selector.currentIndex(), self.log_checkbox.isChecked())
+        grid = self.grid_selector.currentIndex()
+        wrk_selecctor_index = self.wrk_selectors_arr[grid].currentIndex()
+        wrk_pos = self.wrk_selectors_arr[grid].currentData()
+
+        self.config = (grid, wrk_selecctor_index, wrk_pos, self.log_checkbox.isChecked())
         self.addFunction(ReturnFunction)
 
 class ReturnFunction(Function):
@@ -122,7 +156,9 @@ class ReturnFunction(Function):
 
     def execute(self, record):
 
-        log_txt = '{{BASIC RETURN}}           Return to {}|{}'.format(self.config[0][0], alphabet[self.config[0][1]])
-        result = Record(self.getPos(), self.config[0], record, log=self.config[2], log_txt=log_txt)
+        grid, wrk_selecctor_index, wrk_pos, log_state = self.config
+        target_0 = (grid, wrk_pos[0], wrk_pos[1])
+        log_txt = '{{BASIC RETURN}} Grid {} - Pos {}|{}'.format(grid, wrk_pos[0], alphabet[wrk_pos[1]])
+        result = Record(self.getPos(), target_0, record, log=log_state, log_txt=log_txt)
         return result
 
