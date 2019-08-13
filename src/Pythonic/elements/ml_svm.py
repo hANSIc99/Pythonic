@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, pyqtSlot, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QDoubleValidator
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
+from PyQt5.QtGui import  QPixmap, QPainter, QColor, QDoubleValidator
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget, QFileDialog
 from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 from pythonic_binance.client import Client
@@ -23,13 +23,16 @@ class MLSVM(ElementMaster):
         self.row = row
         self.column = column
 
-        # pass_input, url, log_state
+        # train_eval, decision_function, gamma_mode, gamma_value, filename, log_state
 
-        pass_input  = False
-        url         = None
-        log_state   = False
+        train_eval          = 2
+        decision_function   = 0
+        gamma_mode          = 0
+        gamma_value         = '1.0'
+        filename            = None
+        log_state           = False
 
-        self.config = pass_input, url, log_state
+        self.config = train_eval, decision_function, gamma_mode, gamma_value, filename, log_state
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -60,7 +63,10 @@ class MLSVM(ElementMaster):
 
         data split train / eval
         """
-        
+        # train_eval, decision_function, gamma_mode, gamma_value, filename, log_state
+        self.train_eval, self.decision_function, self.gamma_mode, \
+            self.gamma_value, self.filename, self.log_state = self.config
+
         self.train_test_label = QLabel()
         self.train_test_label.setText(
                 QC.translate('', 'Choose train / evalutaion ratio:'))
@@ -86,10 +92,27 @@ class MLSVM(ElementMaster):
         self.gamma_list.addItem('Auto', QVariant('auto'))
         self.gamma_list.addItem('Scaled', QVariant('scaled'))
         self.gamma_list.addItem('Manual', QVariant('manual'))
-        
+
+        self.gamma_input_line = QWidget()
+        #self.gamma_input_line.setMinimumHeight(100)
+        self.gamma_input_line_layout = QHBoxLayout(self.gamma_input_line)
+        self.gamma_input_txt = QLabel()
+        self.gamma_input_txt.setText(QC.translate('', 'Gamma:'))
+        self.gamma_input = QLineEdit()
+        self.gamma_input.setPlaceholderText('1.0')
+        self.gamma_input.setValidator(QDoubleValidator(0, 999, 3))
+        self.gamma_input_line_layout.addWidget(self.gamma_input_txt)
+        self.gamma_input_line_layout.addWidget(self.gamma_input)
+
         self.conn_rest_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 
+        self.filename_text = QLabel()
+        
+        self.file_button = QPushButton(QC.translate('', 'Select model output file'))
+        self.file_button.clicked.connect(self.ChooseFileDialog)
+
+        
         """
         self.pass_input_line = QWidget()
         self.pass_input_txt = QLabel()
@@ -124,18 +147,17 @@ class MLSVM(ElementMaster):
         self.log_line_layout.addStretch(1)
 
         
-        self.conn_mail_edit = ElementEditor(self)
-        self.conn_mail_edit.setWindowTitle(QC.translate('', 'Support Vector Machine'))
+        self.ml_svm_edit = ElementEditor(self)
+        self.ml_svm_edit.setWindowTitle(QC.translate('', 'Support Vector Machine'))
+        self.ml_svm_edit.setMinimumHeight(500)
 
-        """
         # signals and slots
-        self.confirm_button.clicked.connect(self.conn_mail_edit.closeEvent)
-        self.conn_mail_edit.window_closed.connect(self.edit_done)
-        self.pass_input_check.stateChanged.connect(self.toggle_url_input)
+        self.gamma_list.currentIndexChanged.connect(self.indexChanged)
+        self.confirm_button.clicked.connect(self.ml_svm_edit.closeEvent)
+        self.ml_svm_edit.window_closed.connect(self.edit_done)
 
         # load config
         self.loadLastConfig()
-        """
 
         self.conn_rest_layout.addWidget(self.train_test_label)
         self.conn_rest_layout.addWidget(self.train_test_list)
@@ -143,40 +165,54 @@ class MLSVM(ElementMaster):
         self.conn_rest_layout.addWidget(self.decision_function_list)
         self.conn_rest_layout.addWidget(self.gamma_label)
         self.conn_rest_layout.addWidget(self.gamma_list)
+        self.conn_rest_layout.addWidget(self.gamma_input_line)
+        self.conn_rest_layout.addWidget(self.filename_text)
+        self.conn_rest_layout.addWidget(self.file_button)
+        self.conn_rest_layout.addStretch(1)
         self.conn_rest_layout.addWidget(self.help_text_1)
         self.conn_rest_layout.addWidget(self.log_line)
         self.conn_rest_layout.addWidget(self.confirm_button)
-        self.conn_mail_edit.setLayout(self.conn_rest_layout)
-        self.conn_mail_edit.show()
+        self.ml_svm_edit.setLayout(self.conn_rest_layout)
+        self.ml_svm_edit.show()
 
     def loadLastConfig(self):
 
         logging.debug('MLSVM::loadLastConfig() called')
-        # pass_input, url, log_state
-        pass_input, url, log_state = self.config
-
-        self.pass_input_check.setChecked(pass_input)        
-        self.log_checkbox.setChecked(log_state)
-
-        if url:
-            self.url_address_input.setText(url)
-
         
+        self.train_test_list.setCurrentIndex(self.train_eval)
+        self.decision_function_list.setCurrentIndex(self.decision_function)
+        self.gamma_list.setCurrentIndex(self.gamma_mode)
+        self.gamma_input.setText(self.gamma_value)
+        self.indexChanged(self.gamma_mode)
+        if self.filename:
+            self.filename_text.setText(self.filename)
 
-    def toggle_url_input(self, event):
+    def indexChanged(self, event):
 
-        logging.debug('MLSVM::toggle_url_input() called')
-        if event == 0:
-            self.url_address_input.setDisabled(False)
+        current_index = event
+        logging.debug('MLSVM::indexChanged() called: {}'.format(event))
+        if event == 2 :
+            self.gamma_input_line.setVisible(True)
         else:
-            self.url_address_input.setDisabled(True)
+            self.gamma_input_line.setVisible(False)
 
+    def ChooseFileDialog(self, event):    
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self, \
+                QC.translate('', 'Choose file'),"","All Files (*);;Text Files (*.txt)", \
+                options=options)
+        if fileName:
+            logging.debug('ChooseFileDialog() called with filename: {}'.format(fileName))
+            self.filename = fileName
+            self.filename_text.setText(self.filename)
 
 
     def edit_done(self):
 
         logging.debug('MLSVM::edit_done() called')
 
+        """
         # pass_input, url, log_state
 
         pass_input  = self.pass_input_check.isChecked()
@@ -185,6 +221,7 @@ class MLSVM(ElementMaster):
 
         self.config = pass_input, url, log_state
         logging.debug('########CONFIG: {}'.format(self.config))
+        """
 
         self.addFunction(MLSVMFunction)
 
