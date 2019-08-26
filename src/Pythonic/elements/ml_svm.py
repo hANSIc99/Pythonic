@@ -12,6 +12,8 @@ from Pythonic.elementmaster import ElementMaster
 from email.message import EmailMessage
 from email.contentmanager import raw_data_manager
 from sys import getsizeof
+from sklearn import svm, preprocessing
+from sklearn.model_selection import train_test_split
 #from smtplib import SMTP
 
 class MLSVM(ElementMaster):
@@ -279,19 +281,20 @@ class MLSVMFunction(Function):
 
     def execute(self, record):
 
-        # pass_input, url, log_state
-        pass_input, url, log_state = self.config
+        scale_option, scale_mean, scale_std, train_eval, decision_function, \
+                gamma_mode, gamma_value, filename, log_state = self.config
 
-        if pass_input:
-            recv_string = requests.get(str(record))
-        else:
-            recv_string = requests.get(url)
+        # expect a tuple (Xdata, Ylabels) as input
+        X, Y = record
 
-        record = json.loads(recv_string.text)
+        if scale_option == 1:
+            # X, axis, with_mean, with_std, copy
+            Xscaled = preprocessing.scale(X, 0, scale_mean, scale_std, False)
 
+        
 
         log_txt = '{REST call succesfull}'
-        log_output = '{} bytes received'.format(getsizeof(recv_string.text))
+        log_output = '{} bytes received'.format(12)
 
         result = Record(self.getPos(), (self.row +1, self.column), record,
                  log=log_state, log_txt=log_txt, log_output=log_output)
