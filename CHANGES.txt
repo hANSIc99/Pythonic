@@ -1,3 +1,10 @@
+0.13
+    
+    Added scicit learn as dependency
+    Added Support Vector Machine learning functionality
+    Added Support Vector Machine prediction functionality
+
+
 0.12
 
     Now five independent grids per Pythonic instance
