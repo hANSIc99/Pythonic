@@ -289,15 +289,66 @@ class MLSVMFunction(Function):
 
         if scale_option == 1:
             # X, axis, with_mean, with_std, copy
-            Xscaled = preprocessing.scale(X, 0, scale_mean, scale_std, False)
+            X = preprocessing.scale(X, 0, scale_mean, scale_std, False)
 
+        if train_eval == 0: # 90/10
+            test_share = 0.1
+        elif train_eval == 1: # 80/20
+            test_share = 0.2 
+        elif train_eval == 2: # 70/30
+            test_share = 0.3
+        elif train_eval == 3: # 60/40  
+            test_share = 0.4
+        else: # 50/50
+            test_share = 0.5
+
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_share)
+
+        if decision_function == 0: # one vs. one
+            dec_func_shape = 'ovo'
+        else: # one vs. rest
+            dec_func_shape = 'ovr' 
+
+        if gamma_mode == 0: # auto
+            gamma_arg = 'auto'
+        elif gamma_mode == 1: #scaled
+            gamma_arg = 'scaled'
+        else: # manual
+            gamma_arg = gamma_value
+
+
+        clf = svm.SVC(decision_function_shape='ovr', gamma=gamma_arg)
+        clf.fit(X_train, Y_train)
+
+        Y_predicted = clf.predict(X_test)
+
+        tp = 0
+        tn = 0
+        fp = 0
+        fn = 0
+
+        for idx, Y_pre in enumerate(Y_predicted):
+            if Y_pre == Y_test[idx]: # true positives or true negatives
+
+                if Y_test[idx] != 0: # true positive
+                    tp += 1
+                else: #true negative
+                    tn += 1
+
+            else: #false positives or false negatives
+
+                if Y_test[idx] != 0: # false positive
+                    fp += 1
+                else: # false negative
+                    fn += 1
         
 
-        log_txt = '{REST call succesfull}'
-        log_output = '{} bytes received'.format(12)
+        record = {'tp': tp, 'tn':tn, 'fp':fp, 'fn':fn}
+        log_txt = '{SVM successful trained}'
+        log_output = 'tp: {} tn: {} fp: {} fn: {}'.format(tp, tn, fp, fn)
 
         result = Record(self.getPos(), (self.row +1, self.column), record,
-                 log=log_state, log_txt=log_txt, log_output=log_output)
+                 log=log_state, log_txt=log_txt)
 
         
         return result
