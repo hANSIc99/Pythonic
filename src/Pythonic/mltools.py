@@ -27,8 +27,12 @@ class MLTools(QFrame):
         self.svm = MasterTool(self, 'MLSVM', 1)
         self.svm.setPixmap(QPixmap('images/MLSVM.png').scaled(120, 60))
 
+        self.svm_predict = MasterTool(self, 'MLSVM_Predict', 1)
+        self.svm_predict.setPixmap(QPixmap('images/MLSVM_Predict.png').scaled(120, 60))
+
 
         self.layout_h.addWidget(self.svm)
+        self.layout_h.addWidget(self.svm_predict)
         self.layout_h.addStretch(1)
 
         self.setLayout(self.layout_h)
@@ -66,5 +70,6 @@ class MLTools(QFrame):
     def register_tools(self):
         logging.debug('MLTools::register_tools() called')
         self.reg_tool.emit(self.svm.toolData())
+        self.reg_tool.emit(self.svm_predict.toolData())
 
 
