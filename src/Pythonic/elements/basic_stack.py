@@ -147,8 +147,7 @@ class ExecStack(ElementMaster):
         self.log_line_layout.addStretch(1)
 
 
-        if log_state:
-            self.log_checkbox.setChecked(True)
+        self.log_checkbox.setChecked(log_state)
 
         self.confirm_button.clicked.connect(self.returnEdit.closeEvent)
         self.returnEdit.window_closed.connect(self.edit_done)

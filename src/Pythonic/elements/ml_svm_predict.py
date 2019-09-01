@@ -16,9 +16,9 @@ from sklearn import svm, preprocessing
 from sklearn.model_selection import train_test_split
 #from smtplib import SMTP
 
-class MLSVM(ElementMaster):
+class MLSVM_Predict(ElementMaster):
 
-    pixmap_path = 'images/MLSVM.png'
+    pixmap_path = 'images/MLSVM_Predict.png'
     child_pos = (True, False)
 
     def __init__(self, row, column):
@@ -44,26 +44,26 @@ class MLSVM(ElementMaster):
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
-        logging.debug('MLSVM::__init__() called at row {}, column {}'.format(row, column))
-        self.addFunction(MLSVMFunction)
+        logging.debug('MLSVM_Predict::__init__() called at row {}, column {}'.format(row, column))
+        self.addFunction(MLSVM_PredictFunction)
 
     def __setstate__(self, state):
-        logging.debug('MLSVM::__setstate__() called')
+        logging.debug('MLSVM_Predict::__setstate__() called')
         self.row, self.column, self.config = state
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
-        self.addFunction(MLSVMFunction)
+        self.addFunction(MLSVM_PredictFunction)
 
     def __getstate__(self):
-        logging.debug('MLSVM::__getstate__() called')
+        logging.debug('MLSVM_Predict::__getstate__() called')
         return (self.row, self.column, self.config)
 
     def openEditor(self):
-        logging.debug('MLSVM::openEditor() called')
+        logging.debug('MLSVM_Predict::openEditor() called')
 
     def edit(self):
 
-        logging.debug('MLSVM::edit()')
+        logging.debug('MLSVM_Predict::edit()')
 
         """
         gamma: auto oder float eingabe
@@ -207,7 +207,7 @@ class MLSVM(ElementMaster):
 
     def loadLastConfig(self):
 
-        logging.debug('MLSVM::loadLastConfig() called')
+        logging.debug('MLSVM_Predict::loadLastConfig() called')
         
         self.train_test_list.setCurrentIndex(self.train_eval)
         self.decision_function_list.setCurrentIndex(self.decision_function)
@@ -225,7 +225,7 @@ class MLSVM(ElementMaster):
     def scaledIndexChanged(self, event):
 
         current_index = event
-        logging.debug('MLSVM::scaledIndexChanged() called: {}'.format(event))
+        logging.debug('MLSVM_Predict::scaledIndexChanged() called: {}'.format(event))
         if event == 1 :
             self.scale_input_area.setVisible(True)
         else:
@@ -234,7 +234,7 @@ class MLSVM(ElementMaster):
     def gammaIndexChanged(self, event):
 
         current_index = event
-        logging.debug('MLSVM::gammaIndexChanged() called: {}'.format(event))
+        logging.debug('MLSVM_Predict::gammaIndexChanged() called: {}'.format(event))
         if event == 2 :
             self.gamma_input_line.setVisible(True)
         else:
@@ -254,7 +254,7 @@ class MLSVM(ElementMaster):
 
     def edit_done(self):
 
-        logging.debug('MLSVM::edit_done() called')
+        logging.debug('MLSVM_Predict::edit_done() called')
         # scale_option, scale_mean, scale_std train_eval, decision_function, gamma_mode, 
         #    gamma_value, filename, log_state
 
@@ -271,14 +271,14 @@ class MLSVM(ElementMaster):
         self.config = scale_option, scale_mean, scale_std, train_eval, decision_function, gamma_mode, \
                 gamma_value, filename, log_state
         
-        self.addFunction(MLSVMFunction)
+        self.addFunction(MLSVM_PredictFunction)
 
-class MLSVMFunction(Function):
+class MLSVM_PredictFunction(Function):
 
     def __init(self, config, b_debug, row, column):
 
         super().__init__(config, b_debug, row, column)
-        logging.debug('MLSVMFunction::__init__() called')
+        logging.debug('MLSVM_PredictFunction::__init__() called')
 
     def execute(self, record):
 
