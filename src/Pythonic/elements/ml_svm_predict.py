@@ -25,22 +25,16 @@ class MLSVM_Predict(ElementMaster):
         self.row = row
         self.column = column
 
-        # scale_option, scale_mean, scale_std train_eval, decision_function, gamma_mode, 
-        #    gamma_value, filename, log_state
-
+        # scale_option, scale_mean, scale_std, predict_val, filename, log_state
         
         scale_option        = 0
         scale_mean          = True
         scale_std           = True
-        train_eval          = 2
-        decision_function   = 0
-        gamma_mode          = 0
-        gamma_value         = '1.0'
+        predict_val         = False
         filename            = None
         log_state           = False
 
-        self.config = scale_option, scale_mean, scale_std, train_eval, decision_function, \
-                gamma_mode, gamma_value, filename, log_state
+        self.config = scale_option, scale_mean, scale_std, predict_val, filename, log_state
 
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
         super().edit_sig.connect(self.edit)
@@ -65,14 +59,9 @@ class MLSVM_Predict(ElementMaster):
 
         logging.debug('MLSVM_Predict::edit()')
 
-        """
-        gamma: auto oder float eingabe
-        decision function shape: ovr oder ovo
-
-        data split train / eval
-        """
-        self.scale_option, self.scale_mean, self.scale_std, self.train_eval, self.decision_function, \
-                self.gamma_mode, self.gamma_value, self.filename, self.log_state = self.config
+        # scale_option, scale_mean, scale_std, predict_val, filename, log_state
+        self.scale_option, self.scale_mean, self.scale_std, self.predict_val, \
+                self.filename, self.log_state = self.config
 
         self.scale_label = QLabel()
         self.scale_label.setText(QC.translate('', 'Scale n_samples ?'))
@@ -102,48 +91,23 @@ class MLSVM_Predict(ElementMaster):
         self.scale_input_area_layout.addWidget(self.scale_center_input_line)
         self.scale_input_area_layout.addWidget(self.scale_std_input_line)
 
-        self.train_test_label = QLabel()
-        self.train_test_label.setText(
-                QC.translate('', 'Choose train / evalutaion ratio:'))
+        self.last_value_line = QWidget()
+        self.last_value_line_layout = QHBoxLayout(self.last_value_line)
+        self.last_value_label = QLabel()
+        self.last_value_label.setText(
+                QC.translate('', 'Predict only last value [-1]?'))
+        self.last_value_checkbox = QCheckBox()
 
-        self.train_test_list = QComboBox()
-        self.train_test_list.addItem('90/10', QVariant(90))
-        self.train_test_list.addItem('80/20', QVariant(80))
-        self.train_test_list.addItem('70/30', QVariant(70))
-        self.train_test_list.addItem('60/40', QVariant(60))
-        self.train_test_list.addItem('50/50', QVariant(50))
+        self.last_value_line_layout.addWidget(self.last_value_label)
+        self.last_value_line_layout.addWidget(self.last_value_checkbox)
 
-        self.decision_function_label = QLabel()
-        self.decision_function_label.setText(QC.translate('', 'Choose decision function shape:'))
-
-        self.decision_function_list = QComboBox()
-        self.decision_function_list.addItem('ovo', QVariant('ovo'))
-        self.decision_function_list.addItem('ovr', QVariant('ovr'))
-
-        self.gamma_label = QLabel()
-        self.gamma_label.setText(QC.translate('', 'Gamma:'))
-
-        self.gamma_list = QComboBox()
-        self.gamma_list.addItem('Auto', QVariant('auto'))
-        self.gamma_list.addItem('Scaled', QVariant('scaled'))
-        self.gamma_list.addItem('Manual', QVariant('manual'))
-
-        self.gamma_input_line = QWidget()
-        self.gamma_input_line_layout = QHBoxLayout(self.gamma_input_line)
-        self.gamma_input_txt = QLabel()
-        self.gamma_input_txt.setText(QC.translate('', 'Gamma:'))
-        self.gamma_input = QLineEdit()
-        self.gamma_input.setPlaceholderText('1.0')
-        self.gamma_input.setValidator(QDoubleValidator(0, 999, 3))
-        self.gamma_input_line_layout.addWidget(self.gamma_input_txt)
-        self.gamma_input_line_layout.addWidget(self.gamma_input)
 
         self.conn_rest_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 
         self.filename_text = QLabel()
         
-        self.file_button = QPushButton(QC.translate('', 'Select model output file'))
+        self.file_button = QPushButton(QC.translate('', 'Select model file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
 
         
@@ -151,12 +115,10 @@ class MLSVM_Predict(ElementMaster):
         output: prediction quality
         """
         self.help_text_1 = QLabel()
-        self.help_text_1.setText(QC.translate('', 'Expects a tuple (n_samples, n_features) as input.'))
+        self.help_text_1.setText(QC.translate('', 'Expects an array of samples as input.'))
 
         self.help_text_2 = QLabel()
-        self.help_text_2.setText(QC.translate('', 'Outputs a contigency table in the format:'))
-        self.help_text_3 = QLabel()
-        self.help_text_3.setText(QC.translate('', '{\'TP\': 23, \'FP\': 13, \'FN\':12, \'TN\': 33}'))
+        self.help_text_2.setText(QC.translate('', 'Outputs a single value or an array'))
 
         
 
@@ -171,15 +133,14 @@ class MLSVM_Predict(ElementMaster):
         self.log_line_layout.addStretch(1)
 
         
-        self.ml_svm_edit = ElementEditor(self)
-        self.ml_svm_edit.setWindowTitle(QC.translate('', 'Support Vector Machine'))
-        self.ml_svm_edit.setMinimumHeight(600)
+        self.ml_svm_predict_edit = ElementEditor(self)
+        self.ml_svm_predict_edit.setWindowTitle(QC.translate('', 'Support Vector Machine Prediction'))
+        self.ml_svm_predict_edit.setMinimumHeight(400)
 
         # signals and slots
-        self.gamma_list.currentIndexChanged.connect(self.gammaIndexChanged)
         self.scale_list.currentIndexChanged.connect(self.scaledIndexChanged)
-        self.confirm_button.clicked.connect(self.ml_svm_edit.closeEvent)
-        self.ml_svm_edit.window_closed.connect(self.edit_done)
+        self.confirm_button.clicked.connect(self.ml_svm_predict_edit.closeEvent)
+        self.ml_svm_predict_edit.window_closed.connect(self.edit_done)
 
         # load config
         self.loadLastConfig()
@@ -188,36 +149,25 @@ class MLSVM_Predict(ElementMaster):
         self.conn_rest_layout.addWidget(self.scale_label) # scale: copy = false
         self.conn_rest_layout.addWidget(self.scale_list)
         self.conn_rest_layout.addWidget(self.scale_input_area)
-        self.conn_rest_layout.addWidget(self.train_test_label)
-        self.conn_rest_layout.addWidget(self.train_test_list)
-        self.conn_rest_layout.addWidget(self.decision_function_label)
-        self.conn_rest_layout.addWidget(self.decision_function_list)
-        self.conn_rest_layout.addWidget(self.gamma_label)
-        self.conn_rest_layout.addWidget(self.gamma_list)
-        self.conn_rest_layout.addWidget(self.gamma_input_line)
+        self.conn_rest_layout.addWidget(self.last_value_line)
         self.conn_rest_layout.addWidget(self.filename_text)
         self.conn_rest_layout.addWidget(self.file_button)
         self.conn_rest_layout.addStretch(1)
         self.conn_rest_layout.addWidget(self.help_text_2)
-        self.conn_rest_layout.addWidget(self.help_text_3)
         self.conn_rest_layout.addWidget(self.log_line)
         self.conn_rest_layout.addWidget(self.confirm_button)
-        self.ml_svm_edit.setLayout(self.conn_rest_layout)
-        self.ml_svm_edit.show()
+        self.ml_svm_predict_edit.setLayout(self.conn_rest_layout)
+        self.ml_svm_predict_edit.show()
 
     def loadLastConfig(self):
 
         logging.debug('MLSVM_Predict::loadLastConfig() called')
         
-        self.train_test_list.setCurrentIndex(self.train_eval)
-        self.decision_function_list.setCurrentIndex(self.decision_function)
-        self.gamma_list.setCurrentIndex(self.gamma_mode)
-        self.gamma_input.setText('{}'.format(self.gamma_value))
-        self.gammaIndexChanged(self.gamma_mode)
         self.scale_list.setCurrentIndex(self.scale_option)
         self.scaledIndexChanged(self.scale_option)
         self.scale_center_checkbox.setChecked(self.scale_mean)
         self.scale_std_checkbox.setChecked(self.scale_std)
+        self.last_value_checkbox.setChecked(self.predict_val)
         self.log_checkbox.setChecked(self.log_state)
         if self.filename:
             self.filename_text.setText(self.filename)
@@ -231,15 +181,7 @@ class MLSVM_Predict(ElementMaster):
         else:
             self.scale_input_area.setVisible(False)
 
-    def gammaIndexChanged(self, event):
-
-        current_index = event
-        logging.debug('MLSVM_Predict::gammaIndexChanged() called: {}'.format(event))
-        if event == 2 :
-            self.gamma_input_line.setVisible(True)
-        else:
-            self.gamma_input_line.setVisible(False)
-
+    
     def ChooseFileDialog(self, event):    
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -255,21 +197,16 @@ class MLSVM_Predict(ElementMaster):
     def edit_done(self):
 
         logging.debug('MLSVM_Predict::edit_done() called')
-        # scale_option, scale_mean, scale_std train_eval, decision_function, gamma_mode, 
-        #    gamma_value, filename, log_state
+        # scale_option, scale_mean, scale_std, predict_val, filename, log_state
 
         scale_option        = self.scale_list.currentIndex()
         scale_mean          = self.scale_center_checkbox.isChecked()
         scale_std           = self.scale_std_checkbox.isChecked()
-        train_eval          = self.train_test_list.currentIndex()
-        decision_function   = self.decision_function_list.currentIndex()
-        gamma_mode          = self.gamma_list.currentIndex()
-        gamma_value         = float(self.gamma_input.text())
+        predict_val         = self.last_value_checkbox.isChecked()
         filename            = self.filename
         log_state           = self.log_checkbox.isChecked()
 
-        self.config = scale_option, scale_mean, scale_std, train_eval, decision_function, gamma_mode, \
-                gamma_value, filename, log_state
+        self.config = scale_option, scale_mean, scale_std, predict_val, filename, log_state
         
         self.addFunction(MLSVM_PredictFunction)
 
@@ -282,8 +219,7 @@ class MLSVM_PredictFunction(Function):
 
     def execute(self, record):
 
-        scale_option, scale_mean, scale_std, train_eval, decision_function, \
-                gamma_mode, gamma_value, filename, log_state = self.config
+        scale_option, scale_mean, scale_std, predict_val, filename, log_state = self.config
 
         # expect a tuple (Xdata, Ylabels) as input
         X, Y = record
