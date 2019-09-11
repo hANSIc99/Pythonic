@@ -98,6 +98,7 @@ class ExecStack(ElementMaster):
         self.top_text.setText(QC.translate('', 'Choose file on hard disc for storing stack data:'))
 
         self.filename_text = QLabel()
+        self.filename_text.setWordWrap(True)
         if self.filename:
             self.filename_text.setText(self.filename)
 
