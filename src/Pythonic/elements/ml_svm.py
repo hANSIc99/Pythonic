@@ -142,6 +142,7 @@ class MLSVM(ElementMaster):
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 
         self.filename_text = QLabel()
+        self.filename_text.setWordWrap(True)
         
         self.file_button = QPushButton(QC.translate('', 'Select model output file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
@@ -357,7 +358,6 @@ class MLSVMFunction(Function):
         
 
         record = {'tp': tp, 'tn':tn, 'fp':fp, 'fn':fn}
-        log_output = 'tp: {} tn: {} fp: {} fn: {}'.format(tp, tn, fp, fn)
 
         result = Record(self.getPos(), (self.row +1, self.column), record,
                  log=log_state, log_txt=log_txt)

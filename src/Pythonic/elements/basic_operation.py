@@ -134,7 +134,8 @@ class OperationFunction(Function):
 
         log_state, code_input = self.config
 
-        proc_dict = {'record' : record, 'input' : None, 'output' : None, 'log_txt' : ""}
+        proc_dict = {'record' : record, 'input' : None, 'output' : None, 'log_txt' : None}
+                        
 
         exec_string = 'input = record\r\n'
         exec_string += 'output = record\r\n'
@@ -148,10 +149,15 @@ class OperationFunction(Function):
 
         exec(exec_string, proc_dict)
 
-        log_txt = '{{BASIC OPERATION}}        {}'.format(proc_dict['log_txt'])
-
         output = proc_dict['output']
+        log_txt = proc_dict['log_txt']
+        if log_txt:
+            log_txt = '{{BASIC OPERATION}}        {}'.format(proc_dict['log_txt'])
+        else:
+            log_txt = '{{BASIC OPERATION}}        {}'.format(proc_dict['output'])
+
 
         result = Record(self.getPos(), (self.row+1, self.column), output, log=log_state, log_txt=log_txt)
+                
         return result
 
