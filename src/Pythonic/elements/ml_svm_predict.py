@@ -9,8 +9,7 @@ import os.path, datetime, logging, requests, json, pickle
 from time import sleep
 from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
-from email.message import EmailMessage
-from email.contentmanager import raw_data_manager
+from pathlib import Path
 from sys import getsizeof
 from sklearn import svm, preprocessing
 from sklearn.model_selection import train_test_split
@@ -63,6 +62,8 @@ class MLSVM_Predict(ElementMaster):
         self.scale_option, self.scale_mean, self.scale_std, self.predict_val, \
                 self.filename, self.log_state = self.config
 
+        self.home_dict = str(Path.home())
+
         self.scale_label = QLabel()
         self.scale_label.setText(QC.translate('', 'Scale n_samples ?'))
         self.scale_list = QComboBox()
@@ -106,9 +107,10 @@ class MLSVM_Predict(ElementMaster):
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 
         self.filename_text = QLabel()
+        self.filename_text.setWordWrap(True)
         
         self.file_button = QPushButton(QC.translate('', 'Select model file'))
-        self.file_button.clicked.connect(self.ChooseFileDialog)
+        self.file_button.clicked.connect(self.openFileNameDialog)
 
         
         """
@@ -135,7 +137,7 @@ class MLSVM_Predict(ElementMaster):
         
         self.ml_svm_predict_edit = ElementEditor(self)
         self.ml_svm_predict_edit.setWindowTitle(QC.translate('', 'Support Vector Machine Prediction'))
-        self.ml_svm_predict_edit.setMinimumHeight(400)
+        self.ml_svm_predict_edit.setMinimumHeight(450)
 
         # signals and slots
         self.scale_list.currentIndexChanged.connect(self.scaledIndexChanged)
@@ -181,15 +183,14 @@ class MLSVM_Predict(ElementMaster):
         else:
             self.scale_input_area.setVisible(False)
 
-    
-    def ChooseFileDialog(self, event):    
+    def openFileNameDialog(self, event):    
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, \
-                QC.translate('', 'Choose file'),"","All Files (*);;Text Files (*.txt)", \
-                options=options)
+        #options |= QFileDialog.DontUseNativeDialog
+
+        fileName, _ = QFileDialog.getOpenFileName(self, QC.translate('', 'Open SVM model file'),
+                self.home_dict,"All Files (*);;Pythonic Files (*.pyc)", options=options)
         if fileName:
-            logging.debug('ChooseFileDialog() called with filename: {}'.format(fileName))
+            logging.debug('MLSVM_Predict::openFileNameDialog() called with filename: {}'.format(fileName))
             self.filename = fileName
             self.filename_text.setText(self.filename)
 
@@ -232,7 +233,6 @@ class MLSVM_PredictFunction(Function):
 
         
         record = 1
-        log_output = 'tp: {} tn: {} fp: {} fn: {}'.format(tp, tn, fp, fn)
 
         result = Record(self.getPos(), (self.row +1, self.column), record,
                  log=log_state, log_txt=log_txt)
