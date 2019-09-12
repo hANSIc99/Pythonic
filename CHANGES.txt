@@ -3,6 +3,7 @@
     Added scicit learn as dependency
     Added Support Vector Machine learning functionality
     Added Support Vector Machine prediction functionality
+    Made improvements in logging behaviour
 
 
 0.12

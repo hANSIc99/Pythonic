@@ -327,33 +327,33 @@ class TAFunction(Function):
     def execute(self, record):
 
         ta_str, ta_index, ta_config, log_state = self.config
-        logging.error('b_debug = {}'.format(self.b_debug))
+        #logging.error('b_debug = {}'.format(self.b_debug))
 
         function = ''
 
         if ta_str == 'MA':
 
-            logging.warning('execute() - Moving Average selected - {}'.format(ta_config))
+            #logging.warning('execute() - Moving Average selected - {}'.format(ta_config))
             function = 'Moving Averages'
             column_name = 'ma-{}'.format(ta_config[0])
             record[column_name] = record['close'].rolling(window = ta_config[0], center=False).mean()
 
         elif ta_str == 'EMA':
 
-            logging.warning('execute() - Exponential Moving Average selected - {}'.format(ta_config))
+            #logging.warning('execute() - Exponential Moving Average selected - {}'.format(ta_config))
             function = 'Exponential Moving Averages'
             column_name = 'ema-{}'.format(ta_config[0])
             record[column_name] = record['close'].ewm(span = ta_config[0], adjust=False).mean()
 
         elif ta_str == 'STOK':
 
-            logging.warning('execute() -  Stochastic Oscillator %K selected - {}'.format(ta_config))
+            #logging.warning('execute() -  Stochastic Oscillator %K selected - {}'.format(ta_config))
             function = 'Stochastic Oscillator %K'
             record['stok'] = pd.Series((record['close'] - record['low']) / (record['high'] - record['low']), name = 'stok')
 
         elif ta_str == 'STO':
 
-            logging.warning('execute() -  Stochastic Oscillator %D selected - {}'.format(ta_config))
+            #logging.warning('execute() -  Stochastic Oscillator %D selected - {}'.format(ta_config))
             function = 'Stochastic Oscillator %D'
             column_name = 'sto-{}'.format(ta_config[0])
             SOk = pd.Series((record['close'] - record['low']) / (record['high'] - record['low']), name = 'stok')
@@ -361,7 +361,7 @@ class TAFunction(Function):
 
         elif ta_str == 'RSI':
 
-            logging.warning('execute() - Relative Strenght Index selected - {}'.format(ta_config))
+            #logging.warning('execute() - Relative Strenght Index selected - {}'.format(ta_config))
             function = 'Relative Strenght Index'
 
             i = 0
@@ -397,17 +397,14 @@ class TAFunction(Function):
             column_name = 'rsi-{}'.format(ta_config[0])
             record[column_name] = pd.Series(PosDI / (PosDI + NegDI))
 
+        """
         else:
-
             logging.warning('execute() - No config found')
+        """
 
+        log_txt = '{{TECHNICAL ANALYSIS}}     {}'.format(function)
 
-        #logging.warning(record)
-
-        log_txt = '{BASIC TA}        '
-        log_output = function
-
-        result = Record(self.getPos(), (self.row +1, self.column), record, log=log_state, log_txt=log_txt, log_output=log_output)
+        result = Record(self.getPos(), (self.row +1, self.column), record, log=log_state, log_txt=log_txt)
 
         return result
 

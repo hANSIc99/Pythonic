@@ -170,12 +170,9 @@ class ConnRESTFunction(Function):
 
         record = json.loads(recv_string.text)
 
+        log_txt = '{{REST (GET)}}             {} bytes received'.format(getsizeof(recv_string.text))
 
-        log_txt = '{REST call succesfull}'
-        log_output = '{} bytes received'.format(getsizeof(recv_string.text))
-
-        result = Record(self.getPos(), (self.row +1, self.column), record,
-                 log=log_state, log_txt=log_txt, log_output=log_output)
+        result = Record(self.getPos(), (self.row +1, self.column), record, log=log_state, log_txt=log_txt)
 
         
         return result

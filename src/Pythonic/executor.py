@@ -116,11 +116,6 @@ class GridOperator(QObject):
         # when the debug button on the element is active
         if element.b_debug:
 
-            if prg_return.log_output:
-                log_message = prg_return.log_output
-            else:
-                log_message = str(prg_return.record_0)
-
             logging.debug('GridOperator::execDone() b_debug_window = {}'.format(self.b_debug_window))
 
             if isinstance(element, ExecStack): # don't open the regular debug window
@@ -132,7 +127,7 @@ class GridOperator(QObject):
             # check if there is already an open debug window
             elif not self.b_debug_window:
 
-                self.debugWindow = DebugWindow(log_message, prg_return.source)
+                self.debugWindow = DebugWindow(str(prg_return.record_0), prg_return.source)
                 self.debugWindow.proceed_execution.connect(lambda: self.proceedExec(prg_return))
                 self.debugWindow.raiseWindow()
 
