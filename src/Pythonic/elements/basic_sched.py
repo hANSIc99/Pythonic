@@ -576,9 +576,9 @@ class BasicScheduler(Function):
                     record_0 = record
                     record_1 = (sync_time, record)
 
-                log_output = '>>>EXECUTE<<<'
+                log_txt = '{BASIC SCHEDULER}        >>>EXECUTE<<<'
                 result = Record(self.getPos(), target_0, record_0, target_1, record_1,
-                        log=log_state, log_output=log_output)
+                        log=log_state, log_txt=log_txt)
 
                 
                 
@@ -619,24 +619,24 @@ class BasicScheduler(Function):
                     record_0 = record[1]
                     record_1 = (sync_time, record[1], False)
 
-                    log_output = '>>>EXECUTE<<<'
+                    log_txt = '{BASIC SCHEDULER}        >>>EXECUTE<<<'
                     # when stop time is reached
                     if sync_time > stop_time:
                         # prevent fast firing at the end of the time frame
                         # caused by jumpgin between the two possible states: calc start time
                         # and regular interval mode
                         record_1 = (True, record[1])
-                        log_output = '>>>LAST EXECUTE<<<'
+                        log_txt = '{BASIC SCHEDULER}        >>>LAST EXECUTION<<<'
                         target_0 = record_0 = None
                         # go to else part 'first activation' to calculate the new start time
                         result = Record(self.getPos(), target_0, record_0,
-                                        target_1, record_1, log=log_state, log_output=log_output)
+                                        target_1, record_1, log=log_state, log_txt=log_txt)
 
 
                     else:
-                        log_output = len(record)
+                        log_txt = '{BASIC SCHEDULER}        >>>EXECUTE<<<'
                         result = Record(self.getPos(), target_0, record_0,
-                                        target_1, record_1, log=log_state, log_output=log_output)
+                                        target_1, record_1, log=log_state, log_txt=log_txt)
 
                 else:
 
@@ -708,14 +708,14 @@ class BasicScheduler(Function):
 
                     offset = day_offset + time_offset
                     sync_time = datetime.now() + offset
-                    log_output = 'Start in: {}'.format(offset)
+                    log_txt = '{{BASIC SCHEDULER}}        Start in: {}'.format(offset)
                     record_1 = (sync_time, record, False)
                     if mode_index == 5:
                         # special flag for module time operation
                         record_1 =(sync_time, record, True)
 
                     result = Record(self.getPos(), None, None, target_1, record_1,
-                             log=log_state, log_output=log_output)
+                             log=log_state, log_txt=log_txt)
 
  
 
@@ -793,11 +793,11 @@ class BasicScheduler(Function):
                     offset = day_offset + time_offset
                     sync_time = datetime.now() + offset
 
-                    log_output = 'Start in: {}'.format(offset)
+                    log_txt = '{{BASIC SCHEDULER}}        Start in: {}'.format(offset)
                     record_1 = (sync_time, record)
 
                     result = Record(self.getPos(), None, None, target_1, record_1,
-                             log=log_state, log_output=log_output)
+                             log=log_state, log_txt=log_txt)
 
             # on every full interval
             elif mode_index == 4:
@@ -832,7 +832,7 @@ class BasicScheduler(Function):
                     record_0 = record[1] # regular execute
                     record_1 = (sync_time, record[1]) #trigger next waiting phase
                     
-                    log_output = '>>>EXECUTE<<<'
+                    log_txt = '{BASIC SCHEDULER}        >>>EXECUTE<<<'
 
                 else:
                     # first execution only
@@ -842,10 +842,10 @@ class BasicScheduler(Function):
                     # overwrite existing information
                     target_0 = None
                     record_0 = None
-                    log_output = 'Initial time synchronization'
+                    log_txt = '{BASIC SCHEDULER}        Initial time synchronization'
 
                 result = Record(self.getPos(), target_0, record_0, target_1, record_1,
-                        log=log_state, log_output=log_output)
+                        log=log_state, log_txt=log_txt)
 
         else:
 

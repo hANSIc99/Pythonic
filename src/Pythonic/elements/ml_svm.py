@@ -345,7 +345,7 @@ class MLSVMFunction(Function):
                     fn += 1
 
 
-        log_txt = '{SVM successful trained}'
+        log_txt = '{SVM}                    Successful trained'
 
         if filename:
             try:
@@ -353,7 +353,7 @@ class MLSVMFunction(Function):
                     pickle.dump(clf, f)
             except Exception as e:
                 # not writeable?
-                log_txt = '{SVM successful trained - Error writing model to HDD}'
+                log_txt = '{SVM}                    Successful trained - Error writing model to HDD'
 
         
 

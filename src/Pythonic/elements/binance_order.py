@@ -721,7 +721,7 @@ class BinanceOrderFunction(Function):
         logging.error('stopPrice = {}'.format(stopPrice))
         """
 
-        log_txt = '{BINANCE ORDER}          '
+        log_txt = '{{BINANCE ORDER}}          {} ORDER EXECUTED'.format(order_string)
         result = Record(self.getPos(), (self.row +1, self.column), order,
                  log=log_state, log_txt=log_txt)
 

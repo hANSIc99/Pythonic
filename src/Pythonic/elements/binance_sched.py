@@ -168,10 +168,9 @@ class BinanceScheduler(Function):
 
             record = record[1]
             target = (self.row + 1, self.column)
-            log_txt = '{BINANCE SCHEDULER}      '
-            log_output = '>>>EXECUTE<<<'
+            log_txt = '{BINANCE SCHEDULER}      >>>EXECUTE<<<'
 
-            result = Record(self.getPos(), target, record, log=log_state, log_txt=log_txt, log_output=log_output)
+            result = Record(self.getPos(), target, record, log=log_state, log_txt=log_txt)
 
         else:
 
@@ -203,11 +202,14 @@ class BinanceScheduler(Function):
             sync_time += offset
             countdown = sync_time - datetime.datetime.now()
 
-            target = self.getPos()
-            record = (sync_time, record)
-            log_txt = '{BINANCE SCHEDULER}      Synchronization successful'
-            log_output = 'Execution starts in {}'.format(countdown)
+            target  = self.getPos()
+            record  = (sync_time, record)
+            hours   = countdown.seconds // 3600
+            minutes = (countdown.seconds // 60) % 60
+            seconds = countdown.seconds % 60
+            log_txt = '{{BINANCE SCHEDULER}}      Synchronization successful, '\
+                    'execution starts in {:02}:{:02}:{:02}'.format(hours, minutes, seconds)
 
-            result = Record(self.getPos(), target, record, log=log_state, log_txt=log_txt, log_output=log_output)
+            result = Record(self.getPos(), target, record, log=log_state, log_txt=log_txt)
 
         return result
