@@ -221,7 +221,7 @@ class MLSVM_PredictFunction(Function):
     def execute(self, record):
 
         scale_option, scale_mean, scale_std, predict_val, filename, log_state = self.config
-        log_txt = 'hi'
+
         if filename:
             try:
                 with open(filename, 'rb') as f:
@@ -229,13 +229,28 @@ class MLSVM_PredictFunction(Function):
             except Exception as e:
                 # not writeable?
                 log_txt = 'Error opening model'
-                return e
+                record = None
 
-        
-        record = 1
+        if isinstance(record, (list, tuple, pd.DataFrame)):
+            # scaling option only here available
+            record = preprocessing.scale(record, with_mean=scale_mean, with_std=scale_std)
+            record = clf.predict(record)
+        else:
+            # when only one value is passed
+            predict_val = False
+            record = pd.DataFrame([record])
+            record = clf.predict([record])
 
+                
+        if predict_val:
+            # predict only last value
+            record = pd.DataFrame([record[-1]])
+            record = clf.predict(record)
+
+
+        #Baustelle
+        log_txt = 'Irgendeine wichtige information'
         result = Record(self.getPos(), (self.row +1, self.column), record,
                  log=log_state, log_txt=log_txt)
-
         
         return result
