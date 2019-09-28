@@ -1,13 +1,9 @@
 from elementmaster import ElementMaster
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget,
-        QComboBox, QCheckBox, QSpacerItem, QGridLayout, QPushButton)
+        QCheckBox, QSpacerItem, QGridLayout, QPushButton)
 from PyQt5.QtCore import QCoreApplication as QC
-from time import sleep
 import logging
-import os.path
-import pandas as pd
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
 
