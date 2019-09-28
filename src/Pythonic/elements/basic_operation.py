@@ -1,13 +1,9 @@
 from elementmaster import ElementMaster
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget,
-        QComboBox, QCheckBox, QSpacerItem, QGridLayout, QPushButton)
+        QCheckBox, QSpacerItem, QGridLayout, QPushButton)
 from PyQt5.QtCore import QCoreApplication as QC
-from time import sleep
 import logging
-import os.path
-import pandas as pd
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
 
@@ -134,7 +130,8 @@ class OperationFunction(Function):
 
         log_state, code_input = self.config
 
-        proc_dict = {'record' : record, 'input' : None, 'output' : None, 'log_txt' : ""}
+        proc_dict = {'record' : record, 'input' : None, 'output' : None, 'log_txt' : None}
+                        
 
         exec_string = 'input = record\r\n'
         exec_string += 'output = record\r\n'
@@ -148,10 +145,15 @@ class OperationFunction(Function):
 
         exec(exec_string, proc_dict)
 
-        log_txt = '{{BASIC OPERATION}}        {}'.format(proc_dict['log_txt'])
-
         output = proc_dict['output']
+        log_txt = proc_dict['log_txt']
+        if log_txt:
+            log_txt = '{{BASIC OPERATION}}        {}'.format(proc_dict['log_txt'])
+        else:
+            log_txt = '{{BASIC OPERATION}}        {}'.format(proc_dict['output'])
+
 
         result = Record(self.getPos(), (self.row+1, self.column), output, log=log_state, log_txt=log_txt)
+                
         return result
 

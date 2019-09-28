@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '0.12',
+        version = '0.13',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -24,10 +24,11 @@ setuptools.setup(
             },
         python_requires = '>=3.6',
         install_requires = [
-            'PyQt5>=5.6,<=5.8.2',
+            'PyQt5>=5.6',
             'pandas>=0.20.3',
             'pythonic-binance>=0.7.2',
-            'requests>=2.21.0'],
+            'requests>=2.21.0',
+            'scikit-learn>=0.21.3'],
         classifiers = [
             'Programming Language :: Python :: 3 :: Only',
             'Programming Language :: Python :: 3.6',

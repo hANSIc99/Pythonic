@@ -700,4 +700,68 @@
     <source>Go to grid:</source>
     <target>Ir a la cuadrícula:</target>
 </phrase>
+<phrase>
+    <source>Scale n_samples ?</source>
+    <target>¿Escalar n_samples ?</target>
+</phrase>
+<phrase>
+    <source>Center data before scaling?</source>
+    <target>¿Centrar datos antes de escalar?</target>
+</phrase>
+<phrase>
+    <source>Scale data until variance?</source>
+    <target>¿Escalar datos hasta la varianza?</target>
+</phrase>
+<phrase>
+    <source>Predict only last value [-1]?</source>
+    <target>¿Predecir solo el último valor [-1]?</target>
+</phrase>
+<phrase>
+    <source>Select model file</source>
+    <target>Seleccionar archivo de modelo</target>
+</phrase>
+<phrase>
+    <source>Expects an array of samples as input.</source>
+    <target>Espera una matriz de muestras como entrada.</target>
+</phrase>
+<phrase>
+    <source>Outputs a single value or an array.</source>
+    <target>Emite un valor único o una matriz.</target>
+</phrase>
+<phrase>
+    <source>Support Vector Machine Prediction</source>
+    <target>Admite predicción de máquinas vectoriales</target>
+</phrase>
+<phrase>
+    <source>Expects a tuple (n_samples, n_features) as input.</source>
+    <target>Espera una tupla (n_samples, n_features) como entrada.</target>
+</phrase>
+<phrase>
+    <source>Choose decision function shape:</source>
+    <target>Elija la forma de la función de decisión:</target>
+</phrase>
+<phrase>
+    <source>Select model output file</source>
+    <target>Seleccionar archivo de salida del modelo</target>
+</phrase>
+<phrase>
+    <source>Scaled</source>
+    <target>Escamoso</target>
+</phrase>
+<phrase>
+    <source>Gamma:</source>
+    <target>Gama:</target>
+</phrase>
+<phrase>
+    <source>Outputs a contigency table in the format:</source>
+    <target>Emite una tabla de contingencia en el formato:</target>
+</phrase>
+<phrase>
+    <source>Support Vector Machine</source>
+    <target>Máquinas de vectores soporte</target>
+</phrase>
+<phrase>
+    <source>Choose train / evalutaion ratio:</source>
+    <target>Elija la relación tren / valoración:</target>
+</phrase>
 </QPH>

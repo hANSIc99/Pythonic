@@ -99,22 +99,22 @@ class GridOperator(QObject):
             if prg_return.log_txt:
                 logging.info('Message {}|{} : {}'.format(prg_return.source[0],
                             alphabet[prg_return.source[1]], prg_return.log_txt))
-            if prg_return.log_output:
-                log = prg_return.log_output
+                """
+                if prg_return.log_output: # False by default
+                    log = prg_return.log_output
+                """
             else:
-                log = prg_return.record_0
+                logging.info('Message {}|{} : {}'.format(prg_return.source[0],
+                            alphabet[prg_return.source[1]], prg_return.record_0))
 
-            logging.info('Output  {}|{} : {}'.format(prg_return.source[0],
+            """
+            logging.info('Output  {}|{}'.format(prg_return.source[0],
                         alphabet[prg_return.source[1]], log))
+            """
 
 
         # when the debug button on the element is active
         if element.b_debug:
-
-            if prg_return.log_output:
-                log_message = prg_return.log_output
-            else:
-                log_message = str(prg_return.record_0)
 
             logging.debug('GridOperator::execDone() b_debug_window = {}'.format(self.b_debug_window))
 
@@ -127,7 +127,7 @@ class GridOperator(QObject):
             # check if there is already an open debug window
             elif not self.b_debug_window:
 
-                self.debugWindow = DebugWindow(log_message, prg_return.source)
+                self.debugWindow = DebugWindow(str(prg_return.record_0), prg_return.source)
                 self.debugWindow.proceed_execution.connect(lambda: self.proceedExec(prg_return))
                 self.debugWindow.raiseWindow()
 
