@@ -377,9 +377,8 @@ class ConnMailFunction(Function):
         if not pass_input:
             record = None
 
-        log_txt = '{Message send succesfull}'
-        log_output = '{} bytes send'.format(getsizeof(msg.__str__()))
-        result = Record(self.getPos(), (self.row +1, self.column), record,
-                 log=log_state, log_txt=log_txt, log_output=log_output)
+        log_txt = '{{SEND MAIL}}              {} bytes send'.format(getsizeof(msg.__str__()))
+
+        result = Record(self.getPos(), (self.row +1, self.column), record, log=log_state, log_txt=log_txt)
 
         return result

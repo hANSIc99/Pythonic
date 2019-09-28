@@ -14,6 +14,8 @@ from Pythonic.elements.binance_ohlc      import BinanceOHLC
 from Pythonic.elements.binance_order     import BinanceOrder
 from Pythonic.elements.conn_mail         import ConnMail
 from Pythonic.elements.conn_rest         import ConnREST
+from Pythonic.elements.ml_svm            import MLSVM
+from Pythonic.elements.ml_svm_predict    import MLSVM_Predict
 
 from Pythonic.elementmaster              import ElementMaster
 from Pythonic.dropbox                    import DropBox

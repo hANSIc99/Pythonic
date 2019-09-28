@@ -15,6 +15,7 @@ from Pythonic.top_menubar               import topMenuBar
 from Pythonic.basictools                import BasicTools
 from Pythonic.binancetools              import BinanceTools
 from Pythonic.connectivitytools         import ConnectivityTools
+from Pythonic.mltools                   import MLTools
 from Pythonic.mastertool                import MasterTool
 from Pythonic.elementmaster             import alphabet
 from Pythonic.settings                  import Settings
@@ -130,11 +131,13 @@ class MainWindow(QWidget):
         self.toolbox_basics = BasicTools(self)
         self.toolbox_binance = BinanceTools(self)
         self.toolbox_connectivity = ConnectivityTools(self)
+        self.toolbox_ml = MLTools(self)
 
         # add Tabs to the toolbox
         self.toolbox_tab.addTab(self.toolbox_basics, QC.translate('', 'Basic'))
         self.toolbox_tab.addTab(self.toolbox_binance, QC.translate('', 'Binance'))
         self.toolbox_tab.addTab(self.toolbox_connectivity, QC.translate('', 'Connectivity'))
+        self.toolbox_tab.addTab(self.toolbox_ml, QC.translate('', 'Machine Learning'))
 
         # signals and slots
         #self.menubar.save_file.connect(self.working_area.saveGrid)
@@ -171,6 +174,7 @@ class MainWindow(QWidget):
             
             self.toolbox_binance.reg_tool.connect(self.wrk_area_arr[i].regType)
             self.toolbox_connectivity.reg_tool.connect(self.wrk_area_arr[i].regType)
+            self.toolbox_ml.reg_tool.connect(self.wrk_area_arr[i].regType)
             self.toolbox_basics.reg_tool.connect(self.wrk_area_arr[i].regType)
             # hier auch noch anpassen
             self.storagebar.forward_config.connect(self.wrk_area_arr[i].receiveConfig)
@@ -185,6 +189,7 @@ class MainWindow(QWidget):
         self.toolbox_binance.register_tools()
         self.toolbox_basics.register_tools()
         self.toolbox_connectivity.register_tools()
+        self.toolbox_ml.register_tools()
 
         self.image_folder = QDir('images')
 
@@ -340,7 +345,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.12'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.13'))
 
     def showInfo(self, event):
 

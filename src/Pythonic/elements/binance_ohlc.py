@@ -207,12 +207,12 @@ class BinanceOHLCFUnction(Function):
             result = Record(self.getPos(), None, None, log=log_state, log_txt=log_txt)
             return result
 
-        new_ohlc = pd.DataFrame(myList, columns=['open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time',
-            'quote_assetv', 'trades', 'taker_b_asset_v', 'taker_b_quote_v', 'datetime'])
+        new_ohlc = pd.DataFrame(myList, columns=['open_time', 'open', 'high', 'low',
+            'close', 'volume', 'close_time', 'quote_assetv', 'trades', 'taker_b_asset_v',
+            'taker_b_quote_v', 'datetime'])
 
-        log_txt = '{BINANCE SCHEDULER}      Query successful'
-        log_output = 'Received {} records'.format(len(record))
-        result = Record(self.getPos(), (self.row +1, self.column), new_ohlc, log=log_state, log_txt=log_txt, log_output=log_output)
+        log_txt = '{{BINANCE OHLC QUERY}}     Received {} records'.format(len(record))
+        result = Record(self.getPos(), (self.row +1, self.column), new_ohlc, log=log_state, log_txt=log_txt)
 
         return result
 

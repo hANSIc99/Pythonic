@@ -98,6 +98,7 @@ class ExecStack(ElementMaster):
         self.top_text.setText(QC.translate('', 'Choose file on hard disc for storing stack data:'))
 
         self.filename_text = QLabel()
+        self.filename_text.setWordWrap(True)
         if self.filename:
             self.filename_text.setText(self.filename)
 
@@ -147,8 +148,7 @@ class ExecStack(ElementMaster):
         self.log_line_layout.addStretch(1)
 
 
-        if log_state:
-            self.log_checkbox.setChecked(True)
+        self.log_checkbox.setChecked(log_state)
 
         self.confirm_button.clicked.connect(self.returnEdit.closeEvent)
         self.returnEdit.window_closed.connect(self.edit_done)

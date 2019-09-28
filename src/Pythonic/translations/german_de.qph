@@ -672,4 +672,64 @@
     <source>Go to grid:</source>
     <target>Springe zu Raster:</target>
 </phrase>
+<phrase>
+    <source>Scale n_samples ?</source>
+    <target>n_samples skalieren?</target>
+</phrase>
+<phrase>
+    <source>Center data before scaling?</source>
+    <target>Daten vor Skalierung zentrieren?</target>
+</phrase>
+<phrase>
+    <source>Scale data until variance?</source>
+    <target>Daten bis zur Varianz skalieren?</target>
+</phrase>
+<phrase>
+    <source>Choose train / evalutaion ratio:</source>
+    <target>Training- / Evaluierungsverhältnis wählen:</target>
+</phrase>
+<phrase>
+    <source>Choose decision function shape:</source>
+    <target>Wählen Sie die Form der Entscheidungsfunktion:</target>
+</phrase>
+<phrase>
+    <source>Scaled</source>
+    <target>Skaliert</target>
+</phrase>
+<phrase>
+    <source>Manual</source>
+    <target>Manuell</target>
+</phrase>
+<phrase>
+    <source>Select model output file</source>
+    <target>Wählen Sie die Modellausgabedatei aus</target>
+</phrase>
+<phrase>
+    <source>Expects a tuple (n_samples, n_features) as input.</source>
+    <target>Erwartet ein Tupel (n_samples, n_features) als Eingabe.</target>
+</phrase>
+<phrase>
+    <source>Outputs a contigency table in the format:</source>
+    <target>Gibt eine Kontingenztabelle im Format aus:</target>
+</phrase>
+<phrase>
+    <source>Expects an array of samples as input.</source>
+    <target>Erwartet ein Array von Samples als Eingabe.</target>
+</phrase>
+<phrase>
+    <source>Predict only last value [-1]?</source>
+    <target>Nur letzten Wert vorhersagen [-1]?</target>
+</phrase>
+<phrase>
+    <source>Support Vector Machine Prediction</source>
+    <target>Support Vector Machine Vorhersage</target>
+</phrase>
+<phrase>
+    <source>Select model file</source>
+    <target>Modelldatei auswählen</target>
+</phrase>
+<phrase>
+    <source>Outputs a single value or an array.</source>
+    <target>Gibt einen einzelnen Wert oder ein Array aus.</target>
+</phrase>
 </QPH>

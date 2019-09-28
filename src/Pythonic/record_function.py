@@ -11,7 +11,7 @@ import os
 class Record():
 
     def __init__(self, source, target_0, record_0,
-            target_1=None, record_1=None, log=False, log_txt=None, log_output=False):
+            target_1=None, record_1=None, log=False, log_txt=None):
 
         logging.debug('__init__() called Record')
         self.source   = source
@@ -21,7 +21,7 @@ class Record():
         self.record_1 = record_1
         self.log = log
         self.log_txt = log_txt
-        self.log_output = log_output
+        #self.log_output = log_output
         self.pid = os.getpid()
     
 
@@ -29,13 +29,13 @@ class Record():
         logging.debug('__setstate__() called Record')
         self.source, self.target_0, self.target_1, \
             self.record_0, self.record_1, self.log, self.log_txt,\
-            self.log_output, self.pid = state
+            self.pid = state
 
     def __getstate__(self):
         logging.debug('__getstate__() called Record')
         return (self.source, self.target_0, self.target_1,
                 self.record_0, self.record_1, self.log, self.log_txt,
-                self.log_output, self.pid)
+                self.pid)
 
 
 class Function():
