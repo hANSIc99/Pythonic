@@ -67,8 +67,8 @@ class MLSVM_Predict(ElementMaster):
         self.scale_label = QLabel()
         self.scale_label.setText(QC.translate('', 'Scale n_samples ?'))
         self.scale_list = QComboBox()
-        self.scale_list.addItem('No', QVariant(False))
-        self.scale_list.addItem('Yes', QVariant(True))
+        self.scale_list.addItem(QC.translate('', 'No'), QVariant(False))
+        self.scale_list.addItem(QC.translate('', 'Yes'), QVariant(True))
 
         
         self.scale_center_input_line = QWidget()
