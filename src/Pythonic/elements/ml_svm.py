@@ -124,9 +124,9 @@ class MLSVM(ElementMaster):
         self.gamma_label.setText(QC.translate('', 'Gamma:'))
 
         self.gamma_list = QComboBox()
-        self.gamma_list.addItem('Auto', QVariant('auto'))
-        self.gamma_list.addItem('Scaled', QVariant('scaled'))
-        self.gamma_list.addItem('Manual', QVariant('manual'))
+        self.gamma_list.addItem(QC.translate('', 'Auto'), QVariant('auto'))
+        self.gamma_list.addItem(QC.translate('', 'Scaled'), QVariant('scaled'))
+        self.gamma_list.addItem(QC.translate('', 'Manual'), QVariant('manual'))
 
         self.gamma_input_line = QWidget()
         self.gamma_input_line_layout = QHBoxLayout(self.gamma_input_line)

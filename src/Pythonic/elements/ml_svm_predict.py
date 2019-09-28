@@ -120,7 +120,7 @@ class MLSVM_Predict(ElementMaster):
         self.help_text_1.setText(QC.translate('', 'Expects an array of samples as input.'))
 
         self.help_text_2 = QLabel()
-        self.help_text_2.setText(QC.translate('', 'Outputs a single value or an array'))
+        self.help_text_2.setText(QC.translate('', 'Outputs a single value or an array.'))
 
         
 
