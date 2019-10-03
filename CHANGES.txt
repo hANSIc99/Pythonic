@@ -1,5 +1,6 @@
 0.13
     
+    Added compatibility to newer versions of PyQt5
     Added scicit learn as dependency
     Added Support Vector Machine learning functionality
     Added Support Vector Machine prediction functionality
