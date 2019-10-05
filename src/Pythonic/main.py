@@ -288,6 +288,8 @@ class MainWindow(QWidget):
 
         logging.debug('MainWindow::saveGrid() called')
         self.wrk_area_arr[self.wrk_tab_index].saveGrid(filename)
+        #BAUSTELLE
+        self.wrk_area_arr[self.wrk_tab_index].saveGridWorker(filename)
 
     def setupDefault(self):
 
