@@ -2,7 +2,7 @@ import sys, signal, logging, pickle
 import multiprocessing as mp
 from workingarea               import WorkingArea
 from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThreadPool
-
+#workingarea import
 from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 
@@ -23,6 +23,9 @@ from Pythonic.elements.ml_svm            import MLSVM
 from Pythonic.elements.ml_svm_predict    import MLSVM_Predict
 
 from Pythonic.elementmaster              import ElementMaster
+from Pythonic.dropbox                    import DropBox
+
+
 class MainWorker(QObject):
 
     log_level = logging.INFO
@@ -74,21 +77,16 @@ class MainWorker(QObject):
 
             return
 
-        """
         # populate the grid
         for element in element_list:
             
-            row, col = element.getPos()
-            print('WorkingArea::loadGrid() ADD current element: row: {} col: {}'.format(
-                row, col))
-            print('WorkingArea::loadGrid() ADD element:{}'.format(
-                element))
-            print('WorkingArea::loadGrid() ADD element type:{}'.format(
-                type(element)))
+                # Element description: (pos, function, config, self_sync)
+                pos, function, config, self_sync = element
+                print('position: {}'.format(pos))
+                print('function: {}'.format(function))
 
-            #self.grid.addWidget(element, row, col)
+        element_list[1][1].execute(None)
 
-        """
         """
         # second run: add child and parent relation
         for element in element_list:

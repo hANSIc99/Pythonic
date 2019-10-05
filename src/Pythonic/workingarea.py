@@ -491,6 +491,30 @@ class WorkingArea(QFrame):
         with open(filename, 'wb') as save_file:
             pickle.dump(element_list, save_file)
 
+    def saveGridWorker(self, filename):
+
+        logging.debug('WorkingArea::saveGridWorker() called with fileName {}'.format(filename))
+
+        grid_cols = range(0, self.grid.columnCount())
+        grid_rows = range(0, self.grid.rowCount())
+
+        element_list = []
+
+        index = ((row, column) for row in grid_rows for column in grid_cols)
+
+        for pos in index:
+            row, col = pos
+            logging.debug('WorkingArea::saveGrid() check position: {} {}'.format(row, col))
+            element = self.grid.itemAtPosition(row, col)
+            if element:
+                # Element description: (pos, function, config, self_sync)
+                logging.debug('WorkingArea::saveGrid() element found at: {} {}'.format(row, col))
+                element = element.widget()
+                element_list.append((pos, element.function, element.config, element.self_sync))
+
+        with open((filename + '_wrk'), 'wb') as save_file:
+            pickle.dump(element_list, save_file)
+
     def clearGrid(self): 
 
         grid_cols = range(0, self.grid.columnCount())
@@ -603,11 +627,11 @@ class WorkingArea(QFrame):
 
         for pos in index:
             row, col = pos
-            logging.debug('saveGrid() check position: {} {}'.format(row, col))
+            logging.debug('returnCurrentElements() check position: {} {}'.format(row, col))
             element = self.grid.itemAtPosition(row, col)
             #if element and isinstance(element.widget(), ElementMaster):
             if type(element) is QWidgetItem:
-                logging.debug('saveGrid() element found at: {} {}'.format(row, col))
+                logging.debug('returnCurrentElements() element found at: {} {}'.format(row, col))
                 element_widget = element.widget()
                 if element_widget.state_iconBar:
 
