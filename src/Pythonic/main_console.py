@@ -1,11 +1,13 @@
-import sys, signal, logging, pickle
+import sys, signal, logging, pickle, datetime, os
 import multiprocessing as mp
+from pathlib import Path
 from workingarea               import WorkingArea
 from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThreadPool
 #workingarea import
 from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 
+"""
 from Pythonic.elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
 from Pythonic.elements.basic_operation   import ExecOp
 from Pythonic.elements.basic_branch      import ExecBranch
@@ -22,13 +24,15 @@ from Pythonic.elements.conn_rest         import ConnREST
 from Pythonic.elements.ml_svm            import MLSVM
 from Pythonic.elements.ml_svm_predict    import MLSVM_Predict
 
+from Pythonic.executor                   import GridOperator
 from Pythonic.elementmaster              import ElementMaster
 from Pythonic.dropbox                    import DropBox
+"""
 
 
 class MainWorker(QObject):
 
-    log_level = logging.INFO
+    log_level = logging.DEBUG
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
 
@@ -36,18 +40,57 @@ class MainWorker(QObject):
         super(MainWorker, self).__init__()
         self.app = app
         self.threadpool = QThreadPool()
-        self.init()
         mp.set_start_method('spawn')
 
-    def init(self):
-        print('Init')
+        self.logger = logging.getLogger()
+        self.logger.setLevel(self.log_level)
+        self.log_date = datetime.datetime.now()
+
+        log_date_str = self.log_date.strftime('%Y_%m_%d')
+        month = self.log_date.strftime('%b')
+        year = self.log_date.strftime('%Y')
+        home_dict = str(Path.home())
+        file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+        self.ensure_file_path(file_path)
+
+        file_handler = logging.FileHandler(file_path)
+        file_handler.setLevel(self.log_level)
+        file_handler.setFormatter(self.formatter)
+
+        self.logger.addHandler(file_handler)
+
+        logging.debug('MainWorker::__init__() called')
+
+    def ensure_file_path(self, file_path):
+
+        directory = os.path.dirname(file_path)
+
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+    def update_logfile(self):
+
+        now = datetime.datetime.now().date()
+        if (now != self.log_date.date()):
+            self.logger.removeHandler(self.logger.handlers[0])
+            log_date_str = now.strftime('%Y_%m_%d')
+            month = now.strftime('%b')
+            year = now.strftime('%Y')
+            home_dict = str(Path.home())
+            file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+            self.ensure_file_path(file_path)
+            file_handler = logging.FileHandler(file_path)
+            file_handler.setLevel(self.log_level)
+            file_handler.setFormatter(self.formatter)
+            self.logger.addHandler(file_handler)
+            self.log_date = datetime.datetime.now()
 
     def start(self, args):
         grid_files = []
         self.checkArgs(args[1:], grid_files)
 
-        print('Start class')
-        print('Open the following files: {}'.format(grid_files))
+        logging.debug('MainWorker::start() called')
+        logging.debug('MainWorker::start() Open the following files: {}'.format(grid_files))
 
         self.loadGrid(grid_files[0])
 
@@ -56,13 +99,11 @@ class MainWorker(QObject):
     def loadGrid(self, filename):
 
         #logging.debug('WorkingArea::loadGrid() called with filename {}'.format(filename))
-        print('WorkingArea::loadGrid() called with filename {}'.format(filename))
-        print('filename: {}'.format(filename))
+        logging.debug('MainWorker::loadGrid() called with filename {}'.format(filename))
 
         try:
             f = open(filename, 'rb')
             try:
-                print('hi') # BAUSTELLE: Das funktioniert nicht
                 element_list = pickle.load(f)
                 #self.clearGrid()
             except Exception as e:
@@ -82,10 +123,19 @@ class MainWorker(QObject):
             
                 # Element description: (pos, function, config, self_sync)
                 pos, function, config, self_sync = element
-                print('position: {}'.format(pos))
-                print('function: {}'.format(function))
 
-        element_list[1][1].execute(None)
+        #def __init__(self, config, b_debug, row, column):
+        # pos = (row, column)
+        pos, function, config, self_sync = element_list[2]
+        print('position: {}'.format(pos))
+        print('function: {}'.format(function))
+
+        function.__init__(config, True, *pos)
+        result = function.execute('test 123')
+        print(result.source)
+        print(result.target_0)
+        print(result.log_txt)
+        print(result.record_0)
 
         """
         # second run: add child and parent relation
