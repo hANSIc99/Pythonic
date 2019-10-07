@@ -7,6 +7,8 @@ from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThreadPool
 from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 
+from executor_daemon import GridOperator
+
 """
 from Pythonic.elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
 from Pythonic.elements.basic_operation   import ExecOp
@@ -36,6 +38,8 @@ class MainWorker(QObject):
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
 
+    max_grid_size = 50
+
     def __init__(self, app):
         super(MainWorker, self).__init__()
         self.app = app
@@ -58,6 +62,7 @@ class MainWorker(QObject):
         file_handler.setFormatter(self.formatter)
 
         self.logger.addHandler(file_handler)
+
 
         logging.debug('MainWorker::__init__() called')
 
@@ -118,18 +123,25 @@ class MainWorker(QObject):
 
             return
 
+        #5 grid [row, column]
+        grid = [[[None for k in range(self.max_grid_size)]for i in range(self.max_grid_size)]for j in range(5)]
+        
         # populate the grid
         for element in element_list:
             
-                # Element description: (pos, function, config, self_sync)
+                # Element description: (pos, function, config, log,  self_sync)
+                
                 pos, function, config, self_sync = element
+                row, column = pos
+                logging.debug('MainWorker::loadGrid() row: {} col: {}'.format(row, column))
+                grid[0][row][column] = (function, config, self_sync)
 
-        #def __init__(self, config, b_debug, row, column):
+        self.grid_operator = GridOperator(grid[0])
+        # __init__(self, config, row, column):
         # pos = (row, column)
-        pos, function, config, self_sync = element_list[2]
-        print('position: {}'.format(pos))
-        print('function: {}'.format(function))
-
+        # return.log_txt return.log
+        self.grid_operator.startExec((0,0))
+        
         function.__init__(config, True, *pos)
         result = function.execute('test 123')
         print(result.source)
