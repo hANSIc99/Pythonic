@@ -274,7 +274,7 @@ class Executor(QRunnable):
 
         self.start_proc(self.element.function, self.record, self.delay, 1)
 
-        logging.debug('Executor::run() returnded from {}, pid: {} returned at {}'.format(
+        logging.debug('Executor::run() returned from {}, pid: {} returned at {}'.format(
             self.element.getPos(), os.getpid(), datetime.now()))
 
 
