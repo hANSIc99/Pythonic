@@ -55,11 +55,11 @@ class GridOperator(QObject):
 
         logging.debug('startExec() called, start_pos = {}'.format(start_pos))
 
-        function, config, self_sync = self.grid[start_pos[0]][start_pos[1]]
+        #function, config, self_sync = self.grid[start_pos[0]][start_pos[1]]
+        function, self_sync = self.grid[start_pos[0]][start_pos[1]]
         logging.debug('GridOperator::startExec() function found: {}'.format(function))
         logging.debug('GridOperator::startExec() function dict: {}'.format(function.__dict__))
-        logging.debug('GridOperator::startExec() function type: {}'.format(type(function)))
-        logging.debug('GridOperator::startExec() function isinstance: {}'.format(isinstance(function, BasicScheduler)))
+        logging.debug('GridOperator::startExec() config: {}'.format(function.config))
 
 
         self.update_logger.emit()
@@ -124,6 +124,8 @@ class GridOperator(QObject):
 
         # check is target_0 includes a diffrent grid 
         # ExecReturn elemenot
+        logging.debug('GridOperator::goNext() called, prg_return: {}'.format(prg_return))
+        logging.debug('GridOperator::goNext() called, target_0: {}'.format(prg_return.target_0))
 
         if prg_return.target_0:
             logging.debug('GridOperator::goNext() called with next target_0: {}'.format(prg_return.target_0))
@@ -132,7 +134,7 @@ class GridOperator(QObject):
             #BAUSTELLE
             if len(prg_return.target_0) == 3: # switch grid, go over main
                 # fastpath = True
-                self.switch_grid.emit((prg_return, True))
+                self.switch_grid.emit(prg_return)
                 return
                 
             #Proceed as usual
@@ -150,7 +152,8 @@ class GridOperator(QObject):
 
             # self_sync is true on basic_sched and binancesched
             #self_sync = self.grid.itemAtPosition(*prg_return.target_1).widget().self_sync
-            function, config, self_sync = self.grid[prg_return.target_1[0]][prg_return.target_1[1]] 
+            #function, config, self_sync = self.grid[prg_return.target_1[0]][prg_return.target_1[1]] 
+            function, self_sync = self.grid[prg_return.target_1[0]][prg_return.target_1[1]] 
 
             if not self_sync:
                 new_rec = self.fastPath(prg_return.target_1, prg_return.record_1)
@@ -161,12 +164,12 @@ class GridOperator(QObject):
                 self.startExec(prg_return.target_1, prg_return.record_1)
 
     def fastPath(self, target_0, record):
-        # umbauen
         row, col = target_0
         logging.debug('GridOperator::fastPath() check row: {} col: {}'.format(*target_0))
         #element = self.grid.itemAtPosition(*target).widget()
         #[row][column] = (function, config, self_sync)
-        function, config, self_sync = self.grid[row][col] 
+        #function, config, self_sync = self.grid[row][col] 
+        function, self_sync = self.grid[row][col] 
         logging.debug('GridOperator::fastPath() function: {}'.format(function))
         logging.debug('GridOperator::fastPath() isinstance ExecRB: {}'.format(isinstance(function, ExecRBFunction)))
         logging.debug('GridOperator::fastPath() isinstance ExecR: {}'.format(isinstance(function, ExecRFunction)))
