@@ -250,7 +250,7 @@ class MainWindow(QWidget):
 
         prg_return, fastpath = data
         grid, *pos = prg_return.target_0
-        logging.debug('MainWindow::receiveTarget() called {}'.format(pos))
+        logging.debug('MainWorker::receiveTarget() called from pos: {} goto grid: {}'.format(pos, grid))
         logging.debug('MainWindow::receiveTarget() called fp {}'.format(fastpath))
         # go to goNext() in the target grid
         # set fastpath variable
@@ -347,7 +347,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.13'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.14'))
 
     def showInfo(self, event):
 

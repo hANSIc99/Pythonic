@@ -34,7 +34,7 @@ from Pythonic.dropbox                    import DropBox
 
 class MainWorker(QObject):
 
-    log_level = logging.DEBUG
+    log_level = logging.INFO
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
 
@@ -45,6 +45,7 @@ class MainWorker(QObject):
         self.app = app
         self.threadpool = QThreadPool()
         mp.set_start_method('spawn')
+        self.grd_ops_arr    = []
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
@@ -97,57 +98,57 @@ class MainWorker(QObject):
         logging.debug('MainWorker::start() called')
         logging.debug('MainWorker::start() Open the following files: {}'.format(grid_files))
 
-        self.loadGrid(grid_files[0])
+        self.loadGrid(grid_files)
 
         #self.wrk_area = (QObject)WorkingArea()
 
-    def loadGrid(self, filename):
-
-        #logging.debug('WorkingArea::loadGrid() called with filename {}'.format(filename))
-        logging.debug('MainWorker::loadGrid() called with filename {}'.format(filename))
-
-        try:
-            f = open(filename, 'rb')
-            try:
-                element_list = pickle.load(f)
-                #self.clearGrid()
-            except Exception as e:
-                #logging.error('loadGrid() pickle cant be loaded: {}'.format(e))
-                print('loadGrid() pickle cant be loaded: {}'.format(e))
-
-            finally:
-                f.close()
-        except Exception as e:
-            #logging.error('loadGrid() file cant be read: {}'.format(e))
-            print('loadGrid() file cant be read: {}'.format(e))
-
-            return
+    def loadGrid(self, grid_files):
 
         #5 grid [row, column]
         grid = [[[None for k in range(self.max_grid_size)]for i in range(self.max_grid_size)]for j in range(5)]
-        
-        # populate the grid
-        for element in element_list:
+
+        for i, filename in enumerate(grid_files):
+            logging.debug('MainWorker::loadGrid() called with filename {}'.format(filename))
+
+            try:
+                f = open(filename, 'rb')
+                try:
+                    element_list = pickle.load(f)
+                    #self.clearGrid()
+                except Exception as e:
+                    #logging.error('loadGrid() pickle cant be loaded: {}'.format(e))
+                    print('loadGrid() pickle cant be loaded: {}'.format(e))
+                finally:
+                    f.close()
+            except Exception as e:
+                #logging.error('loadGrid() file cant be read: {}'.format(e))
+                print('loadGrid() file cant be read: {}'.format(e))
+
+                return
+
+            # populate the grid
+            for element in element_list:
             
                 # Element description: (pos, function, config, log,  self_sync)
-                
                 pos, function, config, self_sync = element
                 row, column = pos
                 logging.debug('MainWorker::loadGrid() row: {} col: {}'.format(row, column))
-                grid[0][row][column] = (function, config, self_sync)
+                #grid[0][row][column] = (function, config, self_sync)
+                grid[i][row][column] = (function, self_sync)
 
+            self.grd_ops_arr.append(GridOperator(grid[i]))
+            self.grd_ops_arr[i].startExec((0,0))
+            self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
+
+        """
         self.grid_operator = GridOperator(grid[0])
         # __init__(self, config, row, column):
         # pos = (row, column)
         # return.log_txt return.log
         self.grid_operator.startExec((0,0))
-        
-        function.__init__(config, True, *pos)
-        result = function.execute('test 123')
-        print(result.source)
-        print(result.target_0)
-        print(result.log_txt)
-        print(result.record_0)
+        """ 
+        #function.__init__(config, True, *pos)
+        #result = function.execute('test 123')
 
         """
         # second run: add child and parent relation
@@ -191,6 +192,17 @@ class MainWorker(QObject):
             else:
                 element.del_sig.connect(self.delete_element)
         """
+    def receiveTarget(self, data):
+
+        prg_return = data
+        grid, *pos = prg_return.target_0
+        logging.debug('MainWorker::receiveTarget() called from pos: {} goto grid: {}'.format(pos, grid))
+        # go to goNext() in the target grid
+        # set fastpath variable
+
+        # remove grid from target_0 
+        prg_return.target_0 = pos
+        self.grd_ops_arr[grid].goNext(prg_return)
 
 
     def checkArgs(self, args, grid_files):
