@@ -22,7 +22,6 @@ class ExecReturn(ElementMaster):
     def __init__(self, row, column):
         self.row = row
         self.column = column
-
         # grid, wrk_selecctor_index, wrk_pos, ischecked
         self.config = (0, 0, (0,0), False)
         super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
@@ -112,16 +111,18 @@ class ExecReturn(ElementMaster):
         self.returnEdit.setLayout(self.returnEditLayout)
         self.returnEdit.show()
 
-    def baustelle(self, config):
+    def recvGridConfig(self, config):
 
         self.wrk_selectors_arr = []
-
-        logging.debug('ExecReturn::baustelle config: {}'.format(config))
+        logging.debug('ExecReturn::recvGridConfig config: {}'.format(config))
         for index, wrk_area in enumerate(config):
             self.grid_selector.addItem('Grid {}'.format(index + 1))
+            logging.debug('ExecReturn::recvGridConfig Grid: {}'.format(index + 1))
 
             self.wrk_selectors_arr.append(QComboBox())
+            logging.debug('ExecReturn::recvGridConfig flag: {}'.format(1))
             self.element_selector.addWidget(self.wrk_selectors_arr[index])
+            logging.debug('ExecReturn::recvGridConfig flag: {}'.format(1))
             for pos in wrk_area:
                 self.wrk_selectors_arr[index].addItem('{} {}'.format(pos[0], alphabet[pos[1]]), QVariant(pos))
 
@@ -133,20 +134,20 @@ class ExecReturn(ElementMaster):
 
     def loadLastConfig(self):
 
-        grid, wrk_selecctor_index, wrk_pos, log_state = self.config
+        grid, wrk_selector_index, wrk_pos, log_state = self.config
 
         self.grid_selector.setCurrentIndex(grid)
         self.element_selector.setCurrentIndex(grid)
-        self.wrk_selectors_arr[grid].setCurrentIndex(wrk_selecctor_index)
+        self.wrk_selectors_arr[grid].setCurrentIndex(wrk_selector_index)
         self.log_checkbox.setChecked(log_state)
 
     def edit_done(self):
         logging.debug('edit_done() called ExecReturn' )
         grid = self.grid_selector.currentIndex()
-        wrk_selecctor_index = self.wrk_selectors_arr[grid].currentIndex()
+        wrk_selector_index = self.wrk_selectors_arr[grid].currentIndex()
         wrk_pos = self.wrk_selectors_arr[grid].currentData()
 
-        self.config = (grid, wrk_selecctor_index, wrk_pos, self.log_checkbox.isChecked())
+        self.config = (grid, wrk_selector_index, wrk_pos, self.log_checkbox.isChecked())
         self.addFunction(ReturnFunction)
 
 class ReturnFunction(Function):

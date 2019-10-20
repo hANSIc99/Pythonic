@@ -25,6 +25,7 @@ import logging, pickle
 class WorkingArea(QFrame):
 
     func_blocks = {}
+    file_extension = '.grid'
     return_grid = pyqtSignal('PyQt_PyObject', name='return_grid')
     finish_dropbox = pyqtSignal(name='finish_dropbox')
     query_grid_config_wrk = pyqtSignal(name='query_grid_config_wrk')
@@ -126,7 +127,7 @@ class WorkingArea(QFrame):
             logging.debug('WorkingArea::addElement() ExecReturn element found')
             # connecting signals for passing grid configuration
             new_type.query_grid_config.connect(self.queryGridConfiguration)
-            self.pass_grid_config.connect(new_type.baustelle)
+            self.pass_grid_config.connect(new_type.recvGridConfig)
 
         # add second placeholder in case of a added branch function
         # connect delete button to related grid method
@@ -488,7 +489,7 @@ class WorkingArea(QFrame):
                 logging.debug('WorkingArea::saveGrid() element found at: {} {}'.format(row, col))
                 element_list.append(element.widget())
 
-        with open(filename, 'wb') as save_file:
+        with open(filename + self.file_extension, 'wb') as save_file:
             pickle.dump(element_list, save_file)
 
     def saveGridWorker(self, filename):
@@ -512,7 +513,7 @@ class WorkingArea(QFrame):
                 element = element.widget()
                 element_list.append((pos, element.function, element.config, element.self_sync))
 
-        with open((filename + '_wrk'), 'wb') as save_file:
+        with open((filename + '.d' + self.file_extension), 'wb') as save_file:
             pickle.dump(element_list, save_file)
 
     def clearGrid(self): 
@@ -608,6 +609,11 @@ class WorkingArea(QFrame):
                 element.parent_element = parent
 
             #if isinstance(element, PlaceHolder):
+            if (type(element).__name__ == ExecReturn.__name__):    
+                element.query_grid_config.connect(self.queryGridConfiguration)
+                self.pass_grid_config.connect(element.recvGridConfig)
+
+
 
             if (type(element).__name__ == PlaceHolder.__name__):    
                 element.func_drop.connect(self.addElement)
