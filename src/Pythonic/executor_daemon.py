@@ -21,7 +21,6 @@ class WorkerSignals(QObject):
 
     finished = pyqtSignal(object, name='element_finished' )
     except_sig = pyqtSignal(object, name='exception')
-    #proc_ret = pyqtSignal(object)
     pid_sig = pyqtSignal(object)
 
 class GridOperator(QObject):
@@ -131,7 +130,6 @@ class GridOperator(QObject):
             logging.debug('GridOperator::goNext() called with next target_0: {}'.format(prg_return.target_0))
             logging.debug('GridOperator::goNext() called with record_0: {}'.format(prg_return.record_0))
 
-            #BAUSTELLE
             if len(prg_return.target_0) == 3: # switch grid, go over main
                 # fastpath = True
                 self.switch_grid.emit(prg_return)
