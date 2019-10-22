@@ -20,7 +20,6 @@ from Pythonic.elements.basicelements import ExecRBFunction, ExecRFunction
 class WorkerSignals(QObject):
 
     finished = pyqtSignal(object, name='element_finished' )
-    except_sig = pyqtSignal(object, name='exception')
     pid_sig = pyqtSignal(object)
 
 class GridOperator(QObject):
@@ -219,14 +218,6 @@ class Executor(QRunnable):
         self.retry_counter = 0
         self.delay = delay
         self.signals = WorkerSignals()
-        self.signals.except_sig.connect(self.raiseExcpetion)
-
-    def raiseExcpetion(self, e):
-
-        # Bug, method is not called sometimes
-        logging.error('Executor::raiseExcpetion() 2. Exception caught!!!')
-        exceptRecord = Record(self.element.getPos(), None, e)
-        self.signals.finished.emit(exceptRecord)
 
     def run(self):
 
@@ -254,7 +245,6 @@ class Executor(QRunnable):
 
         if(issubclass(result.__class__, BaseException)):
             logging.error('Executor::start_proc() 1. Exception caught!!!')
-            self.signals.except_sig.emit(result)
         else:
             self.signals.finished.emit(result)
         
