@@ -1,13 +1,29 @@
-import sys, signal, logging, pickle, datetime, os
+import sys, signal, logging, pickle, datetime, os, time
 import multiprocessing as mp
 from pathlib import Path
 from workingarea               import WorkingArea
-from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThreadPool
+from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThread
 #workingarea import
 from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 
 from executor_daemon import GridOperator
+
+class stdinReader(QThread):
+
+    kill_all    = pyqtSignal(name='kill_all')
+    print_procs = pyqtSignal(name='print_procs')
+    def run(self):
+        while True:
+            cmd = sys.stdin.read(1) # reads one byte at a time
+            if cmd == ('q' or 'Q'):
+                print('Stopping all processes....')
+                self.kill_all.emit()
+                time.sleep(3) # wait for 3 seconds to kill all processes
+                QCoreApplication.quit()
+            elif cmd == ('s' or 'S'):
+                self.print_procs.emit()
+
 
 class MainWorker(QObject):
 
@@ -17,12 +33,23 @@ class MainWorker(QObject):
 
     max_grid_size = 50
     max_grid_cnt  = 5
+    
+    welcome_msg =   ' ____        _   _                 _      ____                                   \n'\
+                    '|  _ \ _   _| |_| |__   ___  _ __ (_) ___|  _ \  __ _  ___ _ __ ___   ___  _ __  \n'\
+                    '| |_) | | | | __| \'_ \ / _ \| \'_ \| |/ __| | | |/ _` |/ _ \ \'_ ` _ \ / _ \| \'_ \ \n'\
+                    '|  __/| |_| | |_| | | | (_) | | | | | (__| |_| | (_| |  __/ | | | | | (_) | | | |\n'\
+                    '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
+                    '|___/                                                                     \n\n'
+
+    input_info_msg = '>>>>>>>>>>>> Enter \'q\' to stop execution\n'
+    status_info_msg = '>>>>>>>>>>>> Enter \'s\' to list all background processes\n'
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
         self.app = app
-        self.threadpool = QThreadPool()
         mp.set_start_method('spawn')
+        self.stdinReader = stdinReader()
+        self.stdinReader.print_procs.connect(self.printProcessList)
         self.grd_ops_arr    = []
 
         self.logger = logging.getLogger()
@@ -52,6 +79,13 @@ class MainWorker(QObject):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
+    def printProcessList(self):
+        for i in range(self.active_grids):
+            if self.grd_ops_arr[i].pid_register:
+                for pid in self.grd_ops_arr[i].pid_register:
+                    print('>> Grid {} - PID: {}'.format(str(i+1), str(pid)))
+        print('\n')
+
     def update_logfile(self):
 
         now = datetime.datetime.now().date()
@@ -76,8 +110,14 @@ class MainWorker(QObject):
         logging.debug('MainWorker::start() called')
         logging.debug('MainWorker::start() Open the following files: {}'.format(grid_files))
 
+        print(self.welcome_msg)
+        print(self.input_info_msg)
+        print(self.status_info_msg)
         self.loadGrid(grid_files)
+        self.stdinReader.start()
 
+            
+        
     def loadGrid(self, grid_files):
 
         #5 grid [row, column]
@@ -120,8 +160,11 @@ class MainWorker(QObject):
                 grid[i][row][column] = (function, self_sync)
 
             self.grd_ops_arr.append(GridOperator(grid[i]))
-            self.grd_ops_arr[i].startExec((0,0))
             self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
+            self.stdinReader.kill_all.connect(self.grd_ops_arr[i].kill_proc)
+            self.grd_ops_arr[i].startExec((0,0))
+            #count number of active grids
+            self.active_grids = i+1
 
     def receiveTarget(self, prg_return):
 
