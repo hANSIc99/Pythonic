@@ -20,7 +20,7 @@ setuptools.setup(
                 'images/*.png', 'elements/*']
         },
         entry_points = {
-            'console_scripts' : ['Pythonic = Pythonic.script:run']
+            'console_scripts' : ['Pythonic = Pythonic.script:run', 'PythonicDaemon = Pythonic.scriptd:run']
             },
         python_requires = '>=3.6',
         install_requires = [

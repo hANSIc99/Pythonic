@@ -1,13 +1,13 @@
 import sys, signal, logging, pickle, datetime, os, time
 import multiprocessing as mp
 from pathlib import Path
-from workingarea               import WorkingArea
+from Pythonic.workingarea               import WorkingArea
 from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThread
 #workingarea import
 from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 
-from executor_daemon import GridOperator
+from Pythonic.executor_daemon import GridOperator
 
 class stdinReader(QThread):
 
@@ -41,7 +41,8 @@ class MainWorker(QObject):
                     '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
                     '|___/                                                                     \n\n'
 
-    input_info_msg = '>>>>>>>>>>>> Enter \'q\' to stop execution\n'
+    log_info_msg    = '<<<<<<<<<<<< Logging directory ~/PythonicDaemon_201x/Month/\n'
+    input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
     status_info_msg = '>>>>>>>>>>>> Enter \'s\' to list all background processes\n'
 
     def __init__(self, app):
@@ -105,12 +106,21 @@ class MainWorker(QObject):
 
     def start(self, args):
         grid_files = []
-        self.checkArgs(args[1:], grid_files)
+        print('\n Arguments: {}'.format(args[2:]))
+        print(self.welcome_msg)
+
+        # first argument is main_console.py
+        # second argument is script location
+        if not args[2:]:
+            print('No files specified - nothing to do')
+            sys.exit()
+
+        self.checkArgs(args[2:], grid_files)
 
         logging.debug('MainWorker::start() called')
         logging.debug('MainWorker::start() Open the following files: {}'.format(grid_files))
 
-        print(self.welcome_msg)
+        print(self.log_info_msg)
         print(self.input_info_msg)
         print(self.status_info_msg)
         self.loadGrid(grid_files)
@@ -179,6 +189,7 @@ class MainWorker(QObject):
 
 
     def checkArgs(self, args, grid_files):
+
         for argument in args:
             if argument[0] == '-' or argument[0] == '--':
                 print('Option found: {}'.format(argument))
