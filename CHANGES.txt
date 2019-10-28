@@ -1,3 +1,8 @@
+0.14
+
+    Fixed bug in import statement
+    Added PythonicDaemon
+
 0.13
     
     Added compatibility to newer versions of PyQt5

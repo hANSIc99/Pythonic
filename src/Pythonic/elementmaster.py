@@ -3,10 +3,10 @@ from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout,
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont, QDrag, QColor
 from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QRect, QMimeData
 from PyQt5.QtCore import QCoreApplication as QC
-from element_iconbar import IconBar
-from elementeditor import ElementEditor
 from time import sleep
 import logging, sys, traceback
+from Pythonic.elementeditor import ElementEditor
+from Pythonic.element_iconbar import IconBar
 from Pythonic.record_function import Function
 
 
