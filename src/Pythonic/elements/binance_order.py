@@ -1,12 +1,12 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QDoubleValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
-from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 from pythonic_binance.client import Client
 import pandas as pd
 import os.path, datetime, logging
 from time import sleep
+from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
 

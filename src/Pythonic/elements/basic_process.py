@@ -1,10 +1,10 @@
-from elementmaster import ElementMaster
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor
 from PyQt5.QtWidgets import (QVBoxLayout, QLabel, QTextEdit, QWidget,
         QComboBox, QCheckBox, QGridLayout, QSpacerItem, QLineEdit, QPushButton)
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
+from Pythonic.elementmaster import ElementMaster
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
 

@@ -1,4 +1,3 @@
-from elementmaster import ElementMaster
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget,
@@ -7,7 +6,7 @@ from PyQt5.QtCore import QCoreApplication as QC
 import logging
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
-from Pythonic.elementmaster import alphabet
+from Pythonic.elementmaster import ElementMaster, alphabet
 
 
 class ExecBranch(ElementMaster):

@@ -6,9 +6,8 @@ from time import sleep
 import os.path, datetime, logging
 import pandas as pd
 from Pythonic.record_function import Record, Function
-from Pythonic.elementmaster import alphabet
+from Pythonic.elementmaster import ElementMaster, alphabet
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.elementmaster import ElementMaster
 
 ohlc_steps = { '1m' : 1, '3m' : 3, '5m' : 5, '15m' : 15, '30m' : 30, '1h' : 60, '2h' : 120, '4h' : 240, '6h' : 360,
         '8h' : 480, '12h' : 720, '1d' : 1440, '3d' : 4320, '1w' : 10080, '1M' : 40320 }

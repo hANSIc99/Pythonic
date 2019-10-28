@@ -1,9 +1,9 @@
-from elementmaster import ElementMaster
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget,
         QCheckBox, QSpacerItem, QGridLayout, QPushButton)
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
+from Pythonic.elementmaster import ElementMaster
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
 
