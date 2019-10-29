@@ -10,10 +10,7 @@ from PyQt5.QtCore import (Qt, QMimeData, QByteArray, QDataStream, QPoint, QLocal
 from PyQt5.QtCore import QCoreApplication as QC
 from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen, QPainter, QIcon, QCloseEvent)
-import sys, logging, os
-from Pythonic.workingarea import WorkingArea
-from Pythonic.menubar import MenuBar
-from Pythonic.executor import Executor
+import logging, os, Pythonic
 
 class topMenuBar(QMenuBar):
 
@@ -57,7 +54,11 @@ class topMenuBar(QMenuBar):
 
         self.actionList = []
 
-        for file in os.listdir(os.getcwd() + '/translations'):
+        mod_path = os.path.dirname(Pythonic.__file__)
+        mod_path = os.path.join(mod_path, 'translations')
+
+
+        for file in os.listdir(mod_path):
             if file.endswith('.qm'):
                 logging.debug('file found: {}'.format(file))
                 logging.debug('with locale {}'.format(file[-5:-3]))
