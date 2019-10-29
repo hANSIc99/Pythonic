@@ -4,8 +4,11 @@ import os, sys, Pythonic
 from subprocess import Popen
 
 def run():
-    if os.name == 'nt':
-        Popen(['python', 'main_daemon.py', *sys.argv], cwd= os.path.dirname(Pythonic.__file__))
-    else:
-        Popen(['python3', 'main_daemon.py', *sys.argv], cwd= os.path.dirname(Pythonic.__file__))
+    cwd = os.path.dirname(Pythonic.__file__)
+    path = os.path.join(cwd, 'main_daemon.py')
 
+    if os.name == 'nt':
+        Popen(['python', path, *sys.argv])
+    else:
+        print(sys.argv)
+        Popen(['python3', path, *sys.argv])
