@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QSizePolicy, QStyleOption, QStyle
 from PyQt5.QtGui import QPixmap, QPainter
 from PyQt5.QtCore import Qt, pyqtSignal
-import logging
+import logging, os, Pythonic
 
 class EditButton(QLabel):
 
@@ -10,7 +10,8 @@ class EditButton(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('__init__() called EditButton')
-        self.setPixmap(QPixmap('images/edit.png').scaled(20, 20))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(os.path.join(mod_path, 'images/edit.png')).scaled(20, 20))
         self.setStyleSheet('background-color: lightblue; \
                 border-style: solid; border-color: lightblue; border-width: 1px')
         self.setMargin(5)
@@ -34,7 +35,8 @@ class DebugButton(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('__init__() called DebugButton')
-        self.setPixmap(QPixmap('images/debug.png').scaled(20, 20))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(os.path.join(mod_path, 'images/debug.png')).scaled(20, 20))
         self.setStyleSheet('background-color: goldenrod; \
                 border-style: solid; border-color: goldenrod; border-width: 1px')
         self.setMargin(5)
@@ -103,7 +105,8 @@ class DelButton(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('__init__() called DelButton')
-        self.setPixmap(QPixmap('images/del.png').scaled(20, 20))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(os.path.join(mod_path, 'images/del.png')).scaled(20, 20))
         self.setStyleSheet('background-color: darkred; \
                 border-style: solid; border-color: darkred; border-width: 1px')
         self.setMargin(5)
@@ -153,7 +156,8 @@ class IconBar(QWidget):
         self.setLayout(self.iconBox)
 
         self.setObjectName('IconBar')
-        self.setStyleSheet('#IconBar { background-color: #636363; border: 3px solid #ff5900; border-radius: 15px; }')
+        self.setStyleSheet('#IconBar { background-color: #636363; border: 3px solid #ff5900;\
+                border-radius: 15px; }')
 
 
         #self.del_button.mousePressEvent = self.click_del_element

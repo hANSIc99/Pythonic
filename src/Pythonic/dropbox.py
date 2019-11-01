@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt, QMimeData, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap 
 from PyQt5.QtCore import QCoreApplication as QC
 from Pythonic.element_iconbar import IconBar
-import sys, logging, os.path
+import sys, logging, os
 
 class DropBox(QWidget):
 
@@ -12,6 +12,8 @@ class DropBox(QWidget):
     def __init__(self, parent):
 
         super().__init__()
+        self.mod_path = os.path.dirname(Pythonic.__file__)
+
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.parent = parent
         self.label = QLabel()

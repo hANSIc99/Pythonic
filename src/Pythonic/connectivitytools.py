@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QFrame, QHBoxLayout 
 from PyQt5.QtCore import Qt, QMimeData, QDir, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap, QPainter,QColor
-import sys, logging
+import sys, logging, os, Pythonic
+from os.path import join
 from Pythonic.workingarea import WorkingArea
 from Pythonic.mastertool import MasterTool
 
@@ -16,19 +17,22 @@ class ConnectivityTools(QFrame):
     def initUI(self):
 
         self.setStyleSheet('background-color: silver')
+        mod_path = os.path.dirname(Pythonic.__file__)
+        """
         image_folder = QDir('images')
 
         if not image_folder.exists():
             logging.error('Image foulder not found')
             sys.exit(1)
+        """
             
         self.layout_h = QHBoxLayout()
 
         self.e_mail = MasterTool(self, 'ConnMail', 1)
-        self.e_mail.setPixmap(QPixmap('images/ConnMail.png').scaled(120, 60))
+        self.e_mail.setPixmap(QPixmap(join(mod_path, 'images/ConnMail.png')).scaled(120, 60))
 
         self.rest = MasterTool(self, 'ConnREST', 1)
-        self.rest.setPixmap(QPixmap('images/ConnREST.png').scaled(120, 60))
+        self.rest.setPixmap(QPixmap(join(mod_path, 'images/ConnREST.png')).scaled(120, 60))
 
         self.layout_h.addWidget(self.e_mail)
         self.layout_h.addWidget(self.rest)

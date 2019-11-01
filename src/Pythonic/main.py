@@ -6,7 +6,8 @@ from PyQt5.QtCore import (Qt, QMimeData, QLocale, QThreadPool, QDir,
 from PyQt5.QtGui import (QDrag, QPixmap, QPainter, QScreen, QFont)
 from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
-import sys, logging, datetime, os
+from os.path import join
+import sys, logging, datetime, os, Pythonic
 import multiprocessing as mp
 from Pythonic.workingarea               import WorkingArea
 from Pythonic.menubar                   import MenuBar
@@ -51,6 +52,8 @@ class MainWindow(QWidget):
         self.logger.setLevel(self.log_level)
         self.log_date = datetime.datetime.now()
 
+        self.mod_path = os.path.dirname(Pythonic.__file__)
+
         log_date_str = self.log_date.strftime('%Y_%m_%d')
         month = self.log_date.strftime('%b')
         year = self.log_date.strftime('%Y')
@@ -67,7 +70,7 @@ class MainWindow(QWidget):
         # init language !
         self.translator = QTranslator(self.app)
         #self.translator.load('translations/spanish_es')
-        self.translator.load('translations/english_en.qm')
+        self.translator.load(join(self.mod_path, 'translations/english_en.qm'))
         self.app.installTranslator(self.translator)
         #QC.installTranslator(self.translator)
 
@@ -92,6 +95,7 @@ class MainWindow(QWidget):
         self.bottom_border_layout.setSpacing(0)
         self.setContentsMargins(0, 0, 0, 0)
 
+        print('##############################################1')
         # create class objects
         #self.exceptwindow = ExceptWindow(self)
 
@@ -116,8 +120,10 @@ class MainWindow(QWidget):
         self.focus_grid = self.wrk_area_arr[0]
         self.wrk_tab_index = 0
 
+        print('##############################################2')
         #self.working_area = WorkingArea()
         self.storagebar = StorageBar(self)
+        print('##############################################3')
         self.menubar = MenuBar()
         self.toolbox_tab = QTabWidget()
         self.toolbox_tab.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
@@ -190,12 +196,17 @@ class MainWindow(QWidget):
         self.toolbox_basics.register_tools()
         self.toolbox_connectivity.register_tools()
         self.toolbox_ml.register_tools()
+        print('##############################################')
 
-        self.image_folder = QDir('images')
+        """
+        self.image_folder = QDir(join(self.mod_path, 'images'))
+        print("##########PATH: {}".format(self.image_folder))
+        sys.exit()
 
         if not self.image_folder.exists():
             logging.error('Image foulder not found')
             sys.exit(0)
+        """
 
         self.scrollArea = QScrollArea()
         #self.scrollArea.setWidget(self.working_area)
@@ -312,7 +323,7 @@ class MainWindow(QWidget):
         #QC.removeTranslator(self.translator)
         self.app.removeTranslator(self.translator)
         logging.debug('changeTranslator() called with file: {}'.format(fileName))
-        self.translator.load('translations/' + fileName)
+        self.translator.load(join(self.mod_path, 'translations/') + fileName)
         #QC.installTranslator(self.translator)
         self.app.installTranslator(self.translator)
         logging.debug('Translation: {}'.format(QC.translate('', 'Save')))
