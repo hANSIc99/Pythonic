@@ -1,6 +1,6 @@
 0.14
 
-    Fixed bug in import statement
+    Fixed working directory bug
     Added PythonicDaemon
 
 0.13
