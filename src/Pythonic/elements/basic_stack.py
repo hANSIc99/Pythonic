@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator
+from PyQt5.QtGui import  QIntValidator
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QFileDialog, QPushButton, QStackedWidget, QLineEdit)
 from PyQt5.QtCore import QCoreApplication as QC
 import logging, pickle, os
@@ -33,7 +33,7 @@ class ExecStack(ElementMaster):
         log_state = False
         self.config = (filename, read_mode, write_mode, delete_read,
                 b_array_limits, n_array_limits, log_state)
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecStack called at row {}, column {}'.format(row, column))
 
@@ -42,7 +42,7 @@ class ExecStack(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecStack')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.addFunction(StackFunction)
 

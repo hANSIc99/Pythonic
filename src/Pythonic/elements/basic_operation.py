@@ -2,7 +2,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget,
         QCheckBox, QSpacerItem, QGridLayout, QPushButton)
 from PyQt5.QtCore import QCoreApplication as QC
-import logging
+import logging, os, Pythonic
 from Pythonic.elementmaster import ElementMaster
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
@@ -16,7 +16,7 @@ class ExecOp(ElementMaster):
         self.row = row
         self.column = column
         self.config = (False, None)
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecOp called at row {}, column {}'.format(row, column))
         self.addFunction(OperationFunction)
@@ -24,7 +24,7 @@ class ExecOp(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecOp')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         self.addFunction(OperationFunction)
         super().edit_sig.connect(self.edit)
 
@@ -36,7 +36,9 @@ class ExecOp(ElementMaster):
         logging.debug('openEditor() called ExecOp')
 
     def edit(self):
+
         logging.debug('edit() called ExecOp')
+        mod_path = os.path.dirname(Pythonic.__file__)
 
         self.opEditLayout = QVBoxLayout()
 
@@ -50,7 +52,7 @@ class ExecOp(ElementMaster):
         self.help_text.setText(QC.translate('', 'Process your own Python 3 code.'))
 
         self.op_image = QLabel()
-        self.op_image.setPixmap(QPixmap(self.pixmap_path))
+        self.op_image.setPixmap(QPixmap(os.path.join(mod_path, self.pixmap_path)))
 
         self.code_input = QTextEdit()
 

@@ -3,7 +3,8 @@ from PyQt5.QtCore import Qt, QMimeData, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap 
 from PyQt5.QtCore import QCoreApplication as QC
 from Pythonic.element_iconbar import IconBar
-import sys, logging, os
+import sys, logging, os, Pythonic
+from os.path import join
 
 class DropBox(QWidget):
 
@@ -17,7 +18,7 @@ class DropBox(QWidget):
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.parent = parent
         self.label = QLabel()
-        self.label.setPixmap(QPixmap('images/tmp.png').scaled(160, 80))
+        self.label.setPixmap(QPixmap(join(self.mod_path, 'images/tmp.png')).scaled(160, 80))
         self.setAcceptDrops(True)
         self.type = None
         self.config = None
@@ -70,7 +71,7 @@ class DropBox(QWidget):
             if not self.parent.checkStore(row, column):
                 return
 
-            newImg = 'images/' +  e.mimeData().text()[2:] + '.png'
+            newImg = self.mod_path + '/images/' +  e.mimeData().text()[2:] + '.png'
             if os.path.isfile(newImg):
                 self.alterPixmap(QPixmap(newImg))
                 e.accept()
@@ -78,7 +79,7 @@ class DropBox(QWidget):
     def dragLeaveEvent(self, e):
 
         logging.debug('DropBox::dragLeaveEvent() called')
-        self.alterPixmap(QPixmap('images/tmp.png'))
+        self.alterPixmap(QPixmap(join(self.mod_path, 'images/tmp.png')))
         e.accept()
 
     def mousePressEvent(self, event):

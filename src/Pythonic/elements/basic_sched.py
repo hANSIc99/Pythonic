@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant, QRegExp
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QRegExpValidator
+from PyQt5.QtGui import  QIntValidator, QRegExpValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
 from PyQt5.QtCore import QCoreApplication as QC
 import logging, os.path

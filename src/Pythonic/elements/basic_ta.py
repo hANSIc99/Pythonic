@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator
+from PyQt5.QtGui import  QIntValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
 from PyQt5.QtCore import QCoreApplication as QC
 from time import sleep
@@ -29,7 +29,7 @@ class ExecTA(ElementMaster):
 
         self.config = (ta_str, ta_index, ta_config, log_state)
 
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecTA called at row {}, column {}'.format(row, column))
         self.addFunction(TAFunction)
@@ -37,7 +37,7 @@ class ExecTA(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecTA')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.addFunction(TAFunction)
 

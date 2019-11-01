@@ -101,7 +101,6 @@ class PlaceHolder(ElementMaster):
         self.column = column
         self.mod_path = os.path.dirname(Pythonic.__file__)
         super().__init__(self.row, self.column, self.pixmap_path, False, None)
-        #self.setAttribute(Qt.WA_DeleteOnClose)
         logging.debug('PlaceHolder called at row {}, column {}'.format(row, column))
         # everything else
         self.setAcceptDrops(True)
@@ -146,7 +145,7 @@ class PlaceHolder(ElementMaster):
     def dragLeaveEvent(self, e):
 
         logging.debug('dragLeaveEvent() called')
-        self.alterPixmap(QPixmap(os.path.joing(self.mod_path, 'images/placeholder.png')))
+        self.alterPixmap(QPixmap(os.path.join(self.mod_path, 'images/placeholder.png')))
         e.accept()
 
 

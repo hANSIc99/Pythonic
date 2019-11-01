@@ -1,5 +1,4 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, pyqtSlot, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QDoubleValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
 from PyQt5.QtCore import QCoreApplication as QC
 from pythonic_binance.client import Client
@@ -30,7 +29,7 @@ class ConnREST(ElementMaster):
 
         self.config = pass_input, url, log_state
 
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ConnREST::__init__() called at row {}, column {}'.format(row, column))
         self.addFunction(ConnRESTFunction)
@@ -38,7 +37,7 @@ class ConnREST(ElementMaster):
     def __setstate__(self, state):
         logging.debug('ConnREST::__setstate__() called')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.addFunction(ConnRESTFunction)
 
