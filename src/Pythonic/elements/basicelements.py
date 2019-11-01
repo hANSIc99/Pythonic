@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor
 from PyQt5.QtWidgets import QVBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox
-import logging, os.path
+import logging, os, Pythonic
 from time import sleep
 from datetime import datetime
 from multiprocessing import Process
@@ -29,14 +29,14 @@ class ExecRB(ElementMaster):
     def __init__(self, row, column):
         self.row = row
         self.column = column
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), False, None)
+        super().__init__(self.row, self.column, self.pixmap_path, False, None)
         logging.debug('ExecRB called at row {}, column {}'.format(row, column))
         self.addFunction(ExecRBFunction)
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecRB')
         self.row, self.column = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), False, None)
+        super().__init__(self.row, self.column, self.pixmap_path, False, None)
         self.addFunction(ExecRBFunction)
 
     def __getstate__(self):
@@ -61,7 +61,7 @@ class ExecR(ElementMaster):
     def __init__(self, row, column):
         self.row = row
         self.column = column
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), False, None)
+        super().__init__(self.row, self.column, self.pixmap_path, False, None)
 
         logging.debug('ExecR called at row {}, column {}'.format(row, column))
         self.addFunction(ExecRFunction)
@@ -69,7 +69,7 @@ class ExecR(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecR')
         self.row, self.column = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), False, None)
+        super().__init__(self.row, self.column, self.pixmap_path, False, None)
         self.addFunction(ExecRFunction)
 
     def __getstate__(self):
@@ -99,7 +99,8 @@ class PlaceHolder(ElementMaster):
 
         self.row = row
         self.column = column
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), False, None)
+        self.mod_path = os.path.dirname(Pythonic.__file__)
+        super().__init__(self.row, self.column, self.pixmap_path, False, None)
         #self.setAttribute(Qt.WA_DeleteOnClose)
         logging.debug('PlaceHolder called at row {}, column {}'.format(row, column))
         # everything else
@@ -108,8 +109,9 @@ class PlaceHolder(ElementMaster):
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called PlaceHolder')
+        self.mod_path = os.path.dirname(Pythonic.__file__)
         self.row, self.column = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), False, None)
+        super().__init__(self.row, self.column, self.pixmap_path, False, None)
         self.addFunction(PlaceHolderFunction)
         self.setAcceptDrops(True)
 
@@ -136,7 +138,7 @@ class PlaceHolder(ElementMaster):
         if e.mimeData().hasText():
             logging.debug('PlaceHolder::dragLeaveEvent() mime data: {}'.format(e.mimeData().text()))
             logging.debug('PlaceHolder::dragEnterEvent() event: {}'.format(e))
-            newImg = 'images/' +  e.mimeData().text() + '.png'
+            newImg = self.mod_path + '/images/' +  e.mimeData().text() + '.png'
             if os.path.isfile(newImg):
                 self.alterPixmap(QPixmap(newImg))
                 e.accept()
@@ -144,7 +146,7 @@ class PlaceHolder(ElementMaster):
     def dragLeaveEvent(self, e):
 
         logging.debug('dragLeaveEvent() called')
-        self.alterPixmap(QPixmap('images/placeholder.png'))
+        self.alterPixmap(QPixmap(os.path.joing(self.mod_path, 'images/placeholder.png')))
         e.accept()
 
 

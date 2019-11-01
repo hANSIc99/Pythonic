@@ -29,7 +29,7 @@ class ExecSched(ElementMaster):
         self.config = (mode_index, mode_data, log_state)
 
         # self_sync = True
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config, True)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecSched::__init__() called at row {}, column {}'.format(row, column))
         self.addFunction(BasicScheduler)
@@ -38,7 +38,7 @@ class ExecSched(ElementMaster):
         logging.debug('ExecSched::__setstate__() called')
         self.row, self.column, self.config  = state
         # self-self_sync = True
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config, True)
         super().edit_sig.connect(self.edit)
         self.addFunction(BasicScheduler)
 

@@ -3,7 +3,8 @@ from PyQt5.QtCore import Qt, QMimeData, QDir, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap
 from PyQt5.QtCore import QCoreApplication as QC
 from Pythonic.mastertool import MasterTool
-import logging
+from os.path import join
+import logging, os, Pythonic
 
 class BasicTools(QFrame):
 
@@ -16,30 +17,31 @@ class BasicTools(QFrame):
     def initUI(self):
 
         self.setStyleSheet('background-color: silver')
+        mod_path = os.path.dirname(Pythonic.__file__)
         image_folder = QDir('images')
 
         self.layout_h = QHBoxLayout()
 
         self.op_tool = MasterTool(self, 'ExecOp', 1)
-        self.op_tool.setPixmap(QPixmap('images/ExecOp.png').scaled(120, 60))
+        self.op_tool.setPixmap(QPixmap(join(mod_path, 'images/ExecOp.png')).scaled(120, 60))
 
         self.branch_tool = MasterTool(self, 'ExecBranch', 2)
-        self.branch_tool.setPixmap(QPixmap('images/ExecBranch.png').scaled(120, 60))
+        self.branch_tool.setPixmap(QPixmap(join(mod_path, 'images/ExecBranch.png')).scaled(120, 60))
 
         self.return_tool = MasterTool(self, 'ExecReturn', 0)
-        self.return_tool.setPixmap(QPixmap('images/ExecReturn.png').scaled(120, 60))
+        self.return_tool.setPixmap(QPixmap(join(mod_path, 'images/ExecReturn.png')).scaled(120, 60))
 
         self.proc_tool = MasterTool(self, 'ExecProcess', 2)
-        self.proc_tool.setPixmap(QPixmap('images/ExecProcess.png').scaled(120, 60))
+        self.proc_tool.setPixmap(QPixmap(join(mod_path, 'images/ExecProcess.png')).scaled(120, 60))
 
         self.ta_tool = MasterTool(self, 'ExecTA', 1)
-        self.ta_tool.setPixmap(QPixmap('images/ExecTA.png').scaled(120, 60))
+        self.ta_tool.setPixmap(QPixmap(join(mod_path, 'images/ExecTA.png')).scaled(120, 60))
 
         self.sched_tool = MasterTool(self, 'ExecSched', 1)
-        self.sched_tool.setPixmap(QPixmap('images/ExecSched.png').scaled(120, 60))
+        self.sched_tool.setPixmap(QPixmap(join(mod_path, 'images/ExecSched.png')).scaled(120, 60))
 
         self.stack_tool = MasterTool(self, 'ExecStack', 1)
-        self.stack_tool.setPixmap(QPixmap('images/ExecStack.png').scaled(120, 60))
+        self.stack_tool.setPixmap(QPixmap(join(mod_path, 'images/ExecStack.png')).scaled(120, 60))
 
         self.layout_h.addWidget(self.op_tool)
         self.layout_h.addWidget(self.branch_tool)
