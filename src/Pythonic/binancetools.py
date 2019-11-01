@@ -20,13 +20,6 @@ class BinanceTools(QFrame):
         self.setStyleSheet('background-color: silver')
         mod_path = os.path.dirname(Pythonic.__file__)
 
-        """
-        image_folder = QDir(join('images')
-        if not image_folder.exists():
-            logging.error('Image foulder not found')
-            sys.exit(1)
-        """
-            
         self.layout_h = QHBoxLayout()
 
         self.scheduler = MasterTool(self, 'BinanceSched', 1)
