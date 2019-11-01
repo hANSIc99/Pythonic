@@ -1,5 +1,4 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox,
                                 QPushButton, QStackedWidget)
 from PyQt5.QtCore import QCoreApplication as QC
@@ -23,7 +22,7 @@ class ExecReturn(ElementMaster):
         self.column = column
         # grid, wrk_selecctor_index, wrk_pos, ischecked
         self.config = (0, 0, (0,0), False)
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecReturn called at row {}, column {}'.format(row, column))
 
@@ -32,7 +31,7 @@ class ExecReturn(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecReturn')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.addFunction(ReturnFunction)
 

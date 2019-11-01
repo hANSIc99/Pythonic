@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QFrame, QHBoxLayout 
 from PyQt5.QtCore import Qt, QMimeData, QDir, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap, QPainter,QColor
-import sys, logging
+import sys, logging, os, Pythonic
 from Pythonic.workingarea import WorkingArea
 from Pythonic.mastertool import MasterTool
 
@@ -16,19 +16,22 @@ class MLTools(QFrame):
     def initUI(self):
 
         self.setStyleSheet('background-color: silver')
+        mod_path = os.path.dirname(Pythonic.__file__)
+        """
         image_folder = QDir('images')
 
         if not image_folder.exists():
             logging.error('Image foulder not found')
             sys.exit(1)
+        """
             
         self.layout_h = QHBoxLayout()
 
         self.svm = MasterTool(self, 'MLSVM', 1)
-        self.svm.setPixmap(QPixmap('images/MLSVM.png').scaled(120, 60))
+        self.svm.setPixmap(QPixmap(os.path.join(mod_path, 'images/MLSVM.png')).scaled(120, 60))
 
         self.svm_predict = MasterTool(self, 'MLSVM_Predict', 1)
-        self.svm_predict.setPixmap(QPixmap('images/MLSVM_Predict.png').scaled(120, 60))
+        self.svm_predict.setPixmap(QPixmap(os.path.join(mod_path, 'images/MLSVM_Predict.png')).scaled(120, 60))
 
 
         self.layout_h.addWidget(self.svm)

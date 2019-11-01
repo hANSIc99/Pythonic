@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy,
         QStyleOption, QStyle, QPushButton, QTextEdit, QListWidgetItem, QListWidget,
         QSizePolicy)
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont, QColor, QBrush
+from PyQt5.QtGui import QFont, QColor, QBrush
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QPoint, QRect
 from PyQt5.QtCore import QCoreApplication as QC
 from PyQt5.QtCore import QThread

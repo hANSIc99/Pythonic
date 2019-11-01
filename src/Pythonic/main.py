@@ -95,7 +95,6 @@ class MainWindow(QWidget):
         self.bottom_border_layout.setSpacing(0)
         self.setContentsMargins(0, 0, 0, 0)
 
-        print('##############################################1')
         # create class objects
         #self.exceptwindow = ExceptWindow(self)
 
@@ -120,10 +119,8 @@ class MainWindow(QWidget):
         self.focus_grid = self.wrk_area_arr[0]
         self.wrk_tab_index = 0
 
-        print('##############################################2')
         #self.working_area = WorkingArea()
         self.storagebar = StorageBar(self)
-        print('##############################################3')
         self.menubar = MenuBar()
         self.toolbox_tab = QTabWidget()
         self.toolbox_tab.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
@@ -196,17 +193,6 @@ class MainWindow(QWidget):
         self.toolbox_basics.register_tools()
         self.toolbox_connectivity.register_tools()
         self.toolbox_ml.register_tools()
-        print('##############################################')
-
-        """
-        self.image_folder = QDir(join(self.mod_path, 'images'))
-        print("##########PATH: {}".format(self.image_folder))
-        sys.exit()
-
-        if not self.image_folder.exists():
-            logging.error('Image foulder not found')
-            sys.exit(0)
-        """
 
         self.scrollArea = QScrollArea()
         #self.scrollArea.setWidget(self.working_area)

@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor
+from PyQt5.QtGui import  QPainter, QColor
 from PyQt5.QtWidgets import (QVBoxLayout, QLabel, QTextEdit, QWidget,
         QComboBox, QCheckBox, QGridLayout, QSpacerItem, QLineEdit, QPushButton)
 from PyQt5.QtCore import QCoreApplication as QC
@@ -20,7 +20,7 @@ class ExecProcess(ElementMaster):
     def __init__(self, row, column):
         self.row = row
         self.column = column
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, None)
+        super().__init__(self.row, self.column, self.pixmap_path, True, None)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecProcess called at row {}, column {}'.format(row, column))
         self.addFunction(ProcessFunction)
@@ -29,7 +29,7 @@ class ExecProcess(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecBranch')
         self.row, self.column = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, None)
+        super().__init__(self.row, self.column, self.pixmap_path, True, None)
         super().edit_sig.connect(self.edit)
         self.addFunction(ProcessFunction)
 
