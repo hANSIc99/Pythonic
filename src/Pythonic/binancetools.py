@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QFrame, QHBoxLayout 
 from PyQt5.QtCore import Qt, QMimeData, QDir, pyqtSignal
 from PyQt5.QtGui import QDrag, QPixmap, QPainter, QColor
-import sys, logging
+import sys, logging, os, Pythonic
+from os.path import join
 from Pythonic.workingarea import WorkingArea
 from Pythonic.mastertool import MasterTool
 
@@ -17,22 +18,18 @@ class BinanceTools(QFrame):
     def initUI(self):
 
         self.setStyleSheet('background-color: silver')
-        image_folder = QDir('images')
+        mod_path = os.path.dirname(Pythonic.__file__)
 
-        if not image_folder.exists():
-            logging.error('Image foulder not found')
-            sys.exit(1)
-            
         self.layout_h = QHBoxLayout()
 
         self.scheduler = MasterTool(self, 'BinanceSched', 1)
-        self.scheduler.setPixmap(QPixmap('images/BinanceSched.png').scaled(120, 60))
+        self.scheduler.setPixmap(QPixmap(join(mod_path, 'images/BinanceSched.png')).scaled(120, 60))
 
         self.ohlc = MasterTool(self, 'BinanceOHLC', 1)
-        self.ohlc.setPixmap(QPixmap('images/BinanceOHLC.png').scaled(120, 60))
+        self.ohlc.setPixmap(QPixmap(join(mod_path, 'images/BinanceOHLC.png')).scaled(120, 60))
 
         self.order = MasterTool(self, 'BinanceOrder', 1)
-        self.order.setPixmap(QPixmap('images/BinanceOrder.png').scaled(120, 60))
+        self.order.setPixmap(QPixmap(join(mod_path, 'images/BinanceOrder.png')).scaled(120, 60))
 
         self.layout_h.addWidget(self.scheduler)
         self.layout_h.addWidget(self.ohlc)

@@ -6,7 +6,8 @@ from PyQt5.QtCore import (Qt, QMimeData, QLocale, QThreadPool, QDir,
 from PyQt5.QtGui import (QDrag, QPixmap, QPainter, QScreen, QFont)
 from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
-import sys, logging, datetime, os
+from os.path import join
+import sys, logging, datetime, os, Pythonic
 import multiprocessing as mp
 from Pythonic.workingarea               import WorkingArea
 from Pythonic.menubar                   import MenuBar
@@ -51,6 +52,8 @@ class MainWindow(QWidget):
         self.logger.setLevel(self.log_level)
         self.log_date = datetime.datetime.now()
 
+        self.mod_path = os.path.dirname(Pythonic.__file__)
+
         log_date_str = self.log_date.strftime('%Y_%m_%d')
         month = self.log_date.strftime('%b')
         year = self.log_date.strftime('%Y')
@@ -67,7 +70,7 @@ class MainWindow(QWidget):
         # init language !
         self.translator = QTranslator(self.app)
         #self.translator.load('translations/spanish_es')
-        self.translator.load('translations/english_en.qm')
+        self.translator.load(join(self.mod_path, 'translations/english_en.qm'))
         self.app.installTranslator(self.translator)
         #QC.installTranslator(self.translator)
 
@@ -191,12 +194,6 @@ class MainWindow(QWidget):
         self.toolbox_connectivity.register_tools()
         self.toolbox_ml.register_tools()
 
-        self.image_folder = QDir('images')
-
-        if not self.image_folder.exists():
-            logging.error('Image foulder not found')
-            sys.exit(0)
-
         self.scrollArea = QScrollArea()
         #self.scrollArea.setWidget(self.working_area)
         self.scrollArea.setWidget(self.working_tabs)
@@ -250,7 +247,7 @@ class MainWindow(QWidget):
 
         prg_return, fastpath = data
         grid, *pos = prg_return.target_0
-        logging.debug('MainWindow::receiveTarget() called {}'.format(pos))
+        logging.debug('MainWorker::receiveTarget() called from pos: {} goto grid: {}'.format(pos, grid))
         logging.debug('MainWindow::receiveTarget() called fp {}'.format(fastpath))
         # go to goNext() in the target grid
         # set fastpath variable
@@ -288,6 +285,8 @@ class MainWindow(QWidget):
 
         logging.debug('MainWindow::saveGrid() called')
         self.wrk_area_arr[self.wrk_tab_index].saveGrid(filename)
+        #BAUSTELLE
+        self.wrk_area_arr[self.wrk_tab_index].saveGridWorker(filename)
 
     def setupDefault(self):
 
@@ -310,7 +309,7 @@ class MainWindow(QWidget):
         #QC.removeTranslator(self.translator)
         self.app.removeTranslator(self.translator)
         logging.debug('changeTranslator() called with file: {}'.format(fileName))
-        self.translator.load('translations/' + fileName)
+        self.translator.load(join(self.mod_path, 'translations/') + fileName)
         #QC.installTranslator(self.translator)
         self.app.installTranslator(self.translator)
         logging.debug('Translation: {}'.format(QC.translate('', 'Save')))
@@ -345,7 +344,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.13'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.14'))
 
     def showInfo(self, event):
 

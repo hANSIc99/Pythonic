@@ -1,12 +1,12 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, pyqtSlot, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QDoubleValidator
+from PyQt5.QtGui import  QIntValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
-from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 from pythonic_binance.client import Client
 import pandas as pd
 import os.path, datetime, logging
 from time import sleep
+from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
 from email.message import EmailMessage
@@ -43,7 +43,7 @@ class ConnMail(ElementMaster):
         self.config = (recipient, sender, password, server_url, server_port, subject,
                 input_opt_index, input_opt_data, filename, pass_input, message_state, message_txt, log_state)
 
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ConnMail::__init__() called at row {}, column {}'.format(row, column))
         self.addFunction(ConnMailFunction)
@@ -51,7 +51,7 @@ class ConnMail(ElementMaster):
     def __setstate__(self, state):
         logging.debug('ConnMail::__setstate__() called')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.addFunction(ConnMailFunction)
 

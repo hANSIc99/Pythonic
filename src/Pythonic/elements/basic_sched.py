@@ -1,16 +1,15 @@
-from elementmaster import ElementMaster
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant, QRegExp
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator, QRegExpValidator
+from PyQt5.QtGui import  QIntValidator, QRegExpValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
-from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 import logging, os.path
 from time import sleep
 from itertools import cycle
 from datetime import datetime, date, time, timedelta
 from enum import Enum
+from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
-from Pythonic.elementmaster import alphabet
+from Pythonic.elementmaster import ElementMaster, alphabet
 
 
 class ExecSched(ElementMaster):
@@ -30,7 +29,7 @@ class ExecSched(ElementMaster):
         self.config = (mode_index, mode_data, log_state)
 
         # self_sync = True
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config, True)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecSched::__init__() called at row {}, column {}'.format(row, column))
         self.addFunction(BasicScheduler)
@@ -39,7 +38,7 @@ class ExecSched(ElementMaster):
         logging.debug('ExecSched::__setstate__() called')
         self.row, self.column, self.config  = state
         # self-self_sync = True
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config, True)
         super().edit_sig.connect(self.edit)
         self.addFunction(BasicScheduler)
 

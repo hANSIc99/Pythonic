@@ -1,11 +1,11 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator
+from PyQt5.QtGui import  QIntValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox
-from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 from pythonic_binance.client import Client
 from time import sleep
 import os.path, datetime, logging
+from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
 
@@ -31,7 +31,7 @@ class BinanceSched(ElementMaster):
         self.config = (interval_str, interval_index, offset, log_state)
 
         # self_sync = True (last True)
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config, True)
         super().edit_sig.connect(self.edit)
         logging.debug('BinanceSched called at row {}, column {}'.format(row, column))
         self.addFunction(BinanceScheduler)
@@ -40,7 +40,7 @@ class BinanceSched(ElementMaster):
         logging.debug('__setstate__() called BinanceSched')
         self.row, self.column, self.config = state
         # interval-str, inteval-index, offset, log-state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config, True)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config, True)
         super().edit_sig.connect(self.edit)
         self.addFunction(BinanceScheduler)
 

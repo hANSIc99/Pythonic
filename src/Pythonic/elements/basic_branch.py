@@ -1,13 +1,12 @@
-from elementmaster import ElementMaster
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QPixmap, QPainter, QColor
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget,
         QComboBox, QCheckBox, QGridLayout, QSpacerItem, QLineEdit, QPushButton)
 from PyQt5.QtCore import QCoreApplication as QC
-import logging
+import logging, os, Pythonic
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
-from Pythonic.elementmaster import alphabet
+from Pythonic.elementmaster import ElementMaster, alphabet
 
 
 class ExecBranch(ElementMaster):
@@ -27,7 +26,7 @@ class ExecBranch(ElementMaster):
         # compare_with,  operation, op_index, negate, log_state
         self.config = (compare_with, operation, op_index, negate, log_state)
 
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.initUI()
         logging.debug('ExecBranch called at row {}, column {}'.format(row, column))
@@ -51,7 +50,7 @@ class ExecBranch(ElementMaster):
         logging.debug('__setstate__() called ExecBranch')
         self.row, self.column, self.config  = state
         self.initUI()
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.addFunction(BranchFunction)
 
@@ -61,8 +60,9 @@ class ExecBranch(ElementMaster):
 
 
     def edit(self):
-        logging.debug('edit() called ExecBranch')
 
+        logging.debug('edit() called ExecBranch')
+        mod_path = os.path.dirname(Pythonic.__file__)
 
         self.branchEditLayout = QVBoxLayout()
 
@@ -70,7 +70,7 @@ class ExecBranch(ElementMaster):
         self.branchEdit.setWindowTitle(QC.translate('', 'Edit Branch'))
 
         self.branch_image = QLabel()
-        self.branch_image.setPixmap(QPixmap(self.pixmap_path))
+        self.branch_image.setPixmap(QPixmap(os.path.join(mod_path, self.pixmap_path)))
 
         self.branch_yes = QLabel()
         self.branch_yes.setText(QC.translate('', 'Yes'))

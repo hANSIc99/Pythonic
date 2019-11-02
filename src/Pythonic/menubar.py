@@ -11,8 +11,9 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen)
 from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
-import logging
+import logging, os, Pythonic
 import multiprocessing as mp
+from os.path import join
 
 class RunButton(QLabel):
 
@@ -21,7 +22,8 @@ class RunButton(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('RunButton::__init__() called')
-        self.setPixmap(QPixmap('images/run.png').scaled(32, 32))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(join(mod_path, 'images/run.png')).scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
 
@@ -40,7 +42,9 @@ class StartDebugButton(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('StartDebugButton::__init__() called')
-        self.setPixmap(QPixmap('images/start_debug.png').scaled(32, 32))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        #print("##########PATH: {}".format(join(mod_path, 'images/start_debug.png')))
+        self.setPixmap(QPixmap(join(mod_path, 'images/start_debug.png')).scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
 
@@ -59,7 +63,8 @@ class StopExecButton(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('StopExecButton::__init__() called')
-        self.setPixmap(QPixmap('images/stop_exec.png').scaled(32, 32))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(join(mod_path, 'images/stop_exec.png')).scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
 
@@ -78,7 +83,8 @@ class KillProcButton(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('KillProcButton::__init__() called')
-        self.setPixmap(QPixmap('images/kill.png').scaled(32, 32))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(join(mod_path, 'images/kill.png')).scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
 
@@ -97,7 +103,8 @@ class SaveAsButton(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('SaveAsButton::__init__() called')
-        self.setPixmap(QPixmap('images/save_as.png').scaled(32, 32))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(join(mod_path, 'images/save_as.png')).scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
 
@@ -116,7 +123,8 @@ class SaveButton(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('SaveButton::__init__() called')
-        self.setPixmap(QPixmap('images/save.png').scaled(32, 32))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(join(mod_path, 'images/save.png')).scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
         self.setMargin(0)
 
@@ -136,7 +144,8 @@ class OpenFile(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('OpenFile::__init__() called')
-        self.setPixmap(QPixmap('images/open_file.png').scaled(32, 32))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(join(mod_path, 'images/open_file.png')).scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
 
 
@@ -155,7 +164,8 @@ class NewFile(QLabel):
     def __init__(self):
         super().__init__()
         logging.debug('NewFile::__init__() called')
-        self.setPixmap(QPixmap('images/new_file.png').scaled(32, 32))
+        mod_path = os.path.dirname(Pythonic.__file__)
+        self.setPixmap(QPixmap(join(mod_path, 'images/new_file.png')).scaled(32, 32))
         self.setStyleSheet('background-color: transparent')
 
 
@@ -201,6 +211,7 @@ class MenuBar(QWidget):
 
         #home directory of the user
         self.home_dict = str(Path.home())
+        mod_path = os.path.dirname(Pythonic.__file__)
 
         # widget which contains the icons
         self.iconBox = QHBoxLayout(self.icon_bar)
@@ -219,7 +230,7 @@ class MenuBar(QWidget):
         # Logo
         self.logo_horizontal = QLabel()
         logo_height = self.save_as_button.pixmap().height() * 1.5
-        self.logo_horizontal.setPixmap(QPixmap('images/horizontal_blur.png').scaledToHeight(
+        self.logo_horizontal.setPixmap(QPixmap(join(mod_path, 'images/horizontal_blur.png')).scaledToHeight(
             logo_height))
         self.logo_horizontal.pixmap()
 
