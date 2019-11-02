@@ -11,7 +11,7 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen, QPainter, QFont, QIntValidator)
 
 from PyQt5.QtCore import QCoreApplication as QC
-import sys, logging
+import sys, logging, os, Pythonic
 from elementeditor import ElementEditor
 
 class InfoWindow(QWidget):
@@ -24,6 +24,7 @@ class InfoWindow(QWidget):
     def show(self):
 
         logging.debug('edit() called ExecReturn')
+        mod_path = os.path.dirname(Pythonic.__file__)
         self.infoLayout = QVBoxLayout()
 
         self.window = ElementEditor(self)
@@ -79,7 +80,7 @@ class InfoWindow(QWidget):
         self.logo_layout = QHBoxLayout(self.logo)
         self.logo_layout.setAlignment(Qt.AlignCenter)
         self.logo_label = QLabel()
-        self.logo_label.setPixmap(QPixmap('images/vertical.png').scaledToHeight(200))
+        self.logo_label.setPixmap(QPixmap(os.path.join(mod_path, 'images/vertical.png')).scaledToHeight(200))
         self.logo_layout.addWidget(self.logo_label)
 
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))

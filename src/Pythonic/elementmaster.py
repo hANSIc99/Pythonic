@@ -3,10 +3,10 @@ from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout,
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont, QDrag, QColor
 from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QRect, QMimeData
 from PyQt5.QtCore import QCoreApplication as QC
-from element_iconbar import IconBar
-from elementeditor import ElementEditor
 from time import sleep
-import logging, sys, traceback
+import logging, sys, traceback, os, Pythonic
+from Pythonic.elementeditor import ElementEditor
+from Pythonic.element_iconbar import IconBar
 from Pythonic.record_function import Function
 
 
@@ -32,6 +32,7 @@ class ElementMaster(QWidget):
         self.self_sync = self_sync # for elements like basic_sched or binancesched
         self.config = config
 
+        mod_path = os.path.dirname(Pythonic.__file__)
         
         # flag indicates if programm should stop in debugging mode
         self.b_debug = False
@@ -43,9 +44,9 @@ class ElementMaster(QWidget):
 
         self.label = QLabel()
         self.label.setObjectName('label')
-        self.pixmap = QPixmap(pixmap)
+        self.pixmap = QPixmap(os.path.join(mod_path, pixmap))
         # set background picture
-        self.alterPixmap(pixmap)
+        self.alterPixmap()
         
         # layout containes the iconbar and the element picture
         self.layout = QHBoxLayout()
@@ -159,9 +160,11 @@ class ElementMaster(QWidget):
         logging.debug('ElementMaster::edit_element() called MasterItem')
         self.edit_sig.emit()
 
-    def alterPixmap(self, pixmap):
+    def alterPixmap(self, pixmap=None):
 
-        self.pixmap = pixmap
+        #placeholder element accesc this function
+        if pixmap:
+            self.pixmap = pixmap
         self.label.setStyleSheet('#label { background-color: #636363;\
                 border: 3px solid #ff5900; border-radius: 20px; }')
 

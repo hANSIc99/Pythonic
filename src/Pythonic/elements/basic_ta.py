@@ -1,14 +1,13 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator
+from PyQt5.QtGui import  QIntValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
 from PyQt5.QtCore import QCoreApplication as QC
 from time import sleep
 import os.path, datetime, logging
 import pandas as pd
 from Pythonic.record_function import Record, Function
-from Pythonic.elementmaster import alphabet
+from Pythonic.elementmaster import ElementMaster, alphabet
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.elementmaster import ElementMaster
 
 ohlc_steps = { '1m' : 1, '3m' : 3, '5m' : 5, '15m' : 15, '30m' : 30, '1h' : 60, '2h' : 120, '4h' : 240, '6h' : 360,
         '8h' : 480, '12h' : 720, '1d' : 1440, '3d' : 4320, '1w' : 10080, '1M' : 40320 }
@@ -30,7 +29,7 @@ class ExecTA(ElementMaster):
 
         self.config = (ta_str, ta_index, ta_config, log_state)
 
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecTA called at row {}, column {}'.format(row, column))
         self.addFunction(TAFunction)
@@ -38,7 +37,7 @@ class ExecTA(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecTA')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.addFunction(TAFunction)
 

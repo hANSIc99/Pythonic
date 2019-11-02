@@ -1,5 +1,4 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QIntValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox
 from PyQt5.QtCore import QCoreApplication as QC
 from pythonic_binance.client import Client
@@ -31,7 +30,7 @@ class BinanceOHLC(ElementMaster):
         # interval-str, inteval-index, symbol_txt, log-state
         self.config = (interval_str, interval_index, symbol_txt, log_state)
 
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('BinanceOHLC called at row {}, column {}'.format(row, column))
         self.addFunction(BinanceOHLCFUnction)
@@ -39,7 +38,7 @@ class BinanceOHLC(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called BinanceOHLC')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.addFunction(BinanceOHLCFUnction)
 

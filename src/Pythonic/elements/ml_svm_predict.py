@@ -1,19 +1,17 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, pyqtSlot, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor, QDoubleValidator
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget, QFileDialog
-from elementeditor import ElementEditor
 from PyQt5.QtCore import QCoreApplication as QC
 from pythonic_binance.client import Client
 import pandas as pd
 import os.path, datetime, logging, requests, json, pickle
 from time import sleep
+from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
 from pathlib import Path
 from sys import getsizeof
 from sklearn import svm, preprocessing
 from sklearn.model_selection import train_test_split
-#from smtplib import SMTP
 
 class MLSVM_Predict(ElementMaster):
 
@@ -35,7 +33,7 @@ class MLSVM_Predict(ElementMaster):
 
         self.config = scale_option, scale_mean, scale_std, predict_val, filename, log_state
 
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('MLSVM_Predict::__init__() called at row {}, column {}'.format(row, column))
         self.addFunction(MLSVM_PredictFunction)
@@ -43,7 +41,7 @@ class MLSVM_Predict(ElementMaster):
     def __setstate__(self, state):
         logging.debug('MLSVM_Predict::__setstate__() called')
         self.row, self.column, self.config = state
-        super().__init__(self.row, self.column, QPixmap(self.pixmap_path), True, self.config)
+        super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         self.addFunction(MLSVM_PredictFunction)
 
