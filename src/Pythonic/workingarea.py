@@ -472,9 +472,9 @@ class WorkingArea(QFrame):
                     self.grid.addWidget(link, row, col-1)
                     element.widget().parent_element = link
 
-    def saveGrid(self, filename):
+    def saveGrid(self):
 
-        logging.debug('WorkingArea::saveGrid() called with fileName {}'.format(filename))
+        logging.debug('WorkingArea::saveGrid() called')
         grid_cols = range(0, self.grid.columnCount())
         grid_rows = range(0, self.grid.rowCount())
 
@@ -492,9 +492,9 @@ class WorkingArea(QFrame):
 
         return pickle.dumps(element_list)
 
-    def saveGridWorker(self, filename):
+    def saveGridWorker(self):
 
-        logging.debug('WorkingArea::saveGridWorker() called with fileName {}'.format(filename))
+        logging.debug('WorkingArea::saveGridWorker() called')
 
         grid_cols = range(0, self.grid.columnCount())
         grid_rows = range(0, self.grid.rowCount())
@@ -511,10 +511,22 @@ class WorkingArea(QFrame):
                 # Element description: (pos, function, config, self_sync)
                 logging.debug('WorkingArea::saveGrid() element found at: {} {}'.format(row, col))
                 element = element.widget()
-                element_list.append((pos, element.function, element.config, element.self_sync))
+                element_type = type(element).__name__
+                """
+                element_type = type(element).__name__
+                if (element_type != PlaceHolder.__name__ and
+                    element_type != ExecR.__name__ and
+                    element_type != ExecRB.__name__):
+                """
 
+                print('element found __name__: {}'.format(type(element).__name__))
+                element_list.append((pos, element_type, element.function, element.config, element.self_sync))
+
+        """
         with open((filename + '.d' + self.file_extension), 'wb') as save_file:
             pickle.dump(element_list, save_file)
+        """
+        return pickle.dumps(element_list)
 
     def clearGrid(self): 
 
@@ -539,45 +551,37 @@ class WorkingArea(QFrame):
 
         self.addPlaceholder(1, 0)
 
+    def loadGrid(self, element_list):
 
-    def loadGrid(self, filename):
+        logging.debug('WorkingArea::loadGrid() called')
 
-        logging.debug('WorkingArea::loadGrid() called with filename {}'.format(filename))
-        
-        try:
-            f = open(filename, 'rb')
-            try:
-                element_list = pickle.load(f)
-                self.clearGrid()
-            finally:
-                f.close()
-        except Exception as e:
-            logging.error('loadGrid() file cant be read: {}'.format(e))
-
-            self.msg = QMessageBox()
-            self.msg.setWindowTitle('Invalid format')
-            self.msg.setText('File can\'t be read')
-            self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setStyleSheet('background-color: lightgrey')
-            self.msg.exec()
-            return
-
+        self.clearGrid()
         # populate the grid
+
         for element in element_list:
-            
-            row, col = element.getPos()
-            logging.debug('WorkingArea::loadGrid() ADD current element: row: {} col: {}'.format(
-                row, col))
-            logging.debug('WorkingArea::loadGrid() ADD element:{}'.format(
-                element))
-            logging.debug('WorkingArea::loadGrid() ADD element type:{}'.format(
-                type(element)))
+            pos, element_type, function, config, self_sync = element
+            row, column = pos
+            #logging.debug('MainWorker::loadGrid() row: {} col: {}'.format(row, column))
+            #logging.debug('MainWorker::loadGrid() type: {}'.format(element_type))
+            print('StartElement.__name__ : {}'.format(StartElement.__name__))
+            logging.debug('MainWorker::loadGrid() type: {}'.format(element_type))
+            new_type_str = 'new_type = ' + element_type + '({},{})'.format(row, column)
+            logging.debug('WorkingArea::addElement() called, new_type_str: {}'.format(new_type_str))
+            try:
+                exec(new_type_str, globals())
+            except Exception as e:
+                logging.error('WorkingArea::addElement()- desired element type not found')
+                logging.error(e)
+                return
+            self.grid.addWidget(new_type, row, column, Qt.AlignCenter)
 
-            self.grid.addWidget(element, row, col)
-
+        
+        #new_type_str = 'new_type = ' + newType + '({},{})'.format(row, column)
         # second run: add child and parent relation
         for element in element_list:
-            row, col = element.getPos()
+            pos, element_type, function, config, self_sync = element
+            row, col = pos
+            element = self.grid.itemAtPosition(*pos).widget()
                 
             if element.child_pos[0]:
 
