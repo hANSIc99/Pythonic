@@ -20,8 +20,7 @@ from Pythonic.elements.ml_svm_predict    import MLSVM_Predict
 from Pythonic.elementmaster              import ElementMaster
 from Pythonic.dropbox                    import DropBox
 
-#from tempfile import SpooledTemporaryFile
-import logging, pickle, io
+import logging, pickle
 
 class WorkingArea(QFrame):
 
@@ -472,27 +471,8 @@ class WorkingArea(QFrame):
                     self.grid.addWidget(link, row, col-1)
                     element.widget().parent_element = link
 
+
     def saveGrid(self):
-
-        logging.debug('WorkingArea::saveGrid() called')
-        grid_cols = range(0, self.grid.columnCount())
-        grid_rows = range(0, self.grid.rowCount())
-
-        element_list = []
-
-        index = ((row, column) for row in grid_rows for column in grid_cols)
-
-        for pos in index:
-            row, col = pos
-            logging.debug('WorkingArea::saveGrid() check position: {} {}'.format(row, col))
-            element = self.grid.itemAtPosition(row, col)
-            if element:
-                logging.debug('WorkingArea::saveGrid() element found at: {} {}'.format(row, col))
-                element_list.append(element.widget())
-
-        return pickle.dumps(element_list)
-
-    def saveGridWorker(self):
 
         logging.debug('WorkingArea::saveGridWorker() called')
 
@@ -512,20 +492,9 @@ class WorkingArea(QFrame):
                 logging.debug('WorkingArea::saveGrid() element found at: {} {}'.format(row, col))
                 element = element.widget()
                 element_type = type(element).__name__
-                """
-                element_type = type(element).__name__
-                if (element_type != PlaceHolder.__name__ and
-                    element_type != ExecR.__name__ and
-                    element_type != ExecRB.__name__):
-                """
 
-                print('element found __name__: {}'.format(type(element).__name__))
                 element_list.append((pos, element_type, element.function, element.config, element.self_sync))
 
-        """
-        with open((filename + '.d' + self.file_extension), 'wb') as save_file:
-            pickle.dump(element_list, save_file)
-        """
         return pickle.dumps(element_list)
 
     def clearGrid(self): 
@@ -563,7 +532,6 @@ class WorkingArea(QFrame):
             row, column = pos
             #logging.debug('MainWorker::loadGrid() row: {} col: {}'.format(row, column))
             #logging.debug('MainWorker::loadGrid() type: {}'.format(element_type))
-            print('StartElement.__name__ : {}'.format(StartElement.__name__))
             logging.debug('MainWorker::loadGrid() type: {}'.format(element_type))
             new_type_str = 'new_type = ' + element_type + '({},{})'.format(row, column)
             logging.debug('WorkingArea::addElement() called, new_type_str: {}'.format(new_type_str))
@@ -573,6 +541,8 @@ class WorkingArea(QFrame):
                 logging.error('WorkingArea::addElement()- desired element type not found')
                 logging.error(e)
                 return
+            # Skip elements without config
+            new_type.__setstate__((row, column, config))
             self.grid.addWidget(new_type, row, column, Qt.AlignCenter)
 
         

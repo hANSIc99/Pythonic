@@ -27,7 +27,7 @@ from Pythonic.storagebar                import StorageBar
 
 class MainWindow(QWidget):
 
-    log_level = logging.DEBUG
+    log_level = logging.INFO
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
 
@@ -281,12 +281,10 @@ class MainWindow(QWidget):
 
         logging.debug('MainWindow::loadGrid() called')
         grid_data_list = []
-        with ZipFile('sample.zip', 'r') as archive:
+        with ZipFile(filename, 'r') as archive:
             for zipped_grid in archive.namelist():
-                print('file found: {}'.format(str(zipped_grid)))
                 pickled_grid = archive.read(zipped_grid)
                 element_list = pickle.loads(pickled_grid)
-                print('obj found: {}'.format(element_list))
                 # first char repesents the grid number
                 self.wrk_area_arr[int(zipped_grid[0])].loadGrid(pickle.loads(pickled_grid))
 
@@ -297,18 +295,14 @@ class MainWindow(QWidget):
 
         logging.debug('MainWindow::saveGrid() called')
 
-        with ZipFile('sample.zip', 'w') as save_file:
+        with ZipFile(filename, 'w') as save_file:
 
             for i in range(self.number_of_grids):
-                #tmp_file = (self.wrk_area_arr[i].saveGrid())
-                tmp_file = (self.wrk_area_arr[i].saveGridWorker())
+                tmp_file = (self.wrk_area_arr[i].saveGrid())
 
                 save_file.writestr('{}_grid'.format(str(i)), tmp_file)
 
         save_file.close()
-
-        #BAUSTELLE
-        #self.wrk_area_arr[self.wrk_tab_index].saveGridWorker(filename)
 
     def setupDefault(self):
 
