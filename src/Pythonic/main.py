@@ -7,7 +7,8 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter, QScreen, QFont)
 from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
 from os.path import join
-import sys, logging, datetime, os, Pythonic
+from zipfile import ZipFile
+import sys, logging, datetime, os, Pythonic, pickle
 import multiprocessing as mp
 from Pythonic.workingarea               import WorkingArea
 from Pythonic.menubar                   import MenuBar
@@ -26,9 +27,11 @@ from Pythonic.storagebar                import StorageBar
 
 class MainWindow(QWidget):
 
-    log_level = logging.INFO
+    log_level = logging.DEBUG
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
+
+    number_of_grids = 5
 
 
     def __init__(self, app):
@@ -103,7 +106,7 @@ class MainWindow(QWidget):
         self.grd_ops_arr    = []
         self.working_tabs = QTabWidget()
         self.working_tabs.setMinimumSize(300, 300)
-        for i in range(5):
+        for i in range(self.number_of_grids):
 
             self.wrk_area_arr.append(WorkingArea())
             self.wrk_tabs_arr.append(QScrollArea())
@@ -143,8 +146,6 @@ class MainWindow(QWidget):
         self.toolbox_tab.addTab(self.toolbox_ml, QC.translate('', 'Machine Learning'))
 
         # signals and slots
-        #self.menubar.save_file.connect(self.working_area.saveGrid)
-        #self.menubar.load_file.connect(self.working_area.loadGrid)
         self.menubar.set_info_text.connect(self.setInfoText)
         self.menubar.start_debug.connect(self.startDebug)
         self.menubar.start_exec.connect(self.startExec)
@@ -173,7 +174,7 @@ class MainWindow(QWidget):
         self.menubar.save_file.connect(self.saveGrid)
         self.menubar.clear_grid.connect(self.setupDefault)
 
-        for i in range(5):
+        for i in range(self.number_of_grids):
             
             self.toolbox_binance.reg_tool.connect(self.wrk_area_arr[i].regType)
             self.toolbox_connectivity.reg_tool.connect(self.wrk_area_arr[i].regType)
@@ -279,14 +280,29 @@ class MainWindow(QWidget):
     def loadGrid(self, filename):
 
         logging.debug('MainWindow::loadGrid() called')
-        self.wrk_area_arr[self.wrk_tab_index].loadGrid(filename)
+        with ZipFile('sample.zip', 'r') as archive:
+            for zipped_grid in archive.infolist():
+                print('file found: {}'.format(str(zipped_grid)))
+                pickled_grid = archive.read(zipped_grid)
+                element_list = pickle.loads(pickled_grid)
+                print('obj found: {}'.format(str(element_list)))
+        #for i in range(self.number_of_grids):
+
+        #self.wrk_area_arr[self.wrk_tab_index].loadGrid(filename)
 
     def saveGrid(self, filename):
 
         logging.debug('MainWindow::saveGrid() called')
-        self.wrk_area_arr[self.wrk_tab_index].saveGrid(filename)
+
+        with ZipFile('sample.zip', 'w') as save_file:
+
+            for i in range(self.number_of_grids):
+                tmp_file = (self.wrk_area_arr[self.wrk_tab_index].saveGrid(filename))
+
+                save_file.writestr('grid_{}'.format(str(i)), tmp_file)
+
         #BAUSTELLE
-        self.wrk_area_arr[self.wrk_tab_index].saveGridWorker(filename)
+        #self.wrk_area_arr[self.wrk_tab_index].saveGridWorker(filename)
 
     def setupDefault(self):
 
@@ -344,7 +360,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.14'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.15'))
 
     def showInfo(self, event):
 

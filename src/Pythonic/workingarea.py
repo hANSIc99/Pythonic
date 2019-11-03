@@ -20,7 +20,8 @@ from Pythonic.elements.ml_svm_predict    import MLSVM_Predict
 from Pythonic.elementmaster              import ElementMaster
 from Pythonic.dropbox                    import DropBox
 
-import logging, pickle
+#from tempfile import SpooledTemporaryFile
+import logging, pickle, io
 
 class WorkingArea(QFrame):
 
@@ -489,8 +490,7 @@ class WorkingArea(QFrame):
                 logging.debug('WorkingArea::saveGrid() element found at: {} {}'.format(row, col))
                 element_list.append(element.widget())
 
-        with open(filename + self.file_extension, 'wb') as save_file:
-            pickle.dump(element_list, save_file)
+        return pickle.dumps(element_list)
 
     def saveGridWorker(self, filename):
 

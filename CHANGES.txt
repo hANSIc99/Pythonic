@@ -1,3 +1,7 @@
+0.15
+
+    Save/load file affects now all grids
+
 0.14
 
     Fixed working directory bug
