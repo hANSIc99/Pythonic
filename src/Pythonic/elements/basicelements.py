@@ -35,13 +35,13 @@ class ExecRB(ElementMaster):
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecRB')
-        self.row, self.column = state
+        self.row, self.column, self.config = state
         super().__init__(self.row, self.column, self.pixmap_path, False, None)
         self.addFunction(ExecRBFunction)
 
     def __getstate__(self):
         logging.debug('__getstate__() called ExecRB')
-        return (self.row, self.column)
+        return (self.row, self.column, self.config)
 
 class ExecRBFunction(Function):
 
@@ -68,13 +68,13 @@ class ExecR(ElementMaster):
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecR')
-        self.row, self.column = state
+        self.row, self.column, self.config = state
         super().__init__(self.row, self.column, self.pixmap_path, False, None)
         self.addFunction(ExecRFunction)
 
     def __getstate__(self):
         logging.debug('__getstate__() called ExecR')
-        return (self.row, self.column)
+        return (self.row, self.column, self.config)
 
 
 class ExecRFunction(Function):
@@ -109,14 +109,14 @@ class PlaceHolder(ElementMaster):
     def __setstate__(self, state):
         logging.debug('__setstate__() called PlaceHolder')
         self.mod_path = os.path.dirname(Pythonic.__file__)
-        self.row, self.column = state
+        self.row, self.column, self.config = state
         super().__init__(self.row, self.column, self.pixmap_path, False, None)
         self.addFunction(PlaceHolderFunction)
         self.setAcceptDrops(True)
 
     def __getstate__(self):
         logging.debug('__getstate__() called Placeholder')
-        return (self.row, self.column)
+        return (self.row, self.column, self.config)
 
     def dropEvent(self, e):
 
