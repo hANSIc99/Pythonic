@@ -1,9 +1,9 @@
 import sys, signal, logging, pickle, datetime, os, time
 import multiprocessing as mp
 from pathlib import Path
-from Pythonic.workingarea               import WorkingArea
+from zipfile import ZipFile
+#from Pythonic.workingarea               import WorkingArea
 from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThread
-#workingarea import
 from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 
@@ -13,7 +13,11 @@ class stdinReader(QThread):
 
     kill_all    = pyqtSignal(name='kill_all')
     print_procs = pyqtSignal(name='print_procs')
+
+    sys.stdin.flush()
+
     def run(self):
+        print('run executed')
         while True:
             cmd = sys.stdin.read(1) # reads one byte at a time
             if cmd == ('q' or 'Q'):
@@ -39,7 +43,7 @@ class MainWorker(QObject):
                     '| |_) | | | | __| \'_ \ / _ \| \'_ \| |/ __| | | |/ _` |/ _ \ \'_ ` _ \ / _ \| \'_ \ \n'\
                     '|  __/| |_| | |_| | | | (_) | | | | | (__| |_| | (_| |  __/ | | | | | (_) | | | |\n'\
                     '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
-                    '|___/                                                                     \n\n'
+                    '       |___/                                                                     \n\n'
 
     log_info_msg    = '<<<<<<<<<<<< Logging directory ~/PythonicDaemon_201x/Month/\n'
     input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
@@ -81,7 +85,7 @@ class MainWorker(QObject):
             os.makedirs(directory)
 
     def printProcessList(self):
-        for i in range(self.active_grids):
+        for i in range(self.max_grid_cnt):
             if self.grd_ops_arr[i].pid_register:
                 for pid in self.grd_ops_arr[i].pid_register:
                     print('>> Grid {} - PID: {}'.format(str(i+1), str(pid)))
@@ -105,17 +109,22 @@ class MainWorker(QObject):
             self.log_date = datetime.datetime.now()
 
     def start(self, args):
-        grid_files = []
+
         print('\n Arguments: {}'.format(args[2:]))
         print(self.welcome_msg)
 
         # first argument is main_console.py
         # second argument is script location
         if not args[2:]:
-            print('No files specified - nothing to do')
+            print('No file specified - nothing to do')
             sys.exit()
 
-        self.checkArgs(args[2:], grid_files)
+        grid_file = self.checkArgs(args[2:])
+
+        if not grid_file:
+            print('No file specified - nothing to do')
+            sys.exit()
+
 
         logging.debug('MainWorker::start() called')
         logging.debug('MainWorker::start() Open the following files: {}'.format(grid_files))
@@ -123,12 +132,42 @@ class MainWorker(QObject):
         print(self.log_info_msg)
         print(self.input_info_msg)
         print(self.status_info_msg)
-        self.loadGrid(grid_files)
+        #self.loadGrid(grid_file)
         self.stdinReader.start()
 
-            
+    def loadGrid(self, filename):
+
+        logging.debug('MainWindow::loadGrid() called')
+
+        grid = [[[None for k in range(self.max_grid_size)]for i in range(self.max_grid_size)]
+                for j in range(self.max_grid_cnt)]
+
+        grid_data_list = []
+        with ZipFile(filename, 'r') as archive:
+            for i, zipped_grid in enumerate(archive.namelist()):
+                pickled_grid = archive.read(zipped_grid)
+                element_list = pickle.loads(pickled_grid)
+                # first char repesents the grid number
+                #self.wrk_area_arr[int(zipped_grid[0])].loadGrid(pickle.loads(pickled_grid))
+                for element in element_list:
+                    # Element description: (pos, function, config, log,  self_sync)
+                    pos, element_type, function, config, self_sync = element
+                    row, column = pos
+                    logging.debug('MainWorker::loadGrid() row: {} col: {}'.format(row, column))
+                    grid[i][row][column] = (function, self_sync)
+
+                self.grd_ops_arr.append(GridOperator(grid[i]))
+                self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
+                self.stdinReader.kill_all.connect(self.grd_ops_arr[i].kill_proc)
+                self.grd_ops_arr[i].startExec((0,0))
+
+
+        archive.close()
+           
         
+    """
     def loadGrid(self, grid_files):
+        
 
         #5 grid [row, column]
         grid = [[[None for k in range(self.max_grid_size)]for i in range(self.max_grid_size)]
@@ -175,6 +214,7 @@ class MainWorker(QObject):
             self.grd_ops_arr[i].startExec((0,0))
             #count number of active grids
             self.active_grids = i+1
+    """
 
     def receiveTarget(self, prg_return):
 
@@ -188,13 +228,20 @@ class MainWorker(QObject):
         self.grd_ops_arr[grid].goNext(prg_return)
 
 
-    def checkArgs(self, args, grid_files):
+    def checkArgs(self, args):
+
+        b_file_found = False
+        grid_file = None
 
         for argument in args:
             if argument[0] == '-' or argument[0] == '--':
                 print('Option found: {}'.format(argument))
             else:
-                grid_files.append(argument)
+                if not b_file_found:
+                    b_file_found = True
+                    grid_file = argument
+
+        return grid_file
 
 
 
