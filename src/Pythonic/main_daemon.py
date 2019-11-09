@@ -3,7 +3,7 @@ import multiprocessing as mp
 from pathlib import Path
 from zipfile import ZipFile
 from Pythonic.workingarea               import WorkingArea
-from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThread
+from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThread, QSocketNotifier
 from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 import fileinput
@@ -16,8 +16,14 @@ class stdinReader(QThread):
     print_procs = pyqtSignal(name='print_procs')
 
     def run(self):
+        """
+        self.m_notifier = QSocketNotifier(sys.stdin.fileno(), QSocketNotifier.Read)
+        #QObject.connect(self.m_notifier, QtCore.pyqtSignal(), self.trigger)
+        self.m_notifier.activated.connect(self.trigger)
+        """
         print('run executed')
         while True:
+            print('running')
             cmd = sys.stdin.read(1) # reads one byte at a time
             if cmd == ('q' or 'Q'):
                 print('Stopping all processes....')
@@ -33,6 +39,7 @@ class MainWorker(QObject):
     log_level = logging.INFO
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
+
 
     max_grid_size = 50
     max_grid_cnt  = 5
@@ -107,18 +114,18 @@ class MainWorker(QObject):
             self.logger.addHandler(file_handler)
             self.log_date = datetime.datetime.now()
 
+    def trigger(self):
+        print('#####################')
+
     def start(self, args):
 
-        print('\n Arguments: {}'.format(args[2:]))
+        print('\n Arguments: {}'.format(args[1:]))
         print(self.welcome_msg)
 
         # first argument is main_console.py
         # second argument is script location
-        if not args[2:]:
-            print('No file specified - nothing to do')
-            sys.exit()
 
-        grid_file = self.checkArgs(args[2:])
+        grid_file = self.checkArgs(args[1:])
 
         if not grid_file:
             print('No file specified - nothing to do')
@@ -126,13 +133,11 @@ class MainWorker(QObject):
 
 
         logging.debug('MainWorker::start() called')
-        logging.debug('MainWorker::start() Open the following files: {}'.format(grid_files))
+        logging.debug('MainWorker::start() Open the following file: {}'.format(grid_file))
 
         print(self.log_info_msg)
         print(self.input_info_msg)
         print(self.status_info_msg)
-        cmd = sys.stdin.read(1) # reads one byte at a time
-        print(cmd)
         self.loadGrid(grid_file)
         self.stdinReader.start()
 
@@ -192,19 +197,3 @@ class MainWorker(QObject):
                     grid_file = argument
 
         return grid_file
-
-
-
-if __name__ == '__main__':
-    signal.signal(signal.SIGINT, lambda *argc: QCoreApplication.quit())
-    grid_files = []
-    app = QCoreApplication(sys.argv)
-
-    timer = QTimer()
-    timer.timeout.connect(lambda *args: None) # cathing signals outside the QT eventloop (e.g. SIGINT)
-    timer.start(100)
-
-    ex = MainWorker(app)
-    ex.start(sys.argv)
-
-    app.exec_()
