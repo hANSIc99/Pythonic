@@ -2,10 +2,11 @@ import sys, signal, logging, pickle, datetime, os, time
 import multiprocessing as mp
 from pathlib import Path
 from zipfile import ZipFile
-#from Pythonic.workingarea               import WorkingArea
+from Pythonic.workingarea               import WorkingArea
 from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThread
 from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
+import fileinput
 
 from Pythonic.executor_daemon import GridOperator
 
@@ -13,8 +14,6 @@ class stdinReader(QThread):
 
     kill_all    = pyqtSignal(name='kill_all')
     print_procs = pyqtSignal(name='print_procs')
-
-    sys.stdin.flush()
 
     def run(self):
         print('run executed')
@@ -132,7 +131,9 @@ class MainWorker(QObject):
         print(self.log_info_msg)
         print(self.input_info_msg)
         print(self.status_info_msg)
-        #self.loadGrid(grid_file)
+        cmd = sys.stdin.read(1) # reads one byte at a time
+        print(cmd)
+        self.loadGrid(grid_file)
         self.stdinReader.start()
 
     def loadGrid(self, filename):
@@ -165,57 +166,6 @@ class MainWorker(QObject):
         archive.close()
            
         
-    """
-    def loadGrid(self, grid_files):
-        
-
-        #5 grid [row, column]
-        grid = [[[None for k in range(self.max_grid_size)]for i in range(self.max_grid_size)]
-                for j in range(self.max_grid_cnt)]
-
-        for i, filename in enumerate(grid_files):
-            logging.debug('MainWorker::loadGrid() called with filename {}'.format(filename))
-            if i >= self.max_grid_cnt:
-                print('Maximum number if grids reached, file \'{}\' won\'t be loaded'.format(
-                    filename))
-                return
-
-
-            try:
-                f = open(filename, 'rb')
-                try:
-                    element_list = pickle.load(f)
-                    #self.clearGrid()
-                except Exception as e:
-                    #logging.error('loadGrid() pickle cant be loaded: {}'.format(e))
-                    print('loadGrid() pickle cant be loaded: {}'.format(e))
-                finally:
-                    f.close()
-            except Exception as e:
-                #logging.error('loadGrid() file cant be read: {}'.format(e))
-                print('loadGrid() file cant be read: {}'.format(e))
-
-                return
-
-            print('Load file - Grid: {} file: \'{}\' found'.format(i+1, filename))
-            # populate the grid
-            for element in element_list:
-            
-                # Element description: (pos, function, config, log,  self_sync)
-                pos, function, config, self_sync = element
-                row, column = pos
-                logging.debug('MainWorker::loadGrid() row: {} col: {}'.format(row, column))
-                #grid[0][row][column] = (function, config, self_sync)
-                grid[i][row][column] = (function, self_sync)
-
-            self.grd_ops_arr.append(GridOperator(grid[i]))
-            self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
-            self.stdinReader.kill_all.connect(self.grd_ops_arr[i].kill_proc)
-            self.grd_ops_arr[i].startExec((0,0))
-            #count number of active grids
-            self.active_grids = i+1
-    """
-
     def receiveTarget(self, prg_return):
 
         grid, *pos = prg_return.target_0
