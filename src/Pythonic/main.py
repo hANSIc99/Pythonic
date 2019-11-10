@@ -281,14 +281,22 @@ class MainWindow(QWidget):
 
         logging.debug('MainWindow::loadGrid() called')
         grid_data_list = []
-        with ZipFile(filename, 'r') as archive:
-            for zipped_grid in archive.namelist():
-                pickled_grid = archive.read(zipped_grid)
-                element_list = pickle.loads(pickled_grid)
-                # first char repesents the grid number
-                self.wrk_area_arr[int(zipped_grid[0])].loadGrid(pickle.loads(pickled_grid))
+        try:
+            with ZipFile(filename, 'r') as archive:
+                for zipped_grid in archive.namelist():
+                    pickled_grid = archive.read(zipped_grid)
+                    element_list = pickle.loads(pickled_grid)
+                    # first char repesents the grid number
+                    self.wrk_area_arr[int(zipped_grid[0])].loadGrid(pickle.loads(pickled_grid))
+            archive.close()
 
-        archive.close()
+        except Exception as e:
+            err_msg = QMessageBox()
+            err_msg.setIcon(QMessageBox.Critical)
+            err_msg.setWindowTitle(QC.translate('', 'File Error'))
+            err_msg.setText(QC.translate('', 'File can\'t be read'))
+            err_msg.setAttribute(Qt.WA_DeleteOnClose)
+            err_msg.exec()
 
 
     def saveGrid(self, filename):
@@ -395,6 +403,7 @@ class MainWindow(QWidget):
     def closeEvent(self, event):
         logging.debug('closeEvent() called')
         messageBox = QMessageBox()
+        messageBox.setAttribute(Qt.WA_DeleteOnClose)
         messageBox.setIcon(QMessageBox.Warning)
         messageBox.setWindowTitle(QC.translate('', 'Close?'))
         messageBox.setText(QC.translate('', 'Warning: Execution of all tasks will be stopped!'))
