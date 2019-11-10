@@ -11,6 +11,7 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen)
 from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
+from datetime import datetime
 import logging, os, Pythonic
 import multiprocessing as mp
 from os.path import join
@@ -199,6 +200,7 @@ class MenuBar(QWidget):
         super().__init__()
 
         self.filename = None
+        self.last_saved = QC.translate('', 'Not yet')
 
         self.icon_bar = QWidget()
         self.icon_bar.setStyleSheet('background-color: silver')
@@ -274,7 +276,8 @@ class MenuBar(QWidget):
         if fileName:
             logging.debug('MenuBar::openFileNameDialog() called with filename: {}'.format(fileName))
             self.filename = fileName
-            self.setInfoText(fileName)
+            self.last_saved = QC.translate('', 'Not yet')
+            self.setInfoText(None)
             self.load_file.emit(fileName)
 
     def saveFileDialog(self, event):    
@@ -285,14 +288,26 @@ class MenuBar(QWidget):
         if fileName:
             logging.debug('MenuBar::saveFileDialog() called with filename: {}'.format(fileName))
             self.filename = fileName
-            self.setInfoText(fileName)
+            self.last_saved = datetime.now().strftime('%H:%M:%S')
+            """
+            #self.setInfoText('{} - Last saved {}'.format(fileName, time.strftime('%H:%M:%S')))
+            self.setInfoText(self.filename + QC.translate('', ' - Last saved ') + time.strftime('%H:%M:%S'))
+            """
+            self.setInfoText(None)
             self.save_file.emit(fileName)
 
     def simpleSave(self, event):
 
         if self.filename:
             logging.debug('MenuBar::simpleSave() grid can be saved in {}'.format(self.filename))
+            self.last_saved = datetime.now().strftime('%H:%M:%S')
             self.save_file.emit(self.filename)
+            """
+            time = datetime.now()
+            #self.setInfoText('{} - Last saved {}'.format(fileName, time.strftime('%H:%M:%S')))
+            self.setInfoText(self.filename + QC.translate('', ' - Last saved ') + time.strftime('%H:%M:%S'))
+            """
+
         else:
             logging.debug('MenuBar::simpleSave() no former filename found')
             self.saveFileDialog(event)
@@ -317,8 +332,10 @@ class MenuBar(QWidget):
         if text:
             logging.debug('MenuBar::setInfoText() text: {}'.format(text))
             self.set_info_text.emit(text)
+        elif self.filename:
+            self.set_info_text.emit(self.filename + QC.translate('', ' - Last saved: ') + self.last_saved)
         else:
-            self.set_info_text.emit(self.filename)
+            self.set_info_text.emit('')
 
     def startDebug(self, event):
         logging.debug('MenuBar::startDebug() called MenuBar')
