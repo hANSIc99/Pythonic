@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget,
-        QCheckBox, QSpacerItem, QGridLayout, QPushButton)
+        QCheckBox, QSpacerItem, QGridLayout, QPushButton, QLineEdit)
 from PyQt5.QtCore import QCoreApplication as QC
 import logging, os, Pythonic
 from Pythonic.elementmaster import ElementMaster
@@ -15,7 +15,8 @@ class ExecOp(ElementMaster):
     def __init__(self, row, column):
         self.row = row
         self.column = column
-        self.config = (False, None)
+        # log_state, code_input, custom_edit_state, cmd
+        self.config = (False, None, False, None)
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecOp called at row {}, column {}'.format(row, column))
@@ -51,6 +52,22 @@ class ExecOp(ElementMaster):
         self.help_text = QLabel()
         self.help_text.setText(QC.translate('', 'Process your own Python 3 code.'))
 
+        self.cmd_line_txt_1 = QLabel()
+        self.cmd_line_txt_1.setText(QC.translate('', 'Use custom editor?'))
+        self.cmd_line_txt_2 = QLabel()
+        self.cmd_line_txt_2.setText(QC.translate('', 'Use keyword PYFILE to specify the code file.'))
+        self.cmd_line_txt_3 = QLabel()
+        self.cmd_line_txt_3.setText(QC.translate('','Re-open to activate settings.'))
+
+        self.custom_editor_checkbox = QCheckBox()
+        self.custom_editor_cmd = QLineEdit()
+        self.custom_editor_cmd.setPlaceholderText('tbd')
+        self.custom_editor_line = QWidget()
+        self.custom_editor_line_layout = QHBoxLayout(self.custom_editor_line)
+        self.custom_editor_line_layout.addWidget(self.cmd_line_txt_1)
+        self.custom_editor_line_layout.addWidget(self.custom_editor_checkbox)
+
+
         self.op_image = QLabel()
         self.op_image.setPixmap(QPixmap(os.path.join(mod_path, self.pixmap_path)))
 
@@ -66,11 +83,52 @@ class ExecOp(ElementMaster):
         self.log_line_layout.addWidget(self.log_checkbox)
         self.log_line_layout.addStretch(1)
 
-        if self.config[0]:
+        self.loadLastConfig()
+
+        
+        self.confirm_button = QPushButton(QC.translate('', 'Ok'))
+
+        self.spacer = QSpacerItem(0, 30)
+        self.picto_spacer = QSpacerItem(0, 40)
+
+        self.picto_widget = QWidget()
+        self.pictogram_layout = QGridLayout(self.picto_widget)
+        self.pictogram_layout.addWidget(self.op_image, 0, 0)
+        self.pictogram_layout.addItem(self.picto_spacer, 0, 1)
+        self.pictogram_layout.addWidget(self.help_text, 0, 2)
+
+        self.opEditLayout.addWidget(self.head_info)
+        self.opEditLayout.addWidget(self.code_input)
+        self.opEditLayout.addWidget(self.custom_editor_line)
+        self.opEditLayout.addWidget(self.custom_editor_cmd)
+        self.opEditLayout.addWidget(self.cmd_line_txt_2)
+        self.opEditLayout.addWidget(self.cmd_line_txt_3)
+        self.opEditLayout.addWidget(self.log_line)
+        self.opEditLayout.addSpacerItem(self.spacer)
+        self.opEditLayout.addWidget(self.picto_widget)
+        self.opEditLayout.addWidget(self.confirm_button)
+        self.op_edit.setLayout(self.opEditLayout)
+
+        # signals and slots
+        self.custom_editor_checkbox.stateChanged.connect(self.toggle_custom_editor)
+        self.confirm_button.clicked.connect(self.op_edit.closeEvent)
+        self.op_edit.window_closed.connect(self.edit_done)
+
+        self.op_edit.show()
+
+    def toggle_custom_editor(self, event):
+        logging.debug('ExecOp::toggle_custom_editor() called')
+        logging.debug('ExecOp::toggle_custom_editor() called {}'.format(event))
+
+    def loadLastConfig(self):
+        logging.debug('ExecOp::loadLastConfig() called')
+        log_state, code_input, custom_edit_state, cmd = self.config
+
+        if log_state:
             self.log_checkbox.setChecked(True)
 
 
-        if self.config[1]:
+        if code_input:
             self.code_input.setPlainText(self.config[1])
         else:
             self.placeholder_1 = QC.translate('',
@@ -86,31 +144,6 @@ class ExecOp(ElementMaster):
                                                self.placeholder_3 + '\r\n\r\n' +
                                                'log_txt = "debug text"')
 
-        self.confirm_button = QPushButton(QC.translate('', 'Ok'))
-
-        self.spacer = QSpacerItem(0, 30)
-        self.picto_spacer = QSpacerItem(0, 40)
-
-        self.picto_widget = QWidget()
-        self.pictogram_layout = QGridLayout(self.picto_widget)
-        self.pictogram_layout.addWidget(self.op_image, 0, 0)
-        self.pictogram_layout.addItem(self.picto_spacer, 0, 1)
-        self.pictogram_layout.addWidget(self.help_text, 0, 2)
-
-        self.opEditLayout.addWidget(self.head_info)
-        self.opEditLayout.addWidget(self.code_input)
-        self.opEditLayout.addWidget(self.log_line)
-        self.opEditLayout.addSpacerItem(self.spacer)
-        self.opEditLayout.addWidget(self.picto_widget)
-        self.opEditLayout.addWidget(self.confirm_button)
-        self.op_edit.setLayout(self.opEditLayout)
-
-        # signals and slots
-        self.confirm_button.clicked.connect(self.op_edit.closeEvent)
-        self.op_edit.window_closed.connect(self.edit_done)
-
-        self.op_edit.show()
-
     def edit_done(self):
         logging.debug('edit_done() called ExecOp' )
 
@@ -119,7 +152,10 @@ class ExecOp(ElementMaster):
         else:
             code_input = self.code_input.toPlainText()
 
-        self.config = (self.log_checkbox.isChecked(), code_input)
+        custom_edit_state = False
+        cmd = None
+
+        self.config = (self.log_checkbox.isChecked(), code_input, custom_edit_state, cmd)
         self.addFunction(OperationFunction)
         logging.debug('edit_done() 2 called ExecOp' )
 
@@ -130,7 +166,7 @@ class OperationFunction(Function):
 
     def execute(self, record):
 
-        log_state, code_input = self.config
+        log_state, code_input, custom_edit_state, cmd = self.config
 
         proc_dict = {'record' : record, 'input' : None, 'output' : None, 'log_txt' : None}
                         
