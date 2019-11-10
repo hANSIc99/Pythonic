@@ -91,10 +91,15 @@ class MainWorker(QObject):
             os.makedirs(directory)
 
     def printProcessList(self):
+        b_proc_found = False
         for i in range(self.max_grid_cnt):
             if self.grd_ops_arr[i].pid_register:
                 for pid in self.grd_ops_arr[i].pid_register:
+                    b_proc_found = True
                     print('>> Grid {} - PID: {}'.format(str(i+1), str(pid)))
+        if not b_proc_found:
+            print('Currently no processes running')
+
         print('\n')
 
     def update_logfile(self):
@@ -119,7 +124,7 @@ class MainWorker(QObject):
 
     def start(self, args):
 
-        print('\n Arguments: {}'.format(args[1:]))
+        print('\n Arguments: {}'.format(args))
         print(self.welcome_msg)
 
         # first argument is main_console.py
