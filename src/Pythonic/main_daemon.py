@@ -16,23 +16,29 @@ class stdinReader(QThread):
     print_procs = pyqtSignal(name='print_procs')
 
     def run(self):
-        """
-        self.m_notifier = QSocketNotifier(sys.stdin.fileno(), QSocketNotifier.Read)
-        #QObject.connect(self.m_notifier, QtCore.pyqtSignal(), self.trigger)
-        self.m_notifier.activated.connect(self.trigger)
-        """
-        print('run executed')
+
+        spinner = self.spinning_cursor()
         while True:
-            print('running')
+            """ ToDo: non-blocking IO
+            sys.stdout.write(next(spinner))
+            sys.stdout.flush()
+            time.sleep(0.1)
+            sys.stdout.write('\b')
+            """
             cmd = sys.stdin.read(1) # reads one byte at a time
             if cmd == ('q' or 'Q'):
                 print('Stopping all processes....')
                 self.kill_all.emit()
                 time.sleep(3) # wait for 3 seconds to kill all processes
                 QCoreApplication.quit()
+                sys.exit()
             elif cmd == ('s' or 'S'):
                 self.print_procs.emit()
 
+    def spinning_cursor(self):
+        while True:
+            for cursor in '|/-\\':
+                yield cursor
 
 class MainWorker(QObject):
 

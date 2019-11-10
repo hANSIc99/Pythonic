@@ -256,8 +256,8 @@ class MenuBar(QWidget):
 
         self.iconBox.addWidget(self.new_file_button)
         self.iconBox.addWidget(self.open_file_button)
-        self.iconBox.addWidget(self.save_as_button)
         self.iconBox.addWidget(self.save_button)
+        self.iconBox.addWidget(self.save_as_button)
         self.iconBox.addWidget(self.start_debug_button)
         self.iconBox.addWidget(self.run_button)
         self.iconBox.addWidget(self.stop_exec_button)
@@ -277,6 +277,7 @@ class MenuBar(QWidget):
             logging.debug('MenuBar::openFileNameDialog() called with filename: {}'.format(fileName))
             self.filename = fileName
             self.last_saved = QC.translate('', 'Not yet')
+            self.home_dict = os.path.dirname(self.filename)
             self.setInfoText(None)
             self.load_file.emit(fileName)
 
@@ -289,10 +290,7 @@ class MenuBar(QWidget):
             logging.debug('MenuBar::saveFileDialog() called with filename: {}'.format(fileName))
             self.filename = fileName
             self.last_saved = datetime.now().strftime('%H:%M:%S')
-            """
-            #self.setInfoText('{} - Last saved {}'.format(fileName, time.strftime('%H:%M:%S')))
-            self.setInfoText(self.filename + QC.translate('', ' - Last saved ') + time.strftime('%H:%M:%S'))
-            """
+            self.home_dict = os.path.dirname(self.filename)
             self.setInfoText(None)
             self.save_file.emit(fileName)
 
@@ -301,13 +299,8 @@ class MenuBar(QWidget):
         if self.filename:
             logging.debug('MenuBar::simpleSave() grid can be saved in {}'.format(self.filename))
             self.last_saved = datetime.now().strftime('%H:%M:%S')
+            self.setInfoText(None)
             self.save_file.emit(self.filename)
-            """
-            time = datetime.now()
-            #self.setInfoText('{} - Last saved {}'.format(fileName, time.strftime('%H:%M:%S')))
-            self.setInfoText(self.filename + QC.translate('', ' - Last saved ') + time.strftime('%H:%M:%S'))
-            """
-
         else:
             logging.debug('MenuBar::simpleSave() no former filename found')
             self.saveFileDialog(event)
