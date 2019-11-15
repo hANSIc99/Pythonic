@@ -2,7 +2,8 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget,
         QCheckBox, QSpacerItem, QGridLayout, QPushButton, QLineEdit)
 from PyQt5.QtCore import QCoreApplication as QC
-import logging, os, tempfile, random, subprocess, Pythonic
+from PyQt5.QtCore import QProcess
+import logging, os, tempfile, random, subprocess, Pythonic, time
 from Pythonic.elementmaster import ElementMaster, alphabet
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
@@ -16,7 +17,7 @@ class ExecOp(ElementMaster):
         self.row = row
         self.column = column
         # log_state, code_input, custom_edit_state, cmd
-        self.config = (False, None, False, None)
+        self.config = (False, None, True, None)
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecOp called at row {}, column {}'.format(row, column))
@@ -55,7 +56,7 @@ class ExecOp(ElementMaster):
         self.cmd_line_txt_1 = QLabel()
         self.cmd_line_txt_1.setText(QC.translate('', 'Use custom editor?'))
         self.cmd_line_txt_2 = QLabel()
-        self.cmd_line_txt_2.setText(QC.translate('', 'Use keyword PYFILE to specify the code file.'))
+        self.cmd_line_txt_2.setText(QC.translate('', 'Use keyword $FILENAME to specify the code file.'))
         self.cmd_line_txt_3 = QLabel()
         self.cmd_line_txt_3.setText(QC.translate('','Re-open to activate settings.'))
 
@@ -152,7 +153,7 @@ class ExecOp(ElementMaster):
         if cmd:
             self.custom_editor_cmd.setText(cmd)
         else:
-            self.custom_editor_cmd.setPlaceholderText('tbd')
+            self.custom_editor_cmd.setPlaceholderText('gnome-terminal --wait -e "vim $FILENAME"')
 
         if custom_edit_state:
             self.code_input.setEnabled(False)
@@ -169,18 +170,42 @@ class ExecOp(ElementMaster):
         filename = os.path.join(tempfile.gettempdir(), filename)
         logging.debug('ExecOp::openCustomEditor() filename: {}'.format(filename))
 
+
+        
+        if cmd:
+            try:
+                # create new file
+                with open(filename, 'w') as f:
+                    if code_input:
+                        f.write(code_input)
+            except Exception as e:
+                # not writeable?
+                return e
+
+            cmd = cmd.replace('$FILENAME', filename)
+        else:
+            logging.debug('ExecOp::openCustomEditor() no command specified - returning')
+            return
+
+        logging.debug('ExecOp::openCustomEditor() cmd: {}'.format(cmd))
+        logging.debug('ExecOp::openCustomEditor() subprocess called')
+        edit_proc = QProcess()
+        edit_proc.start(cmd)
+        edit_proc.waitForFinished()
+
+        logging.debug('ExecOp::openCustomEditor() subprocess ended')
+
         try:
             # create new file
-            with open(filename, 'w') as f:
-                f.write(code_input)
+            with open(filename, 'r') as f:
+                code_input = f.read()
         except Exception as e:
             # not writeable?
             return e
-        # subprocess.call('vim', shell=True)
-        os.system('vim')
 
-        logging.debug('ExecOp::openCustomEditor() subprocess called')
-        #os.remove(filename)
+        self.code_input.setPlainText(code_input)
+        logging.debug('ExecOp::openCustomEditor() removing temporary file')
+        os.remove(filename)
 
     def edit_done(self):
         logging.debug('edit_done() called ExecOp' )
@@ -216,7 +241,7 @@ class OperationFunction(Function):
         exec_string = 'input = record\r\n'
         exec_string += 'output = record\r\n'
 
-                #logging.warning('Exec-String:\r\n{}'.format(exec_string))
+        #logging.warning('Exec-String:\r\n{}'.format(exec_string))
         
         if code_input:
             #logging.warning('Appending user specific code')
@@ -232,7 +257,6 @@ class OperationFunction(Function):
         else:
             log_txt = '{{BASIC OPERATION}}        {}'.format(proc_dict['output'])
 
-        output = filename
         result = Record(self.getPos(), (self.row+1, self.column), output, log=log_state, log_txt=log_txt)
                 
         return result
