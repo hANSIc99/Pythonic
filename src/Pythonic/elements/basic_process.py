@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import  QPainter, QColor
 from PyQt5.QtWidgets import (QVBoxLayout, QLabel, QTextEdit, QWidget,
         QComboBox, QCheckBox, QGridLayout, QSpacerItem, QLineEdit, QPushButton)
