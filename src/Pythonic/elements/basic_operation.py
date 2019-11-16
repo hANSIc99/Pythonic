@@ -153,8 +153,11 @@ class ExecOp(ElementMaster):
         if cmd:
             self.custom_editor_cmd.setText(cmd)
         else:
-            self.custom_editor_cmd.setPlaceholderText('gnome-terminal --wait -e "vim $FILENAME"')
-            #D:\"Program Files (x86)"\Notepad++\notepad++.exe $FILENAME
+            if os.name == 'nt':
+                self.custom_editor_cmd.setPlaceholderText(r'C:\"Program Files (x86)"\Notepad++\notepad++.exe $FILENAME')
+            else:
+                self.custom_editor_cmd.setPlaceholderText('gnome-terminal --wait -e "vim $FILENAME"')
+            
         if custom_edit_state:
             self.code_input.setEnabled(False)
             self.custom_editor_cmd.setEnabled(True)
