@@ -154,7 +154,7 @@ class ExecOp(ElementMaster):
             self.custom_editor_cmd.setText(cmd)
         else:
             self.custom_editor_cmd.setPlaceholderText('gnome-terminal --wait -e "vim $FILENAME"')
-
+            #D:\"Program Files (x86)"\Notepad++\notepad++.exe $FILENAME
         if custom_edit_state:
             self.code_input.setEnabled(False)
             self.custom_editor_cmd.setEnabled(True)
@@ -166,7 +166,7 @@ class ExecOp(ElementMaster):
         
     def openCustomEditor(self, cmd, code_input):
         logging.debug('ExecOp::openCustomEditor() called')
-        filename = '{}_{}_{}'.format(self.row, alphabet[self.column], int(random.random() * 1e7))
+        filename = '{}_{}_{}.py'.format(self.row, alphabet[self.column], int(random.random() * 1e7))
         filename = os.path.join(tempfile.gettempdir(), filename)
         logging.debug('ExecOp::openCustomEditor() filename: {}'.format(filename))
 
