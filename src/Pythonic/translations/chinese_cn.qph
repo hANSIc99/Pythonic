@@ -776,4 +776,32 @@
     <source>Outputs a single value or an array.</source>
     <target>输出单个值或数组。</target>
 </phrase>
+<phrase>
+    <source>Use custom editor?</source>
+    <target>使用自定义编辑器？</target>
+</phrase>
+<phrase>
+    <source>Use keyword $FILENAME to specify the code file.</source>
+    <target>使用关键字 $FILENAME 指定代码文件。</target>
+</phrase>
+<phrase>
+    <source>Re-open to activate settings.</source>
+    <target>重新打开以激活设置。</target>
+</phrase>
+<phrase>
+    <source>Enter your Python 3 code below:</source>
+    <target>在下面输入您的Python 3代码：</target>
+</phrase>
+<phrase>
+    <source>Process your own Python 3 code.</source>
+    <target>处理您自己的Python 3代码。</target>
+</phrase>
+<phrase>
+    <source>Edit Basic Operation</source>
+    <target>编辑基本操作</target>
+</phrase>
+<phrase>
+    <source> - Last saved: </source>
+    <target> - 上次保存：</target>
+</phrase>
 </QPH>
