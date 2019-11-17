@@ -48,7 +48,6 @@ class topMenuBar(QMenuBar):
 
         self.langMenu.triggered.connect(self.switchLanguage)
         self.close_action.triggered.connect(self.closeEvent)
-        #self.settings_action.triggered.connect(self.settingsEvent)
 
         self.langGroup = QActionGroup(self.langMenu)
 
@@ -63,7 +62,7 @@ class topMenuBar(QMenuBar):
                 logging.debug('file found: {}'.format(file))
                 logging.debug('with locale {}'.format(file[-5:-3]))
                 
-                icon_string =  'translations/' + file[-5:-3] + '.png'
+                icon_string = os.path.join(mod_path, file[-5:-3] + '.png')
                 logging.debug('Translation Language: {}'.format(QC.translate('', 'Save')))
                 logging.debug('current Language: {}'.format(icon_string))
                 lang_icon = QIcon(icon_string)

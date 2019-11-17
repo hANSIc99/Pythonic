@@ -17,7 +17,7 @@ class ExecOp(ElementMaster):
         self.row = row
         self.column = column
         # log_state, code_input, custom_edit_state, cmd
-        self.config = (False, None, True, None)
+        self.config = (False, None, False, None)
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('ExecOp called at row {}, column {}'.format(row, column))
@@ -72,6 +72,7 @@ class ExecOp(ElementMaster):
         self.op_image.setPixmap(QPixmap(os.path.join(mod_path, self.pixmap_path)))
 
         self.code_input = QTextEdit()
+        self.code_input.setMinimumHeight(250)
 
         # hier logging option einfügen
         self.log_line = QWidget()
@@ -114,6 +115,7 @@ class ExecOp(ElementMaster):
         self.confirm_button.clicked.connect(self.op_edit.closeEvent)
         self.op_edit.window_closed.connect(self.edit_done)
 
+        self.op_edit.setMinimumHeight(650)
         self.op_edit.show()
 
     def toggle_custom_editor(self, event):
