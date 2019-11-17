@@ -732,4 +732,20 @@
     <source>Outputs a single value or an array.</source>
     <target>Gibt einen einzelnen Wert oder ein Array aus.</target>
 </phrase>
+<phrase>
+    <source>Use custom editor?</source>
+    <target>Benutzerdefinierter Editor?</target>
+</phrase>
+<phrase>
+    <source>Use keyword $FILENAME to specify the code file.</source>
+    <target>Verwende $FILENAME als Parameter für Eingabedatei.</target>
+</phrase>
+<phrase>
+    <source>Re-open to activate settings.</source>
+    <target>Neu öffnen um Einstellungen zu aktivieren.</target>
+</phrase>
+<phrase>
+    <source> - Last saved: </source>
+    <target> - Zuletzt gespeichert: </target>
+</phrase>
 </QPH>

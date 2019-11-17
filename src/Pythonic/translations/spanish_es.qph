@@ -764,4 +764,24 @@
     <source>Choose train / evalutaion ratio:</source>
     <target>Elija la relación tren / valoración:</target>
 </phrase>
+<phrase>
+    <source>Use custom editor?</source>
+    <target>¿Usar editor personalizado?</target>
+</phrase>
+<phrase>
+    <source>Use keyword $FILENAME to specify the code file.</source>
+    <target>Use la palabra clave $FILENAME para especificar el archivo de código.</target>
+</phrase>
+<phrase>
+    <source>Re-open to activate settings.</source>
+    <target>Vuelva a abrir para activar la configuración.</target>
+</phrase>
+<phrase>
+    <source>Yes</source>
+    <target>Si</target>
+</phrase>
+<phrase>
+    <source> - Last saved: </source>
+    <target> - Última guardado: </target>
+</phrase>
 </QPH>

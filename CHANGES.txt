@@ -1,6 +1,8 @@
 0.15
 
     Save/load file affects now all grids
+    Use of custom editor in Basic Operation now possible
+    PythonicDaemon improved
 
 0.14
 
