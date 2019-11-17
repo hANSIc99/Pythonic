@@ -7,7 +7,8 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter, QScreen, QFont)
 from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
 from os.path import join
-import sys, logging, datetime, os, Pythonic
+from zipfile import ZipFile
+import sys, logging, datetime, os, Pythonic, pickle
 import multiprocessing as mp
 from Pythonic.workingarea               import WorkingArea
 from Pythonic.menubar                   import MenuBar
@@ -29,6 +30,8 @@ class MainWindow(QWidget):
     log_level = logging.INFO
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
+
+    number_of_grids = 5
 
 
     def __init__(self, app):
@@ -103,7 +106,7 @@ class MainWindow(QWidget):
         self.grd_ops_arr    = []
         self.working_tabs = QTabWidget()
         self.working_tabs.setMinimumSize(300, 300)
-        for i in range(5):
+        for i in range(self.number_of_grids):
 
             self.wrk_area_arr.append(WorkingArea())
             self.wrk_tabs_arr.append(QScrollArea())
@@ -143,8 +146,6 @@ class MainWindow(QWidget):
         self.toolbox_tab.addTab(self.toolbox_ml, QC.translate('', 'Machine Learning'))
 
         # signals and slots
-        #self.menubar.save_file.connect(self.working_area.saveGrid)
-        #self.menubar.load_file.connect(self.working_area.loadGrid)
         self.menubar.set_info_text.connect(self.setInfoText)
         self.menubar.start_debug.connect(self.startDebug)
         self.menubar.start_exec.connect(self.startExec)
@@ -173,7 +174,7 @@ class MainWindow(QWidget):
         self.menubar.save_file.connect(self.saveGrid)
         self.menubar.clear_grid.connect(self.setupDefault)
 
-        for i in range(5):
+        for i in range(self.number_of_grids):
             
             self.toolbox_binance.reg_tool.connect(self.wrk_area_arr[i].regType)
             self.toolbox_connectivity.reg_tool.connect(self.wrk_area_arr[i].regType)
@@ -279,14 +280,37 @@ class MainWindow(QWidget):
     def loadGrid(self, filename):
 
         logging.debug('MainWindow::loadGrid() called')
-        self.wrk_area_arr[self.wrk_tab_index].loadGrid(filename)
+        grid_data_list = []
+        try:
+            with ZipFile(filename, 'r') as archive:
+                for zipped_grid in archive.namelist():
+                    pickled_grid = archive.read(zipped_grid)
+                    element_list = pickle.loads(pickled_grid)
+                    # first char repesents the grid number
+                    self.wrk_area_arr[int(zipped_grid[0])].loadGrid(pickle.loads(pickled_grid))
+            archive.close()
+
+        except Exception as e:
+            err_msg = QMessageBox()
+            err_msg.setIcon(QMessageBox.Critical)
+            err_msg.setWindowTitle(QC.translate('', 'File Error'))
+            err_msg.setText(QC.translate('', 'File can\'t be read'))
+            err_msg.setAttribute(Qt.WA_DeleteOnClose)
+            err_msg.exec()
+
 
     def saveGrid(self, filename):
 
         logging.debug('MainWindow::saveGrid() called')
-        self.wrk_area_arr[self.wrk_tab_index].saveGrid(filename)
-        #BAUSTELLE
-        self.wrk_area_arr[self.wrk_tab_index].saveGridWorker(filename)
+
+        with ZipFile(filename, 'w') as save_file:
+
+            for i in range(self.number_of_grids):
+                tmp_file = (self.wrk_area_arr[i].saveGrid())
+
+                save_file.writestr('{}_grid'.format(str(i)), tmp_file)
+
+        save_file.close()
 
     def setupDefault(self):
 
@@ -344,7 +368,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.14'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.15'))
 
     def showInfo(self, event):
 
@@ -379,6 +403,7 @@ class MainWindow(QWidget):
     def closeEvent(self, event):
         logging.debug('closeEvent() called')
         messageBox = QMessageBox()
+        messageBox.setAttribute(Qt.WA_DeleteOnClose)
         messageBox.setIcon(QMessageBox.Warning)
         messageBox.setWindowTitle(QC.translate('', 'Close?'))
         messageBox.setText(QC.translate('', 'Warning: Execution of all tasks will be stopped!'))

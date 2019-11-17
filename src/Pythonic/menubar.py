@@ -11,6 +11,7 @@ from PyQt5.QtGui import (QDrag, QPixmap, QPainter,QColor,
                         QScreen)
 from PyQt5.QtCore import QCoreApplication as QC
 from pathlib import Path
+from datetime import datetime
 import logging, os, Pythonic
 import multiprocessing as mp
 from os.path import join
@@ -33,7 +34,7 @@ class RunButton(QLabel):
 
     def leaveEvent(self, event):
         self.setStyleSheet('background-color: transparent')
-        self.runHover.emit('')
+        self.runHover.emit(None)
 
 class StartDebugButton(QLabel):
 
@@ -54,7 +55,7 @@ class StartDebugButton(QLabel):
 
     def leaveEvent(self, event):
         self.setStyleSheet('background-color: transparent')
-        self.startDebugHover.emit('')
+        self.startDebugHover.emit(None)
 
 class StopExecButton(QLabel):
 
@@ -74,7 +75,7 @@ class StopExecButton(QLabel):
 
     def leaveEvent(self, event):
         self.setStyleSheet('background-color: transparent')
-        self.stopExecHover.emit('')
+        self.stopExecHover.emit(None)
 
 class KillProcButton(QLabel):
 
@@ -94,7 +95,7 @@ class KillProcButton(QLabel):
 
     def leaveEvent(self, event):
         self.setStyleSheet('background-color: transparent')
-        self.killProcHover.emit('')
+        self.killProcHover.emit(None)
 
 class SaveAsButton(QLabel):
 
@@ -114,7 +115,7 @@ class SaveAsButton(QLabel):
 
     def leaveEvent(self, event):
         self.setStyleSheet('background-color: transparent')
-        self.saveAsHover.emit('')
+        self.saveAsHover.emit(None)
 
 class SaveButton(QLabel):
 
@@ -134,7 +135,7 @@ class SaveButton(QLabel):
 
     def leaveEvent(self, event):
         self.setStyleSheet('background-color: transparent')
-        self.saveHover.emit('')
+        self.saveHover.emit(None)
 
 
 class OpenFile(QLabel):
@@ -155,7 +156,7 @@ class OpenFile(QLabel):
 
     def leaveEvent(self, event):
         self.setStyleSheet('background-color: transparent')
-        self.openHover.emit('')
+        self.openHover.emit(None)
 
 class NewFile(QLabel):
 
@@ -175,7 +176,7 @@ class NewFile(QLabel):
 
     def leaveEvent(self, event):
         self.setStyleSheet('background-color: transparent')
-        self.newHover.emit('')
+        self.newHover.emit(None)
 
 
 class MenuBar(QWidget):
@@ -187,7 +188,6 @@ class MenuBar(QWidget):
     set_info_text = pyqtSignal(str, name='set_info_text_from_button')
 
     saveHover = pyqtSignal(str, name='save_hover')
-    loadHover = pyqtSignal(str, name='load_hover')
 
     start_debug = pyqtSignal(name='start_debug')
     start_exec = pyqtSignal(name='start_exec')
@@ -200,6 +200,7 @@ class MenuBar(QWidget):
         super().__init__()
 
         self.filename = None
+        self.last_saved = QC.translate('', 'Not yet')
 
         self.icon_bar = QWidget()
         self.icon_bar.setStyleSheet('background-color: silver')
@@ -255,8 +256,8 @@ class MenuBar(QWidget):
 
         self.iconBox.addWidget(self.new_file_button)
         self.iconBox.addWidget(self.open_file_button)
-        self.iconBox.addWidget(self.save_as_button)
         self.iconBox.addWidget(self.save_button)
+        self.iconBox.addWidget(self.save_as_button)
         self.iconBox.addWidget(self.start_debug_button)
         self.iconBox.addWidget(self.run_button)
         self.iconBox.addWidget(self.stop_exec_button)
@@ -274,6 +275,10 @@ class MenuBar(QWidget):
                 self.home_dict,"All Files (*);;Pythonic Files (*.pyc)", options=options)
         if fileName:
             logging.debug('MenuBar::openFileNameDialog() called with filename: {}'.format(fileName))
+            self.filename = fileName
+            self.last_saved = QC.translate('', 'Not yet')
+            self.home_dict = os.path.dirname(self.filename)
+            self.setInfoText(None)
             self.load_file.emit(fileName)
 
     def saveFileDialog(self, event):    
@@ -284,12 +289,17 @@ class MenuBar(QWidget):
         if fileName:
             logging.debug('MenuBar::saveFileDialog() called with filename: {}'.format(fileName))
             self.filename = fileName
+            self.last_saved = datetime.now().strftime('%H:%M:%S')
+            self.home_dict = os.path.dirname(self.filename)
+            self.setInfoText(None)
             self.save_file.emit(fileName)
 
     def simpleSave(self, event):
 
         if self.filename:
             logging.debug('MenuBar::simpleSave() grid can be saved in {}'.format(self.filename))
+            self.last_saved = datetime.now().strftime('%H:%M:%S')
+            self.setInfoText(None)
             self.save_file.emit(self.filename)
         else:
             logging.debug('MenuBar::simpleSave() no former filename found')
@@ -312,8 +322,13 @@ class MenuBar(QWidget):
 
     def setInfoText(self, text):
         logging.debug('MenuBar::setInfoText() called MenuBar')
-        logging.debug('MenuBar::setInfoText() text: {}'.format(text))
-        self.set_info_text.emit(text)
+        if text:
+            logging.debug('MenuBar::setInfoText() text: {}'.format(text))
+            self.set_info_text.emit(text)
+        elif self.filename:
+            self.set_info_text.emit(self.filename + QC.translate('', ' - Last saved: ') + self.last_saved)
+        else:
+            self.set_info_text.emit('')
 
     def startDebug(self, event):
         logging.debug('MenuBar::startDebug() called MenuBar')

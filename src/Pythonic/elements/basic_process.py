@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import  QPainter, QColor
 from PyQt5.QtWidgets import (QVBoxLayout, QLabel, QTextEdit, QWidget,
         QComboBox, QCheckBox, QGridLayout, QSpacerItem, QLineEdit, QPushButton)
@@ -28,14 +28,14 @@ class ExecProcess(ElementMaster):
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called ExecBranch')
-        self.row, self.column = state
+        self.row, self.column, self.config = state
         super().__init__(self.row, self.column, self.pixmap_path, True, None)
         super().edit_sig.connect(self.edit)
         self.addFunction(ProcessFunction)
 
     def __getstate__(self):
         logging.debug('__getstate__() called ExecBranch')
-        return (self.row, self.column)
+        return (self.row, self.column, self.config)
 
 
     def edit(self):
