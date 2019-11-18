@@ -1,18 +1,11 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout,
-        QSizePolicy, QStyleOption, QStyle, QPushButton, QTextEdit, QMainWindow)
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont, QDrag, QColor
-from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QRect, QMimeData
-from PyQt5.QtCore import QCoreApplication as QC
-from time import sleep
-import logging, sys, traceback, os, Pythonic
+from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtGui import QPixmap, QDrag
+from PyQt5.QtCore import Qt, pyqtSignal, QMimeData
+import logging, os, Pythonic
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.element_iconbar import IconBar
-from Pythonic.record_function import Function
+from Pythonic.record_function import Function, alphabet
 
-
-alphabet = { 0 : 'A', 1 : 'B', 2 : 'C', 3 : 'D', 4 : 'E', 5 : 'F', 6 : 'G', 7 : 'H', 8 : 'J',
-        9 : 'K', 10 : 'L', 11 : 'M', 12 : 'N', 13 : 'O', 14 : 'P', 15 : 'Q', 16 : 'R', 17 : 'S',
-        18 : 'T', 19 : 'U', 20 : 'V', 21 : 'W', 22 : 'X', 23 : 'Y', 24 : 'Z'}
 
 class ElementMaster(QWidget):
 

@@ -19,7 +19,6 @@ from Pythonic.binancetools              import BinanceTools
 from Pythonic.connectivitytools         import ConnectivityTools
 from Pythonic.mltools                   import MLTools
 from Pythonic.mastertool                import MasterTool
-from Pythonic.elementmaster             import alphabet
 from Pythonic.settings                  import Settings
 from Pythonic.info                      import InfoWindow
 from Pythonic.storagebar                import StorageBar

@@ -1,12 +1,12 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
 from PyQt5.QtGui import  QIntValidator
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QWidget, QComboBox, QCheckBox, QStackedWidget
 from PyQt5.QtCore import QCoreApplication as QC
 from time import sleep
 import os.path, datetime, logging
 import pandas as pd
 from Pythonic.record_function import Record, Function
-from Pythonic.elementmaster import ElementMaster, alphabet
+from Pythonic.elementmaster import ElementMaster
 from Pythonic.elementeditor import ElementEditor
 
 ohlc_steps = { '1m' : 1, '3m' : 3, '5m' : 5, '15m' : 15, '30m' : 30, '1h' : 60, '2h' : 120, '4h' : 240, '6h' : 360,

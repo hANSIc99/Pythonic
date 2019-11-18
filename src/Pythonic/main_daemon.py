@@ -1,12 +1,9 @@
-import sys, signal, logging, pickle, datetime, os, time
+import sys, logging, pickle, datetime, os, time
 import multiprocessing as mp
 from pathlib import Path
 from zipfile import ZipFile
-from Pythonic.workingarea               import WorkingArea
-from PyQt5.QtCore import QCoreApplication, QObject, QTimer, QThread, QSocketNotifier
-from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
-from PyQt5.QtCore import Qt, pyqtSignal
-import fileinput
+from PyQt5.QtCore import QCoreApplication, QObject, QThread
+from PyQt5.QtCore import pyqtSignal
 
 from Pythonic.executor_daemon import GridOperator
 

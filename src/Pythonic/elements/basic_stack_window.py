@@ -1,15 +1,11 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy,
-        QStyleOption, QStyle, QPushButton, QTextEdit, QListWidgetItem, QListWidget,
-        QSizePolicy)
+from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QPushButton, QListWidgetItem, QListWidget
 from PyQt5.QtGui import QFont, QColor, QBrush
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QPoint, QRect
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtCore import QCoreApplication as QC
-from PyQt5.QtCore import QThread
-import multiprocessing as mp
-import logging, sys, time, traceback, pickle
+import logging, pickle
 from time import localtime, strftime
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.elementmaster import alphabet
+from Pythonic.record_function import alphabet
 
 class StackItem(QListWidgetItem):
 
