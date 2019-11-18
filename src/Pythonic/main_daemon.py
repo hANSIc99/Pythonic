@@ -1,5 +1,7 @@
-import sys, logging, pickle, datetime, os, time
+import sys, logging, pickle, datetime, os, time, itertools, tty, termios
 import multiprocessing as mp
+import keyboard
+from threading import Timer
 from pathlib import Path
 from zipfile import ZipFile
 from PyQt5.QtCore import QCoreApplication, QObject, QThread
@@ -11,16 +13,41 @@ class stdinReader(QThread):
 
     kill_all    = pyqtSignal(name='kill_all')
     print_procs = pyqtSignal(name='print_procs')
+    b_init      = True
+    interval    = 0.5
+    spinner = itertools.cycle(['-', '/', '|', '\\'])
 
     def run(self):
 
-        spinner = self.spinning_cursor()
-        while True:
-            """ ToDo: non-blocking IO
+        self.timer = Timer(self.interval, self.callback)
+        self.timer.start()
+        fd = sys.stdin.fileno() 
+        old_settings = termios.tcgetattr(fd) 
+        try: 
+            tty.setraw(sys.stdin.fileno()) 
+            cmd = sys.stdin.read(1) 
+        finally: 
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+        if cmd == ('q' or 'Q'):
+            print('Stopping all processes....')
+            self.timer.cancel()
+            termios.tcflush(fd, termios.TCIOFLUSH)
+            self.kill_all.emit()
+            time.sleep(3) # wait for 3 seconds to kill all processes
+            QCoreApplication.quit()
+            sys.exit()
+
+        else:
+            sys.stdout.write('\b')
+        #while True:
+            """
+            ToDo: non-blocking IO
             sys.stdout.write(next(spinner))
             sys.stdout.flush()
             time.sleep(0.1)
             sys.stdout.write('\b')
+            """
             """
             cmd = sys.stdin.read(1) # reads one byte at a time
             if cmd == ('q' or 'Q'):
@@ -31,6 +58,13 @@ class stdinReader(QThread):
                 sys.exit()
             elif cmd == ('s' or 'S'):
                 self.print_procs.emit()
+            """
+
+    def callback(self):
+        sys.stdout.write('Running... ' + next(self.spinner))
+        sys.stdout.flush()
+        sys.stdout.write('\b\b\b\b\b\b\b\b\b\b\b\b')
+        self.run()
 
     def spinning_cursor(self):
         while True:
