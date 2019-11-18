@@ -1,13 +1,10 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QStyleOption, QStyle,
-                                QPushButton, QTextEdit, QMainWindow)
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QPoint, QRect
+from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTextEdit
+from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtCore import QCoreApplication as QC
-from PyQt5.QtCore import QThread
-import multiprocessing as mp
-import logging, sys, time, traceback
+import logging
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.elementmaster import alphabet
+from Pythonic.record_function import alphabet
 
 
 class ExceptWindow(QWidget):

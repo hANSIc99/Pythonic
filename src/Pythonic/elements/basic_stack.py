@@ -1,12 +1,11 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
+from PyQt5.QtCore import pyqtSignal, QVariant
 from PyQt5.QtGui import  QIntValidator
-from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QFileDialog, QPushButton, QStackedWidget, QLineEdit)
+from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QWidget, QComboBox,
+        QCheckBox, QFileDialog, QPushButton, QLineEdit)
 from PyQt5.QtCore import QCoreApplication as QC
 import logging, pickle, os
-from time import sleep
-from datetime import datetime
-from Pythonic.elementmaster import ElementMaster, alphabet
-from Pythonic.record_function import Record, Function
+from Pythonic.elementmaster import ElementMaster
+from Pythonic.record_function import Record, Function, alphabet
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.elements.basic_stack_window import StackWindow
 
