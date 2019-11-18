@@ -1,16 +1,11 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QStyleOption, QStyle,
-                                QPushButton, QTextEdit, QMainWindow, QApplication)
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QPoint, QRect
-from PyQt5.QtCore import QCoreApplication as QC
-from PyQt5.QtCore import QThread, QRunnable, QObject, QThreadPool
-from time import sleep
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import QRunnable, QObject, QThreadPool
 import multiprocessing as mp
 import logging, sys, time, traceback, os, signal
 from datetime import datetime
 from Pythonic.record_function import Record
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.elementmaster import alphabet
+from Pythonic.record_function import alphabet
 from Pythonic.exceptwindow import ExceptWindow
 from Pythonic.debugwindow import DebugWindow
 from Pythonic.elements.basic_stack import ExecStack

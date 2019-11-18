@@ -4,9 +4,9 @@ from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidge
 from PyQt5.QtCore import QCoreApplication as QC
 from PyQt5.QtCore import QProcess
 import logging, os, tempfile, random, subprocess, Pythonic, time
-from Pythonic.elementmaster import ElementMaster, alphabet
+from Pythonic.elementmaster import ElementMaster
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.record_function import Record, Function
+from Pythonic.record_function import Record, Function, alphabet
 
 class ExecOp(ElementMaster):
 

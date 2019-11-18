@@ -1,15 +1,15 @@
 from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant, QRegExp
 from PyQt5.QtGui import  QIntValidator, QRegExpValidator
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
+from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel,
+        QWidget, QComboBox, QCheckBox)
 from PyQt5.QtCore import QCoreApplication as QC
-import logging, os.path
+import logging
 from time import sleep
 from itertools import cycle
 from datetime import datetime, date, time, timedelta
-from enum import Enum
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import Record, Function
-from Pythonic.elementmaster import ElementMaster, alphabet
+from Pythonic.elementmaster import ElementMaster
 
 
 class ExecSched(ElementMaster):

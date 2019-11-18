@@ -1,21 +1,29 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QStyleOption, QStyle,
-                                QPushButton, QTextEdit, QMainWindow, QApplication)
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QPoint, QRect
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QCoreApplication as QC
-from PyQt5.QtCore import QThread, QRunnable, QObject, QThreadPool
-from time import sleep
+from PyQt5.QtCore import QRunnable, QObject, QThreadPool
 import multiprocessing as mp
-import logging, sys, time, traceback, os, signal
+import logging, sys, time, os, signal
 from datetime import datetime
-from Pythonic.record_function import Record
-from Pythonic.elementeditor import ElementEditor
-from Pythonic.elementmaster import alphabet
-from Pythonic.exceptwindow import ExceptWindow
-from Pythonic.debugwindow import DebugWindow
-from Pythonic.elements.basic_stack import ExecStack
-from Pythonic.elements.basic_sched import BasicScheduler
-from Pythonic.elements.basicelements import ExecRBFunction, ExecRFunction
+from Pythonic.record_function import Record, Function, alphabet
+
+# additional declaration: already defined in elements/basicelements
+class ExecRBFunction(Function):
+
+    def __init__(self, config, b_debug, row, column):
+        super().__init__(config, b_debug, row, column)
+
+    def execute(self, record):
+        result = Record(self.getPos(), (self.row +1, self.column), record)
+        return result
+
+class ExecRFunction(Function):
+
+    def __init__(self, config, b_debug, row, column):
+        super().__init__(config, b_debug, row, column)
+
+    def execute(self, record):
+        result = Record(self.getPos(), (self.row, self.column+1), record)
+        return result
 
 class WorkerSignals(QObject):
 
