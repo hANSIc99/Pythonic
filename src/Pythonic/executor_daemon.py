@@ -162,7 +162,7 @@ class GridOperator(QObject):
 
             if not self_sync:
                 new_rec = self.fastPath(prg_return.target_1, prg_return.record_1)
-                logging.debug('GridOperator::goNext() execption here')
+                logging.debug('GridOperator::goNext() exception here')
                 logging.debug('GridOperator::goNext() new_rec: {}'.format(new_rec))
                 self.goNext(new_rec)
             else:
@@ -177,14 +177,15 @@ class GridOperator(QObject):
         function, self_sync = self.grid[row][col] 
         logging.debug('GridOperator::fastPath() function: {}'.format(function))
         logging.debug('GridOperator::fastPath() isinstance ExecRB: {}'.format(isinstance(function, ExecRBFunction)))
+        logging.debug('GridOperator::fastPath() isinstance ExecRB#####: {} '.format(str(type(function))))
         logging.debug('GridOperator::fastPath() isinstance ExecR: {}'.format(isinstance(function, ExecRFunction)))
 
-        if isinstance(function, ExecRBFunction): # jump to the next target
+        if str(type(function)) == "<class 'Pythonic.elements.basicelements.ExecRBFunction'>": # jump to the next target
             # record_1 -> record_0 when goNext() is called recursively
             # returning only target_0 and record_0
             new_rec = Record((row, col-1), (row+1, col), record)
             return new_rec
-        elif isinstance(function, ExecRFunction): # jump to the next target
+        elif str(type(function)) == "<class 'Pythonic.elements.basicelements.ExecRFunction'>": # jump to the next target
             #hier testen ob target fings
             # record_1 -> record_0 when goNext() is called recursively
             # returning only target_0 and record_0
@@ -207,8 +208,11 @@ class GridOperator(QObject):
         logging.debug('kill_proc() called')
 
         for proc in self.pid_register:
-            os.kill(proc, signal.SIGTERM)
-            logging.info('Process killed, PID {}'.format(proc))
+            try:
+                os.kill(proc, signal.SIGTERM)
+                logging.info('Process killed, PID {}'.format(proc))
+            except Exception as e:
+                pass
 
         self.pid_register.clear()
 
@@ -271,12 +275,14 @@ def target_0(function, record, feed_pipe):
         feed_pipe.send(ret)
 
     except Exception as e:
+        """
         print('Exception in target_0(): %s' % sys.exc_info()[0])
         print('Exception in target_0(): %s' % sys.exc_info()[1])
         print('Exception in target_0(): %s' % sys.exc_info()[2])
         print('Exception as e: %s' % e)
         except_type, except_class, tb = sys.exc_info()
         print(type(e))
+        """
         #print(issubclass(e.__class__, BaseException))
         #feed_pipe.send((except_type, except_class, traceback.extract_tb(tb)))
         #feed_pipe.send((e, traceback.format_exc()))
