@@ -1,64 +1,51 @@
 import sys, logging, pickle, datetime, os, time, itertools, tty, termios
 import multiprocessing as mp
-import keyboard
 from threading import Timer
 from pathlib import Path
 from zipfile import ZipFile
-from PyQt5.QtCore import QCoreApplication, QObject, QThread
+from PyQt5.QtCore import QCoreApplication, QObject, QThread, Qt
 from PyQt5.QtCore import pyqtSignal
 
 from Pythonic.executor_daemon import GridOperator
 
 class stdinReader(QThread):
 
-    kill_all    = pyqtSignal(name='kill_all')
     print_procs = pyqtSignal(name='print_procs')
+    quit_app = pyqtSignal(name='quit_app')
     b_init      = True
     interval    = 0.5
     spinner = itertools.cycle(['-', '/', '|', '\\'])
 
+    def __init__(self):
+        super().__init__()
+
     def run(self):
+
+        if self.b_init:
+            self.b_init = False
+            self.fd = sys.stdin.fileno() 
+            self.old_settings = termios.tcgetattr(self.fd) 
+            tty.setraw(sys.stdin.fileno()) 
+
 
         self.timer = Timer(self.interval, self.callback)
         self.timer.start()
-        fd = sys.stdin.fileno() 
-        old_settings = termios.tcgetattr(fd) 
-        try: 
-            tty.setraw(sys.stdin.fileno()) 
-            cmd = sys.stdin.read(1) 
-        finally: 
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+        cmd = sys.stdin.read(1) 
 
         if cmd == ('q' or 'Q'):
-            print('Stopping all processes....')
-            self.timer.cancel()
-            termios.tcflush(fd, termios.TCIOFLUSH)
-            self.kill_all.emit()
-            time.sleep(3) # wait for 3 seconds to kill all processes
-            QCoreApplication.quit()
-            sys.exit()
+            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+            termios.tcflush(self.fd, termios.TCIOFLUSH)
 
+            self.timer.cancel()
+            self.quit_app.emit()
+
+        elif cmd == ('s' or 'S'):
+            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+            self.print_procs.emit()
+            tty.setraw(sys.stdin.fileno()) 
         else:
             sys.stdout.write('\b')
-        #while True:
-            """
-            ToDo: non-blocking IO
-            sys.stdout.write(next(spinner))
-            sys.stdout.flush()
-            time.sleep(0.1)
-            sys.stdout.write('\b')
-            """
-            """
-            cmd = sys.stdin.read(1) # reads one byte at a time
-            if cmd == ('q' or 'Q'):
-                print('Stopping all processes....')
-                self.kill_all.emit()
-                time.sleep(3) # wait for 3 seconds to kill all processes
-                QCoreApplication.quit()
-                sys.exit()
-            elif cmd == ('s' or 'S'):
-                self.print_procs.emit()
-            """
 
     def callback(self):
         sys.stdout.write('Running... ' + next(self.spinner))
@@ -73,6 +60,7 @@ class stdinReader(QThread):
 
 class MainWorker(QObject):
 
+    kill_all    = pyqtSignal(name='kill_all')
     log_level = logging.INFO
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
             datefmt='%H:%M:%S')
@@ -98,7 +86,10 @@ class MainWorker(QObject):
         mp.set_start_method('spawn')
         self.stdinReader = stdinReader()
         self.stdinReader.print_procs.connect(self.printProcessList)
+        self.stdinReader.quit_app.connect(self.exitApp)
         self.grd_ops_arr    = []
+        self.fd = sys.stdin.fileno()
+        self.orig_tty_settings = termios.tcgetattr(self.fd) 
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
@@ -120,6 +111,13 @@ class MainWorker(QObject):
 
         logging.debug('MainWorker::__init__() called')
 
+    def exitApp(self):
+        print('Stopping all processes....')
+        self.kill_all.emit()
+        time.sleep(1) # wait for 1 seconds to kill all processes
+        sys.exit()
+
+
     def ensure_file_path(self, file_path):
 
         directory = os.path.dirname(file_path)
@@ -129,6 +127,7 @@ class MainWorker(QObject):
 
     def printProcessList(self):
         b_proc_found = False
+        termios.tcsetattr(self.fd, termios.TCSADRAIN, self.orig_tty_settings)
         for i in range(self.max_grid_cnt):
             if self.grd_ops_arr[i].pid_register:
                 for pid in self.grd_ops_arr[i].pid_register:
@@ -138,6 +137,7 @@ class MainWorker(QObject):
             print('Currently no processes running')
 
         print('\n')
+        tty.setraw(sys.stdin.fileno()) 
 
     def update_logfile(self):
 
@@ -156,12 +156,10 @@ class MainWorker(QObject):
             self.logger.addHandler(file_handler)
             self.log_date = datetime.datetime.now()
 
-    def trigger(self):
-        print('#####################')
-
     def start(self, args):
 
-        print('\n Arguments: {}'.format(args))
+        #print('\n Arguments: {}'.format(args))
+        print('\n')
         print(self.welcome_msg)
 
         # first argument is main_console.py
@@ -181,6 +179,7 @@ class MainWorker(QObject):
         print(self.input_info_msg)
         print(self.status_info_msg)
         self.loadGrid(grid_file)
+
         self.stdinReader.start()
 
     def loadGrid(self, filename):
@@ -196,7 +195,6 @@ class MainWorker(QObject):
                 pickled_grid = archive.read(zipped_grid)
                 element_list = pickle.loads(pickled_grid)
                 # first char repesents the grid number
-                #self.wrk_area_arr[int(zipped_grid[0])].loadGrid(pickle.loads(pickled_grid))
                 for element in element_list:
                     # Element description: (pos, function, config, log,  self_sync)
                     pos, element_type, function, config, self_sync = element
@@ -206,7 +204,7 @@ class MainWorker(QObject):
 
                 self.grd_ops_arr.append(GridOperator(grid[i]))
                 self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
-                self.stdinReader.kill_all.connect(self.grd_ops_arr[i].kill_proc)
+                self.kill_all.connect(self.grd_ops_arr[i].kill_proc)
                 self.grd_ops_arr[i].startExec((0,0))
 
 
