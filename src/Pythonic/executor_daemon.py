@@ -180,12 +180,12 @@ class GridOperator(QObject):
         logging.debug('GridOperator::fastPath() isinstance ExecRB#####: {} '.format(str(type(function))))
         logging.debug('GridOperator::fastPath() isinstance ExecR: {}'.format(isinstance(function, ExecRFunction)))
 
-        if str(type(function)) == "<class 'Pythonic.elements.basicelements.ExecRBFunction'>": # jump to the next target
+        if str(type(function)) == "<class 'Pythonic.elements.basicelements_func.ExecRBFunction'>": # jump to the next target
             # record_1 -> record_0 when goNext() is called recursively
             # returning only target_0 and record_0
             new_rec = Record((row, col-1), (row+1, col), record)
             return new_rec
-        elif str(type(function)) == "<class 'Pythonic.elements.basicelements.ExecRFunction'>": # jump to the next target
+        elif str(type(function)) == "<class 'Pythonic.elements.basicelements_func.ExecRFunction'>": # jump to the next target
             #hier testen ob target fings
             # record_1 -> record_0 when goNext() is called recursively
             # returning only target_0 and record_0
