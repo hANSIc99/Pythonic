@@ -1,17 +1,12 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, pyqtSlot, QVariant
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget, QFileDialog
+from PyQt5.QtCore import QVariant
+from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QWidget,
+                            QComboBox, QCheckBox, QFileDialog)
 from PyQt5.QtCore import QCoreApplication as QC
-from pythonic_binance.client import Client
-import pandas as pd
-import os.path, datetime, logging, requests, json, pickle
-from time import sleep
+import logging
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
+from Pythonic.elements.ml_svm_predict_func import MLSVM_PredictFunction
 from pathlib import Path
-from sys import getsizeof
-from sklearn import svm, preprocessing
-from sklearn.model_selection import train_test_split
 
 class MLSVM_Predict(ElementMaster):
 
@@ -208,57 +203,3 @@ class MLSVM_Predict(ElementMaster):
         self.config = scale_option, scale_mean, scale_std, predict_val, filename, log_state
         
         self.addFunction(MLSVM_PredictFunction)
-
-class MLSVM_PredictFunction(Function):
-
-    def __init(self, config, b_debug, row, column):
-
-        super().__init__(config, b_debug, row, column)
-        logging.debug('MLSVM_PredictFunction::__init__() called')
-
-    def execute(self, record):
-
-        scale_option, scale_mean, scale_std, predict_val, filename, log_state = self.config
-        b_open_succeeded = True
-
-        if filename:
-            try:
-                with open(filename, 'rb') as f:
-                    clf = pickle.load(f)
-            except Exception as e:
-                # not writeable?
-                log_txt = '{SVM Predict}            Error opening model'
-                record = None
-                b_open_succeeded = False
-        else:
-            b_open_succeeded = False
-            log_txt = '{SVM Predict}            No model file specified'
-
-        if b_open_succeeded:
-            if isinstance(record, (list, tuple, pd.DataFrame)):
-                # scaling option only here available
-                if not isinstance(record, pd.DataFrame):
-                    record = pd.DataFrame(record)
-
-                record = preprocessing.scale(record, with_mean=scale_mean, with_std=scale_std)
-                record = clf.predict(record)
-            elif record:
-                # when only one value is passed
-                predict_val = False
-                record = pd.DataFrame([record])
-                record = clf.predict([record])
-            else:
-                log_txt = '{SVM Predict}            No input specified'
-
-                
-            if predict_val:
-                # predict only last value
-                record = pd.DataFrame([record[-1]])
-                record = clf.predict(record)
-
-            log_txt = '{{SVM Predict}}            Predicted {} value'.format(len(record))
-
-        result = Record(self.getPos(), (self.row +1, self.column), record,
-                 log=log_state, log_txt=log_txt)
-        
-        return result
