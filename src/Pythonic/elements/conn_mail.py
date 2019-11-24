@@ -1,3 +1,4 @@
+from PyQt5.QtGui import  QIntValidator
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel,
         QTextEdit, QWidget, QComboBox, QCheckBox)
 from PyQt5.QtCore import QCoreApplication as QC
