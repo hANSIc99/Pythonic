@@ -30,9 +30,10 @@ class MLSVM(ElementMaster):
         gamma_value         = '1.0'
         filename            = None
         log_state           = False
+        rel_path            = False
 
         self.config = scale_option, scale_mean, scale_std, train_eval, decision_function, \
-                gamma_mode, gamma_value, filename, log_state
+                gamma_mode, gamma_value, filename, rel_path, log_state
 
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
@@ -64,7 +65,7 @@ class MLSVM(ElementMaster):
         data split train / eval
         """
         self.scale_option, self.scale_mean, self.scale_std, self.train_eval, self.decision_function, \
-                self.gamma_mode, self.gamma_value, self.filename, self.log_state = self.config
+                self.gamma_mode, self.gamma_value, self.filename, self.rel_path, self.log_state = self.config
 
         self.scale_label = QLabel()
         self.scale_label.setText(QC.translate('', 'Scale n_samples ?'))
@@ -133,11 +134,33 @@ class MLSVM(ElementMaster):
         self.conn_rest_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 
+                
         self.filename_text = QLabel()
         self.filename_text.setWordWrap(True)
-        
+
         self.file_button = QPushButton(QC.translate('', 'Select model output file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
+        
+        self.relative_file_check = QWidget()
+        self.relative_file_check_layout = QHBoxLayout(self.relative_file_check)
+
+        self.relative_file_label = QLabel()
+        self.relative_file_label.setText(QC.translate('', 'Filename relative to $HOME.'))
+        self.relative_file_checkbox = QCheckBox()
+        self.relative_file_check_layout.addWidget(self.relative_file_checkbox)
+        self.relative_file_check_layout.addWidget(self.relative_file_label)
+        self.relative_file_check_layout.addStretch(1)
+
+        self.relative_filepath_input = QLineEdit()
+        self.relative_filepath_input.setPlaceholderText('my_folder/my_file')
+
+        self.file_input = QWidget()
+        self.file_input_layout = QVBoxLayout(self.file_input)
+        self.file_input_layout.addWidget(self.filename_text)
+        self.file_input_layout.addWidget(self.file_button)
+        self.file_input_layout.addWidget(self.relative_file_check)
+        self.file_input_layout.addWidget(self.relative_filepath_input)
+
 
         
         """
@@ -169,6 +192,7 @@ class MLSVM(ElementMaster):
         self.ml_svm_edit.setMinimumHeight(600)
 
         # signals and slots
+        self.relative_file_checkbox.stateChanged.connect(self.toggleFileInput)
         self.gamma_list.currentIndexChanged.connect(self.gammaIndexChanged)
         self.scale_list.currentIndexChanged.connect(self.scaledIndexChanged)
         self.confirm_button.clicked.connect(self.ml_svm_edit.closeEvent)
@@ -188,8 +212,7 @@ class MLSVM(ElementMaster):
         self.conn_rest_layout.addWidget(self.gamma_label)
         self.conn_rest_layout.addWidget(self.gamma_list)
         self.conn_rest_layout.addWidget(self.gamma_input_line)
-        self.conn_rest_layout.addWidget(self.filename_text)
-        self.conn_rest_layout.addWidget(self.file_button)
+        self.conn_rest_layout.addWidget(self.file_input)
         self.conn_rest_layout.addStretch(1)
         self.conn_rest_layout.addWidget(self.help_text_2)
         self.conn_rest_layout.addWidget(self.help_text_3)
@@ -197,6 +220,20 @@ class MLSVM(ElementMaster):
         self.conn_rest_layout.addWidget(self.confirm_button)
         self.ml_svm_edit.setLayout(self.conn_rest_layout)
         self.ml_svm_edit.show()
+
+    def toggleFileInput(self, event):
+        logging.debug('MLSVM::toggleFileInput() called: {}'.format(event))
+        # 0 = FALSE, 2 = TRUE
+        if event: # TRUE
+            self.file_button.setDisabled(True)
+            self.relative_filepath_input.setDisabled(False)
+            self.filename_text.setText('')
+        else:
+            self.file_button.setDisabled(False)
+            self.relative_filepath_input.clear()
+            self.relative_filepath_input.setDisabled(True)
+            self.relative_filepath_input.setPlaceholderText('my_folder/my_file')
+
 
     def loadLastConfig(self):
 
@@ -212,8 +249,16 @@ class MLSVM(ElementMaster):
         self.scale_center_checkbox.setChecked(self.scale_mean)
         self.scale_std_checkbox.setChecked(self.scale_std)
         self.log_checkbox.setChecked(self.log_state)
-        if self.filename:
-            self.filename_text.setText(self.filename)
+        self.relative_file_checkbox.setChecked(self.rel_path)
+        
+        if self.rel_path:
+            self.toggleFileInput(2)
+            if self.filename:
+                self.relative_filepath_input.setText(self.filename)
+        else:
+            self.toggleFileInput(0)
+            if self.filename:
+                self.filename_text.setText(self.filename)
 
     def scaledIndexChanged(self, event):
 
@@ -260,8 +305,16 @@ class MLSVM(ElementMaster):
         gamma_value         = float(self.gamma_input.text())
         filename            = self.filename
         log_state           = self.log_checkbox.isChecked()
+        rel_path            = self.relative_file_checkbox.isChecked()
+        if rel_path:
+            filename        = self.relative_filepath_input.text()
+        else:
+            filename        = self.filename
+
+        if filename == '':
+            filename = None
 
         self.config = scale_option, scale_mean, scale_std, train_eval, decision_function, gamma_mode, \
-                gamma_value, filename, log_state
+                gamma_value, filename, rel_path, log_state
         
         self.addFunction(MLSVMFunction)
