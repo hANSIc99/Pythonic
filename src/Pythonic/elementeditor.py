@@ -8,7 +8,7 @@ class ElementEditor(QWidget):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.setMinimumSize(400, 300)
+        self.setMinimumSize(400, 500)
         self.setWindowFlags(Qt.Window)
         self.setWindowModality(Qt.WindowModal)
         self.setAttribute(Qt.WA_DeleteOnClose, True)

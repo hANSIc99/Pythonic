@@ -22,15 +22,16 @@ class ExecStack(ElementMaster):
 
         self.show_window = False
 
-        # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
+        # filename, rel_path, read_mode, write_mode, b_array_limits, n_array_limits, log_state
         filename = None
+        rel_path = False
         read_mode = 0
         write_mode = 0
         delete_read = False
         b_array_limits = False
         n_array_limits = None
         log_state = False
-        self.config = (filename, read_mode, write_mode, delete_read,
+        self.config = (filename, rel_path, read_mode, write_mode, delete_read,
                 b_array_limits, n_array_limits, log_state)
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
@@ -83,8 +84,8 @@ class ExecStack(ElementMaster):
     def edit(self):
         logging.debug('edit() called ExecStack')
 
-        # filename, read_mode, write_mode, array_limits, log_state
-        self.filename, self.read_mode, self.write_mode, self.delete_read, \
+        # filename, rel_path, read_mode, write_mode, array_limits, log_state
+        self.filename, self.rel_path, self.read_mode, self.write_mode, self.delete_read, \
                 self.b_array_limits, self.n_array_limits, log_state = self.config
 
         self.returnEditLayout = QVBoxLayout()
@@ -97,11 +98,30 @@ class ExecStack(ElementMaster):
 
         self.filename_text = QLabel()
         self.filename_text.setWordWrap(True)
-        if self.filename:
-            self.filename_text.setText(self.filename)
 
-        self.file_button = QPushButton(QC.translate('', 'Select file'))
+        self.file_button = QPushButton(QC.translate('', 'Select model output file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
+        
+        self.relative_file_check = QWidget()
+        self.relative_file_check_layout = QHBoxLayout(self.relative_file_check)
+
+        self.relative_file_label = QLabel()
+        self.relative_file_label.setText(QC.translate('', 'Filename relative to $HOME.'))
+        self.relative_file_checkbox = QCheckBox()
+        self.relative_file_check_layout.addWidget(self.relative_file_checkbox)
+        self.relative_file_check_layout.addWidget(self.relative_file_label)
+        self.relative_file_check_layout.addStretch(1)
+
+        self.relative_filepath_input = QLineEdit()
+        self.relative_filepath_input.setPlaceholderText('my_folder/my_file')
+
+        self.file_input = QWidget()
+        self.file_input_layout = QVBoxLayout(self.file_input)
+        self.file_input_layout.addWidget(self.filename_text)
+        self.file_input_layout.addWidget(self.file_button)
+        self.file_input_layout.addWidget(self.relative_file_check)
+        self.file_input_layout.addWidget(self.relative_filepath_input)
+
 
         self.writeInput()
         self.readOutput()
@@ -148,11 +168,14 @@ class ExecStack(ElementMaster):
 
         self.log_checkbox.setChecked(log_state)
 
+        #signals and slots
         self.confirm_button.clicked.connect(self.returnEdit.closeEvent)
         self.returnEdit.window_closed.connect(self.edit_done)
+        self.relative_file_checkbox.stateChanged.connect(self.toggleFileInput)
         self.returnEditLayout.addWidget(self.top_text)
-        self.returnEditLayout.addWidget(self.filename_text)
-        self.returnEditLayout.addWidget(self.file_button)
+        self.returnEditLayout.addWidget(self.file_input)
+        #self.returnEditLayout.addWidget(self.filename_text)
+        #self.returnEditLayout.addWidget(self.file_button)
         self.returnEditLayout.addWidget(self.mode_text)
         self.returnEditLayout.addWidget(self.write_input)
         self.returnEditLayout.addWidget(self.read_input)
@@ -168,6 +191,7 @@ class ExecStack(ElementMaster):
 
         self.select_read_mode.setCurrentIndex(self.read_mode)
         self.select_write_mode.setCurrentIndex(self.write_mode)
+        self.relative_file_checkbox.setChecked(self.rel_path)
 
         if self.b_array_limits:
             self.enableArrLimits()
@@ -183,7 +207,28 @@ class ExecStack(ElementMaster):
             self.delete_read_checkbox.setChecked(True)
         else:
             self.delete_read_checkbox.setChecked(False)
+        
+        if self.rel_path:
+            self.toggleFileInput(2)
+            if self.filename:
+                self.relative_filepath_input.setText(self.filename)
+        else:
+            self.toggleFileInput(0)
+            if self.filename:
+                self.filename_text.setText(self.filename)
 
+    def toggleFileInput(self, event):
+        logging.debug('ExecStack::toggleFileInput() called: {}'.format(event))
+        # 0 = FALSE, 2 = TRUE
+        if event: # TRUE
+            self.file_button.setDisabled(True)
+            self.relative_filepath_input.setDisabled(False)
+            self.filename_text.setText('')
+        else:
+            self.file_button.setDisabled(False)
+            self.relative_filepath_input.clear()
+            self.relative_filepath_input.setDisabled(True)
+            self.relative_filepath_input.setPlaceholderText('my_folder/my_file')
 
     def ChooseFileDialog(self, event):    
         options = QFileDialog.Options()
@@ -192,7 +237,7 @@ class ExecStack(ElementMaster):
                 QC.translate('', 'Choose file'),"","All Files (*);;Text Files (*.txt)", \
                 options=options)
         if fileName:
-            logging.debug('ChooseFileDialog() called with filename: {}'.format(fileName))
+            logging.debug('ExecStack::ChooseFileDialog() called with filename: {}'.format(fileName))
             self.filename = fileName
             self.filename_text.setText(self.filename)
 
@@ -323,7 +368,16 @@ class ExecStack(ElementMaster):
         delete_read = self.delete_read_checkbox.isChecked()
         n_array_limits
         filename = self.filename
+        rel_path            = self.relative_file_checkbox.isChecked()
+        if rel_path:
+            filename        = self.relative_filepath_input.text()
+        else:
+            filename        = self.filename
+
+        if filename == '':
+            filename = None
+
         # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
-        self.config = (filename, read_mode, write_mode, delete_read, b_array_limits, \
+        self.config = (filename, rel_path, read_mode, write_mode, delete_read, b_array_limits, \
                 n_array_limits, log_state)
         self.addFunction(StackFunction)
