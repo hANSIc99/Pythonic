@@ -76,13 +76,16 @@ class MLSVMFunction(Function):
 
         log_txt = '{SVM}                    Successful trained'
 
-        if filename:
-            try:
-                with open(filename, 'wb') as f:
-                    pickle.dump(clf, f)
-            except Exception as e:
-                # not writeable?
-                log_txt = '{SVM}                    Successful trained - Error writing model to HDD'
+        #BAUSTELLE
+        if rel_path:
+            filename = os.path.join(os.environ['HOME'], filename)
+
+        try:
+            with open(filename, 'wb') as f:
+                pickle.dump(clf, f)
+        except Exception as e:
+            # not writeable?
+            log_txt = '{SVM}                    Successful trained - Error writing model to HDD'
 
         
 
