@@ -3,7 +3,7 @@ from PyQt5.QtGui import  QIntValidator
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QWidget, QComboBox,
         QCheckBox, QFileDialog, QPushButton, QLineEdit)
 from PyQt5.QtCore import QCoreApplication as QC
-import logging
+import logging, os
 from Pythonic.elementmaster import ElementMaster
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.elements.basic_stack_window import StackWindow
@@ -66,7 +66,15 @@ class ExecStack(ElementMaster):
         self.update_stack.connect(self.stackWindow.updateStack)
 
         # pass filename to the window
-        self.stackWindow.raiseWindow(self.config[0])
+        filename = self.config[0]
+        rel_path = self.config[1]
+
+        if rel_path and filename:
+            filepath = os.path.join(os.environ['HOME'], filename)
+        else:
+            filepath = filename
+
+        self.stackWindow.raiseWindow(filepath)
 
     def reconnect_debug_button(self):
 
@@ -78,7 +86,15 @@ class ExecStack(ElementMaster):
 
         logging.debug('ExecStack::highlightStop() called OVERWRITTEN method')
         # pass filename
-        self.update_stack.emit(self.config[0])
+        filename = self.config[0]
+        rel_path = self.config[1]
+
+        if rel_path and filename:
+            filepath = os.path.join(os.environ['HOME'], filename)
+        else:
+            filepath = filename
+
+        self.update_stack.emit(filepath)
         super().highlightStop()
 
     def edit(self):
@@ -174,8 +190,6 @@ class ExecStack(ElementMaster):
         self.relative_file_checkbox.stateChanged.connect(self.toggleFileInput)
         self.returnEditLayout.addWidget(self.top_text)
         self.returnEditLayout.addWidget(self.file_input)
-        #self.returnEditLayout.addWidget(self.filename_text)
-        #self.returnEditLayout.addWidget(self.file_button)
         self.returnEditLayout.addWidget(self.mode_text)
         self.returnEditLayout.addWidget(self.write_input)
         self.returnEditLayout.addWidget(self.read_input)
