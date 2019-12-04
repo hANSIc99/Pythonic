@@ -8,12 +8,15 @@ class StackFunction(Function):
 
     def execute(self, record):
 
-        # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
-        filename, read_mode, write_mode, delete_read, b_array_limits, \
+        # filename, rel_path, read_mode, write_mode, b_array_limits, n_array_limits, log_state
+        filename, rel_path, read_mode, write_mode, delete_read, b_array_limits, \
                 n_array_limits, log_state = self.config
 
         if not filename:
             raise OSError('Filename not specified')
+
+        if rel_path:
+            filename = os.path.join(os.environ['HOME'], filename)
 
         
         if not n_array_limits:

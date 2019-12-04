@@ -78,50 +78,53 @@ class StackWindow(QWidget):
             while self.stackWidget.count() != 0:
                 self.stackWidget.takeItem(0)
 
-        with open(filename, 'rb') as stack_file:
-            stack = pickle.load(stack_file)
-            if not isinstance(stack, list):
-                logging.error('StackWindow::raiseWindow() cannot iterate - \
-                        file is not a list - \
-                        file is type: {}'.format(type(stack_file)))
-                self.closed.emit()
-                return
+        try:
+            with open(filename, 'rb') as stack_file:
+                stack = pickle.load(stack_file)
+                if not isinstance(stack, list):
+                    logging.error('StackWindow::raiseWindow() cannot iterate - \
+                            file is not a list - \
+                            file is type: {}'.format(type(stack_file)))
+                    self.closed.emit()
+                    return
 
-            if len(stack) <= 40:
-                for i, data in enumerate(stack):
-    
-                    if i % 2 == 0: # even numbers
-                        is_even = True
-                    else: # uneven number
-                        is_even = False
+                if len(stack) <= 40:
+                    for i, data in enumerate(stack):
 
-                    self.stackWidget.addItem(StackItem(is_even, data, True))
-            else:
-                for i in range(20): #print element 0 - 19
-                    if i % 2 == 0: # even numbers
-                        is_even = True
-                    else: # uneven number
-                        is_even = False
+                        if i % 2 == 0: # even numbers
+                            is_even = True
+                        else: # uneven number
+                            is_even = False
 
-                    self.stackWidget.addItem(StackItem(is_even, stack[i], True))
-                # seperator element when the list is long
-                self.seperator_widget = QListWidgetItem()
-                self.seperator_widget.setTextAlignment(Qt.AlignCenter)
-                self.seperatorwidgettext = QC.translate('', 'Element')
-                self.seperatorwidgettext += ' 21 - {} '.format(str(len(stack)-20))
-                self.seperatorwidgettext += QC.translate('', 'hidden')
-                self.seperator_widget.setText(self.seperatorwidgettext)
-                self.seperator_widget.setBackground(QBrush(QColor('#CCCC00')))
-                self.stackWidget.addItem(self.seperator_widget)
+                        self.stackWidget.addItem(StackItem(is_even, data, True))
+                else:
+                    for i in range(20): #print element 0 - 19
+                        if i % 2 == 0: # even numbers
+                            is_even = True
+                        else: # uneven number
+                            is_even = False
+
+                        self.stackWidget.addItem(StackItem(is_even, stack[i], True))
+                    # seperator element when the list is long
+                    self.seperator_widget = QListWidgetItem()
+                    self.seperator_widget.setTextAlignment(Qt.AlignCenter)
+                    self.seperatorwidgettext = QC.translate('', 'Element')
+                    self.seperatorwidgettext += ' 21 - {} '.format(str(len(stack)-20))
+                    self.seperatorwidgettext += QC.translate('', 'hidden')
+                    self.seperator_widget.setText(self.seperatorwidgettext)
+                    self.seperator_widget.setBackground(QBrush(QColor('#CCCC00')))
+                    self.stackWidget.addItem(self.seperator_widget)
 
 
-                for i in range(len(stack)-20, len(stack)):
-                    if i % 2 == 0: # even numbers
-                        is_even = True
-                    else: # uneven number
-                        is_even = False
+                    for i in range(len(stack)-20, len(stack)):
+                        if i % 2 == 0: # even numbers
+                            is_even = True
+                        else: # uneven number
+                            is_even = False
 
-                    self.stackWidget.addItem(StackItem(is_even, stack[i], True))
+                        self.stackWidget.addItem(StackItem(is_even, stack[i], True))
+        except Exception as e:
+            logging.error('StackWindow::restock() exception while opening file: {}'.format(e))
 
         
     def closeEvent(self, event):
