@@ -194,7 +194,6 @@ class MenuBar(QWidget):
     stop_exec = pyqtSignal(name='stop_execution')
     kill_proc = pyqtSignal(name='kill_proc')
 
-
     def __init__(self):
 
         super().__init__()
@@ -305,8 +304,10 @@ class MenuBar(QWidget):
             logging.debug('MenuBar::simpleSave() no former filename found')
             self.saveFileDialog(event)
 
+        
     def saveQuestion(self, event):
         logging.debug('MenuBar::saveQuestion() called')
+        #logging.debug('MenuBar::saveQuestion() called filename: {}'.format(self.filename))
         messageBox = QMessageBox()
         messageBox.setWindowTitle(QC.translate('','New workflow'))
         messageBox.setIcon(QMessageBox.Warning)
@@ -316,9 +317,13 @@ class MenuBar(QWidget):
 
         if ret == QMessageBox.Save:
             self.simpleSave(event)
+            self.filename = None
             self.clear_grid.emit()
+            self.setInfoText(None)
         elif ret == QMessageBox.No:
+            self.filename = None
             self.clear_grid.emit()
+            self.setInfoText(None)
 
     def setInfoText(self, text):
         logging.debug('MenuBar::setInfoText() called MenuBar')

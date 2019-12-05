@@ -1,16 +1,9 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, pyqtSlot, QVariant
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QWidget, QCheckBox
 from PyQt5.QtCore import QCoreApplication as QC
-from pythonic_binance.client import Client
-import pandas as pd
-import os.path, datetime, logging, requests, json
-from time import sleep
+import logging
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
-from email.message import EmailMessage
-from email.contentmanager import raw_data_manager
-from sys import getsizeof
+from Pythonic.elements.conn_rest_func import ConnRESTFunction
 
 class ConnREST(ElementMaster):
 
@@ -148,29 +141,3 @@ class ConnREST(ElementMaster):
         logging.debug('########CONFIG: {}'.format(self.config))
 
         self.addFunction(ConnRESTFunction)
-
-class ConnRESTFunction(Function):
-
-    def __init(self, config, b_debug, row, column):
-
-        super().__init__(config, b_debug, row, column)
-        logging.debug('ConnRESTFunction::__init__() called')
-
-    def execute(self, record):
-
-        # pass_input, url, log_state
-        pass_input, url, log_state = self.config
-
-        if pass_input:
-            recv_string = requests.get(str(record))
-        else:
-            recv_string = requests.get(url)
-
-        record = json.loads(recv_string.text)
-
-        log_txt = '{{REST (GET)}}             {} bytes received'.format(getsizeof(recv_string.text))
-
-        result = Record(self.getPos(), (self.row +1, self.column), record, log=log_state, log_txt=log_txt)
-
-        
-        return result

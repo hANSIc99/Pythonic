@@ -1,14 +1,10 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtGui import  QPixmap, QPainter, QColor
-from PyQt5.QtWidgets import QVBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import  QPixmap
 import logging, os, Pythonic
-from time import sleep
-from datetime import datetime
-from multiprocessing import Process
-from Pythonic.record_function import Record, Function
 from Pythonic.dropbox import DropBox
 from Pythonic.elements.basic_sched import ExecSched
 from Pythonic.elementmaster import ElementMaster
+from Pythonic.elements.basicelements_func import ExecRFunction, ExecRBFunction, PlaceHolderFunction
 
 class StartElement(ExecSched):
 
@@ -43,16 +39,6 @@ class ExecRB(ElementMaster):
         logging.debug('__getstate__() called ExecRB')
         return (self.row, self.column, self.config)
 
-class ExecRBFunction(Function):
-
-    def __init__(self, config, b_debug, row, column):
-        super().__init__(config, b_debug, row, column)
-
-    def execute(self, record):
-        result = Record(self.getPos(), (self.row +1, self.column), record)
-        return result
-
-
 class ExecR(ElementMaster):
 
     pixmap_path = 'images/right.png'
@@ -75,17 +61,6 @@ class ExecR(ElementMaster):
     def __getstate__(self):
         logging.debug('__getstate__() called ExecR')
         return (self.row, self.column, self.config)
-
-
-class ExecRFunction(Function):
-
-    def __init__(self, config, b_debug, row, column):
-        super().__init__(config, b_debug, row, column)
-
-    def execute(self, record):
-        result = Record(self.getPos(), (self.row, self.column+1), record)
-        return result
-
 
 class PlaceHolder(ElementMaster):
 
@@ -147,15 +122,3 @@ class PlaceHolder(ElementMaster):
         logging.debug('dragLeaveEvent() called')
         self.alterPixmap(QPixmap(os.path.join(self.mod_path, 'images/placeholder.png')))
         e.accept()
-
-
-class PlaceHolderFunction(Function):
-
-    def __init__(self, config, b_debug, row, column):
-        super().__init__(config, b_debug, row, column)
-
-    def execute(self, record):
-        result = Record(self.getPos(), None, record)
-        return result
-
-

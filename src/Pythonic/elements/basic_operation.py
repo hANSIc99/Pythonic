@@ -4,9 +4,10 @@ from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidge
 from PyQt5.QtCore import QCoreApplication as QC
 from PyQt5.QtCore import QProcess
 import logging, os, tempfile, random, subprocess, Pythonic, time
-from Pythonic.elementmaster import ElementMaster, alphabet
+from Pythonic.elementmaster import ElementMaster
+from Pythonic.elements.basic_operation_func import OperationFunction
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.record_function import Record, Function
+from Pythonic.record_function import alphabet
 
 class ExecOp(ElementMaster):
 
@@ -196,7 +197,7 @@ class ExecOp(ElementMaster):
         logging.debug('ExecOp::openCustomEditor() subprocess called')
         edit_proc = QProcess()
         edit_proc.start(cmd)
-        edit_proc.waitForFinished()
+        edit_proc.waitForFinished(-1)
 
         logging.debug('ExecOp::openCustomEditor() subprocess ended')
 
@@ -230,39 +231,3 @@ class ExecOp(ElementMaster):
         self.config = (self.log_checkbox.isChecked(), code_input, custom_edit_state, cmd)
         self.addFunction(OperationFunction)
         logging.debug('edit_done() 2 called ExecOp' )
-
-class OperationFunction(Function):
-
-    def __init__(self, config, b_debug, row, column):
-        super().__init__(config, b_debug, row, column)
-
-    def execute(self, record):
-
-        log_state, code_input, custom_edit_state, cmd = self.config
-
-        proc_dict = {'record' : record, 'input' : None, 'output' : None, 'log_txt' : None}
-                        
-
-        exec_string = 'input = record\r\n'
-        exec_string += 'output = record\r\n'
-
-        #logging.warning('Exec-String:\r\n{}'.format(exec_string))
-        
-        if code_input:
-            #logging.warning('Appending user specific code')
-            exec_string += code_input
-
-
-        exec(exec_string, proc_dict)
-
-        output = proc_dict['output']
-        log_txt = proc_dict['log_txt']
-        if log_txt:
-            log_txt = '{{BASIC OPERATION}}        {}'.format(proc_dict['log_txt'])
-        else:
-            log_txt = '{{BASIC OPERATION}}        {}'.format(proc_dict['output'])
-
-        result = Record(self.getPos(), (self.row+1, self.column), output, log=log_state, log_txt=log_txt)
-                
-        return result
-

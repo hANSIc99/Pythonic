@@ -1,14 +1,12 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
-from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox,
+from PyQt5.QtCore import pyqtSignal, QVariant
+from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QWidget, QComboBox, QCheckBox,
                                 QPushButton, QStackedWidget)
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
-import os.path
-from time import sleep
-from datetime import datetime
-from Pythonic.elementmaster import ElementMaster, alphabet
+from Pythonic.elementmaster import ElementMaster
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.record_function import Record, Function
+from Pythonic.record_function import alphabet
+from Pythonic.elements.basic_return_func import ReturnFunction
 
 class ExecReturn(ElementMaster):
 
@@ -147,17 +145,3 @@ class ExecReturn(ElementMaster):
 
         self.config = (grid, wrk_selector_index, wrk_pos, self.log_checkbox.isChecked())
         self.addFunction(ReturnFunction)
-
-class ReturnFunction(Function):
-
-    def __init__(self, config, b_debug, row, column):
-        super().__init__(config, b_debug, row, column)
-
-    def execute(self, record):
-
-        grid, wrk_selecctor_index, wrk_pos, log_state = self.config
-        target_0 = (grid, wrk_pos[0], wrk_pos[1])
-        log_txt = '{{BASIC RETURN}}           Grid {} - Pos {}|{}'.format(grid+1, wrk_pos[0], alphabet[wrk_pos[1]])
-        result = Record(self.getPos(), target_0, record, log=log_state, log_txt=log_txt)
-        return result
-

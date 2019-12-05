@@ -1,21 +1,29 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QStyleOption, QStyle,
-                                QPushButton, QTextEdit, QMainWindow, QApplication)
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QFont
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QPoint, QRect
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QCoreApplication as QC
-from PyQt5.QtCore import QThread, QRunnable, QObject, QThreadPool
-from time import sleep
+from PyQt5.QtCore import QRunnable, QObject, QThreadPool
 import multiprocessing as mp
-import logging, sys, time, traceback, os, signal
+import logging, sys, time, os, signal
 from datetime import datetime
-from Pythonic.record_function import Record
-from Pythonic.elementeditor import ElementEditor
-from Pythonic.elementmaster import alphabet
-from Pythonic.exceptwindow import ExceptWindow
-from Pythonic.debugwindow import DebugWindow
-from Pythonic.elements.basic_stack import ExecStack
-from Pythonic.elements.basic_sched import BasicScheduler
-from Pythonic.elements.basicelements import ExecRBFunction, ExecRFunction
+from Pythonic.record_function import Record, Function, alphabet
+
+# additional declaration: already defined in elements/basicelements
+class ExecRBFunction(Function):
+
+    def __init__(self, config, b_debug, row, column):
+        super().__init__(config, b_debug, row, column)
+
+    def execute(self, record):
+        result = Record(self.getPos(), (self.row +1, self.column), record)
+        return result
+
+class ExecRFunction(Function):
+
+    def __init__(self, config, b_debug, row, column):
+        super().__init__(config, b_debug, row, column)
+
+    def execute(self, record):
+        result = Record(self.getPos(), (self.row, self.column+1), record)
+        return result
 
 class WorkerSignals(QObject):
 
@@ -154,7 +162,7 @@ class GridOperator(QObject):
 
             if not self_sync:
                 new_rec = self.fastPath(prg_return.target_1, prg_return.record_1)
-                logging.debug('GridOperator::goNext() execption here')
+                logging.debug('GridOperator::goNext() exception here')
                 logging.debug('GridOperator::goNext() new_rec: {}'.format(new_rec))
                 self.goNext(new_rec)
             else:
@@ -169,14 +177,15 @@ class GridOperator(QObject):
         function, self_sync = self.grid[row][col] 
         logging.debug('GridOperator::fastPath() function: {}'.format(function))
         logging.debug('GridOperator::fastPath() isinstance ExecRB: {}'.format(isinstance(function, ExecRBFunction)))
+        logging.debug('GridOperator::fastPath() isinstance ExecRB#####: {} '.format(str(type(function))))
         logging.debug('GridOperator::fastPath() isinstance ExecR: {}'.format(isinstance(function, ExecRFunction)))
 
-        if isinstance(function, ExecRBFunction): # jump to the next target
+        if str(type(function)) == "<class 'Pythonic.elements.basicelements_func.ExecRBFunction'>": # jump to the next target
             # record_1 -> record_0 when goNext() is called recursively
             # returning only target_0 and record_0
             new_rec = Record((row, col-1), (row+1, col), record)
             return new_rec
-        elif isinstance(function, ExecRFunction): # jump to the next target
+        elif str(type(function)) == "<class 'Pythonic.elements.basicelements_func.ExecRFunction'>": # jump to the next target
             #hier testen ob target fings
             # record_1 -> record_0 when goNext() is called recursively
             # returning only target_0 and record_0
@@ -199,8 +208,11 @@ class GridOperator(QObject):
         logging.debug('kill_proc() called')
 
         for proc in self.pid_register:
-            os.kill(proc, signal.SIGTERM)
-            logging.info('Process killed, PID {}'.format(proc))
+            try:
+                os.kill(proc, signal.SIGTERM)
+                logging.info('Process killed, PID {}'.format(proc))
+            except Exception as e:
+                pass
 
         self.pid_register.clear()
 
@@ -263,12 +275,14 @@ def target_0(function, record, feed_pipe):
         feed_pipe.send(ret)
 
     except Exception as e:
+        """
         print('Exception in target_0(): %s' % sys.exc_info()[0])
         print('Exception in target_0(): %s' % sys.exc_info()[1])
         print('Exception in target_0(): %s' % sys.exc_info()[2])
         print('Exception as e: %s' % e)
         except_type, except_class, tb = sys.exc_info()
         print(type(e))
+        """
         #print(issubclass(e.__class__, BaseException))
         #feed_pipe.send((except_type, except_class, traceback.extract_tb(tb)))
         #feed_pipe.send((e, traceback.format_exc()))

@@ -2,9 +2,8 @@ from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QPushButton, QTextEdit
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtCore import QCoreApplication as QC
-import multiprocessing as mp
-import logging, sys, time, traceback
-from Pythonic.elementmaster import alphabet
+import logging
+from Pythonic.record_function import alphabet
 from Pythonic.elementeditor import ElementEditor
 
 
