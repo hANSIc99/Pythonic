@@ -1,19 +1,12 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, pyqtSlot, QVariant
+from PyQt5.QtCore import QVariant
 from PyQt5.QtGui import  QDoubleValidator
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QStackedWidget, QFileDialog
+from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton,
+                            QLabel, QWidget, QComboBox, QCheckBox, QFileDialog)
 from PyQt5.QtCore import QCoreApplication as QC
-from pythonic_binance.client import Client
-import pandas as pd
-import os.path, datetime, logging, requests, json, pickle
-from time import sleep
+import logging
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.record_function import Record, Function
 from Pythonic.elementmaster import ElementMaster
-from email.message import EmailMessage
-from email.contentmanager import raw_data_manager
-from sys import getsizeof
-from sklearn import svm, preprocessing
-from sklearn.model_selection import train_test_split
+from Pythonic.elements.ml_svm_func import MLSVMFunction
 
 class MLSVM(ElementMaster):
 
@@ -37,9 +30,10 @@ class MLSVM(ElementMaster):
         gamma_value         = '1.0'
         filename            = None
         log_state           = False
+        rel_path            = False
 
         self.config = scale_option, scale_mean, scale_std, train_eval, decision_function, \
-                gamma_mode, gamma_value, filename, log_state
+                gamma_mode, gamma_value, filename, rel_path, log_state
 
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
@@ -71,7 +65,7 @@ class MLSVM(ElementMaster):
         data split train / eval
         """
         self.scale_option, self.scale_mean, self.scale_std, self.train_eval, self.decision_function, \
-                self.gamma_mode, self.gamma_value, self.filename, self.log_state = self.config
+                self.gamma_mode, self.gamma_value, self.filename, self.rel_path, self.log_state = self.config
 
         self.scale_label = QLabel()
         self.scale_label.setText(QC.translate('', 'Scale n_samples ?'))
@@ -140,11 +134,33 @@ class MLSVM(ElementMaster):
         self.conn_rest_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
 
+                
         self.filename_text = QLabel()
         self.filename_text.setWordWrap(True)
-        
+
         self.file_button = QPushButton(QC.translate('', 'Select model output file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
+        
+        self.relative_file_check = QWidget()
+        self.relative_file_check_layout = QHBoxLayout(self.relative_file_check)
+
+        self.relative_file_label = QLabel()
+        self.relative_file_label.setText(QC.translate('', 'Filename relative to $HOME.'))
+        self.relative_file_checkbox = QCheckBox()
+        self.relative_file_check_layout.addWidget(self.relative_file_checkbox)
+        self.relative_file_check_layout.addWidget(self.relative_file_label)
+        self.relative_file_check_layout.addStretch(1)
+
+        self.relative_filepath_input = QLineEdit()
+        self.relative_filepath_input.setPlaceholderText('my_folder/my_file')
+
+        self.file_input = QWidget()
+        self.file_input_layout = QVBoxLayout(self.file_input)
+        self.file_input_layout.addWidget(self.filename_text)
+        self.file_input_layout.addWidget(self.file_button)
+        self.file_input_layout.addWidget(self.relative_file_check)
+        self.file_input_layout.addWidget(self.relative_filepath_input)
+
 
         
         """
@@ -176,6 +192,7 @@ class MLSVM(ElementMaster):
         self.ml_svm_edit.setMinimumHeight(600)
 
         # signals and slots
+        self.relative_file_checkbox.stateChanged.connect(self.toggleFileInput)
         self.gamma_list.currentIndexChanged.connect(self.gammaIndexChanged)
         self.scale_list.currentIndexChanged.connect(self.scaledIndexChanged)
         self.confirm_button.clicked.connect(self.ml_svm_edit.closeEvent)
@@ -195,8 +212,7 @@ class MLSVM(ElementMaster):
         self.conn_rest_layout.addWidget(self.gamma_label)
         self.conn_rest_layout.addWidget(self.gamma_list)
         self.conn_rest_layout.addWidget(self.gamma_input_line)
-        self.conn_rest_layout.addWidget(self.filename_text)
-        self.conn_rest_layout.addWidget(self.file_button)
+        self.conn_rest_layout.addWidget(self.file_input)
         self.conn_rest_layout.addStretch(1)
         self.conn_rest_layout.addWidget(self.help_text_2)
         self.conn_rest_layout.addWidget(self.help_text_3)
@@ -204,6 +220,20 @@ class MLSVM(ElementMaster):
         self.conn_rest_layout.addWidget(self.confirm_button)
         self.ml_svm_edit.setLayout(self.conn_rest_layout)
         self.ml_svm_edit.show()
+
+    def toggleFileInput(self, event):
+        logging.debug('MLSVM::toggleFileInput() called: {}'.format(event))
+        # 0 = FALSE, 2 = TRUE
+        if event: # TRUE
+            self.file_button.setDisabled(True)
+            self.relative_filepath_input.setDisabled(False)
+            self.filename_text.setText('')
+        else:
+            self.file_button.setDisabled(False)
+            self.relative_filepath_input.clear()
+            self.relative_filepath_input.setDisabled(True)
+            self.relative_filepath_input.setPlaceholderText('my_folder/my_file')
+
 
     def loadLastConfig(self):
 
@@ -219,8 +249,16 @@ class MLSVM(ElementMaster):
         self.scale_center_checkbox.setChecked(self.scale_mean)
         self.scale_std_checkbox.setChecked(self.scale_std)
         self.log_checkbox.setChecked(self.log_state)
-        if self.filename:
-            self.filename_text.setText(self.filename)
+        self.relative_file_checkbox.setChecked(self.rel_path)
+        
+        if self.rel_path:
+            self.toggleFileInput(2)
+            if self.filename:
+                self.relative_filepath_input.setText(self.filename)
+        else:
+            self.toggleFileInput(0)
+            if self.filename:
+                self.filename_text.setText(self.filename)
 
     def scaledIndexChanged(self, event):
 
@@ -267,99 +305,16 @@ class MLSVM(ElementMaster):
         gamma_value         = float(self.gamma_input.text())
         filename            = self.filename
         log_state           = self.log_checkbox.isChecked()
+        rel_path            = self.relative_file_checkbox.isChecked()
+        if rel_path:
+            filename        = self.relative_filepath_input.text()
+        else:
+            filename        = self.filename
+
+        if filename == '':
+            filename = None
 
         self.config = scale_option, scale_mean, scale_std, train_eval, decision_function, gamma_mode, \
-                gamma_value, filename, log_state
+                gamma_value, filename, rel_path, log_state
         
         self.addFunction(MLSVMFunction)
-
-class MLSVMFunction(Function):
-
-    def __init(self, config, b_debug, row, column):
-
-        super().__init__(config, b_debug, row, column)
-        logging.debug('MLSVMFunction::__init__() called')
-
-    def execute(self, record):
-
-        scale_option, scale_mean, scale_std, train_eval, decision_function, \
-                gamma_mode, gamma_value, filename, log_state = self.config
-
-        # expect a tuple (Xdata, Ylabels) as input
-        X, Y = record
-
-        if scale_option == 1:
-            # X, axis, with_mean, with_std, copy
-            X = preprocessing.scale(X, 0, scale_mean, scale_std, False)
-
-        if train_eval == 0: # 90/10
-            test_share = 0.1
-        elif train_eval == 1: # 80/20
-            test_share = 0.2 
-        elif train_eval == 2: # 70/30
-            test_share = 0.3
-        elif train_eval == 3: # 60/40  
-            test_share = 0.4
-        else: # 50/50
-            test_share = 0.5
-
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_share)
-
-        if decision_function == 0: # one vs. one
-            dec_func_shape = 'ovo'
-        else: # one vs. rest
-            dec_func_shape = 'ovr' 
-
-        if gamma_mode == 0: # auto
-            gamma_arg = 'auto'
-        elif gamma_mode == 1: #scaled
-            gamma_arg = 'scaled'
-        else: # manual
-            gamma_arg = gamma_value
-
-
-        clf = svm.SVC(decision_function_shape='ovr', gamma=gamma_arg)
-        clf.fit(X_train, Y_train)
-
-        Y_predicted = clf.predict(X_test)
-
-        tp = 0
-        tn = 0
-        fp = 0
-        fn = 0
-
-        for idx, Y_pre in enumerate(Y_predicted):
-            if Y_pre == Y_test[idx]: # true positives or true negatives
-
-                if Y_test[idx] != 0: # true positive
-                    tp += 1
-                else: #true negative
-                    tn += 1
-
-            else: #false positives or false negatives
-
-                if Y_test[idx] != 0: # false positive
-                    fp += 1
-                else: # false negative
-                    fn += 1
-
-
-        log_txt = '{SVM}                    Successful trained'
-
-        if filename:
-            try:
-                with open(filename, 'wb') as f:
-                    pickle.dump(clf, f)
-            except Exception as e:
-                # not writeable?
-                log_txt = '{SVM}                    Successful trained - Error writing model to HDD'
-
-        
-
-        record = {'tp': tp, 'tn':tn, 'fp':fp, 'fn':fn}
-
-        result = Record(self.getPos(), (self.row +1, self.column), record,
-                 log=log_state, log_txt=log_txt)
-
-        
-        return result

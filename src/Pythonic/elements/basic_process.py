@@ -1,12 +1,10 @@
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import  QPainter, QColor
-from PyQt5.QtWidgets import (QVBoxLayout, QLabel, QTextEdit, QWidget,
-        QComboBox, QCheckBox, QGridLayout, QSpacerItem, QLineEdit, QPushButton)
+from PyQt5.QtWidgets import QVBoxLayout, QLabel
 from PyQt5.QtCore import QCoreApplication as QC
 import logging
 from Pythonic.elementmaster import ElementMaster
 from Pythonic.elementeditor import ElementEditor
-from Pythonic.record_function import Record, Function
+from Pythonic.elements.basic_process_func import ProcessFunction
 
 
 class ExecProcess(ElementMaster):
@@ -60,17 +58,3 @@ class ExecProcess(ElementMaster):
 
     def windowClosed(self, event):
         logging.debug('windowClosed() called ExecBranch')
-
-
-class ProcessFunction(Function):
-
-    def __init__(self, config, b_debug, row, column):
-        super().__init__(config, b_debug, row, column)
-
-    def execute(self, record):
-        #record = 'Hello from ProcessElement {}'.format((self.row, self.column))
-        target_0 = (self.row +1, self.column)
-        target_1 = (self.row, self.column +1)
-        result = Record(self.getPos(), target_0, record, target_1, record)
-        return result
-

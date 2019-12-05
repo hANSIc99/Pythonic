@@ -1,14 +1,13 @@
-from PyQt5.QtCore import Qt, QCoreApplication, pyqtSignal, QVariant
+from PyQt5.QtCore import pyqtSignal, QVariant
 from PyQt5.QtGui import  QIntValidator
-from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QTextEdit, QWidget, QComboBox, QCheckBox, QFileDialog, QPushButton, QStackedWidget, QLineEdit)
+from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QWidget, QComboBox,
+        QCheckBox, QFileDialog, QPushButton, QLineEdit)
 from PyQt5.QtCore import QCoreApplication as QC
-import logging, pickle, os
-from time import sleep
-from datetime import datetime
-from Pythonic.elementmaster import ElementMaster, alphabet
-from Pythonic.record_function import Record, Function
+import logging, os
+from Pythonic.elementmaster import ElementMaster
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.elements.basic_stack_window import StackWindow
+from Pythonic.elements.basic_stack_func import StackFunction
 
 class ExecStack(ElementMaster):
 
@@ -23,15 +22,16 @@ class ExecStack(ElementMaster):
 
         self.show_window = False
 
-        # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
+        # filename, rel_path, read_mode, write_mode, b_array_limits, n_array_limits, log_state
         filename = None
+        rel_path = False
         read_mode = 0
         write_mode = 0
         delete_read = False
         b_array_limits = False
         n_array_limits = None
         log_state = False
-        self.config = (filename, read_mode, write_mode, delete_read,
+        self.config = (filename, rel_path, read_mode, write_mode, delete_read,
                 b_array_limits, n_array_limits, log_state)
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
@@ -66,7 +66,15 @@ class ExecStack(ElementMaster):
         self.update_stack.connect(self.stackWindow.updateStack)
 
         # pass filename to the window
-        self.stackWindow.raiseWindow(self.config[0])
+        filename = self.config[0]
+        rel_path = self.config[1]
+
+        if rel_path and filename:
+            filepath = os.path.join(os.environ['HOME'], filename)
+        else:
+            filepath = filename
+
+        self.stackWindow.raiseWindow(filepath)
 
     def reconnect_debug_button(self):
 
@@ -78,14 +86,22 @@ class ExecStack(ElementMaster):
 
         logging.debug('ExecStack::highlightStop() called OVERWRITTEN method')
         # pass filename
-        self.update_stack.emit(self.config[0])
+        filename = self.config[0]
+        rel_path = self.config[1]
+
+        if rel_path and filename:
+            filepath = os.path.join(os.environ['HOME'], filename)
+        else:
+            filepath = filename
+
+        self.update_stack.emit(filepath)
         super().highlightStop()
 
     def edit(self):
         logging.debug('edit() called ExecStack')
 
-        # filename, read_mode, write_mode, array_limits, log_state
-        self.filename, self.read_mode, self.write_mode, self.delete_read, \
+        # filename, rel_path, read_mode, write_mode, array_limits, log_state
+        self.filename, self.rel_path, self.read_mode, self.write_mode, self.delete_read, \
                 self.b_array_limits, self.n_array_limits, log_state = self.config
 
         self.returnEditLayout = QVBoxLayout()
@@ -98,11 +114,30 @@ class ExecStack(ElementMaster):
 
         self.filename_text = QLabel()
         self.filename_text.setWordWrap(True)
-        if self.filename:
-            self.filename_text.setText(self.filename)
 
-        self.file_button = QPushButton(QC.translate('', 'Select file'))
+        self.file_button = QPushButton(QC.translate('', 'Select model output file'))
         self.file_button.clicked.connect(self.ChooseFileDialog)
+        
+        self.relative_file_check = QWidget()
+        self.relative_file_check_layout = QHBoxLayout(self.relative_file_check)
+
+        self.relative_file_label = QLabel()
+        self.relative_file_label.setText(QC.translate('', 'Filename relative to $HOME.'))
+        self.relative_file_checkbox = QCheckBox()
+        self.relative_file_check_layout.addWidget(self.relative_file_checkbox)
+        self.relative_file_check_layout.addWidget(self.relative_file_label)
+        self.relative_file_check_layout.addStretch(1)
+
+        self.relative_filepath_input = QLineEdit()
+        self.relative_filepath_input.setPlaceholderText('my_folder/my_file')
+
+        self.file_input = QWidget()
+        self.file_input_layout = QVBoxLayout(self.file_input)
+        self.file_input_layout.addWidget(self.filename_text)
+        self.file_input_layout.addWidget(self.file_button)
+        self.file_input_layout.addWidget(self.relative_file_check)
+        self.file_input_layout.addWidget(self.relative_filepath_input)
+
 
         self.writeInput()
         self.readOutput()
@@ -149,11 +184,12 @@ class ExecStack(ElementMaster):
 
         self.log_checkbox.setChecked(log_state)
 
+        #signals and slots
         self.confirm_button.clicked.connect(self.returnEdit.closeEvent)
         self.returnEdit.window_closed.connect(self.edit_done)
+        self.relative_file_checkbox.stateChanged.connect(self.toggleFileInput)
         self.returnEditLayout.addWidget(self.top_text)
-        self.returnEditLayout.addWidget(self.filename_text)
-        self.returnEditLayout.addWidget(self.file_button)
+        self.returnEditLayout.addWidget(self.file_input)
         self.returnEditLayout.addWidget(self.mode_text)
         self.returnEditLayout.addWidget(self.write_input)
         self.returnEditLayout.addWidget(self.read_input)
@@ -169,6 +205,7 @@ class ExecStack(ElementMaster):
 
         self.select_read_mode.setCurrentIndex(self.read_mode)
         self.select_write_mode.setCurrentIndex(self.write_mode)
+        self.relative_file_checkbox.setChecked(self.rel_path)
 
         if self.b_array_limits:
             self.enableArrLimits()
@@ -184,7 +221,28 @@ class ExecStack(ElementMaster):
             self.delete_read_checkbox.setChecked(True)
         else:
             self.delete_read_checkbox.setChecked(False)
+        
+        if self.rel_path:
+            self.toggleFileInput(2)
+            if self.filename:
+                self.relative_filepath_input.setText(self.filename)
+        else:
+            self.toggleFileInput(0)
+            if self.filename:
+                self.filename_text.setText(self.filename)
 
+    def toggleFileInput(self, event):
+        logging.debug('ExecStack::toggleFileInput() called: {}'.format(event))
+        # 0 = FALSE, 2 = TRUE
+        if event: # TRUE
+            self.file_button.setDisabled(True)
+            self.relative_filepath_input.setDisabled(False)
+            self.filename_text.setText('')
+        else:
+            self.file_button.setDisabled(False)
+            self.relative_filepath_input.clear()
+            self.relative_filepath_input.setDisabled(True)
+            self.relative_filepath_input.setPlaceholderText('my_folder/my_file')
 
     def ChooseFileDialog(self, event):    
         options = QFileDialog.Options()
@@ -193,7 +251,7 @@ class ExecStack(ElementMaster):
                 QC.translate('', 'Choose file'),"","All Files (*);;Text Files (*.txt)", \
                 options=options)
         if fileName:
-            logging.debug('ChooseFileDialog() called with filename: {}'.format(fileName))
+            logging.debug('ExecStack::ChooseFileDialog() called with filename: {}'.format(fileName))
             self.filename = fileName
             self.filename_text.setText(self.filename)
 
@@ -324,103 +382,16 @@ class ExecStack(ElementMaster):
         delete_read = self.delete_read_checkbox.isChecked()
         n_array_limits
         filename = self.filename
+        rel_path            = self.relative_file_checkbox.isChecked()
+        if rel_path:
+            filename        = self.relative_filepath_input.text()
+        else:
+            filename        = self.filename
+
+        if filename == '':
+            filename = None
+
         # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
-        self.config = (filename, read_mode, write_mode, delete_read, b_array_limits, \
+        self.config = (filename, rel_path, read_mode, write_mode, delete_read, b_array_limits, \
                 n_array_limits, log_state)
         self.addFunction(StackFunction)
-
-
-class StackFunction(Function):
-
-    def __init__(self, config, b_debug, row, column):
-        super().__init__(config, b_debug, row, column)
-
-    def execute(self, record):
-
-        # filename, read_mode, write_mode, b_array_limits, n_array_limits, log_state
-        filename, read_mode, write_mode, delete_read, b_array_limits, \
-                n_array_limits, log_state = self.config
-
-        if not filename:
-            raise OSError(QC.translate('', 'Filename not specified'))
-
-        
-        if not n_array_limits:
-            n_array_limits = 20
-
-        debug_text = ''
-
-        try:
-            # if the file already exists
-            f = open(filename, 'rb+') 
-        except Exception as e:
-            try:
-                # create new file
-                f = open(filename, 'wb+')
-            except Exception as e:
-                # not writeable?
-                return e
-
-
-        try:
-            # latin 1 for numpy arrays
-            stack = pickle.load(f)
-            debug_text = 'Pickle loaded'
-        except Exception as e:
-            # create new array
-            #return e
-            debug_text = 'pickle not loaded'
-            stack = []
-
-        ##### WRITING #####
-
-        #if write_mode == 0: # Nothing
-            #record = 'Nothing'
-        if write_mode == 1: # Insert
-            #record = 'Insert'
-            stack.insert(0, record)
-        elif write_mode == 2: # Append
-            #record = 'Append'
-            stack.append(record)
-
-        ### CHECK FOR MAXIMUM LIST SIZE
-        if b_array_limits:
-            while len(stack) > n_array_limits: #delete more elements if necessary
-                if write_mode == 1: # delete last elements
-                    stack.pop()
-                if write_mode == 2: # delete first elements
-                    stack.pop(0)
-
-        ##### READING #####
-        f.seek(os.SEEK_SET) # go back to the start of the stream
-
-
-        if read_mode == 0: # Nothing
-            #record += ' Nothing'
-            record = None
-
-        #elif read_mode == 1: # Pass through
-            # record = record
-        elif read_mode == 2: # First Out
-            if delete_read:
-                record = stack.pop(0)
-            else:
-                record = stack[0]
-        elif read_mode == 3: # Last out
-            if delete_read:
-                record = stack.pop()
-            else:
-                record = stack[-1]
-        elif read_mode == 4: # All out
-            record = stack.copy()
-            if delete_read:
-                stack.clear()
-
-        pickle.dump(stack, f)
-        f.close()
-
-        log_txt = '{BASIC STACK}            '
-        result = Record(self.getPos(), (self.row +1, self.column), record,
-                log=log_state, log_txt=log_txt)
-        return result
-
