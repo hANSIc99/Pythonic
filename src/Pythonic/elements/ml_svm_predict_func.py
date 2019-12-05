@@ -1,5 +1,5 @@
 import pandas as pd
-import pickle
+import pickle, os
 from Pythonic.record_function import Record, Function
 from sklearn import preprocessing
 
@@ -12,10 +12,13 @@ class MLSVM_PredictFunction(Function):
 
     def execute(self, record):
 
-        scale_option, scale_mean, scale_std, predict_val, filename, log_state = self.config
+        scale_option, scale_mean, scale_std, predict_val, filename, rel_path, log_state = self.config
         b_open_succeeded = True
 
         if filename:
+            if rel_path:
+                filename = os.path.join(os.environ['HOME'], filename)
+
             try:
                 with open(filename, 'rb') as f:
                     clf = pickle.load(f)
