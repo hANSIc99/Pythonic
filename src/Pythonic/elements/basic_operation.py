@@ -197,7 +197,7 @@ class ExecOp(ElementMaster):
         logging.debug('ExecOp::openCustomEditor() subprocess called')
         edit_proc = QProcess()
         edit_proc.start(cmd)
-        edit_proc.waitForFinished()
+        edit_proc.waitForFinished(-1)
 
         logging.debug('ExecOp::openCustomEditor() subprocess ended')
 
