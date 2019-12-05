@@ -1,4 +1,4 @@
-import pickle
+import pickle, os
 from Pythonic.record_function import Record, Function
 from sklearn import svm, preprocessing
 from sklearn.model_selection import train_test_split
@@ -13,7 +13,7 @@ class MLSVMFunction(Function):
     def execute(self, record):
 
         scale_option, scale_mean, scale_std, train_eval, decision_function, \
-                gamma_mode, gamma_value, filename, log_state = self.config
+                gamma_mode, gamma_value, filename, rel_path, log_state = self.config
 
         # expect a tuple (Xdata, Ylabels) as input
         X, Y = record
@@ -76,16 +76,16 @@ class MLSVMFunction(Function):
 
         log_txt = '{SVM}                    Successful trained'
 
-        #BAUSTELLE
-        if rel_path:
-            filename = os.path.join(os.environ['HOME'], filename)
+        if filename:
+            if rel_path:
+                filename = os.path.join(os.environ['HOME'], filename)
 
-        try:
-            with open(filename, 'wb') as f:
-                pickle.dump(clf, f)
-        except Exception as e:
-            # not writeable?
-            log_txt = '{SVM}                    Successful trained - Error writing model to HDD'
+            try:
+                with open(filename, 'wb') as f:
+                    pickle.dump(clf, f)
+            except Exception as e:
+                # not writeable?
+                log_txt = '{SVM}                    Successful trained - Error writing model to HDD'
 
         
 
@@ -94,5 +94,5 @@ class MLSVMFunction(Function):
         result = Record(self.getPos(), (self.row +1, self.column), record,
                  log=log_state, log_txt=log_txt)
 
-        
+            
         return result
