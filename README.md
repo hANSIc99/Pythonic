@@ -36,6 +36,11 @@ You can now start Pythonic from the command line by typing:
 
 #### 3. `./Pythonic`
 
+## Tutorial
+Available on [Steemit](https://steemit.com)
+
+[Pythonic Tutorial Part 1-6](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-1-6)
+
 ## Known Issues
 
 ### pip3: command not found
