@@ -1,9 +1,0 @@
-git clone git clone https://github.com/emscripten-core/emsdk.git
-#git checkout 
-Within ~/.bashrc add: export PATH="~/Downloads/emsdk/upstream/emscripten:$PATH"
-
-./emsdk install sdk-fastcomp-1.38.27-64bit 
-https://wiki.qt.io/Qt_for_WebAssembly
-
-
-Use qmake from wasm_32 path
