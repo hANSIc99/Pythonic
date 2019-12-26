@@ -41,7 +41,7 @@ Available on [Steemit](https://steemit.com)
 
 [Pythonic Tutorial Part 1-6](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-1-6) (Installation, Concept, Toolbar, Logging, Basic Scheduler, Basic Operation)
 
-[Pythonic Tutorial Part 7 - 11](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-7-11) (Branch Element, Return Element, Process Branch Element, Technical Analysis Element, Stack Element)
+[Pythonic Tutorial Part 7-11](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-7-11) (Branch Element, Return Element, Process Branch Element, Technical Analysis Element, Stack Element)
 
 ## Known Issues
 
