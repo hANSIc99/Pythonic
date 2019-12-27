@@ -43,6 +43,8 @@ Available on [Steemit](https://steemit.com)
 
 [Pythonic Tutorial Part 7-11](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-7-11) (Branch Element, Return Element, Process Branch Element, Technical Analysis Element, Stack Element)
 
+[Pythonic Tutorial Part 12-16](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-12-16) (Send E-Mail, REST Query, Binance Scheduler, Binance OHLC Query, Binance Order)
+
 ## Known Issues
 
 ### pip3: command not found
