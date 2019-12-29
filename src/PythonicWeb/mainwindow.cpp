@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QString>
 #include <QDir>
+#include <QNetworkAccessManager>
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
@@ -20,10 +21,21 @@ void MainWindow::handleButton(){
     QDir dir; // Initialize to the desired dir if 'path' is relative
               // By default the program's working directory "." is used.
 
+#if 0
     // We create the directory if needed
     if (!dir.exists(path))
         dir.mkpath(path); // You can check the success if needed
 
     QFile file(path + "NewFile.kml");
     file.open(QIODevice::WriteOnly); // Or QIODevice::ReadWrite
+#endif
+    QNetworkAccessManager *net_mgr = new QNetworkAccessManager(this);
+    QByteArray net_data("Hello");
+    connect(net_mgr, SIGNAL(finished(QNetworkReply*)), this, SLOT(netFinished(QNetworkReply*)));
+    net_mgr->post(QNetworkRequest(QUrl("http://localhost:5000/test_1")), net_data);
+}
+
+void MainWindow::netFinished(QNetworkReply *data){
+
+    qDebug() << "POST finished: " << data;
 }
