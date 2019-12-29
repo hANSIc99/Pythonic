@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QWidget>
 #include <QPushButton>
-
+#include <QNetworkAccessManager>
 
 
 class MainWindow : public QMainWindow
@@ -17,6 +17,7 @@ public:
 
 private slots:
     void handleButton();
+    void netFinished(QNetworkReply *data);
 private:
 
     QPushButton *m_button;
