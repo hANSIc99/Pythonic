@@ -44,10 +44,10 @@ void MainWindow::openFileBrowser(){
         } else {
             qDebug() << "Size of file: " << fileContent.size() / 1000 << "kb";
             qDebug() << "Filename: " << fileName;
-            QNetworkRequest *qnet_req = new QNetworkRequest(QUrl("http://localhost:5000/upload"));
+            QNetworkRequest *qnet_req = new QNetworkRequest(QUrl("http://localhost:5000/test"));
             qnet_req->setHeader(QNetworkRequest::ContentTypeHeader, "multipart/form-data");
-            qnet_req->setHeader(QNetworkRequest::ContentLengthHeader, fileContent.size());
-            qnet_req->setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"MAX_FILE_SIZE\"");
+            //qnet_req->setHeader(QNetworkRequest::ContentLengthHeader, fileContent.size());
+            qnet_req->setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"file\", filename=\"stephantest\"");
 
             net_mgr->post(*qnet_req, fileContent);
         }
