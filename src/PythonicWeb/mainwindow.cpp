@@ -4,6 +4,9 @@
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QFileDialog>
+#include <QHttpPart>
+#include <QObject>
+#include <QScopedPointer>
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
@@ -44,12 +47,22 @@ void MainWindow::openFileBrowser(){
         } else {
             qDebug() << "Size of file: " << fileContent.size() / 1000 << "kb";
             qDebug() << "Filename: " << fileName;
-            QNetworkRequest *qnet_req = new QNetworkRequest(QUrl("http://localhost:5000/test"));
-            qnet_req->setHeader(QNetworkRequest::ContentTypeHeader, "multipart/form-data");
-            //qnet_req->setHeader(QNetworkRequest::ContentLengthHeader, fileContent.size());
-            qnet_req->setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"file\", filename=\"stephantest\"");
+            QHttpPart fileDataPart;
+            // BAUSTELLE SMART POINTER
+            QHttpMultiPart *multipart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
-            net_mgr->post(*qnet_req, fileContent);
+            fileDataPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"file\"; filename=\"myfilename\""));
+            fileDataPart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/jpeg"));
+            fileDataPart.setBody(fileContent);
+
+            QUrl url("http://localhost:5000/test");
+            QNetworkRequest qnet_req(url);
+
+            multipart->append(fileDataPart);
+
+            QNetworkReply *reply = net_mgr->post(qnet_req, multipart);
+            std::unique_
+            //multipart->setParent(dynamic_cast<QObject*>(reply));
         }
     };
 

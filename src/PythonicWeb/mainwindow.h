@@ -20,6 +20,7 @@ private slots:
     void netFinished(QNetworkReply *data);
     void openFileBrowser();
     void fileOpenComplete(const QString &fileName, const QByteArray &data);
+
 private:
 
     QPushButton *m_button;
