@@ -36,7 +36,8 @@ def test():
             flash('No selected file')
             print('No selected file')
             return 'post failed'
-        if f and allowed_file(f.filename):
+        #if f and allowed_file(f.filename):
+        if f:
             # f = werkzeug.datastructures.FileStorage
             # https://werkzeug.palletsprojects.com/en/0.16.x/datastructures/#werkzeug.datastructures.FileStorage
             filename = secure_filename(f.filename)
@@ -47,6 +48,7 @@ def test():
             return 'post successfull'
         else:
             print("No file found")
+            return 'No file found'
     else:
         print("test() GET triggered")
         return render_template('test.html')
