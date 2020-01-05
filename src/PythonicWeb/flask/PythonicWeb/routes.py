@@ -53,6 +53,15 @@ def test():
         print("test() GET triggered")
         return render_template('test.html')
 
+@PythonicWeb.route('/websocket_test', methods=['GET'])
+def websocket_test():
+    print('websocket_test() called')
+    return render_template('websocket_test.html')
+
+@PythonicWeb.route('/websocket_test2', methods=['GET'])
+def websocket_test2():
+    print('websocket_test2() called')
+    return render_template('websocket_test2.html')
 
 """
     LOAD WEBASSEMBLY
@@ -77,6 +86,25 @@ def wasm_loader():
     COMMMUNICATION
 """
 
+"""
+# Receiving String messages
+@socketio.on('message')
+def handle_message(message):
+    print('Received message: {}'.format(message))
+    send(message)
+
+#Receiving JSON messages
+@socketio.on('json')
+def handle_json(json):
+    print('received json: {}'.format(str(json)))
+    send(json, json=True)
+
+#Custom event
+@socketio.on('my event')
+def handle_my_custom_event(arg1, arg2, arg3):
+    print('received args: ' + arg1 + arg2 + arg3)
+
+"""
 @PythonicWeb.route('/test_1', methods=['POST'])
 def test_one():
     req_data = request.get_data()
