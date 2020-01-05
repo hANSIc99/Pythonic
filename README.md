@@ -45,6 +45,8 @@ Available on [Steemit](https://steemit.com)
 
 [Pythonic Tutorial Part 12-16](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-12-16) (Send E-Mail, REST Query, Binance Scheduler, Binance OHLC Query, Binance Order)
 
+[Pythonic Tutorial Part 17-18](https://steemit.com/datascience/@avenwedde/pythonic-tutorial-17-18) (Support Vector Machine, Support Vector Machine Prediction)
+
 ## Known Issues
 
 ### pip3: command not found
