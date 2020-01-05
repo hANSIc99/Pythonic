@@ -1,15 +1,11 @@
-import os
 from pathlib import Path
 from PythonicWeb import PythonicWeb
 from flask import render_template, url_for, request, flash
 from werkzeug.utils import secure_filename
 
 
-UPLOAD_FOLDER = '~/Pythonic_2019/'
 ALLOWED_EXTENSIONS = {'txt', 'png', 'jpg' }
 
-PythonicWeb.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-PythonicWeb.config['SECRET_KEY'] = os.urandom(12).hex()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS

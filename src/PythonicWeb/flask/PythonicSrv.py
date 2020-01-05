@@ -1,8 +1,13 @@
 from PythonicWeb import PythonicWeb
 from flask_socketio import SocketIO, emit
 from flask import session
+import os
 
 socketio = SocketIO(PythonicWeb)
+
+UPLOAD_FOLDER = '~/Pythonic_2019/'
+PythonicWeb.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+PythonicWeb.config['SECRET_KEY'] = os.urandom(12).hex()
 
 # On connection
 @socketio.on('connect')
@@ -38,5 +43,5 @@ def test_message(message):
          {'data': message['data'], 'count': session['receive_count']})
 
 if __name__ == '__main__':
-    socketio.run(PythonicWeb)
+    socketio.run(PythonicWeb, host='0.0.0.0')
 
