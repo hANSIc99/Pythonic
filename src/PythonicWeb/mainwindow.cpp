@@ -2,10 +2,18 @@
 #include <QDebug>
 #include <QString>
 #include <QDir>
-#include <QNetworkAccessManager>
 #include <QFileDialog>
-#include <QHttpPart>
 #include <QObject>
+#include <QMetaEnum>
+
+#ifndef WASM
+#include <QNetworkAccessManager>
+#include <QHttpPart>
+#endif
+
+
+
+
 
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
@@ -16,6 +24,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     net_mgr = new QNetworkAccessManager(this);
     connect(net_mgr, SIGNAL(finished(QNetworkReply*)), this, SLOT(netFinished(QNetworkReply*)));
 
+    connect(&m_webSocket, &QWebSocket::connected, this, &MainWindow::wsOnConnected);
+    connect(&m_webSocket, &QWebSocket::disconnected, this, &MainWindow::wsClosed);
+    connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &MainWindow::wsError);
+    connect(&m_webSocket, &QWebSocket::sslErrors, this, &MainWindow::wsSSLerror);
+    //QUrl ws_url("wss://127.0.0.1:5000");
+    QUrl ws_url(QStringLiteral("ws://127.0.0.1:5000"));
+    qDebug() << "Open ws URL: " << ws_url.toString();
+    m_webSocket.open(ws_url);
     /*
      *  STANDARD QUERY
      */
@@ -58,6 +74,7 @@ void MainWindow::openFileBrowser(){
     qDebug() << "MainWindow::openFileBrowser() called";
     QString s_homePath = QDir::homePath();
     //QFileDialog::getOpenFileContent
+
     auto fileOpenCompleted = [this](const QString &filePath, const QByteArray &fileContent) {
         if (filePath.isEmpty()) {
             qDebug() << "No file was selected";
@@ -66,10 +83,11 @@ void MainWindow::openFileBrowser(){
             qDebug() << "Selected file: " << filePath;
 
 
-
             QFileInfo fileName(filePath);
             QString content_header = QString("form-data; name=\"file\"; filename=\"%1\"").arg(fileName.fileName());
 
+            //QWebSocket
+#ifndef WASM
             QHttpPart fileDataPart;
             fileDataPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(content_header));
             fileDataPart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/jpeg"));
@@ -80,8 +98,11 @@ void MainWindow::openFileBrowser(){
 
             QHttpMultiPart *multipart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
             multipart->append(fileDataPart);
-
+            QByteArray data(multipart->boundary());
+            data.append(fileContent);
+            net_mgr->post(qnet_req, data);
             QNetworkReply *reply = net_mgr->post(qnet_req, multipart);
+#endif
         }
     };
 
@@ -104,6 +125,27 @@ void MainWindow::connectWebSocket()
 {
     qDebug() << "MainWindow::connectWebSocket() called";
 
+}
+
+void MainWindow::wsOnConnected()
+{
+    qDebug() << "MainWindow::wsOnConnected() called";
+}
+
+void MainWindow::wsClosed()
+{
+    qDebug() << "MainWindow::wsClosed() called";
+}
+
+void MainWindow::wsError(QAbstractSocket::SocketError error)
+{
+    QMetaEnum metaEnum = QMetaEnum::fromType<QAbstractSocket::SocketError>();
+    qDebug() << "WS Error: " << metaEnum.valueToKey(error);
+}
+
+void MainWindow::wsSSLerror(const QList<QSslError> &errors)
+{
+    qDebug() << "SSL Error";
 }
 
 #if 0
