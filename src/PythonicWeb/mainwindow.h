@@ -20,11 +20,13 @@ private slots:
     void netFinished(QNetworkReply *data);
     void openFileBrowser();
     void fileOpenComplete(const QString &fileName, const QByteArray &data);
+    void connectWebSocket();
 
 private:
 
-    QPushButton *m_button;
+    QPushButton *m_std_query_button;
     QPushButton *m_open_file_button;
+    QPushButton *m_websocket_connect_button;
     QNetworkAccessManager *net_mgr;
 };
 #endif // MAINWINDOW_H
