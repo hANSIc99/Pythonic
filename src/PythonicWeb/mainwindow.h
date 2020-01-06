@@ -32,6 +32,7 @@ private slots:
     void wsClosed();
     void wsError(QAbstractSocket::SocketError error);
     void wsSSLerror(const QList<QSslError> &errors);
+    void wsOnTextMessageReceived(QString message);
 
 private:
 

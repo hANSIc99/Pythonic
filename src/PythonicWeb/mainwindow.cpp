@@ -28,10 +28,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     connect(&m_webSocket, &QWebSocket::disconnected, this, &MainWindow::wsClosed);
     connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &MainWindow::wsError);
     connect(&m_webSocket, &QWebSocket::sslErrors, this, &MainWindow::wsSSLerror);
-    //QUrl ws_url("wss://127.0.0.1:5000");
-    QUrl ws_url(QStringLiteral("wss://localhost.localdomain:5000"));
-    qDebug() << "Open ws URL: " << ws_url.toString();
-    m_webSocket.open(ws_url);
+    connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &MainWindow::wsOnTextMessageReceived);
+
     /*
      *  STANDARD QUERY
      */
@@ -124,6 +122,9 @@ void MainWindow::fileOpenComplete(const QString &fileName, const QByteArray &dat
 void MainWindow::connectWebSocket()
 {
     qDebug() << "MainWindow::connectWebSocket() called";
+    QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
+    qDebug() << "Open ws URL: " << ws_url.toString();
+    m_webSocket.open(ws_url);
 
 }
 
@@ -146,6 +147,11 @@ void MainWindow::wsError(QAbstractSocket::SocketError error)
 void MainWindow::wsSSLerror(const QList<QSslError> &errors)
 {
     qDebug() << "SSL Error";
+}
+
+void MainWindow::wsOnTextMessageReceived(QString message)
+{
+    qDebug() << "MainWindow::wsOnTextMessageReceived: " << message;
 }
 
 #if 0
