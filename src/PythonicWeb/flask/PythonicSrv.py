@@ -43,5 +43,6 @@ def test_message(message):
          {'data': message['data'], 'count': session['receive_count']})
 
 if __name__ == '__main__':
-    socketio.run(PythonicWeb, host='0.0.0.0')
+    context = ('17262165_localhost.localdomain.cert', '17262165_localhost.localdomain.key')
+    socketio.run(PythonicWeb, debug=True, host='0.0.0.0', ssl_context=context)
 
