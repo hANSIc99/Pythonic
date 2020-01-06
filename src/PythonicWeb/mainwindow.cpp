@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &MainWindow::wsError);
     connect(&m_webSocket, &QWebSocket::sslErrors, this, &MainWindow::wsSSLerror);
     //QUrl ws_url("wss://127.0.0.1:5000");
-    QUrl ws_url(QStringLiteral("ws://127.0.0.1:5000"));
+    QUrl ws_url(QStringLiteral("wss://localhost.localdomain:5000"));
     qDebug() << "Open ws URL: " << ws_url.toString();
     m_webSocket.open(ws_url);
     /*
