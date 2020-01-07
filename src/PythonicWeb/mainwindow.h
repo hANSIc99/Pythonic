@@ -23,13 +23,14 @@ public:
                         Qt::WindowFlags flags = 0);
 
 private slots:
-    void handleButton();
+    void wsStartTimer();
     void netFinished(QNetworkReply *data);
     void openFileBrowser();
     void fileOpenComplete(const QString &fileName, const QByteArray &data);
     void connectWebSocket();
     void wsOnConnected();
     void wsClosed();
+    void wsDisconnect();
     void wsError(QAbstractSocket::SocketError error);
     void wsSSLerror(const QList<QSslError> &errors);
     void wsOnTextMessageReceived(QString message);
@@ -39,7 +40,9 @@ private:
     QPushButton *m_std_query_button;
     QPushButton *m_open_file_button;
     QPushButton *m_websocket_connect_button;
+    QPushButton *m_websocket_disconnect_button;
     QWebSocket  m_webSocket;
+    QWebSocket  ws_uploadData;
     QNetworkAccessManager *net_mgr;
 };
 #endif // MAINWINDOW_H
