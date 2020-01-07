@@ -9,7 +9,7 @@
 [<img src="https://img.shields.io/badge/platform-Windows%20Linux%20Mac-blueviolet.svg">](https://github.com/hANSIc99/Pythonic)
 
 
-![Alt text](screenshot-3.png?raw=true "Screenshot")
+![Alt text](screenshot-4.png?raw=true "Screenshot")
 
 
 ## Installation into existing Python 3.x environment
@@ -35,6 +35,17 @@ On Windows, open the command line or the Powershell and type:
 You can now start Pythonic from the command line by typing:
 
 #### 3. `./Pythonic`
+
+## Tutorial
+Available on [Steemit](https://steemit.com)
+
+[Pythonic Tutorial Part 1-6](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-1-6) (Installation, Concept, Toolbar, Logging, Basic Scheduler, Basic Operation)
+
+[Pythonic Tutorial Part 7-11](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-7-11) (Branch Element, Return Element, Process Branch Element, Technical Analysis Element, Stack Element)
+
+[Pythonic Tutorial Part 12-16](https://steemit.com/programming/@avenwedde/pythonic-tutorial-part-12-16) (Send E-Mail, REST Query, Binance Scheduler, Binance OHLC Query, Binance Order)
+
+[Pythonic Tutorial Part 17-18](https://steemit.com/datascience/@avenwedde/pythonic-tutorial-17-18) (Support Vector Machine, Support Vector Machine Prediction)
 
 ## Known Issues
 
