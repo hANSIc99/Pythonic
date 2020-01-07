@@ -16,7 +16,7 @@ def handle(ws):
             ws.send('0 {} {}\n'.format(i, random.random()))
             eventlet.sleep(0.1)
 
-#standard server
+#standard server xxxx
 def dispatch(environ, start_response):
     if environ['PATH_INFO'] == '/data':
         print('PATH_INFO == \'/data\'')
