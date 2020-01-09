@@ -1,14 +1,33 @@
 import eventlet, random, os
 from time import sleep
-from eventlet import wsgi, websocket
+from eventlet import wsgi, websocket, tpool
+
+"""
+def startTimer(ws):
+    n_cnt = 0
+    while True:
+        print('Loop started!')
+        #while True:
+        sleep(2)
+        n_cnt+=1
+        ws.send('Timer executed: {}'.format(n_cnt))
+"""
+
 
 @websocket.WebSocketWSGI
 def startTimer(ws):
     n_cnt = 0
     while True:
+        print('Loop! {}'.format(n_cnt))
+        """ waiting for messages
+        m = ws.wait()
+        if m is None:
+            break
+        """
+        #while True:
+        ws.send('Timer triggered: {}'.format(n_cnt))
         sleep(2)
         n_cnt+=1
-        ws.send('Timer executed: {}'.format(n_cnt))
 
 @websocket.WebSocketWSGI
 def handle(ws):
@@ -20,15 +39,6 @@ def handle(ws):
                 break
             print('Message received: {}'.format(str(m)))
             ws.send(m)
-    if ws.path == '/timer':
-        print('WS == \'/timer\'')
-        while True:
-            m = ws.wait()
-            if m is None:
-                break
-            print('Message received: {}'.format(str(m)))
-            startTimer(ws)
-
     elif ws.path == '/data':
         print('WS == \'/data\'')
         while True:
@@ -36,15 +46,6 @@ def handle(ws):
             if m is None:
                 break
             print('Message received: {}'.format(str(m)))
-
-    """ # send data and close socket
-    elif ws.path == '/data':
-        print('WS == \'/data\'')
-        for i in range (10):
-            ws.send('0 {} {}\n'.format(i, random.random()))
-            eventlet.sleep(0.1)
-    """
-
 
 def dispatch(environ, start_response):
     if environ['PATH_INFO'] == '/data':
@@ -55,7 +56,8 @@ def dispatch(environ, start_response):
         return handle(environ, start_response)
     elif environ['PATH_INFO'] == '/timer':
         print('PATH_INFO == \'/timer\'')
-        return startTimer(environ, start_response)
+        tpool.execute(startTimer, environ, start_response)
+        return
 
 
     elif environ['PATH_INFO'] == '/wasm':

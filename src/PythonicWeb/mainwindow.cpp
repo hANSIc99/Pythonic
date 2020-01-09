@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 
     m_websocket_connect_button = new QPushButton("Connect Websocket", this);
     m_websocket_connect_button->setGeometry((QRect(QPoint(30, 30), QSize(200, 50))));
-    connect(m_websocket_connect_button, SIGNAL(released()), this, SLOT(connectWebSocket()) );
+    connect(m_websocket_connect_button, &QAbstractButton::released, this, &MainWindow::connectWebSocket );
 
     /*
      * WEBSOCKET CLOSE BUTTON
@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 
     m_std_query_button = new QPushButton("Start Timer", this);
     m_std_query_button->setGeometry(QRect(QPoint(30, 240), QSize(200, 50)));
-    connect(m_std_query_button, SIGNAL(released()), this, SLOT(wsStartTimer()) );
+    connect(m_std_query_button, &QAbstractButton::released, this, &MainWindow::wsStartTimer );
 
 
 
