@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     connect(&m_webSocket, &QWebSocket::connected, this, &MainWindow::wsOnConnected);
     connect(&m_webSocket, &QWebSocket::disconnected, this, &MainWindow::wsClosed);
     connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &MainWindow::wsError);
-    connect(&m_webSocket, &QWebSocket::sslErrors, this, &MainWindow::wsSSLerror);
+    //connect(&m_webSocket, &QWebSocket::sslErrors, this, &MainWindow::wsSSLerror);
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &MainWindow::wsOnTextMessageReceived);
 
     /*

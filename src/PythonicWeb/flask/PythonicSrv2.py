@@ -65,6 +65,53 @@ def dispatch(environ, start_response):
         start_response('200 OK', [('content-type', 'text/html')])
         return [open(os.path.join(os.path.dirname(__file__),
             'PythonicWeb/templates/PythonicWeb.html')).read()]
+
+    elif environ['PATH_INFO'] == '/pythonic_0.16.png':
+        print('PATH_INFO == \'/pythonic_0.16.png\'')
+        bin_data = open(os.path.join(os.path.dirname(__file__),
+            'PythonicWeb/static/pythonic_0.16.png'), 'rb').read() 
+        start_response('200 OK', [('content-type', 'image/png'),
+                                ('content-length', str(len(bin_data)))])
+        return [bin_data]
+
+    elif environ['PATH_INFO'] == 'qtloader.js':
+        print('PATH_INFO == \'/qtloader.js\'')
+        str_data = open(os.path.join(os.path.dirname(__file__),
+            'PythonicWeb/static/qtloader.js')).read() 
+        print(str_data)
+        start_response('200 OK', [('content-type', 'application/javascript'),
+                                ('content-length', str(len(str_data)))])
+        #start_response('200 OK', [('content-type', 'application/javascript') ])
+
+        return [str_data]
+
+
+    elif environ['PATH_INFO'] == '/qtlogo.svg':
+        print('PATH_INFO == \'/qtlogo.svg\'')
+        bin_data = open(os.path.join(os.path.dirname(__file__),
+            'PythonicWeb/static/qtlogo.svg'), 'rb').read() 
+        """
+        start_response('200 OK', [('content-type', 'image/png'),
+                                ('content-length', str(len(bin_data)))])
+        """
+        start_response('200 OK', [('content-type', 'image/svg+xml'),
+                                ('content-length', str(len(bin_data)))])
+
+        return [bin_data]
+
+    elif environ['PATH_INFO'] == 'PythonicWeb.js':
+        print('PATH_INFO == \'/PythonicWeb.js\'')
+        start_response('200 OK', [('content-type', 'application/javascript')])
+        return [open(os.path.join(os.path.dirname(__file__),
+            'PythonicWeb/static/PythonicWeb.js')).read()]
+
+    elif environ['PATH_INFO'] == 'PythonicWeb.wasm':
+        print('PATH_INFO == \'/PythonicWeb.wasm\'')
+        bin_data = open(os.path.join(os.path.dirname(__file__),
+            'PythonicWeb/static/PythonicWeb.wasm'), 'rb').read() 
+        start_response('200 OK', [('content-type', 'application/wasm')])
+        return [bin_data]
+
     else:
         print('PATH_INFO == \'/\'')
         start_response('200 OK', [('content-type', 'text/html')])
