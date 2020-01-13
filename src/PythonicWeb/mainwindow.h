@@ -37,11 +37,11 @@ private slots:
 
 private:
 
-    QPushButton *m_std_query_button;
-    QPushButton *m_open_file_button;
+    QPushButton *m_start_timer_btn;
+    QPushButton *m_upload_file_btn;
     QPushButton *m_websocket_connect_button;
     QPushButton *m_websocket_disconnect_button;
-    QWebSocket  m_webSocket;
+    QWebSocket  m_websocket_timer;
     QWebSocket  ws_uploadData;
     QNetworkAccessManager *net_mgr;
 };
