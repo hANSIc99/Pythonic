@@ -189,7 +189,6 @@ class MainWorker(QObject):
         grid = [[[None for k in range(self.max_grid_size)]for i in range(self.max_grid_size)]
                 for j in range(self.max_grid_cnt)]
 
-        grid_data_list = []
         with ZipFile(filename, 'r') as archive:
             for i, zipped_grid in enumerate(archive.namelist()):
                 pickled_grid = archive.read(zipped_grid)
