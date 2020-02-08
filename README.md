@@ -24,6 +24,9 @@ On Linux based systems,
 run `sudo pip3 install Pythonic`
 or `sudo python3 -m pip install Pythonic`
 
+If youre facing problems installing PyQt5, you may have to upgrade pip first:
+`python3 -m pip install --upgrade pip`
+
 In general, root-rights are not required but when you run without it, the start script under
 `/usr/local/bin/` won't get installed.
 
