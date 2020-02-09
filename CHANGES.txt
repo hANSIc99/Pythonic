@@ -1,3 +1,13 @@
+0.17
+
+    Pythonicdaemon: threading optimized
+
+
+0.16
+
+    Basic Stack: relative file path option added
+    Machine Learning: relative file path option added
+
 0.15
 
     Save/load file affects now all grids
