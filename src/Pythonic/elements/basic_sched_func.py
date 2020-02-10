@@ -189,20 +189,16 @@ class BasicScheduler(Function):
                     # funktioniert nur wenn start_time > now
                     time_offset = start_time - now
 
-                    # check if the timeframe already passed
-                    if start_day == today and start_time < now and stop_time > now:
-                        # start immediately, initialize timedelta with 0
-                        day_offset = timedelta()
-                        time_offset = timedelta()
-                    elif start_day == today and stop_time < now:
-                        # time already passed, start schedule next day in list
+                    # check if the time has already passed
+                    if start_day == today and time_offset.days < 0:
                         start_day = next(day_cycle)
-                        # when the next cycle is today too
+                        # when the next cycle is today too (when only one day is selected)
                         if start_day == today:
                             # wait for one week (6)
                             # plus one day bacause of negative time_offset (6+1)
                             day_offset = 7
                         elif start_day < today:
+                            # plus one day bacause of negative time_offset (6+1)
                             # if the start day is next week
                             day_offset = 7 - today + start_day
                         else:
@@ -230,7 +226,6 @@ class BasicScheduler(Function):
                 hour, minute = time_input
 
                 if isinstance(record, tuple) and isinstance(record[0], datetime): # synchronization (target_1)
-
                     # next activation
                     # check secondly if execution can be started
                     
@@ -238,13 +233,14 @@ class BasicScheduler(Function):
                     while record[0] > datetime.now():
                         sleep(1)
 
-                    record = record[1]
-
+                    record = record[1] # payload
+                    # target_0: execute subsequent elements
+                    # target_1: calculate next execution time
+                    log_txt = '{BASIC SCHEDULER}        >>>EXECUTE<<<'
                     result = Record(self.getPos(), target_0,
                             record, target_1, record, log=log_state)
 
                 else: # first activation (when record[0] != datetime)
-                     
                     now = datetime.now()
                     today = datetime.now().weekday()
                     # None = Abbruch
@@ -258,9 +254,8 @@ class BasicScheduler(Function):
                         result = Record(self.getPos(), None, record)
                         return result
 
-
                     # determine the start day
-                    if any(i for i in active_days if i >= today):
+                    if any(True for i in active_days if i >= today):
                         # start today or a day > as today
                         start_day = next(day_cycle)
                         while start_day < today:
@@ -268,12 +263,11 @@ class BasicScheduler(Function):
                         day_offset = start_day - today
 
                     else:
-                        # start the smallest day
+                        # start the smallest day (next week)
                         start_day = next(day_cycle)
                         day_offset = 7 - today + start_day
 
                     day_offset = timedelta(days=day_offset)
-
 
                     start_time = time(hour=hour, minute=minute)
                     actual_time = datetime.now().time()
@@ -289,15 +283,14 @@ class BasicScheduler(Function):
                         # when the next cycle is today too (when only one day is selected)
                         if start_day == today:
                             # wait for one week (6)
-                            # plus 1 day because of negative day in time offset
+                            # plus one day bacause of negative time_offset (6+1)
                             day_offset = 7
+                        elif start_day < today:
+                            # plus one day bacause of negative time_offset (6+1)
+                            # if the start day is next week
+                            day_offset = 7 - today + start_day
                         else:
-                            if start_Day < today: # e.g. saturday to monday
-                                day_offset = 6 - today + start_day
-                            else: # e.g. tuesday to thursday
-                                day_offset = start_day - today
-                            
-                            day_offset += 1 # add 1 day because of negative day in time offset
+                            day_offset = start_day - today
 
                         day_offset = timedelta(days=day_offset)
 
