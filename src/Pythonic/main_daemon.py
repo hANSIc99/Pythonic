@@ -74,8 +74,10 @@ class MainWorker(QObject):
                     '| |_) | | | | __| \'_ \ / _ \| \'_ \| |/ __| | | |/ _` |/ _ \ \'_ ` _ \ / _ \| \'_ \ \n'\
                     '|  __/| |_| | |_| | | | (_) | | | | | (__| |_| | (_| |  __/ | | | | | (_) | | | |\n'\
                     '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
-                    '       |___/                                                                     \n\n'
+                    '       |___/                                                                     \n'
 
+    version         = 'v0.17\n'
+    gitHub          = 'Visit https://github.com/hANSIc99/Pythonic\n'
     log_info_msg    = '<<<<<<<<<<<< Logging directory ~/PythonicDaemon_201x/Month/\n'
     input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
     status_info_msg = '>>>>>>>>>>>> Enter \'s\' to list all background processes\n'
@@ -161,6 +163,8 @@ class MainWorker(QObject):
         os.system('clear')
         print('\n')
         print(self.welcome_msg)
+        print(self.version)
+        print(self.gitHub)
         print(self.log_info_msg)
         print(self.input_info_msg)
         print(self.status_info_msg)
@@ -212,6 +216,7 @@ class MainWorker(QObject):
 
                 self.grd_ops_arr.append(GridOperator(grid[i]))
                 self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
+                self.grd_ops_arr[i].update_logger.connect(self.update_logfile)
                 self.kill_all.connect(self.grd_ops_arr[i].kill_proc)
                 self.grd_ops_arr[i].startExec((0,0))
 
