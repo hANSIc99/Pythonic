@@ -266,6 +266,7 @@ class BasicScheduler(Function):
                         while start_day < today:
                             start_day = next(day_cycle)
                         day_offset = start_day - today
+
                     else:
                         # start the smallest day
                         start_day = next(day_cycle)
@@ -285,13 +286,18 @@ class BasicScheduler(Function):
                     # check if the time has already passed
                     if start_day == today and time_offset.days < 0:
                         start_day = next(day_cycle)
-                        # when the next cycle is today too
+                        # when the next cycle is today too (when only one day is selected)
                         if start_day == today:
                             # wait for one week (6)
-                            # plus one day bacause of negative time_offset (6+1)
+                            # plus 1 day because of negative day in time offset
                             day_offset = 7
                         else:
-                            day_offset = start_day - today
+                            if start_Day < today: # e.g. saturday to monday
+                                day_offset = 6 - today + start_day
+                            else: # e.g. tuesday to thursday
+                                day_offset = start_day - today
+                            
+                            day_offset += 1 # add 1 day because of negative day in time offset
 
                         day_offset = timedelta(days=day_offset)
 
