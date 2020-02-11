@@ -14,6 +14,7 @@ class stdinReader(QThread):
     quit_app = pyqtSignal(name='quit_app')
     finished = pyqtSignal(name='finished')
     b_init      = True
+    b_exit      = False
     interval    = 0.5
     spinner = itertools.cycle(['-', '\\', '|', '/'])
 
@@ -28,7 +29,7 @@ class stdinReader(QThread):
             self.old_settings = termios.tcgetattr(self.fd) 
             tty.setraw(sys.stdin.fileno()) 
 
-        while True:
+        while not self.b_exit:
 
             rd_fs, wrt_fs, err_fs =  select.select([sys.stdin], [], [], self.interval)
 
@@ -38,7 +39,7 @@ class stdinReader(QThread):
                 if cmd == ('q' or 'Q'):
                     termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
                     termios.tcflush(self.fd, termios.TCIOFLUSH)
-
+                    self.b_exit = True
                     self.quit_app.emit()
 
                 elif cmd == ('s' or 'S'):
@@ -116,7 +117,7 @@ class MainWorker(QObject):
     def exitApp(self):
         print('# Stopping all processes....')
         self.kill_all.emit()
-        time.sleep(1) # wait for 1 seconds to kill all processes
+        time.sleep(3) # wait for 1 seconds to kill all processes
         sys.exit()
 
 
