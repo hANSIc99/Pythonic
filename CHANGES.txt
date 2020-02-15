@@ -1,5 +1,6 @@
 0.17
 
+    Exception handling optimized
     PythonicDaemon: threading optimized
     PythonicDaemon: version info added
     PythonicDaemon: update logfile fixed

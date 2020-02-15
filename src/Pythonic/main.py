@@ -115,7 +115,7 @@ class MainWindow(QWidget):
             #self.working_tabs.addTab(self.wrk_area_arr[i], QC.translate('', 'Grid {}'.format(i)))
             self.working_tabs.addTab(self.wrk_tabs_arr[i], QC.translate('', 'Grid {}'.format(i + 1)))
 
-            self.grd_ops_arr.append(GridOperator(self.wrk_area_arr[i].grid))
+            self.grd_ops_arr.append(GridOperator(self.wrk_area_arr[i].grid, i))
 
         # init reference for the current grid which is in focus
         self.focus_grid = self.wrk_area_arr[0]

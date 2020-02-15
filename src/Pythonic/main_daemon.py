@@ -215,7 +215,7 @@ class MainWorker(QObject):
                     logging.debug('MainWorker::loadGrid() row: {} col: {}'.format(row, column))
                     grid[i][row][column] = (function, self_sync)
 
-                self.grd_ops_arr.append(GridOperator(grid[i]))
+                self.grd_ops_arr.append(GridOperator(grid[i], i))
                 self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
                 self.grd_ops_arr[i].update_logger.connect(self.update_logfile)
                 self.kill_all.connect(self.grd_ops_arr[i].kill_proc)
