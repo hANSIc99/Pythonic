@@ -1,5 +1,7 @@
 0.17
 
+    Logger: Grid number in log message added
+    PythonicDaemon: Option to show log messages added
     Exception handling optimized
     PythonicDaemon: threading optimized
     PythonicDaemon: version info added

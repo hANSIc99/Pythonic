@@ -8,6 +8,33 @@ from PyQt5.QtCore import pyqtSignal
 
 from Pythonic.executor_daemon import GridOperator
 
+def reset_screen():
+
+    welcome_msg =   ' ____        _   _                 _      ____                                   \n'\
+                    '|  _ \ _   _| |_| |__   ___  _ __ (_) ___|  _ \  __ _  ___ _ __ ___   ___  _ __  \n'\
+                    '| |_) | | | | __| \'_ \ / _ \| \'_ \| |/ __| | | |/ _` |/ _ \ \'_ ` _ \ / _ \| \'_ \ \n'\
+                    '|  __/| |_| | |_| | | | (_) | | | | | (__| |_| | (_| |  __/ | | | | | (_) | | | |\n'\
+                    '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
+                    '       |___/                                                                     \n'
+
+    version         = 'v0.17\n'
+    gitHub          = 'Visit https://github.com/hANSIc99/Pythonic\n'
+    log_info_msg    = '<<<<<<<<<<<< Logging directory ~/PythonicDaemon_201x/Month/\n'
+    input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
+    status_info_msg = '>>>>>>>>>>>> Hold  \'p\' to list all background processes'
+    applog_info_msg = '>>>>>>>>>>>> Enter \'l\' to show log messages\n'
+
+    os.system('clear')
+
+    print('\n')
+    print(welcome_msg)
+    print(version)
+    print(gitHub)
+    print(log_info_msg)
+    print(input_info_msg)
+    print(status_info_msg)
+    print(applog_info_msg)
+
 class stdinReader(QThread):
 
     print_procs = pyqtSignal(name='print_procs')
@@ -15,7 +42,10 @@ class stdinReader(QThread):
     finished = pyqtSignal(name='finished')
     b_init      = True
     b_exit      = False
+    b_log       = False
+    b_procs     = False
     interval    = 0.5
+    max_log_lines = 20
     spinner = itertools.cycle(['-', '\\', '|', '/'])
 
     def __init__(self):
@@ -36,16 +66,25 @@ class stdinReader(QThread):
             if rd_fs:
                 cmd = rd_fs[0].read(1)
 
-                if cmd == ('q' or 'Q'):
+                if cmd == ('q' or 'Q'): # quit
                     termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
                     termios.tcflush(self.fd, termios.TCIOFLUSH)
                     self.b_exit = True
                     self.quit_app.emit()
 
-                elif cmd == ('s' or 'S'):
+                elif cmd == ('p' or 'P'): # show proccesses
+                    self.b_procs = True
                     termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
                     self.print_procs.emit()
                     tty.setraw(sys.stdin.fileno()) 
+
+                elif cmd == ('l' or 'L'): # show log
+                    if self.b_log:
+                        termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+                        reset_screen() # reset the screen to hide the log list
+                        tty.setraw(sys.stdin.fileno()) 
+                    self.b_log = not self.b_log
+                    
                 else:
                     sys.stdout.write('\b')
 
@@ -53,11 +92,63 @@ class stdinReader(QThread):
                 self.callback()
 
 
+
     def callback(self):
+
+        if self.b_procs:
+            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+            reset_screen() # reset the screen to hide the log list
+            tty.setraw(sys.stdin.fileno()) 
+
+        if self.b_log:
+            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+            reset_screen()
+            print('Log output active:\n')
+            self.tail(self.max_log_lines)
+            tty.setraw(sys.stdin.fileno()) 
 
         sys.stdout.write('Running... ' + next(self.spinner))
         sys.stdout.flush()
-        sys.stdout.write('\b\b\b\b\b\b\b\b\b\b\b\b')
+        sys.stdout.write('\r')
+
+    def tail(self, lines):
+
+        now = datetime.datetime.now().date()
+        log_date_str = now.strftime('%Y_%m_%d')
+        month = now.strftime('%b')
+        year = now.strftime('%Y')
+        home_dict = str(Path.home())
+        file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+
+        BLOCK_SIZE = 1024
+
+
+        with open(file_path, 'rb') as f:
+            f.seek(0, 2) # set fp to 0 from end of file
+            block_end_byte = f.tell() # tell() returns the current fp position
+            block_number = -1
+            blocks = []
+            lines_to_go = lines
+
+            while lines_to_go > 0 and block_end_byte > 0:
+                if (block_end_byte - BLOCK_SIZE > 0): # bytes to read > BLOCK_SIZE
+                    f.seek(block_number * BLOCK_SIZE, 2) # set fp 1 block backwards
+                    blocks.append(f.read(BLOCK_SIZE))
+                else:
+                    f.seek(0,0) # set fp to the beginning
+                    blocks.append(f.read(block_end_byte)) # read the rest
+
+                lines_found = blocks[-1].count(b'\n') # count occurences of \n
+                lines_to_go -= lines_found
+                block_end_byte -= BLOCK_SIZE # move local pointer backwards
+                block_number -= 1
+
+            log_display_txt = b''.join(reversed(blocks))
+            log_display_txt = b'\n'.join(log_display_txt.splitlines()[-lines:])
+            log_display_txt = log_display_txt.decode('utf-8')
+
+            print(log_display_txt + '\n')
+
 
 class MainWorker(QObject):
 
@@ -70,18 +161,6 @@ class MainWorker(QObject):
     max_grid_size = 50
     max_grid_cnt  = 5
     
-    welcome_msg =   ' ____        _   _                 _      ____                                   \n'\
-                    '|  _ \ _   _| |_| |__   ___  _ __ (_) ___|  _ \  __ _  ___ _ __ ___   ___  _ __  \n'\
-                    '| |_) | | | | __| \'_ \ / _ \| \'_ \| |/ __| | | |/ _` |/ _ \ \'_ ` _ \ / _ \| \'_ \ \n'\
-                    '|  __/| |_| | |_| | | | (_) | | | | | (__| |_| | (_| |  __/ | | | | | (_) | | | |\n'\
-                    '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
-                    '       |___/                                                                     \n'
-
-    version         = 'v0.17\n'
-    gitHub          = 'Visit https://github.com/hANSIc99/Pythonic\n'
-    log_info_msg    = '<<<<<<<<<<<< Logging directory ~/PythonicDaemon_201x/Month/\n'
-    input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
-    status_info_msg = '>>>>>>>>>>>> Enter \'s\' to list all background processes\n'
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
@@ -131,7 +210,7 @@ class MainWorker(QObject):
     def printProcessList(self):
         b_proc_found = False
         termios.tcsetattr(self.fd, termios.TCSADRAIN, self.orig_tty_settings)
-        self.reset_screen()
+        reset_screen()
         for i in range(self.max_grid_cnt):
             if self.grd_ops_arr[i].pid_register:
                 for pid in self.grd_ops_arr[i].pid_register:
@@ -160,20 +239,10 @@ class MainWorker(QObject):
             self.logger.addHandler(file_handler)
             self.log_date = datetime.datetime.now()
 
-    def reset_screen(self):
-        os.system('clear')
-        print('\n')
-        print(self.welcome_msg)
-        print(self.version)
-        print(self.gitHub)
-        print(self.log_info_msg)
-        print(self.input_info_msg)
-        print(self.status_info_msg)
-
     def start(self, args):
 
         #print('\n Arguments: {}'.format(args))
-        self.reset_screen()        
+        reset_screen()        
         # first argument is main_console.py
         # second argument is script location
 

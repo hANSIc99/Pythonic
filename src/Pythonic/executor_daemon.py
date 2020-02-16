@@ -107,11 +107,17 @@ class GridOperator(QObject):
         # when the log checkbox is activated
         if prg_return.log:
             if prg_return.log_txt:
-                logging.info('Message {}|{} : {}'.format(prg_return.source[0],
-                            alphabet[prg_return.source[1]], prg_return.log_txt))
+                logging.info('Grid {} Message {}|{} : {}'.format(
+                            self.number + 1,
+                            prg_return.source[0],
+                            alphabet[prg_return.source[1]],
+                            prg_return.log_txt))
             else:
-                logging.info('Message {}|{} : {}'.format(prg_return.source[0],
-                            alphabet[prg_return.source[1]], prg_return.record_0))
+                logging.info('Grid {} Message {}|{} : {}'.format(
+                            self.number + 1,
+                            prg_return.source[0],
+                            alphabet[prg_return.source[1]],
+                            prg_return.record_0))
 
         self.goNext(prg_return)
 
