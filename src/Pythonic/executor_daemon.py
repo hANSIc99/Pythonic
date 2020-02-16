@@ -36,7 +36,7 @@ class GridOperator(QObject):
     exec_pending    = pyqtSignal(name='exec_pending')
     switch_grid     = pyqtSignal('PyQt_PyObject', name='switch_grid')
 
-    def __init__(self, grid):
+    def __init__(self, grid, number):
         super().__init__()
         logging.debug('__init__() called on GridOperator')
 
@@ -45,6 +45,7 @@ class GridOperator(QObject):
         #grid[0][row][column] = (function, config, self_sync)
 
         self.grid = grid
+        self.number = number # grid number [0 .. 4]
         self.stop_flag = False
         self.fastpath = False # fastpath is active when debug is diasbled
         self.retry_counter = 0
@@ -93,8 +94,12 @@ class GridOperator(QObject):
 
         # if an execption occured
         if(issubclass(prg_return.record_0.__class__, BaseException)):
-            logging.error('Target {}|{} Exception found: {}'.format(prg_return.source[0],
-                alphabet[prg_return.source[1]], prg_return.record_0))
+            logging.error('Grid {} Target {}|{} Exception found: {}'.format(
+                self.number + 1,
+                prg_return.source[0],
+                alphabet[prg_return.source[1]],
+                prg_return.record_0))
+
             return
 
         ### proceed with regular execution ###
@@ -102,11 +107,17 @@ class GridOperator(QObject):
         # when the log checkbox is activated
         if prg_return.log:
             if prg_return.log_txt:
-                logging.info('Message {}|{} : {}'.format(prg_return.source[0],
-                            alphabet[prg_return.source[1]], prg_return.log_txt))
+                logging.info('Grid {} Message {}|{} : {}'.format(
+                            self.number + 1,
+                            prg_return.source[0],
+                            alphabet[prg_return.source[1]],
+                            prg_return.log_txt))
             else:
-                logging.info('Message {}|{} : {}'.format(prg_return.source[0],
-                            alphabet[prg_return.source[1]], prg_return.record_0))
+                logging.info('Grid {} Message {}|{} : {}'.format(
+                            self.number + 1,
+                            prg_return.source[0],
+                            alphabet[prg_return.source[1]],
+                            prg_return.record_0))
 
         self.goNext(prg_return)
 
@@ -255,35 +266,9 @@ class Executor(QRunnable):
         result = return_pipe_0.recv()
         p_0.join()
 
-        if(issubclass(result.__class__, BaseException)):
-            logging.error('Executor::start_proc() 1. Exception caught!!!')
-        else:
-            self.signals.finished.emit(result)
-        
+        self.signals.finished.emit(result)
 
 def target_0(function, record, feed_pipe):
 
-    try:
-        #execute the callback function
-        #element = return_pipe.recv()
-        #args = return_pipe.recv()
-        #if arguments given call with args
-        #ret = element.execute(args)
-        ret = function.execute(record)
-
-        #feed_pipe.send('return value from stephan')
-        feed_pipe.send(ret)
-
-    except Exception as e:
-        """
-        print('Exception in target_0(): %s' % sys.exc_info()[0])
-        print('Exception in target_0(): %s' % sys.exc_info()[1])
-        print('Exception in target_0(): %s' % sys.exc_info()[2])
-        print('Exception as e: %s' % e)
-        except_type, except_class, tb = sys.exc_info()
-        print(type(e))
-        """
-        #print(issubclass(e.__class__, BaseException))
-        #feed_pipe.send((except_type, except_class, traceback.extract_tb(tb)))
-        #feed_pipe.send((e, traceback.format_exc()))
-        feed_pipe.send(e)
+    ret = function.execute_ex(record)
+    feed_pipe.send(ret)

@@ -11,7 +11,7 @@ class BasicScheduler(Function):
 
     def execute(self, record):
 
-
+        
         target_0 = (self.row+1, self.column)
         target_1 = self.getPos()
 
@@ -27,7 +27,7 @@ class BasicScheduler(Function):
             while threshold > datetime.now():
                     sleep(1)
 
-        if self.config[1]:
+        if self.config[1]: # mode_data != None (scheduler active)
             
             mode_index, mode_data, log_state = self.config
     
@@ -51,14 +51,16 @@ class BasicScheduler(Function):
                     delta_t = 1
 
                 delta_t *= int(repeat_val)
-
-                if isinstance(record, tuple) and isinstance(record[0], datetime):
-
-                    # ueberpruefung im secunden takt
-                    # wenn es soweit ist dann naechsten takt vorbereiten
+                
+                if isinstance(record, tuple) and isinstance(record[0], datetime): # synchronization (target_1)
+                    # called by tareget_0 (self_sync)
+                    # check every second
+                    
                     
                     # regular interval
                     # record[0] = sync_time of preceding call
+                    
+                    # DELAY
                     threshold_time(record[0])
 
                     offset = timedelta(seconds=delta_t)
@@ -69,8 +71,8 @@ class BasicScheduler(Function):
 
                 else:
 
-                    # beim ersten start
-                    # nur abfeuern im interval mode
+                    # first execution
+                    # only trigger in interval mode
 
                     offset = timedelta(seconds=delta_t)
                     sync_time = datetime.now() + offset
@@ -89,7 +91,7 @@ class BasicScheduler(Function):
             elif mode_index == 2 or mode_index == 5:
 
                 repeat_val, time_base, start_time, stop_time, day_list = self.config[1]
-
+                # day_list = [0 (Monady), 4(Friday), 6(Sunday)]
                 start_hour, start_minute = start_time
                 stop_hour, stop_minute = stop_time
 
@@ -102,7 +104,7 @@ class BasicScheduler(Function):
 
                 delta_t *= int(repeat_val)
 
-                if isinstance(record, tuple) and isinstance(record[0], datetime):
+                if isinstance(record, tuple) and isinstance(record[0], datetime): # synchronization (target_1)
 
 
                     stop_time  = time(hour=stop_hour, minute=stop_minute)
@@ -187,20 +189,16 @@ class BasicScheduler(Function):
                     # funktioniert nur wenn start_time > now
                     time_offset = start_time - now
 
-                    # check if the timeframe already passed
-                    if start_day == today and start_time < now and stop_time > now:
-                        # start immediately, initialize timedelta with 0
-                        day_offset = timedelta()
-                        time_offset = timedelta()
-                    elif start_day == today and stop_time < now:
-                        # time already passed, start schedule next day in list
+                    # check if the time has already passed
+                    if start_day == today and time_offset.days < 0:
                         start_day = next(day_cycle)
-                        # when the next cycle is today too
+                        # when the next cycle is today too (when only one day is selected)
                         if start_day == today:
                             # wait for one week (6)
                             # plus one day bacause of negative time_offset (6+1)
                             day_offset = 7
                         elif start_day < today:
+                            # plus one day bacause of negative time_offset (6+1)
                             # if the start day is next week
                             day_offset = 7 - today + start_day
                         else:
@@ -227,21 +225,22 @@ class BasicScheduler(Function):
                 time_input, day_list = self.config[1]
                 hour, minute = time_input
 
-                if isinstance(record, tuple) and isinstance(record[0], datetime):
-
+                if isinstance(record, tuple) and isinstance(record[0], datetime): # synchronization (target_1)
                     # next activation
                     # check secondly if execution can be started
-
+                    
+                    # DELAY
                     while record[0] > datetime.now():
                         sleep(1)
 
-                    record = record[1]
-
+                    record = record[1] # payload
+                    # target_0: execute subsequent elements
+                    # target_1: calculate next execution time
+                    log_txt = '{BASIC SCHEDULER}        >>>EXECUTE<<<'
                     result = Record(self.getPos(), target_0,
                             record, target_1, record, log=log_state)
 
-                else:
-                    # first activation (when record[0] != datetime) 
+                else: # first activation (when record[0] != datetime)
                     now = datetime.now()
                     today = datetime.now().weekday()
                     # None = Abbruch
@@ -255,21 +254,20 @@ class BasicScheduler(Function):
                         result = Record(self.getPos(), None, record)
                         return result
 
-
-                    # check the start day
-                    if any(i for i in active_days if i >= today):
+                    # determine the start day
+                    if any(True for i in active_days if i >= today):
                         # start today or a day > as today
                         start_day = next(day_cycle)
                         while start_day < today:
                             start_day = next(day_cycle)
                         day_offset = start_day - today
+
                     else:
-                        # start the smallest day
+                        # start the smallest day (next week)
                         start_day = next(day_cycle)
                         day_offset = 7 - today + start_day
 
                     day_offset = timedelta(days=day_offset)
-
 
                     start_time = time(hour=hour, minute=minute)
                     actual_time = datetime.now().time()
@@ -282,11 +280,15 @@ class BasicScheduler(Function):
                     # check if the time has already passed
                     if start_day == today and time_offset.days < 0:
                         start_day = next(day_cycle)
-                        # when the next cycle is today too
+                        # when the next cycle is today too (when only one day is selected)
                         if start_day == today:
                             # wait for one week (6)
                             # plus one day bacause of negative time_offset (6+1)
                             day_offset = 7
+                        elif start_day < today:
+                            # plus one day bacause of negative time_offset (6+1)
+                            # if the start day is next week
+                            day_offset = 7 - today + start_day
                         else:
                             day_offset = start_day - today
 
@@ -349,8 +351,8 @@ class BasicScheduler(Function):
                 result = Record(self.getPos(), target_0, record_0, target_1, record_1,
                         log=log_state, log_txt=log_txt)
 
-        else:
-
+        else: # mode_data == None (no scheduler)
+            # config = mode_index, mode_data, log_state
             result = Record(self.getPos(), target_0, record, log=self.config[2])
 
         return result

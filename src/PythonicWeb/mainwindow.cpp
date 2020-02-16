@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include <QDebug>
 #include <QString>
 #include <QDir>
@@ -20,48 +20,66 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
 
 {
-    this->resize(500, 300);
+    this->resize(500, 400);
     net_mgr = new QNetworkAccessManager(this);
     connect(net_mgr, SIGNAL(finished(QNetworkReply*)), this, SLOT(netFinished(QNetworkReply*)));
 
-    connect(&m_webSocket, &QWebSocket::connected, this, &MainWindow::wsOnConnected);
-    connect(&m_webSocket, &QWebSocket::disconnected, this, &MainWindow::wsClosed);
-    connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &MainWindow::wsError);
-    connect(&m_webSocket, &QWebSocket::sslErrors, this, &MainWindow::wsSSLerror);
-    connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &MainWindow::wsOnTextMessageReceived);
-
-    /*
-     *  STANDARD QUERY
-     */
-
-    m_std_query_button = new QPushButton("Standard Query", this);
-    m_std_query_button->setGeometry(QRect(QPoint(30, 30), QSize(200, 50)));
-    connect(m_std_query_button, SIGNAL(released()), this, SLOT(handleButton()) );
-
-
-    /*
-     * UPLOAD FILE BUTTON
-     */
-
-    m_open_file_button = new QPushButton("Upload File", this);
-    m_open_file_button->setGeometry((QRect(QPoint(30, 100), QSize(200, 50))));
-    connect(m_open_file_button, SIGNAL(released()), this, SLOT(openFileBrowser()) );
+    connect(&m_websocket_timer, &QWebSocket::connected, this, &MainWindow::wsOnConnected);
+    connect(&m_websocket_timer, &QWebSocket::disconnected, this, &MainWindow::wsClosed);
+    connect(&m_websocket_timer, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &MainWindow::wsError);
+    //connect(&m_webSocket, &QWebSocket::sslErrors, this, &MainWindow::wsSSLerror);
+    connect(&m_websocket_timer, &QWebSocket::textMessageReceived, this, &MainWindow::wsOnTextMessageReceived);
 
     /*
      * WEBSOCKET CONNECT BUTTON
      */
 
     m_websocket_connect_button = new QPushButton("Connect Websocket", this);
-    m_websocket_connect_button->setGeometry((QRect(QPoint(30, 170), QSize(200, 50))));
-    connect(m_websocket_connect_button, SIGNAL(released()), this, SLOT(connectWebSocket()) );
+    m_websocket_connect_button->setGeometry((QRect(QPoint(30, 30), QSize(200, 50))));
+    connect(m_websocket_connect_button, &QAbstractButton::released, this, &MainWindow::connectWebSocket );
+
+    /*
+     * WEBSOCKET CLOSE BUTTON
+     */
+
+    m_websocket_disconnect_button = new QPushButton("Disconnect Websocket", this);
+    m_websocket_disconnect_button->setGeometry((QRect(QPoint(30, 100), QSize(200, 50))));
+    connect(m_websocket_disconnect_button, SIGNAL(released()), this, SLOT(wsDisconnect()) );
+
+    /*
+     * UPLOAD FILE BUTTON
+     */
+
+    m_upload_file_btn = new QPushButton("Upload File", this);
+    m_upload_file_btn->setGeometry((QRect(QPoint(30, 170), QSize(200, 50))));
+    connect(m_upload_file_btn, SIGNAL(released()), this, SLOT(openFileBrowser()) );
+
+    /*
+     *  START TIMER
+     */
+
+    m_start_timer_btn = new QPushButton("Start Timer", this);
+    m_start_timer_btn->setGeometry(QRect(QPoint(30, 240), QSize(200, 50)));
+    connect(m_start_timer_btn, &QAbstractButton::released, this, &MainWindow::wsStartTimer );
+
+
+
+
+
 }
 
 
-void MainWindow::handleButton(){
-    qDebug() << "Button pressed";
-    QByteArray net_data("Hello");
+void MainWindow::wsStartTimer(){
+    qDebug() << "MainWindow::wsStartTimer() called";
+    //QByteArray net_data("Hello");
 
-    net_mgr->post(QNetworkRequest(QUrl("http://localhost:5000/test_1")), net_data);
+    //net_mgr->post(QNetworkRequest(QUrl("http://localhost:5000/test_1")), net_data);
+    //m_webSocket.sendTextMessage("Start Timer");
+
+    QUrl ws_url(QStringLiteral("ws://localhost:7000/timer"));
+    qDebug() << "Open Websocket:: " << ws_url.toString();
+    m_websocket_timer.open(ws_url);
+
 }
 
 
@@ -73,6 +91,13 @@ void MainWindow::openFileBrowser(){
     QString s_homePath = QDir::homePath();
     //QFileDialog::getOpenFileContent
 
+
+    QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
+    ws_uploadData.open(ws_url);
+    connect(&ws_uploadData, &QWebSocket::connected, []{ qDebug() << "wsUplData_onConnected() called"; });
+    connect(&ws_uploadData, &QWebSocket::disconnected, []{ qDebug() << "wsUplData_onClosed() called"; });
+
+
     auto fileOpenCompleted = [this](const QString &filePath, const QByteArray &fileContent) {
         if (filePath.isEmpty()) {
             qDebug() << "No file was selected";
@@ -82,10 +107,11 @@ void MainWindow::openFileBrowser(){
 
 
             QFileInfo fileName(filePath);
-            QString content_header = QString("form-data; name=\"file\"; filename=\"%1\"").arg(fileName.fileName());
-
-            //QWebSocket
+            //QByteArray uploadData(fileName.fileName().toUtf8());
+            ws_uploadData.sendTextMessage(fileName.fileName());
+            ws_uploadData.sendBinaryMessage(fileContent);
 #ifndef WASM
+            QString content_header = QString("form-data; name=\"file\"; filename=\"%1\"").arg(fileName.fileName());
             QHttpPart fileDataPart;
             fileDataPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(content_header));
             fileDataPart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/jpeg"));
@@ -122,9 +148,9 @@ void MainWindow::fileOpenComplete(const QString &fileName, const QByteArray &dat
 void MainWindow::connectWebSocket()
 {
     qDebug() << "MainWindow::connectWebSocket() called";
-    QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
+    QUrl ws_url(QStringLiteral("ws://localhost:7000/timer"));
     qDebug() << "Open ws URL: " << ws_url.toString();
-    m_webSocket.open(ws_url);
+    m_websocket_timer.open(ws_url);
 
 }
 
@@ -136,6 +162,12 @@ void MainWindow::wsOnConnected()
 void MainWindow::wsClosed()
 {
     qDebug() << "MainWindow::wsClosed() called";
+}
+
+void MainWindow::wsDisconnect()
+{
+    qDebug() << "MainWindow::wsDisconnect() called";
+    m_websocket_timer.close(QWebSocketProtocol::CloseCodeNormal,"Closed by User");
 }
 
 void MainWindow::wsError(QAbstractSocket::SocketError error)

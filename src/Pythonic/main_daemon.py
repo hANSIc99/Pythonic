@@ -1,20 +1,52 @@
-import sys, logging, pickle, datetime, os, time, itertools, tty, termios
+import sys, logging, pickle, datetime, os, time, itertools, tty, termios, select
 import multiprocessing as mp
-from threading import Timer
+from threading import Timer, Thread, Event
 from pathlib import Path
 from zipfile import ZipFile
-from PyQt5.QtCore import QCoreApplication, QObject, QThread, Qt
+from PyQt5.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PyQt5.QtCore import pyqtSignal
 
 from Pythonic.executor_daemon import GridOperator
+
+def reset_screen():
+
+    welcome_msg =   ' ____        _   _                 _      ____                                   \n'\
+                    '|  _ \ _   _| |_| |__   ___  _ __ (_) ___|  _ \  __ _  ___ _ __ ___   ___  _ __  \n'\
+                    '| |_) | | | | __| \'_ \ / _ \| \'_ \| |/ __| | | |/ _` |/ _ \ \'_ ` _ \ / _ \| \'_ \ \n'\
+                    '|  __/| |_| | |_| | | | (_) | | | | | (__| |_| | (_| |  __/ | | | | | (_) | | | |\n'\
+                    '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
+                    '       |___/                                                                     \n'
+
+    version         = 'v0.17\n'
+    gitHub          = 'Visit https://github.com/hANSIc99/Pythonic\n'
+    log_info_msg    = '<<<<<<<<<<<< Logging directory ~/PythonicDaemon_201x/Month/\n'
+    input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
+    status_info_msg = '>>>>>>>>>>>> Hold  \'p\' to list all background processes'
+    applog_info_msg = '>>>>>>>>>>>> Enter \'l\' to show log messages\n'
+
+    os.system('clear')
+
+    print('\n')
+    print(welcome_msg)
+    print(version)
+    print(gitHub)
+    print(log_info_msg)
+    print(input_info_msg)
+    print(status_info_msg)
+    print(applog_info_msg)
 
 class stdinReader(QThread):
 
     print_procs = pyqtSignal(name='print_procs')
     quit_app = pyqtSignal(name='quit_app')
+    finished = pyqtSignal(name='finished')
     b_init      = True
+    b_exit      = False
+    b_log       = False
+    b_procs     = False
     interval    = 0.5
-    spinner = itertools.cycle(['-', '/', '|', '\\'])
+    max_log_lines = 20
+    spinner = itertools.cycle(['-', '\\', '|', '/'])
 
     def __init__(self):
         super().__init__()
@@ -27,36 +59,96 @@ class stdinReader(QThread):
             self.old_settings = termios.tcgetattr(self.fd) 
             tty.setraw(sys.stdin.fileno()) 
 
+        while not self.b_exit:
 
-        self.timer = Timer(self.interval, self.callback)
-        self.timer.start()
+            rd_fs, wrt_fs, err_fs =  select.select([sys.stdin], [], [], self.interval)
 
-        cmd = sys.stdin.read(1) 
+            if rd_fs:
+                cmd = rd_fs[0].read(1)
 
-        if cmd == ('q' or 'Q'):
-            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
-            termios.tcflush(self.fd, termios.TCIOFLUSH)
+                if cmd == ('q' or 'Q'): # quit
+                    termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+                    termios.tcflush(self.fd, termios.TCIOFLUSH)
+                    self.b_exit = True
+                    self.quit_app.emit()
 
-            self.timer.cancel()
-            self.quit_app.emit()
+                elif cmd == ('p' or 'P'): # show proccesses
+                    self.b_procs = True
+                    termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+                    self.print_procs.emit()
+                    tty.setraw(sys.stdin.fileno()) 
 
-        elif cmd == ('s' or 'S'):
-            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
-            self.print_procs.emit()
-            tty.setraw(sys.stdin.fileno()) 
-        else:
-            sys.stdout.write('\b')
+                elif cmd == ('l' or 'L'): # show log
+                    if self.b_log:
+                        termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+                        reset_screen() # reset the screen to hide the log list
+                        tty.setraw(sys.stdin.fileno()) 
+                    self.b_log = not self.b_log
+                    
+                else:
+                    sys.stdout.write('\b')
+
+            else:
+                self.callback()
+
+
 
     def callback(self):
+
+        if self.b_procs:
+            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+            reset_screen() # reset the screen to hide the log list
+            tty.setraw(sys.stdin.fileno()) 
+
+        if self.b_log:
+            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+            reset_screen()
+            print('Log output active:\n')
+            self.tail(self.max_log_lines)
+            tty.setraw(sys.stdin.fileno()) 
+
         sys.stdout.write('Running... ' + next(self.spinner))
         sys.stdout.flush()
-        sys.stdout.write('\b\b\b\b\b\b\b\b\b\b\b\b')
-        self.run()
+        sys.stdout.write('\r')
 
-    def spinning_cursor(self):
-        while True:
-            for cursor in '|/-\\':
-                yield cursor
+    def tail(self, lines):
+
+        now = datetime.datetime.now().date()
+        log_date_str = now.strftime('%Y_%m_%d')
+        month = now.strftime('%b')
+        year = now.strftime('%Y')
+        home_dict = str(Path.home())
+        file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+
+        BLOCK_SIZE = 1024
+
+
+        with open(file_path, 'rb') as f:
+            f.seek(0, 2) # set fp to 0 from end of file
+            block_end_byte = f.tell() # tell() returns the current fp position
+            block_number = -1
+            blocks = []
+            lines_to_go = lines
+
+            while lines_to_go > 0 and block_end_byte > 0:
+                if (block_end_byte - BLOCK_SIZE > 0): # bytes to read > BLOCK_SIZE
+                    f.seek(block_number * BLOCK_SIZE, 2) # set fp 1 block backwards
+                    blocks.append(f.read(BLOCK_SIZE))
+                else:
+                    f.seek(0,0) # set fp to the beginning
+                    blocks.append(f.read(block_end_byte)) # read the rest
+
+                lines_found = blocks[-1].count(b'\n') # count occurences of \n
+                lines_to_go -= lines_found
+                block_end_byte -= BLOCK_SIZE # move local pointer backwards
+                block_number -= 1
+
+            log_display_txt = b''.join(reversed(blocks))
+            log_display_txt = b'\n'.join(log_display_txt.splitlines()[-lines:])
+            log_display_txt = log_display_txt.decode('utf-8')
+
+            print(log_display_txt + '\n')
+
 
 class MainWorker(QObject):
 
@@ -69,16 +161,6 @@ class MainWorker(QObject):
     max_grid_size = 50
     max_grid_cnt  = 5
     
-    welcome_msg =   ' ____        _   _                 _      ____                                   \n'\
-                    '|  _ \ _   _| |_| |__   ___  _ __ (_) ___|  _ \  __ _  ___ _ __ ___   ___  _ __  \n'\
-                    '| |_) | | | | __| \'_ \ / _ \| \'_ \| |/ __| | | |/ _` |/ _ \ \'_ ` _ \ / _ \| \'_ \ \n'\
-                    '|  __/| |_| | |_| | | | (_) | | | | | (__| |_| | (_| |  __/ | | | | | (_) | | | |\n'\
-                    '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
-                    '       |___/                                                                     \n\n'
-
-    log_info_msg    = '<<<<<<<<<<<< Logging directory ~/PythonicDaemon_201x/Month/\n'
-    input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
-    status_info_msg = '>>>>>>>>>>>> Enter \'s\' to list all background processes\n'
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
@@ -112,9 +194,9 @@ class MainWorker(QObject):
         logging.debug('MainWorker::__init__() called')
 
     def exitApp(self):
-        print('Stopping all processes....')
+        print('# Stopping all processes....')
         self.kill_all.emit()
-        time.sleep(1) # wait for 1 seconds to kill all processes
+        time.sleep(3) # wait for 1 seconds to kill all processes
         sys.exit()
 
 
@@ -128,13 +210,14 @@ class MainWorker(QObject):
     def printProcessList(self):
         b_proc_found = False
         termios.tcsetattr(self.fd, termios.TCSADRAIN, self.orig_tty_settings)
+        reset_screen()
         for i in range(self.max_grid_cnt):
             if self.grd_ops_arr[i].pid_register:
                 for pid in self.grd_ops_arr[i].pid_register:
                     b_proc_found = True
-                    print('>> Grid {} - PID: {}'.format(str(i+1), str(pid)))
+                    print('# Grid {} - PID: {}'.format(str(i+1), str(pid)))
         if not b_proc_found:
-            print('Currently no processes running')
+            print('# Currently no processes running')
 
         print('\n')
         tty.setraw(sys.stdin.fileno()) 
@@ -159,9 +242,7 @@ class MainWorker(QObject):
     def start(self, args):
 
         #print('\n Arguments: {}'.format(args))
-        print('\n')
-        print(self.welcome_msg)
-
+        reset_screen()        
         # first argument is main_console.py
         # second argument is script location
 
@@ -175,12 +256,14 @@ class MainWorker(QObject):
         logging.debug('MainWorker::start() called')
         logging.debug('MainWorker::start() Open the following file: {}'.format(grid_file))
 
-        print(self.log_info_msg)
-        print(self.input_info_msg)
-        print(self.status_info_msg)
         self.loadGrid(grid_file)
 
         self.stdinReader.start()
+
+    def on_callback(self):
+
+        self.stdinReader.run()
+
 
     def loadGrid(self, filename):
 
@@ -189,7 +272,6 @@ class MainWorker(QObject):
         grid = [[[None for k in range(self.max_grid_size)]for i in range(self.max_grid_size)]
                 for j in range(self.max_grid_cnt)]
 
-        grid_data_list = []
         with ZipFile(filename, 'r') as archive:
             for i, zipped_grid in enumerate(archive.namelist()):
                 pickled_grid = archive.read(zipped_grid)
@@ -202,8 +284,9 @@ class MainWorker(QObject):
                     logging.debug('MainWorker::loadGrid() row: {} col: {}'.format(row, column))
                     grid[i][row][column] = (function, self_sync)
 
-                self.grd_ops_arr.append(GridOperator(grid[i]))
+                self.grd_ops_arr.append(GridOperator(grid[i], i))
                 self.grd_ops_arr[i].switch_grid.connect(self.receiveTarget)
+                self.grd_ops_arr[i].update_logger.connect(self.update_logfile)
                 self.kill_all.connect(self.grd_ops_arr[i].kill_proc)
                 self.grd_ops_arr[i].startExec((0,0))
 

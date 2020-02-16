@@ -15,8 +15,6 @@ from Pythonic.elements.basicelements import ExecRB, ExecR
 class WorkerSignals(QObject):
 
     finished = pyqtSignal(object, name='element_finished' )
-    except_sig = pyqtSignal(object, name='exception')
-    #proc_ret = pyqtSignal(object)
     pid_sig = pyqtSignal(object)
 
 class GridOperator(QObject):
@@ -25,10 +23,11 @@ class GridOperator(QObject):
     exec_pending    = pyqtSignal(name='exec_pending')
     switch_grid     = pyqtSignal('PyQt_PyObject', name='switch_grid')
 
-    def __init__(self, grid):
+    def __init__(self, grid, number):
         super().__init__()
         logging.debug('__init__() called on GridOperator')
         self.grid = grid
+        self.number = number # number of workingarea [0-4]
         self.stop_flag = False
         self.fastpath = False # fastpath is active when debug is diasbled
         self.retry_counter = 0
@@ -73,6 +72,7 @@ class GridOperator(QObject):
         logging.debug('PID returned: {}'.format(prg_return.pid))
         # remove returned pid from register
         try:
+            # does not work in case of an exception
             self.pid_register.remove(prg_return.pid)
         except Exception as e:
             logging.error('De-registration of PID failed: {}'.format(e))
@@ -80,8 +80,12 @@ class GridOperator(QObject):
 
         # if an execption occured
         if(issubclass(prg_return.record_0.__class__, BaseException)):
-            logging.error('Target {}|{} Exception found: {}'.format(prg_return.source[0],
-                alphabet[prg_return.source[1]], prg_return.record_0))
+            logging.error('Grid {} Target {}|{} Exception found: {}'.format(
+                self.number + 1,
+                prg_return.source[0],
+                alphabet[prg_return.source[1]],
+                prg_return.record_0))
+
             element.highlightException()
             self.exceptwindow = ExceptWindow(str(prg_return.record_0), prg_return.source)
             self.exceptwindow.window_closed.connect(self.highlightStop)
@@ -92,20 +96,18 @@ class GridOperator(QObject):
         # when the log checkbox is activated
         if prg_return.log:
             if prg_return.log_txt:
-                logging.info('Message {}|{} : {}'.format(prg_return.source[0],
-                            alphabet[prg_return.source[1]], prg_return.log_txt))
-                """
-                if prg_return.log_output: # False by default
-                    log = prg_return.log_output
-                """
+                logging.info('Grid: {} Message {}|{} : {}'.format(
+                            self.number + 1,
+                            prg_return.source[0],
+                            alphabet[prg_return.source[1]],
+                            prg_return.log_txt))
             else:
-                logging.info('Message {}|{} : {}'.format(prg_return.source[0],
-                            alphabet[prg_return.source[1]], prg_return.record_0))
+                logging.info('Grid: {} Message {}|{} : {}'.format(
+                            self.number + 1,
+                            prg_return.source[0],
+                            alphabet[prg_return.source[1]],
+                            prg_return.record_0))
 
-            """
-            logging.info('Output  {}|{}'.format(prg_return.source[0],
-                        alphabet[prg_return.source[1]], log))
-            """
 
 
         # when the debug button on the element is active
@@ -253,14 +255,6 @@ class Executor(QRunnable):
         self.retry_counter = 0
         self.delay = delay
         self.signals = WorkerSignals()
-        self.signals.except_sig.connect(self.raiseExcpetion)
-
-    def raiseExcpetion(self, e):
-
-        # Bug, method is not called sometimes
-        logging.error('Executor::raiseExcpetion() 2. Exception caught!!!')
-        exceptRecord = Record(self.element.getPos(), None, e)
-        self.signals.finished.emit(exceptRecord)
 
     def run(self):
 
@@ -288,34 +282,9 @@ class Executor(QRunnable):
         result = return_pipe_0.recv()
         p_0.join()
 
-        if(issubclass(result.__class__, BaseException)):
-            logging.error('Executor::start_proc() 1. Exception caught!!!')
-            self.signals.except_sig.emit(result)
-        else:
-            self.signals.finished.emit(result)
-        
+        self.signals.finished.emit(result)
 
 def target_0(function, record, feed_pipe):
 
-    try:
-        #execute the callback function
-        #element = return_pipe.recv()
-        #args = return_pipe.recv()
-        #if arguments given call with args
-        #ret = element.execute(args)
-        ret = function.execute(record)
-
-        #feed_pipe.send('return value from stephan')
-        feed_pipe.send(ret)
-
-    except Exception as e:
-        print('Exception in target_0(): %s' % sys.exc_info()[0])
-        print('Exception in target_0(): %s' % sys.exc_info()[1])
-        print('Exception in target_0(): %s' % sys.exc_info()[2])
-        print('Exception as e: %s' % e)
-        except_type, except_class, tb = sys.exc_info()
-        print(type(e))
-        #print(issubclass(e.__class__, BaseException))
-        #feed_pipe.send((except_type, except_class, traceback.extract_tb(tb)))
-        #feed_pipe.send((e, traceback.format_exc()))
-        feed_pipe.send(e)
+    ret = function.execute_ex(record)
+    feed_pipe.send(ret)

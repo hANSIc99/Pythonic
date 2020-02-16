@@ -56,6 +56,16 @@ class Function():
         logging.debug('__getstate__() called Function')
         return (self.config, self.b_debug, self.row, self.column)
 
+    def execute_ex(self, record):
+        logging.debug('execute_ex() called Function')
+
+        try:
+            result =self.execute(record)
+        except Exception as e:
+            result = Record(self.getPos(), None, e, None)
+
+        return result
+
     def execute(self, record):
         logging.debug('execute() called Function')
 

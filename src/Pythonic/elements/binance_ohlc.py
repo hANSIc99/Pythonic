@@ -116,7 +116,7 @@ class BinanceOHLC(ElementMaster):
 
 
         self.binance_ohlc_edit = ElementEditor(self)
-        self.binance_ohlc_edit.setWindowTitle(QC.translate('', 'Edit OHLC query'))
+        self.binance_ohlc_edit.setWindowTitle(QC.translate('', 'Edit OHLC Query'))
 
         # signals and slots
         self.confirm_button.clicked.connect(self.binance_ohlc_edit.closeEvent)
