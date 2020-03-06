@@ -52,6 +52,13 @@ Available on [Steemit](https://steemit.com)
 
 ## Known Issues
 
+### No such file or directory: '/tmp/pip-install-fx0y4_8o/PyQt5/setup.py'
+
+There is a bug in the latest version of PyQt5 on PyPi.
+Install PyQt 5.13 manually before you install Pythonic.
+
+`sudo python3 -m pip install pyqt5==5.13`
+
 ### pip3: command not found
 On Ubuntu, **pip3** is not installed by default.
 Run `sudo apt install python3-pip` to install **pip3**.
