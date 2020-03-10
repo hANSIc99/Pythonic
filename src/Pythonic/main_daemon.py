@@ -1,4 +1,4 @@
-import sys, logging, pickle, datetime, os, time, itertools, tty, termios, select
+import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select
 import multiprocessing as mp
 from threading import Timer, Thread, Event
 from pathlib import Path
@@ -17,7 +17,7 @@ def reset_screen():
                     '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
                     '       |___/                                                                     \n'
 
-    version         = 'v0.17\n'
+    version         = 'v0.18\n'
     gitHub          = 'Visit https://github.com/hANSIc99/Pythonic\n'
     log_info_msg    = '<<<<<<<<<<<< Logging directory ~/PythonicDaemon_201x/Month/\n'
     input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
@@ -114,11 +114,10 @@ class stdinReader(QThread):
     def tail(self, lines):
 
         now = datetime.datetime.now().date()
-        log_date_str = now.strftime('%Y_%m_%d')
         month = now.strftime('%b')
         year = now.strftime('%Y')
         home_dict = str(Path.home())
-        file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+        file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, self.log_date_str) 
 
         BLOCK_SIZE = 1024
 
@@ -149,13 +148,17 @@ class stdinReader(QThread):
 
             print(log_display_txt + '\n')
 
+    def updateLogDate(self, log_date_str):
+        logging.debug('stdinReader::updateLogDate() called with: {}'.format(log_date_str))
+        self.log_date_str = log_date_str
+
 
 class MainWorker(QObject):
 
-    kill_all    = pyqtSignal(name='kill_all')
-    log_level = logging.INFO
-    formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
-            datefmt='%H:%M:%S')
+    kill_all        = pyqtSignal(name='kill_all')
+    update_logdate  = pyqtSignal('PyQt_PyObject', name='update_logdate')
+    log_level       = logging.INFO
+    formatter       = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
 
     max_grid_size = 50
@@ -169,6 +172,7 @@ class MainWorker(QObject):
         self.stdinReader = stdinReader()
         self.stdinReader.print_procs.connect(self.printProcessList)
         self.stdinReader.quit_app.connect(self.exitApp)
+        self.update_logdate.connect(self.stdinReader.updateLogDate)
         self.grd_ops_arr    = []
         self.fd = sys.stdin.fileno()
         self.orig_tty_settings = termios.tcgetattr(self.fd) 
@@ -189,6 +193,7 @@ class MainWorker(QObject):
         file_handler.setFormatter(self.formatter)
 
         self.logger.addHandler(file_handler)
+        self.update_logdate.emit(log_date_str) # forward log_date_str to instance of stdinReader
 
 
         logging.debug('MainWorker::__init__() called')
@@ -197,7 +202,8 @@ class MainWorker(QObject):
         print('# Stopping all processes....')
         self.kill_all.emit()
         time.sleep(3) # wait for 1 seconds to kill all processes
-        sys.exit()
+        self.app.quit()
+        os.kill(self.app.applicationPid(), signal.SIGTERM) # kill all related threads
 
 
     def ensure_file_path(self, file_path):
@@ -238,6 +244,7 @@ class MainWorker(QObject):
             file_handler.setFormatter(self.formatter)
             self.logger.addHandler(file_handler)
             self.log_date = datetime.datetime.now()
+            self.update_logdate.emit(log_date_str)
 
     def start(self, args):
 
@@ -258,7 +265,18 @@ class MainWorker(QObject):
 
         self.loadGrid(grid_file)
 
-        self.stdinReader.start()
+        self.stdinReader.start() # call run() method in separate thread
+
+        """
+        b_finished = False         
+
+        while not b_finished: # when thread return, exit application
+            time.sleep(1)
+            b_finished = self.stdinReader.isFinished()
+ 
+        logging.info('MainWorker::Returning from thread')
+        self.kill_all.emit()
+        """
 
     def on_callback(self):
 

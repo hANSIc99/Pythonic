@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '0.17',
+        version = '0.18',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
