@@ -56,14 +56,15 @@ class stdinReader(QThread):
         if self.b_init:
             self.b_init = False
             self.fd = sys.stdin.fileno() 
-            self.old_settings = termios.tcgetattr(self.fd) 
-            tty.setraw(sys.stdin.fileno()) 
+            if os.isatty(sys.stdin.fileno()):
+                self.old_settings = termios.tcgetattr(self.fd) 
+                tty.setraw(sys.stdin.fileno()) 
 
         while not self.b_exit:
 
             rd_fs, wrt_fs, err_fs =  select.select([sys.stdin], [], [], self.interval)
 
-            if rd_fs:
+            if rd_fs and os.isatty(sys.stdin.fileno()):
                 cmd = rd_fs[0].read(1)
 
                 if cmd == ('q' or 'Q'): # quit
@@ -89,7 +90,8 @@ class stdinReader(QThread):
                     sys.stdout.write('\b')
 
             else:
-                self.callback()
+                if os.isatty(sys.stdin.fileno()):
+                    self.callback()
 
 
 
@@ -175,7 +177,8 @@ class MainWorker(QObject):
         self.update_logdate.connect(self.stdinReader.updateLogDate)
         self.grd_ops_arr    = []
         self.fd = sys.stdin.fileno()
-        self.orig_tty_settings = termios.tcgetattr(self.fd) 
+        if os.isatty(sys.stdin.fileno()):
+            self.orig_tty_settings = termios.tcgetattr(self.fd) 
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
