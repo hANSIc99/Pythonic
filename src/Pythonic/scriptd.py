@@ -8,10 +8,6 @@ def run():
 
     app = QCoreApplication(sys.argv)
     
-    timer = QTimer()
-    timer.timeout.connect(lambda *args: None) # cathing signals outside the QT eventloop (e.g. SIGINT)
-    timer.start(100)
-
     ex = MainWorker(app)
     ex.start(sys.argv)
     

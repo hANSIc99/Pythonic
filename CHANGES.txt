@@ -1,3 +1,9 @@
+0.18
+
+    PythonicDaemon: tty bug fixed: can be run as cronjob now
+    PythonicDaemon: Terminating over SSH fixed
+    PythonicDaemon: Bug when displaying log files permanent fixed
+
 0.17
 
     Logger: Grid number in log message added
