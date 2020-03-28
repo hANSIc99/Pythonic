@@ -30,6 +30,7 @@ class ElementMaster(QWidget):
         # flag indicates if programm should stop in debugging mode
         self.b_debug = False
         # add function dummy
+        # real function is added by calling self.addFunction()
         self.function = Function(None, self.b_debug, row, column)
 
         # family tree

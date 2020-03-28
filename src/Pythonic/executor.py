@@ -280,11 +280,18 @@ class Executor(QRunnable):
         time.sleep(delay)
         
         result = return_pipe_0.recv()
+        while type(result).__name__ != Record.__name__:
+            logging.info('RESULT1: {}'.format(result))
+            result = return_pipe_0.recv()
+
         p_0.join()
 
         self.signals.finished.emit(result)
 
 def target_0(function, record, feed_pipe):
 
+    lambda sig: logging.info('lambda fired')
+    # __init__ method of specific function instance is never called
+    #signal = function.getSig()
     ret = function.execute_ex(record)
     feed_pipe.send(ret)

@@ -1,3 +1,6 @@
+from PyQt5.QtCore import QObject
+from PyQt5.QtCore import pyqtSignal
+
 import logging
 import os
 
@@ -36,12 +39,13 @@ class Record():
                 self.pid)
 
 
-class Function():
-    # baustelle: functionsträger
-    # erstelle in execute einen neuen record
+class Function(QObject):
+
+    fire = pyqtSignal(name='fire')
 
     def __init__(self, config, b_debug, row, column):
-
+        logging.info('Function.__init__()')
+        super().__init__()
         self.config = config
         self.row = row
         self.column = column
@@ -55,6 +59,9 @@ class Function():
     def __getstate__(self):
         logging.debug('__getstate__() called Function')
         return (self.config, self.b_debug, self.row, self.column)
+
+    def getSig(self):
+        return self.fire
 
     def execute_ex(self, record):
         logging.debug('execute_ex() called Function')
