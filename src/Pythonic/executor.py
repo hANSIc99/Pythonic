@@ -3,7 +3,7 @@ from PyQt5.QtCore import QRunnable, QObject, QThreadPool
 import multiprocessing as mp
 import logging, sys, time, traceback, os, signal
 from datetime import datetime
-from Pythonic.record_function import Record
+from Pythonic.record_function import Record, PipeRecord
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import alphabet
 from Pythonic.exceptwindow import ExceptWindow
@@ -15,6 +15,7 @@ from Pythonic.elements.basicelements import ExecRB, ExecR
 class WorkerSignals(QObject):
 
     finished = pyqtSignal(object, name='element_finished' )
+    ret_pipe = pyqtSignal(object, name='pipe_data')
     pid_sig = pyqtSignal(object)
 
 class GridOperator(QObject):
@@ -28,7 +29,7 @@ class GridOperator(QObject):
         logging.debug('__init__() called on GridOperator')
         self.grid = grid
         self.number = number # number of workingarea [0-4]
-        self.stop_flag = False
+        self.stop_flag = False # indicates if normale execution is stopped
         self.fastpath = False # fastpath is active when debug is diasbled
         self.retry_counter = 0
         self.delay = 0
@@ -54,6 +55,7 @@ class GridOperator(QObject):
         self.update_logger.emit()
         executor = Executor(element, record, self.delay)
         executor.signals.finished.connect(self.execDone)
+        executor.signals.ret_pipe.connect(self.execDonePipe)
         executor.signals.pid_sig.connect(self.register_pid)
         element.highlightStart()
         self.threadpool.start(executor)
@@ -62,6 +64,37 @@ class GridOperator(QObject):
         # register PID of spawned child process
         self.pid_register.append(pid)
         logging.debug('PID register: {}'.format(self.pid_register))
+
+    def execDonePipe(self, prg_return):
+        logging.info('GridOperator::execDonePipe() called')
+
+        if self.stop_flag:
+            return
+
+        logging.info('Passt!: {}'.format(prg_return.record_0))
+        #self.goNext(prg_return)
+        if self.fastpath:
+
+            if len(prg_return.target_0) == 3: # switch grid, go over main
+                # fastpath = True
+                self.switch_grid.emit((prg_return, True))
+                return
+                
+            new_rec = self.fastPath(prg_return.target_0, prg_return.record_0)
+            if new_rec: # check for ExecR or ExecRB
+                self.goNext(new_rec)
+            else: # if nothing found: proceed as usual
+                self.startExec(prg_return.target_0, prg_return.record_0)
+        else:
+
+            if len(prg_return.target_0) == 3: # switch grid, go over main
+                # fastpath = False
+                self.switch_grid.emit((prg_return, False))
+                return
+
+            self.startExec(prg_return.target_0, prg_return.record_0)
+
+        #self.startExec(prg_return.target_0, prg_return.record_0)
 
     def execDone(self, prg_return):
 
@@ -126,13 +159,14 @@ class GridOperator(QObject):
 
                 self.debugWindow = DebugWindow(str(prg_return.record_0), prg_return.source)
                 self.debugWindow.proceed_execution.connect(lambda: self.proceedExec(prg_return))
-                self.debugWindow.raiseWindow()
+                self.debugWindow.raiseWindow() # open debug window
 
                 #if not element.self_sync:
                 self.b_debug_window = True
 
+            
             else:
-
+                #queue element
                 self.pending_return.append(prg_return)
 
         else:
@@ -278,10 +312,12 @@ class Executor(QRunnable):
         p_0.start()
         self.signals.pid_sig.emit(p_0.pid) 
         time.sleep(delay)
-        
         result = return_pipe_0.recv()
         while type(result).__name__ != Record.__name__:
-            logging.info('RESULT1: {}'.format(result))
+            logging.info('Passt!: {}'.format(result.record_0))
+            if type(result).__name__ == PipeRecord.__name__:
+                self.signals.ret_pipe.emit(result)
+
             result = return_pipe_0.recv()
 
         p_0.join()
@@ -290,8 +326,11 @@ class Executor(QRunnable):
 
 def target_0(function, record, feed_pipe):
 
-    lambda sig: logging.info('lambda fired')
+    def callback(feed_data): feed_pipe.send(feed_data)
     # __init__ method of specific function instance is never called
+    #function.__init__()
     #signal = function.getSig()
-    ret = function.execute_ex(record)
+    function.pid = return_pipe
+    #logging.info('Return pipe pid: {}'.format(function.pid))
+    ret = function.execute_ex(record, callback)
     feed_pipe.send(ret)
