@@ -55,7 +55,7 @@ class GridOperator(QObject):
         self.update_logger.emit()
         executor = Executor(element, record, self.delay)
         executor.signals.finished.connect(self.execDone)
-        executor.signals.ret_pipe.connect(self.execDonePipe)
+        executor.signals.ret_pipe.connect(self.execDone)
         executor.signals.pid_sig.connect(self.register_pid)
         element.highlightStart()
         self.threadpool.start(executor)
@@ -65,36 +65,6 @@ class GridOperator(QObject):
         self.pid_register.append(pid)
         logging.debug('PID register: {}'.format(self.pid_register))
 
-    def execDonePipe(self, prg_return):
-        logging.info('GridOperator::execDonePipe() called')
-
-        if self.stop_flag:
-            return
-
-        logging.info('Passt!: {}'.format(prg_return.record_0))
-        #self.goNext(prg_return)
-        if self.fastpath:
-
-            if len(prg_return.target_0) == 3: # switch grid, go over main
-                # fastpath = True
-                self.switch_grid.emit((prg_return, True))
-                return
-                
-            new_rec = self.fastPath(prg_return.target_0, prg_return.record_0)
-            if new_rec: # check for ExecR or ExecRB
-                self.goNext(new_rec)
-            else: # if nothing found: proceed as usual
-                self.startExec(prg_return.target_0, prg_return.record_0)
-        else:
-
-            if len(prg_return.target_0) == 3: # switch grid, go over main
-                # fastpath = False
-                self.switch_grid.emit((prg_return, False))
-                return
-
-            self.startExec(prg_return.target_0, prg_return.record_0)
-
-        #self.startExec(prg_return.target_0, prg_return.record_0)
 
     def execDone(self, prg_return):
 
@@ -103,26 +73,27 @@ class GridOperator(QObject):
         element = self.grid.itemAtPosition(*prg_return.source).widget()
 
         logging.debug('PID returned: {}'.format(prg_return.pid))
-        # remove returned pid from register
-        try:
-            # does not work in case of an exception
-            self.pid_register.remove(prg_return.pid)
-        except Exception as e:
-            logging.error('De-registration of PID failed: {}'.format(e))
+        # remove returned pid from register if prg_return is not coming from pipe
+        if not type(prg_return).__name__ == PipeRecord.__name__:
+            try:
+                # does not work in case of an exception
+                self.pid_register.remove(prg_return.pid)
+            except Exception as e:
+                logging.error('De-registration of PID failed: {}'.format(e))
 
 
-        # if an execption occured
-        if(issubclass(prg_return.record_0.__class__, BaseException)):
-            logging.error('Grid {} Target {}|{} Exception found: {}'.format(
-                self.number + 1,
-                prg_return.source[0],
-                alphabet[prg_return.source[1]],
-                prg_return.record_0))
+            # if an execption occured
+            if(issubclass(prg_return.record_0.__class__, BaseException)):
+                logging.error('Grid {} Target {}|{} Exception found: {}'.format(
+                    self.number + 1,
+                    prg_return.source[0],
+                    alphabet[prg_return.source[1]],
+                    prg_return.record_0))
 
-            element.highlightException()
-            self.exceptwindow = ExceptWindow(str(prg_return.record_0), prg_return.source)
-            self.exceptwindow.window_closed.connect(self.highlightStop)
-            return
+                element.highlightException()
+                self.exceptwindow = ExceptWindow(str(prg_return.record_0), prg_return.source)
+                self.exceptwindow.window_closed.connect(self.highlightStop)
+                return
 
         ### proceed with regular execution ###
 
@@ -170,9 +141,10 @@ class GridOperator(QObject):
                 self.pending_return.append(prg_return)
 
         else:
-            # highlight stop =!
-            
-            element.highlightStop()
+            # highlight stop only when element return
+            if not type(prg_return).__name__ == PipeRecord.__name__:
+                element.highlightStop() 
+
             self.goNext(prg_return)
 
     def checkPending(self):
@@ -186,7 +158,8 @@ class GridOperator(QObject):
     def proceedExec(self, prg_return):
 
         element = self.grid.itemAtPosition(*prg_return.source).widget()
-        element.highlightStop()
+        if not type(prg_return).__name__ == PipeRecord.__name__:
+            element.highlightStop()
         self.b_debug_window = False
         self.exec_pending.emit()
         self.goNext(prg_return)
@@ -314,7 +287,7 @@ class Executor(QRunnable):
         time.sleep(delay)
         result = return_pipe_0.recv()
         while type(result).__name__ != Record.__name__:
-            logging.info('Passt!: {}'.format(result.record_0))
+            #logging.info('Passt!: {}'.format(result.record_0))
             if type(result).__name__ == PipeRecord.__name__:
                 self.signals.ret_pipe.emit(result)
 
@@ -327,10 +300,5 @@ class Executor(QRunnable):
 def target_0(function, record, feed_pipe):
 
     def callback(feed_data): feed_pipe.send(feed_data)
-    # __init__ method of specific function instance is never called
-    #function.__init__()
-    #signal = function.getSig()
-    function.pid = return_pipe
-    #logging.info('Return pipe pid: {}'.format(function.pid))
     ret = function.execute_ex(record, callback)
     feed_pipe.send(ret)

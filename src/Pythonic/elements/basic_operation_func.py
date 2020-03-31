@@ -25,13 +25,20 @@ class OperationFunction(Function):
             exec_string += code_input
 
         exec(exec_string, proc_dict)
+
+
+        """
         n_cnt = 0
 
         while True:
             n_cnt += 1
-            ret_data = PipeRecord(self.getPos(), 3, (self.row+1, self.column), n_cnt)
+            # switch grid
+            #ret_data = PipeRecord(self.getPos(), (1, self.row+1, self.column), n_cnt)
+            my_text = 'Hello log'
+            ret_data = PipeRecord(self.getPos(), (self.row+1, self.column), n_cnt, True, my_text)
             self.callback(ret_data)
             time.sleep(2)
+        """
 
         output = proc_dict['output']
         log_txt = proc_dict['log_txt']

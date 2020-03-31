@@ -293,9 +293,11 @@ class MainWindow(QWidget):
             err_msg = QMessageBox()
             err_msg.setIcon(QMessageBox.Critical)
             err_msg.setWindowTitle(QC.translate('', 'File Error'))
-            err_msg.setText(QC.translate('', 'File can\'t be read'))
+            #err_msg.setText(QC.translate('', 'File can\'t be read'))
+            err_msg.setText('{}'.format(e))
             err_msg.setAttribute(Qt.WA_DeleteOnClose)
             err_msg.exec()
+            raise
 
 
     def saveGrid(self, filename):
