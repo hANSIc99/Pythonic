@@ -6,7 +6,9 @@
 #./emsdk install sdk-fastcomp-1.38.27-64bit 
 #https://wiki.qt.io/Qt_for_WebAssembly
 
-source ~/Downloads/emsdk/emsdk_env.sh
-~/Qt/5.13.1/wasm_32/bin/qmake
+source ~/Dokumente/emsdk/emsdk_env.sh
+~/Qt/5.15.1/wasm_32/bin/qmake
 make
-emrun --browser firefox PythonicWeb.html
+#emrun --browser firefox PythonicWeb.html
+python3 main.py
+

@@ -2,17 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QWidget>
 #include <QPushButton>
-#include <QNetworkAccessManager>
-
-// HTTP available at wasm
-#define WASM true
-
-#ifdef WASM
-//#include <QWebSocket>
+#include <QLabel>
+#include <QLineEdit>
 #include <QtWebSockets/QWebSocket>
-#endif
+
 
 class MainWindow : public QMainWindow
 {
@@ -24,15 +18,10 @@ public:
 
 private slots:
     void wsStartTimer();
-    void netFinished(QNetworkReply *data);
     void openFileBrowser();
     void fileOpenComplete(const QString &fileName, const QByteArray &data);
-    void connectWebSocket();
-    void wsOnConnected();
-    void wsClosed();
-    void wsDisconnect();
-    void wsError(QAbstractSocket::SocketError error);
-    void wsSSLerror(const QList<QSslError> &errors);
+    void wsSendMsg();
+    void wsTimerError(QAbstractSocket::SocketError error);
     void wsOnTextMessageReceived(QString message);
 
 private:
@@ -40,9 +29,10 @@ private:
     QPushButton *m_start_timer_btn;
     QPushButton *m_upload_file_btn;
     QPushButton *m_websocket_connect_button;
-    QPushButton *m_websocket_disconnect_button;
-    QWebSocket  m_websocket_timer;
-    QWebSocket  ws_uploadData;
-    QNetworkAccessManager *net_mgr;
+    QLabel      *m_timer_messages_lbl;
+    QLineEdit   *m_input_message_edt;
+    QWebSocket  m_ws_timer;
+    QWebSocket  m_ws_msg;
+    QWebSocket  m_ws_uploadData;
 };
 #endif // MAINWINDOW_H
