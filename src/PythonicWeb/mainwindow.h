@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtWidgets>
 #include <QPushButton>
 #include <QLabel>
 #include <QLineEdit>
@@ -13,8 +14,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr,
-                        Qt::WindowFlags flags = 0);
+    explicit MainWindow(QWidget *parent = nullptr);
 
 private slots:
     void wsStartTimer();
@@ -34,5 +34,7 @@ private:
     QWebSocket  m_ws_timer;
     QWebSocket  m_ws_msg;
     QWebSocket  m_ws_uploadData;
+
 };
 #endif // MAINWINDOW_H
+

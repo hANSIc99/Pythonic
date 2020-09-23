@@ -41,9 +41,9 @@
 #define __DECIMAL_DIG__ __LDBL_DECIMAL_DIG__
 #define __DEPRECATED 1
 #define __EMSCRIPTEN__ 1
-#define __EMSCRIPTEN_major__ 2
-#define __EMSCRIPTEN_minor__ 0
-#define __EMSCRIPTEN_tiny__ 4
+#define __EMSCRIPTEN_major__ 1
+#define __EMSCRIPTEN_minor__ 39
+#define __EMSCRIPTEN_tiny__ 8
 #define __EXCEPTIONS 1
 #define __FINITE_MATH_ONLY__ 0
 #define __FLOAT128__ 1
@@ -305,7 +305,7 @@
 #define __UINT_LEAST8_MAX__ 255
 #define __UINT_LEAST8_TYPE__ unsigned char
 #define __USER_LABEL_PREFIX__ 
-#define __VERSION__ "Clang 12.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project 77152a6b7ac07ce65568d7c69305653e7cad4bb0)"
+#define __VERSION__ "Clang 11.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project 9dc84e9b02d1e402503906099d42fbae4da7d8d9)"
 #define __WCHAR_MAX__ 2147483647
 #define __WCHAR_TYPE__ int
 #define __WCHAR_WIDTH__ 32
@@ -313,10 +313,10 @@
 #define __WINT_TYPE__ int
 #define __WINT_WIDTH__ 32
 #define __clang__ 1
-#define __clang_major__ 12
+#define __clang_major__ 11
 #define __clang_minor__ 0
 #define __clang_patchlevel__ 0
-#define __clang_version__ "12.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project 77152a6b7ac07ce65568d7c69305653e7cad4bb0)"
+#define __clang_version__ "11.0.0 (/b/s/w/ir/cache/git/chromium.googlesource.com-external-github.com-llvm-llvm--project 9dc84e9b02d1e402503906099d42fbae4da7d8d9)"
 #define __cplusplus 201103L
 #define __cpp_alias_templates 200704L
 #define __cpp_attributes 200809L

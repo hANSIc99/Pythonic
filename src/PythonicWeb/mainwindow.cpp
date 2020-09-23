@@ -1,14 +1,8 @@
 ﻿#include "mainwindow.h"
-#include <QDebug>
-#include <QString>
-#include <QDir>
-#include <QFileDialog>
-#include <QMetaEnum>
 
 
-MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
-    : QMainWindow(parent, flags)
-
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
 {
     this->resize(500, 260);
 
@@ -83,11 +77,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 
     connect(&m_ws_uploadData, &QWebSocket::connected, []{ qDebug() << "m_ws_uploadData connected() called"; });
     connect(&m_ws_uploadData, &QWebSocket::disconnected, []{ qDebug() << "m_ws_uploadData closed() called"; });
-
-
-    /* RELEASE KEYBOARD */
-
-    this->centralWidget()->releaseKeyboard();
 
 }
 
