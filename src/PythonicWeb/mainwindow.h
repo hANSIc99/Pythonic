@@ -7,7 +7,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QLineEdit>
-
+#include <QtWebSockets/QWebSocket>
 
 
 
@@ -23,7 +23,7 @@ private slots:
 
 private:
     QPushButton *m_sendDebugMessage;
-
+    QWebSocket  m_log_msg;
 
 };
 #endif // MAINWINDOW_H
