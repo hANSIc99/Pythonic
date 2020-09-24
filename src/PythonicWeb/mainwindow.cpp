@@ -4,7 +4,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    this->resize(500, 260);
+    this->resize(1200, 800);
+
 
     m_sendDebugMessage = new QPushButton("Send Debug Message", this);
     m_sendDebugMessage->setGeometry((QRect(QPoint(30, 170), QSize(200, 50))));
@@ -12,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     /* SEND MESSAGE */
-
+    /*
     connect(&m_log_msg, &QWebSocket::disconnected, [] { qDebug() << "m_ws_msg disconnected() called";});
 
     auto ws_opened = [this]() {
@@ -27,17 +28,18 @@ MainWindow::MainWindow(QWidget *parent)
     };
 
     connect(&m_log_msg, &QWebSocket::connected, ws_opened);
+    */
 
 }
 
 void MainWindow::debugMessage()
 {
-    qDebug() << "MainWindow::wsSendMsg() called";
+    //qDebug() << "MainWindow::wsSendMsg() called";
 
-    QUrl ws_url(QStringLiteral("ws://localhost:7000/message"));
-    qDebug() << "Open ws URL: " << ws_url.toString();
+    //QUrl ws_url(QStringLiteral("ws://localhost:7000/message"));
+    //qDebug() << "Open ws URL: " << ws_url.toString();
 
-    m_log_msg.open(ws_url);
+    m_logger.logMsg("Stephan Hallo!", LogLvl::DEBUG);
+    //m_log_msg.open(ws_url);
 }
-
 

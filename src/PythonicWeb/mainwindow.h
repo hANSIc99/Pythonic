@@ -8,8 +8,10 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QtWebSockets/QWebSocket>
+#include <QRect>
 
-
+#include "helper.h"
+#include "logger.h"
 
 class MainWindow : public QMainWindow
 {
@@ -18,10 +20,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
+    Logger m_logger;
 private slots:
     void debugMessage();
 
 private:
+
     QPushButton *m_sendDebugMessage;
     QWebSocket  m_log_msg;
 

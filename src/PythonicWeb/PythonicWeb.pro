@@ -13,6 +13,8 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
+    helper.h \
+    logger.h \
     mainwindow.h
 
 # Default rules for deployment.
