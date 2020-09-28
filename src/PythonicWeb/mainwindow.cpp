@@ -39,7 +39,7 @@ void MainWindow::debugMessage()
     //QUrl ws_url(QStringLiteral("ws://localhost:7000/message"));
     //qDebug() << "Open ws URL: " << ws_url.toString();
 
-    m_logger.logMsg("Stephan Hallo!", LogLvl::DEBUG);
+    m_logger.logMsg("Stephan Hallo!", LogLvl::FATAL);
     //m_log_msg.open(ws_url);
 }
 

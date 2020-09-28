@@ -1,12 +1,21 @@
 import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select
 import multiprocessing as mp
-import eventlet
+import eventlet, json
 from eventlet import wsgi, websocket, greenthread
 from threading import Timer, Thread, Event
 from pathlib import Path
 from zipfile import ZipFile
+from enum import Enum
 from PyQt5.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PyQt5.QtCore import pyqtSignal
+
+
+class LogLvl(Enum):
+    DEBUG       = 0
+    INFO        = 1
+    WARNING     = 2
+    CRITICAL    = 3
+    FATAL       = 4
 
 
 execTimer = False
@@ -45,7 +54,19 @@ def writeLog(ws):
             
             break;         
         else:
-            logging.debug('PythonicWeb    - {}'.format(m))
+            logObj = json.loads(m)
+            
+            if logObj['logLvL'] == LogLvl.DEBUG.value:
+                logging.debug('PythonicWeb    - {}'.format(logObj['msg']))
+            elif logObj['logLvL'] == LogLvl.INFO.value:
+                logging.info('PythonicWeb    - {}'.format(logObj['msg']))
+            elif logObj['logLvL'] == LogLvl.WARNING.value:
+                logging.warning('PythonicWeb    - {}'.format(logObj['msg']))
+            elif logObj['logLvL'] == LogLvl.CRITICAL.value:
+                logging.error('PythonicWeb    - {}'.format(logObj['msg']))
+            elif logObj['logLvL'] == LogLvl.FATAL.value:
+                logging.critical('PythonicWeb    - {}'.format(logObj['msg']))
+
        
 @websocket.WebSocketWSGI
 def saveData(ws):
