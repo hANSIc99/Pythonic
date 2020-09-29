@@ -7,6 +7,16 @@ MainWindow::MainWindow(QWidget *parent)
 {
     this->resize(1200, 800);
 
+    setAcceptDrops(true);
+    setLayout(&m_mainLayout);
+
+    /* Setup Main QWidget */
+    m_mainWidget.setLayout(&m_mainWidgetLayout); //QVboxLayout
+
+    m_mainLayout.setSpacing(0);
+    m_mainLayout.addWidget(&m_mainWidget);
+
+
 
     m_sendDebugMessage = new QPushButton("Send Debug Message", this);
     m_sendDebugMessage->setGeometry((QRect(QPoint(30, 170), QSize(200, 50))));

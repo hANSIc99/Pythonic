@@ -33,6 +33,9 @@ private:
 
     QPushButton *m_sendDebugMessage;
     QWebSocket  m_log_msg;
+    QVBoxLayout m_mainWidgetLayout;
+    QVBoxLayout m_mainLayout;
+    QWidget     m_mainWidget;
 
 };
 #endif // MAINWINDOW_H
