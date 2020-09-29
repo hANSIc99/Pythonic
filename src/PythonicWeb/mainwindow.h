@@ -9,9 +9,14 @@
 #include <QLineEdit>
 #include <QtWebSockets/QWebSocket>
 #include <QRect>
+#include <QLoggingCategory>
+
 
 #include "helper.h"
 #include "logger.h"
+
+
+
 
 class MainWindow : public QMainWindow
 {

@@ -4,6 +4,17 @@
 #include <QtWebSockets/QWebSocket>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QLoggingCategory>
+
+
+#define LOG_DEBUG() qDebug("%s::%s() - %s", "Logger", __func__, "called");
+
+
+Q_DECLARE_LOGGING_CATEGORY(log_Logger)
+Q_DECLARE_LOGGING_CATEGORY(log_mainwindow)
+
+
+
 
 enum class LogLvl {
     DEBUG,
@@ -14,8 +25,6 @@ enum class LogLvl {
 };
 
 
-
-
 class Logger : public QObject
 {
     Q_OBJECT
@@ -23,33 +32,30 @@ public:
 
 
     explicit Logger()
+        : logC("Logger")
         {
         QUrl url_logger(QStringLiteral("ws://localhost:7000/log"));
-        /*
-        QUrl url_debug(QStringLiteral("ws://localhost:7000/log_debug"));
-        QUrl url_info(QStringLiteral("ws://localhost:7000/log_info"));
-        QUrl url_warning(QStringLiteral("ws://localhost:7000/log_warning"));
-        QUrl url_critical(QStringLiteral("ws://localhost:7000/log_critical"));
-        QUrl url_fatal(QStringLiteral("ws://localhost:7000/log_fatal"));
-        */
+
+        //qDebug(QString("%1::%2 - %3").arg("Logger").arg(__func__).arg("called"));
+        //qDebug("%s::%s() - %s", "Logger", __func__, "called");
 
 
-        connect(&m_WsLogMsg, &QWebSocket::disconnected, [] { qDebug() << "m_WsLogMsg disconnected() called";});
+        connect(&m_WsLogMsg, &QWebSocket::disconnected, [this] { qCInfo(logC, "m_WsLogMsg disconnected()");});
         connect(&m_WsLogMsg, &QWebSocket::connected, [this] {
                     if(m_WsLogMsg.isValid()){
-                        qDebug() << "WebSocket for logging opened";
+                        qCDebug(logC, "WebSocket for logging opened");
                     } else {
-                        qDebug() << "Websocket is NOT valid" ;
                         m_WsLogMsg.close(QWebSocketProtocol::CloseCodeAbnormalDisconnection,"Operation FAILED - closed");
-                        qCritical() << "WebSocket for logging could not be opened";
+                        qCCritical(logC, "WebSocket for logging could not be opened");
                     }
                 });
-        //connect(&m_WsLogMsgDebug, &QWebSocket::connected, this, ws_opened(m_WsLogMsgDebug));
 
         m_WsLogMsg.open(url_logger);
     }
 
     void logMsg(const QString msg, const LogLvl lvl){
+
+        qCDebug(logC, "Log Message: LvL: %i, Msg: %s", (int)lvl, msg.toStdString().c_str());
 
         QJsonObject logObj
         {
@@ -63,6 +69,7 @@ public:
 
 private:
     QWebSocket  m_WsLogMsg;
+    QLoggingCategory logC;
 };
 
 #endif // LOGGER_H

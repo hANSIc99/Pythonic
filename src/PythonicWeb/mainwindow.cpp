@@ -1,5 +1,6 @@
 ﻿#include "mainwindow.h"
 
+Q_LOGGING_CATEGORY(log_mainwindow, "MainWindow")
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,33 +10,23 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_sendDebugMessage = new QPushButton("Send Debug Message", this);
     m_sendDebugMessage->setGeometry((QRect(QPoint(30, 170), QSize(200, 50))));
-    connect(m_sendDebugMessage, SIGNAL(released()), this, SLOT(debugMessage()));
 
 
-    /* SEND MESSAGE */
+
+
     /*
-    connect(&m_log_msg, &QWebSocket::disconnected, [] { qDebug() << "m_ws_msg disconnected() called";});
+     * Signals & Slots
+     */
 
-    auto ws_opened = [this]() {
-        if(m_log_msg.isValid()){
-           qDebug() << "Send text to server: " << "Hello world";
-           m_log_msg.sendTextMessage("Hello world");
-           m_log_msg.close(QWebSocketProtocol::CloseCodeNormal,"Operation complete - closed by client");
-        } else {
-            qDebug() << "Websocket is NOT valid" ;
-            m_log_msg.close(QWebSocketProtocol::CloseCodeAbnormalDisconnection,"Operation FAILED - closed");
-        }
-    };
-
-    connect(&m_log_msg, &QWebSocket::connected, ws_opened);
-    */
+    connect(m_sendDebugMessage, SIGNAL(released()), this, SLOT(debugMessage()));
 
 }
 
 void MainWindow::debugMessage()
 {
-    //qDebug() << "MainWindow::wsSendMsg() called";
-
+    //qInfo() << "MainWindow::wsSendMsg() called";
+    qCDebug(log_mainwindow, "Debug Message");
+    qCInfo(log_mainwindow, "Info Message");
     //QUrl ws_url(QStringLiteral("ws://localhost:7000/message"));
     //qDebug() << "Open ws URL: " << ws_url.toString();
 
