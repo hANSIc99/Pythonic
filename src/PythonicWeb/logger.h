@@ -12,7 +12,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(log_Logger)
 Q_DECLARE_LOGGING_CATEGORY(log_mainwindow)
-
+Q_DECLARE_LOGGING_CATEGORY(log_workingarea)
 
 
 

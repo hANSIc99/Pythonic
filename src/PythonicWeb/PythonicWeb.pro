@@ -11,12 +11,14 @@ CONFIG += c++11
 
 SOURCES += \
     mainwindow.cpp \
-    main.cpp
+    main.cpp \
+    workingarea.cpp
 
 HEADERS += \
     helper.h \
     logger.h \
-    mainwindow.h
+    mainwindow.h \
+    workingarea.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
