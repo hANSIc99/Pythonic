@@ -18,10 +18,12 @@
 #include "helper.h"
 #include "logger.h"
 #include "workingarea.h"
+#include "menubar.h"
+
 
 #define N_WORKING_GRIDS 5
 
-
+//https://stackoverflow.com/questions/39931734/qt-specific-difference-of-stack-vs-heap-attributes
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -29,12 +31,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-    Logger m_logger;
+    Logger m_logger{this};
 private slots:
     void debugMessage();
 
 private:
-
+    /* Die Reihenfolge hier ist entscheidend */
     QPushButton             *m_sendDebugMessage;
 
     QWebSocket              m_log_msg;
@@ -46,19 +48,31 @@ private:
     QWidget                 m_mainWidget;
     QVBoxLayout             m_mainWidgetLayout;
 
+    /* Menu Bar */
+
+    MenuBar                 m_menuBar;
+
 
     /* Dropbox */
 
 
-    /* Working Area (Grrids) */; // self.scrollArea
-    QTabWidget*             m_workingTabs;
-    QTabWidget              m_toolboxTabs;
-    QVector<QScrollArea*>   m_arr_workingTabs;
-    QVector<WorkingArea*>   m_arr_workingArea;
-
     /* Bottom Area (WorkingArea & Dropbox */
     QWidget                 m_bottomArea;
     QHBoxLayout             m_bottomAreaLayout;
+
+
+    /* Working Area (Grids) */ // self.scrollArea
+
+    /*
+     * m_toolboxTabs muss unnnterhalb von m_bottomArea eingeordnet werden da
+     * m_bottomArea der parent ist
+     */
+    QTabWidget              m_workingTabs;
+    QTabWidget              m_toolboxTabs;
+    QVector<QScrollArea*>   m_arr_workingTabs;
+    QVector<WorkingArea*>   m_arr_workingArea;
+    QScrollArea             m_workingScrollAreas; // Scroll area for each grid
+
 
     /* Bottom Border (Info Text & Size Grip) */
 

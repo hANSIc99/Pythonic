@@ -10,10 +10,11 @@
 #define LOG_DEBUG() qDebug("%s::%s() - %s", "Logger", __func__, "called");
 
 
-Q_DECLARE_LOGGING_CATEGORY(log_Logger)
+//Q_DECLARE_LOGGING_CATEGORY(log_Logger)
 Q_DECLARE_LOGGING_CATEGORY(log_mainwindow)
 Q_DECLARE_LOGGING_CATEGORY(log_workingarea)
-
+Q_DECLARE_LOGGING_CATEGORY(log_menubar)
+//Q_DECLARE_LOGGING_CATEGORY(log_runBtn)
 
 
 enum class LogLvl {
@@ -31,9 +32,12 @@ class Logger : public QObject
 public:
 
 
-    explicit Logger()
-        : logC("Logger")
+    explicit Logger(QObject *parent = nullptr)
+        : QObject(parent)
+        , logC("Logger")
         {
+        qCDebug(logC, "called");
+
         QUrl url_logger(QStringLiteral("ws://localhost:7000/log"));
 
         //qDebug(QString("%1::%2 - %3").arg("Logger").arg(__func__).arg("called"));

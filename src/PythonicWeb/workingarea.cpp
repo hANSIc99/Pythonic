@@ -16,4 +16,6 @@ WorkingArea::WorkingArea(QWidget *parent)
 
     setLayout(&m_mastergridLayout);
     show();
+
+    qCDebug(log_workingarea, "called");
 }

@@ -139,7 +139,14 @@ def dispatch(environ, start_response):
                                 ('content-length', str(len(img_data)))])
 
         return [img_data]
+    elif environ['PATH_INFO'] == '/run.png':
+        logging.debug('PATH_INFO == \'/run.png\'')
+        img_data = open(os.path.join(os.path.dirname(__file__),
+            root_url + 'static/run.png'), 'rb').read() 
+        start_response('200 OK', [('content-type', 'image/png'),
+                                ('content-length', str(len(img_data)))])
 
+        return [img_data]
     elif environ['PATH_INFO'] == '/PythonicWeb.js':
         logging.debug('PATH_INFO == \'/PythonicWeb.js\'')
         str_data = open(os.path.join(os.path.dirname(__file__),
