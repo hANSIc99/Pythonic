@@ -8,38 +8,78 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QUrl>
-#include "filedownloader.h"
+#include <QPushButton>
+#include <QSize>
 
-class RunButton : public QLabel {
+//#include "filedownloader.h"
+#include "baselabel.h"
+
+#define BTN_SIZE QSize(32, 32)
+
+class RunButton : public BaseLabel {
     Q_OBJECT
 public:
 
     explicit RunButton(QWidget *parent = nullptr)
-        : QLabel(parent)
+        : BaseLabel(QUrl("http://localhost:7000/run.png"), BTN_SIZE, parent)
         , logC("MenuBar.RunBtn")
-        , m_imgLoader(QUrl("http://localhost:7000/run.png"), this)
     {
         qCDebug(logC, "called");
-        connect(&m_imgLoader, SIGNAL(downloaded()), SLOT(loadImage()));
     };
+
+signals:
+    void hover(QString text);
 
 protected:
 
-    void enterEvent(QEvent *event){qCDebug(logC, "called");};
-    void leaveEvent(QEvent *event){qCDebug(logC, "called");};
+    void enterEvent(QEvent *event){
+        Q_UNUSED(event)
+        qCDebug(logC, "called");
+        emit hover(tr("Run"));
+    };
 
-private slots:
-    void loadImage(){qCDebug(logC, "called");};
+    void leaveEvent(QEvent *event){
+        Q_UNUSED(event)
+        qCDebug(logC, "called");
+        emit hover(tr(""));
+    };
+
 private:
-
-    QLoggingCategory logC;
-    FileDownloader      m_imgLoader;
+    QLoggingCategory    logC;
 };
 
 
+class NewFileButton : public BaseLabel {
+    Q_OBJECT
+public:
 
+    explicit NewFileButton(QWidget *parent = nullptr)
+        : BaseLabel(QUrl("http://localhost:7000/run.png"), BTN_SIZE, parent)
+        , logC("MenuBar.NewFileBtn")
+    {
+        qCDebug(logC, "called");
+    };
 
+signals:
+    void hover(QString text);
 
+protected:
+
+    void enterEvent(QEvent *event){
+        Q_UNUSED(event)
+        qCDebug(logC, "called");
+        emit hover(tr("Run"));
+    };
+
+    void leaveEvent(QEvent *event){
+        Q_UNUSED(event)
+        qCDebug(logC, "called");
+        emit hover(tr(""));
+    };
+
+private:
+    QLoggingCategory    logC;
+};
 
 
 
@@ -58,8 +98,12 @@ private:
     QWidget         m_iconBar;
     QHBoxLayout     m_iconBarLayout;
 
+    QLabel          m_logoHorizontal;
+
     RunButton       m_runBtn;
 
+    /* Test */
+    QPushButton     m_testButton;
 };
 
 #endif // MENUBAR_H

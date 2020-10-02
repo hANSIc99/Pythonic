@@ -22,6 +22,9 @@ int main(int argc, char *argv[])
                                                     "MenuBar.debug=true\n"
                                                     "MenuBar.info=true\n"
 
+                                                    "MenuBar.NewFileBtn.debug=true\n"
+                                                    "MenuBar.NewFileBtn.info=true\n"
+
                                                     "MenuBar.RunBtn.debug=true\n"
                                                     "MenuBar.RunBtn.info=true\n"
                                                     ));

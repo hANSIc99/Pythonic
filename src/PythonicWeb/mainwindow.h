@@ -53,6 +53,9 @@ private:
     MenuBar                 m_menuBar;
 
 
+    /* Test */
+
+    QWidget                 m_testWidget;
     /* Dropbox */
 
 

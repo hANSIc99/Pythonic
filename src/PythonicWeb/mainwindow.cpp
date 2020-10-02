@@ -58,11 +58,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     /* Setup Main Widget */
-
     m_mainWidget.setLayout(&m_mainWidgetLayout);
-    //m_mainLayout.addWidget(&m_topMenuBar);
+    //m_testWidget.setMinimumHeight(50);
+    //m_testWidget.setMinimumWidth(50);
+    //m_testWidget.setStyleSheet("background-color: red");
     m_mainWidgetLayout.addWidget(&m_menuBar);
-    m_mainWidgetLayout.addWidget(&m_toolboxTabs);
+    //m_mainWidgetLayout.addWidget(&m_testWidget);
+
+    //m_mainLayout.addWidget(&m_topMenuBar);
+
+    //m_mainWidgetLayout.addWidget(&m_toolboxTabs);
     m_mainWidgetLayout.addWidget(&m_bottomArea);
     m_mainWidgetLayout.addWidget(&m_bottomBorder);
     m_mainWidgetLayout.setSpacing(0);
@@ -70,11 +75,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     /* Setup self layout */
+    //m_mainWidget.setStyleSheet("background-color: blue");
     setContentsMargins(0, 0, 0, 0);
     setCentralWidget(&m_mainWidget);
 
     resize(1200, 800);
-    m_sendDebugMessage = new QPushButton(this);
+    //m_sendDebugMessage = new QPushButton(this);
     setAcceptDrops(true);
 
     //qCDebug(log_mainwindow, QString("Parent: %1").arg((qulonglong)m_mainWidget.pa));

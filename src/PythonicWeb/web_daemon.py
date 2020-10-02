@@ -87,10 +87,11 @@ def dispatch(environ, start_response):
         WEBSOCKETS
     """
 
-    root_url = 'PythonicWeb/'
+    root_url        = 'PythonicWeb/'
+    root_static      = 'PythonicWeb/static/'
 
     global execTimer
-
+    png_req = environ['PATH_INFO'][-4:] # last 4 characters '.png'
 
     if environ['PATH_INFO'] == '/data':
         logging.debug('PATH_INFO == \'/data\'')     
@@ -122,6 +123,8 @@ def dispatch(environ, start_response):
         start_response('200 OK', [('content-type', 'text/html')])
         return [open(os.path.join(os.path.dirname(__file__),
             root_url + 'templates/PythonicWeb.html')).read()]
+
+        
    
     elif environ['PATH_INFO'] == '/qtloader.js':
         logging.debug('PATH_INFO == \'/qtloader.js\'')
@@ -139,14 +142,17 @@ def dispatch(environ, start_response):
                                 ('content-length', str(len(img_data)))])
 
         return [img_data]
-    elif environ['PATH_INFO'] == '/run.png':
-        logging.debug('PATH_INFO == \'/run.png\'')
+    elif png_req == '.png':
+        logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
+        
         img_data = open(os.path.join(os.path.dirname(__file__),
-            root_url + 'static/run.png'), 'rb').read() 
+            root_static + environ['PATH_INFO']), 'rb').read() 
+        
         start_response('200 OK', [('content-type', 'image/png'),
                                 ('content-length', str(len(img_data)))])
-
+        
         return [img_data]
+
     elif environ['PATH_INFO'] == '/PythonicWeb.js':
         logging.debug('PATH_INFO == \'/PythonicWeb.js\'')
         str_data = open(os.path.join(os.path.dirname(__file__),

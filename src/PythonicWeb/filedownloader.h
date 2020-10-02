@@ -7,22 +7,41 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+
 class FileDownloader : public QObject
 {
  Q_OBJECT
 public:
-    explicit FileDownloader(QUrl imageUrl, QObject *parent = 0);
+    explicit FileDownloader(QUrl imageUrl, QObject *parent = 0)
+        : QObject(parent)
+    {
+        connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
+        SLOT (fileDownloaded(QNetworkReply*)));
 
-    virtual ~FileDownloader();
+        QNetworkRequest request(imageUrl);
+        m_WebCtrl.get(request);
+    };
 
-    QByteArray downloadedData() const;
+    //virtual ~FileDownloader();
+
+    QByteArray downloadedData() const{
+        return m_DownloadedData;
+    };
+
 
 signals:
     void downloaded();
 
 private slots:
 
-    void fileDownloaded(QNetworkReply* pReply);
+    void fileDownloaded(QNetworkReply* pReply){
+        m_DownloadedData = pReply->readAll();
+        //emit a signal
+        pReply->deleteLater();
+        emit downloaded();
+    };
+
+
 
 private:
 
