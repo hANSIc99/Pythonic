@@ -22,7 +22,15 @@ MenuBar::MenuBar(QWidget *parent) : QWidget(parent)
 
     /* Setup Self Layout */
     setLayout(&m_iconBarLayout);
+    m_iconBarLayout.addWidget(&m_newFileBtn);
+    m_iconBarLayout.addWidget(&m_openFileBtn);
+    m_iconBarLayout.addWidget(&m_saveBtn);
+    m_iconBarLayout.addWidget(&m_saveAsBtn);
+    m_iconBarLayout.addWidget(&m_startDebugBtn);
     m_iconBarLayout.addWidget(&m_runBtn);
+    m_iconBarLayout.addWidget(&m_stopExecBtn);
+    m_iconBarLayout.addWidget(&m_killProcBtn);
+    m_iconBarLayout.addStretch(1);
     //m_iconBarLayout.addWidget(&m_testButton);
 
     //show();

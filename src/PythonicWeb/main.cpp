@@ -25,8 +25,28 @@ int main(int argc, char *argv[])
                                                     "MenuBar.NewFileBtn.debug=true\n"
                                                     "MenuBar.NewFileBtn.info=true\n"
 
+                                                    "MenuBar.OpenFileBtn.debug=true\n"
+                                                    "MenuBar.OpenFileBtn.info=true\n"
+
+                                                    "MenuBar.SaveBtn.debug=true\n"
+                                                    "MenuBar.SaveBtn.info=true\n"
+
+                                                    "MenuBar.SaveAsBtn.debug=true\n"
+                                                    "MenuBar.SaveAsBtn.info=true\n"
+
+                                                    "MenuBar.KillProcBtn.debug=true\n"
+                                                    "MenuBar.KillProcBtn.info=true\n"
+
+                                                    "MenuBar.StopExecBtn.debug=true\n"
+                                                    "MenuBar.StopExecBtn.info=true\n"
+
+                                                    "MenuBar.StartDebugBtn.debug=true\n"
+                                                    "MenuBar.StartDebugBtn.info=true\n"
+
                                                     "MenuBar.RunBtn.debug=true\n"
                                                     "MenuBar.RunBtn.info=true\n"
+
+
                                                     ));
     QApplication a(argc, argv);
     MainWindow w;
