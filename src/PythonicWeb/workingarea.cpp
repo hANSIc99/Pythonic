@@ -29,10 +29,17 @@ WorkingArea::WorkingArea(QWidget *parent)
     setStyleSheet("#workBackground { background-color: \
                   qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #366a97, stop: 0.5 silver, stop:1 #ffc634)}");
 
-    m_mastergridLayout.addLayout(&m_gridLayout, 0, 0, Qt::AlignCenter);
+    m_mastergridLayout.addLayout(&m_grid, 0, 0, Qt::AlignCenter);
+    m_mastergridLayout.setRowStretch(1, 1);
+    m_mastergridLayout.setColumnStretch(1, 1);
 
     setLayout(&m_mastergridLayout);
-    show();
+
+    StartElement *startElement = new StartElement(0, 0, this);
+    m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
+
+    //m_grid.addWidget(startElement, 0, 0, Qt::AlignCenter);
+    m_mastergridLayout.addWidget(startElement, 0, 0, Qt::AlignCenter);
 
     qCDebug(log_workingarea, "called");
 }

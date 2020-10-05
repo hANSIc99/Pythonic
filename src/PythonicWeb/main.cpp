@@ -20,12 +20,24 @@
 #include <QDebug>
 #include <QLoggingCategory>
 
+/*
+ * Every Method call: debug
+ * Signals Slots: Info
+ */
+
+
+
 int main(int argc, char *argv[])
 {
     // https://doc.qt.io/qt-5/qtglobal.html#qSetMessagePattern
     qSetMessagePattern("%{type} : %{function}() - %{message}");
     // https://doc.qt.io/qt-5/qloggingcategory.html
-    QLoggingCategory::setFilterRules(QStringLiteral("Logger.debug=true\n"
+    QLoggingCategory::setFilterRules(QStringLiteral(
+                                                    "debug=true\n"
+                                                    "info=true\n"
+
+
+                                                    "Logger.debug=true\n"
                                                     "Logger.info=false\n"
                                                     "Logger.warning=true\n"
                                                     "Logger.critical=true\n"
@@ -39,31 +51,56 @@ int main(int argc, char *argv[])
                                                     "MenuBar.debug=true\n"
                                                     "MenuBar.info=true\n"
 
-                                                    "MenuBar.NewFileBtn.debug=true\n"
-                                                    "MenuBar.NewFileBtn.info=true\n"
+                                                    "MenuBar.NewFileBtn.debug=false\n"
+                                                    "MenuBar.NewFileBtn.info=false\n"
 
-                                                    "MenuBar.OpenFileBtn.debug=true\n"
-                                                    "MenuBar.OpenFileBtn.info=true\n"
+                                                    "MenuBar.OpenFileBtn.debug=false\n"
+                                                    "MenuBar.OpenFileBtn.info=false\n"
 
-                                                    "MenuBar.SaveBtn.debug=true\n"
-                                                    "MenuBar.SaveBtn.info=true\n"
+                                                    "MenuBar.SaveBtn.debug=false\n"
+                                                    "MenuBar.SaveBtn.info=false\n"
 
-                                                    "MenuBar.SaveAsBtn.debug=true\n"
-                                                    "MenuBar.SaveAsBtn.info=true\n"
+                                                    "MenuBar.SaveAsBtn.debug=false\n"
+                                                    "MenuBar.SaveAsBtn.info=false\n"
 
-                                                    "MenuBar.KillProcBtn.debug=true\n"
-                                                    "MenuBar.KillProcBtn.info=true\n"
+                                                    "MenuBar.KillProcBtn.debug=false\n"
+                                                    "MenuBar.KillProcBtn.info=false\n"
 
-                                                    "MenuBar.StopExecBtn.debug=true\n"
-                                                    "MenuBar.StopExecBtn.info=true\n"
+                                                    "MenuBar.StopExecBtn.debug=false\n"
+                                                    "MenuBar.StopExecBtn.info=false\n"
 
-                                                    "MenuBar.StartDebugBtn.debug=true\n"
-                                                    "MenuBar.StartDebugBtn.info=true\n"
+                                                    "MenuBar.StartDebugBtn.debug=false\n"
+                                                    "MenuBar.StartDebugBtn.info=false\n"
 
-                                                    "MenuBar.RunBtn.debug=true\n"
-                                                    "MenuBar.RunBtn.info=true\n"
+                                                    "MenuBar.RunBtn.debug=false\n"
+                                                    "MenuBar.RunBtn.info=false\n"
 
+                                                    "ElementMaster.debug=true\n"
+                                                    "ElementMaster.info=true\n"
 
+                                                    "FileDownloader.debug=true\n"
+                                                    "FileDownloader.info=true\n"
+
+                                                    "BaseLabel.debug=true\n"
+                                                    "BaseLabel.info=true\n"
+
+                                                    "BaseButton.debug=true\n"
+                                                    "BaseButton.info=true\n"
+
+                                                    "ElementIconBar.debug=true\n"
+                                                    "ElementIconBar.info=true\n"
+
+                                                    "StartElement.debug=true\n"
+                                                    "StartElement.info=true\n"
+
+                                                    "EditElementBtn.debug=true\n"
+                                                    "EditElementBtn.info=true\n"
+
+                                                    "DebugElementBtn.debug=true\n"
+                                                    "DebugElementBtn.info=true\n"
+
+                                                    "DeleteElementBtn.debug=true\n"
+                                                    "DeleteElementBtn.info=true\n"
                                                     ));
     QApplication a(argc, argv);
     MainWindow w;

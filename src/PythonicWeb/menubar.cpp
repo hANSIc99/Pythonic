@@ -35,7 +35,9 @@ MenuBar::MenuBar(QWidget *parent) : QWidget(parent)
     //setStyleSheet("background-color: red");
     //m_iconBarLayout.setContentsMargins(8, 0, 0, 0);
 
-    //m_iconBarLayout.addWidget(&m_runBtn);
+    /* Setup Application Logo */
+
+
 
     /* Setup Self Layout */
     setLayout(&m_iconBarLayout);
@@ -48,7 +50,7 @@ MenuBar::MenuBar(QWidget *parent) : QWidget(parent)
     m_iconBarLayout.addWidget(&m_stopExecBtn);
     m_iconBarLayout.addWidget(&m_killProcBtn);
     m_iconBarLayout.addStretch(1);
-    //m_iconBarLayout.addWidget(&m_testButton);
+    m_iconBarLayout.addWidget(&m_logoHorizontal);
 
     //show();
     qCDebug(log_menubar, "called");

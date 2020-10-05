@@ -23,28 +23,32 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-
+#include <QLoggingCategory>
 
 class FileDownloader : public QObject
 {
  Q_OBJECT
 public:
-    explicit FileDownloader(QUrl imageUrl, QObject *parent = 0)
+    explicit FileDownloader(QObject *parent = 0)
         : QObject(parent)
     {
         connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
         SLOT (fileDownloaded(QNetworkReply*)));
 
-        QNetworkRequest request(imageUrl);
-        m_WebCtrl.get(request);
+        m_WebCtrl.get(m_request);
     };
 
-    //virtual ~FileDownloader();
+
 
     QByteArray downloadedData() const{
         return m_DownloadedData;
     };
 
+    void startRequest(QUrl imageUrl){
+            QNetworkRequest request(imageUrl);
+            m_WebCtrl.get(m_request);
+            qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
+    }
 
 signals:
     void downloaded();
@@ -62,8 +66,10 @@ private slots:
 
 private:
 
-    QNetworkAccessManager m_WebCtrl;
+    QLoggingCategory    logC{"FileDownloader"};
 
+    QNetworkAccessManager m_WebCtrl;
+    QNetworkRequest m_request;
     QByteArray m_DownloadedData;
 
 };

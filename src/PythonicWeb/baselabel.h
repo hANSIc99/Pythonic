@@ -25,7 +25,8 @@
 #include <QNetworkReply>
 #include <QLabel>
 #include <QSize>
-
+#include <QPushButton>
+#include <QLoggingCategory>
 
 class BaseLabel : public QLabel
 {
@@ -39,6 +40,57 @@ public:
         SLOT (fileDownloaded(QNetworkReply*)));
         QNetworkRequest request(imageUrl);
         m_WebCtrl.get(request);
+        qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
+    };
+
+    //virtual ~BaseLabel();
+
+    void resetImage(QUrl imageUrl){
+        QNetworkRequest request(imageUrl);
+        m_WebCtrl.get(request);
+    }
+
+private slots:
+
+    void fileDownloaded(QNetworkReply* pReply){
+        m_DownloadedData = pReply->readAll();
+        //emit a signal
+        pReply->deleteLater();
+        //emit downloaded();
+
+
+        m_pixMap.loadFromData(m_DownloadedData);
+        m_pixMap = m_pixMap.scaled(m_size);
+
+        setPixmap(m_pixMap);
+    };
+
+
+
+private:
+
+    QLoggingCategory    logC{"BaseLabel"};
+    QNetworkAccessManager   m_WebCtrl;
+    QPixmap                 m_pixMap;
+    QByteArray              m_DownloadedData;
+    QSize                   m_size;
+
+
+};
+
+class BaseButton : public QPushButton
+{
+ Q_OBJECT
+public:
+    explicit BaseButton(QUrl imageUrl, QSize size, QWidget *parent = 0)
+        : QPushButton(parent)
+        , m_size(size)
+    {
+        connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
+        SLOT (fileDownloaded(QNetworkReply*)));
+        QNetworkRequest request(imageUrl);
+        m_WebCtrl.get(request);
+        qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
     };
 
     //virtual ~BaseLabel();
@@ -54,14 +106,15 @@ private slots:
 
         m_pixMap.loadFromData(m_DownloadedData);
         m_pixMap.scaled(m_size);
-
-        setPixmap(m_pixMap);
+        QIcon buttonIcon(m_pixMap);
+        setIcon(buttonIcon);
+        setIconSize(m_size);
     };
 
 
 
 private:
-
+    QLoggingCategory    logC{"BaseButton"};
     QNetworkAccessManager   m_WebCtrl;
     QPixmap                 m_pixMap;
     QByteArray              m_DownloadedData;

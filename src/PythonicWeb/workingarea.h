@@ -21,6 +21,18 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QLoggingCategory>
+#include <QVector>
+
+#include "elements/basicelements.h"
+#include "elementmaster.h"
+
+/*! @brief WorkingArea holds and manages all programming elements
+ *
+ *  Detailed description follows here.
+ *  @author Stephan Avenwedde
+ *  @date October 2020
+ *  @copyright [GPLv3](../../../LICENSE)
+ */
 
 
 class WorkingArea : public QFrame
@@ -31,9 +43,10 @@ public:
 
 private:
 
-    QGridLayout         m_mastergridLayout;
-    QGridLayout         m_gridLayout;
+    QGridLayout                 m_mastergridLayout;
+    QGridLayout                 m_grid;
 
+    QVector<ElementMaster*>     m_vectorElements;
 
 };
 
