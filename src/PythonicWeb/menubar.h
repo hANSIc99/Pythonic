@@ -51,14 +51,14 @@ signals:
 
 protected:
 
-    void enterEvent(QEvent *event){
+    void enterEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: dimgrey;");
         emit hover(tr("Run"));
     };
 
-    void leaveEvent(QEvent *event){
+    void leaveEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: transparent;");
@@ -86,14 +86,14 @@ signals:
 
 protected:
 
-    void enterEvent(QEvent *event){
+    void enterEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: dimgrey;");
         emit hover(tr("New workflow"));
     };
 
-    void leaveEvent(QEvent *event){
+    void leaveEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: transparent;");
@@ -121,14 +121,14 @@ signals:
 
 protected:
 
-    void enterEvent(QEvent *event){
+    void enterEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: dimgrey;");
         emit hover(tr("Open workflow"));
     };
 
-    void leaveEvent(QEvent *event){
+    void leaveEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: transparent;");
@@ -156,14 +156,14 @@ signals:
 
 protected:
 
-    void enterEvent(QEvent *event){
+    void enterEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: dimgrey;");
         emit hover(tr("Save workflow"));
     };
 
-    void leaveEvent(QEvent *event){
+    void leaveEvent(QEvent *event) override{
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: transparent;");
@@ -191,14 +191,14 @@ signals:
 
 protected:
 
-    void enterEvent(QEvent *event){
+    void enterEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: dimgrey;");
         emit hover(tr("Save as ..."));
     };
 
-    void leaveEvent(QEvent *event){
+    void leaveEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: transparent;");
@@ -226,14 +226,14 @@ signals:
 
 protected:
 
-    void enterEvent(QEvent *event){
+    void enterEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: dimgrey;");
         emit hover(tr("Kill running timers and child processes"));
     };
 
-    void leaveEvent(QEvent *event){
+    void leaveEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: transparent;");
@@ -261,14 +261,14 @@ signals:
 
 protected:
 
-    void enterEvent(QEvent *event){
+    void enterEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: dimgrey;");
         emit hover(tr("Stop execution"));
     };
 
-    void leaveEvent(QEvent *event){
+    void leaveEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: transparent;");
@@ -296,14 +296,14 @@ signals:
 
 protected:
 
-    void enterEvent(QEvent *event){
+    void enterEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: dimgrey;");
         emit hover(tr("Start debug"));
     };
 
-    void leaveEvent(QEvent *event){
+    void leaveEvent(QEvent *event) override {
         Q_UNUSED(event)
         qCInfo(logC, "called - emit SINGAL hover");
         //setStyleSheet("background-color: transparent;");

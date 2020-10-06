@@ -1,9 +1,3 @@
-#ifndef LOGGER_H
-#define LOGGER_H
-
-#include <QtWebSockets/QWebSocket>
-#include <QJsonObject>
-#include <QJsonDocument>
 /*
  * This file is part of Pythonic.
 
@@ -21,6 +15,12 @@
  * along with Pythonic. If not, see <https://www.gnu.org/licenses/>
  */
 
+#ifndef LOGGER_H
+#define LOGGER_H
+
+#include <QtWebSockets/QWebSocket>
+#include <QJsonObject>
+#include <QJsonDocument>
 #include <QLoggingCategory>
 
 
@@ -77,13 +77,19 @@ public:
 
         qCDebug(logC, "Log Message: LvL: %i, Msg: %s", (int)lvl, msg.toStdString().c_str());
 
+
         QJsonObject logObj
         {
             {"logLvL", (int)lvl},
             {"msg", msg}
         };
-        QJsonDocument doc(logObj);
 
+        /* funktioniert auch so
+        QJsonObject logObj;
+        logObj["logLvL"] = (int)lvl;
+        logObj["msg"] = msg;
+        */
+        QJsonDocument doc(logObj);
         m_WsLogMsg.sendTextMessage(doc.toJson(QJsonDocument::Compact));
     }
 

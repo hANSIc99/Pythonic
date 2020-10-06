@@ -15,18 +15,35 @@
  * along with Pythonic. If not, see <https://www.gnu.org/licenses/>
  */
 
-#include "elementiconbar.h"
+#ifndef TOOLMASTER_H
+#define TOOLMASTER_H
 
-ElementIconBar::ElementIconBar(QWidget *parent) : QWidget(parent)
+#include <QUrl>
+#include <QString>
+#include <QSize>
+#include "baselabel.h"
+
+#define TOOL_SIZE QSize(120, 60)
+
+struct ToolData {
+    QString typeName;
+    int     nOutputs;
+};
+
+class ToolMaster : public BaseLabel
 {
-    setLayout(&m_iconBarLayout);
+public:
+    ToolMaster(ToolData toolData, QUrl imageUrl, QWidget *parent = 0)
+        : BaseLabel(imageUrl, TOOL_SIZE, parent)
+        , m_toolData(toolData)
+        {};
 
-    m_iconBarLayout.addWidget(&m_editBtn);
-    m_iconBarLayout.addWidget(&m_debugBtn);
-    m_iconBarLayout.addWidget(&m_deleteBtn);
+    /* Wird die funktion wirklich benötigt? */
+    ToolData getToolData() const {
+        return m_toolData;
+    }
 
+    ToolData m_toolData;
+};
 
-    //setStyleSheet("#IconBar { background-color: #636363; border: 3px solid #ff5900;\
-    //        border-radius: 15px; }");
-
-}
+#endif // TOOLMASTER_H

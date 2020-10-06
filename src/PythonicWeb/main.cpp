@@ -45,14 +45,14 @@ int main(int argc, char *argv[])
                                                     "MainWindow.debug=true\n"
                                                     "MainWindow.info=false\n"
 
-                                                    "WorkingArea.debug=false\n"
-                                                    "WorkingArea.info=false\n"
+                                                    "WorkingArea.debug=true\n"
+                                                    "WorkingArea.info=true\n"
 
                                                     "MenuBar.debug=true\n"
                                                     "MenuBar.info=true\n"
 
-                                                    "MenuBar.NewFileBtn.debug=false\n"
-                                                    "MenuBar.NewFileBtn.info=false\n"
+                                                    "MenuBar.NewFileBtn.debug=true\n"
+                                                    "MenuBar.NewFileBtn.info=true\n"
 
                                                     "MenuBar.OpenFileBtn.debug=false\n"
                                                     "MenuBar.OpenFileBtn.info=false\n"
@@ -75,32 +75,41 @@ int main(int argc, char *argv[])
                                                     "MenuBar.RunBtn.debug=false\n"
                                                     "MenuBar.RunBtn.info=false\n"
 
-                                                    "ElementMaster.debug=true\n"
-                                                    "ElementMaster.info=true\n"
+                                                    "ElementMaster.debug=false\n"
+                                                    "ElementMaster.info=false\n"
 
-                                                    "FileDownloader.debug=true\n"
-                                                    "FileDownloader.info=true\n"
+                                                    "FileDownloader.debug=false\n"
+                                                    "FileDownloader.info=false\n"
 
-                                                    "BaseLabel.debug=true\n"
-                                                    "BaseLabel.info=true\n"
+                                                    "BaseLabel.debug=false\n"
+                                                    "BaseLabel.info=false\n"
 
-                                                    "BaseButton.debug=true\n"
-                                                    "BaseButton.info=true\n"
+                                                    "BaseButton.debug=false\n"
+                                                    "BaseButton.info=false\n"
 
-                                                    "ElementIconBar.debug=true\n"
-                                                    "ElementIconBar.info=true\n"
+                                                    "ElementIconBar.debug=false\n"
+                                                    "ElementIconBar.info=false\n"
 
-                                                    "StartElement.debug=true\n"
-                                                    "StartElement.info=true\n"
+                                                    "StartElement.debug=false\n"
+                                                    "StartElement.info=false\n"
 
-                                                    "EditElementBtn.debug=true\n"
-                                                    "EditElementBtn.info=true\n"
+                                                    "EditElementBtn.debug=false\n"
+                                                    "EditElementBtn.info=false\n"
 
-                                                    "DebugElementBtn.debug=true\n"
-                                                    "DebugElementBtn.info=true\n"
+                                                    "DebugElementBtn.debug=false\n"
+                                                    "DebugElementBtn.info=false\n"
 
-                                                    "DeleteElementBtn.debug=true\n"
-                                                    "DeleteElementBtn.info=true\n"
+                                                    "DeleteElementBtn.debug=false\n"
+                                                    "DeleteElementBtn.info=false\n"
+
+                                                    "Toolbox.debug=true\n"
+                                                    "Toolbox.info=true\n"
+
+                                                    "BasicTools.debug=true\n"
+                                                    "BasicTools.info=true\n"
+
+                                                    "PlaceholderElement.debug=true\n"
+                                                    "PlaceholderElement.info=true\n"
                                                     ));
     QApplication a(argc, argv);
     MainWindow w;

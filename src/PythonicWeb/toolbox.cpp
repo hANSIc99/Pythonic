@@ -15,18 +15,9 @@
  * along with Pythonic. If not, see <https://www.gnu.org/licenses/>
  */
 
-#include "elementiconbar.h"
+#include "toolbox.h"
 
-ElementIconBar::ElementIconBar(QWidget *parent) : QWidget(parent)
+Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
 {
-    setLayout(&m_iconBarLayout);
-
-    m_iconBarLayout.addWidget(&m_editBtn);
-    m_iconBarLayout.addWidget(&m_debugBtn);
-    m_iconBarLayout.addWidget(&m_deleteBtn);
-
-
-    //setStyleSheet("#IconBar { background-color: #636363; border: 3px solid #ff5900;\
-    //        border-radius: 15px; }");
-
+    qCDebug(logC, "called");
 }

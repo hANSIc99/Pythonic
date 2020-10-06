@@ -15,18 +15,22 @@
  * along with Pythonic. If not, see <https://www.gnu.org/licenses/>
  */
 
-#include "elementiconbar.h"
+#ifndef BASICTOOLS_H
+#define BASICTOOLS_H
 
-ElementIconBar::ElementIconBar(QWidget *parent) : QWidget(parent)
+#include <QWidget>
+#include <QLoggingCategory>
+
+
+class BasicTools : public QWidget
 {
-    setLayout(&m_iconBarLayout);
+    Q_OBJECT
+public:
+    explicit BasicTools(QWidget *parent = nullptr);
 
-    m_iconBarLayout.addWidget(&m_editBtn);
-    m_iconBarLayout.addWidget(&m_debugBtn);
-    m_iconBarLayout.addWidget(&m_deleteBtn);
+private:
+    QLoggingCategory        logC{"BasicTools"};
 
+};
 
-    //setStyleSheet("#IconBar { background-color: #636363; border: 3px solid #ff5900;\
-    //        border-radius: 15px; }");
-
-}
+#endif // BASICTOOLS_H

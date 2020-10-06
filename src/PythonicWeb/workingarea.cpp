@@ -38,8 +38,29 @@ WorkingArea::WorkingArea(QWidget *parent)
     StartElement *startElement = new StartElement(0, 0, this);
     m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
 
-    //m_grid.addWidget(startElement, 0, 0, Qt::AlignCenter);
-    m_mastergridLayout.addWidget(startElement, 0, 0, Qt::AlignCenter);
-
+    m_grid.addWidget(startElement, 0, 0, Qt::AlignCenter);
+    /* add first placeholder to the grid */
+    addPlaceholder(1, 0);
     qCDebug(log_workingarea, "called");
-}
+    }
+
+
+
+
+    void WorkingArea::addPlaceholder(int row, int column)
+    {
+
+        ElementMaster *botChild = dynamic_cast<ElementMaster*>(m_grid.itemAtPosition(row, column));
+
+        if (botChild){
+            /* recursive call if there is already a element in the desired position */
+            qCDebug(log_workingarea, "botChild found");
+        } else {
+            /* actual position is valid */
+            qCDebug(log_workingarea, "botChild NOT found");
+        }
+
+        Placeholder *target = new Placeholder(row-1, column);
+        m_grid.addWidget(target);
+        qCDebug(log_workingarea, "called - row: %d column: %d", row, column);
+    }

@@ -43,6 +43,8 @@ public:
 
 private:
 
+    void addPlaceholder(int row, int column);
+
     QGridLayout                 m_mastergridLayout;
     QGridLayout                 m_grid;
 

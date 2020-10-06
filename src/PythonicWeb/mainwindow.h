@@ -41,7 +41,7 @@
 
 
 
-#define N_WORKING_GRIDS 5
+#define N_WORKING_GRIDS 1
 
 //https://stackoverflow.com/questions/39931734/qt-specific-difference-of-stack-vs-heap-attributes
 

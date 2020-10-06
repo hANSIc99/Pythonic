@@ -15,18 +15,24 @@
  * along with Pythonic. If not, see <https://www.gnu.org/licenses/>
  */
 
-#include "elementiconbar.h"
+#ifndef TOOLBOX_H
+#define TOOLBOX_H
 
-ElementIconBar::ElementIconBar(QWidget *parent) : QWidget(parent)
+#include <QWidget>
+#include <QLoggingCategory>
+
+class Toolbox : public QWidget
 {
-    setLayout(&m_iconBarLayout);
+    Q_OBJECT
+public:
+    explicit Toolbox(QWidget *parent = nullptr);
 
-    m_iconBarLayout.addWidget(&m_editBtn);
-    m_iconBarLayout.addWidget(&m_debugBtn);
-    m_iconBarLayout.addWidget(&m_deleteBtn);
+//signals:
 
+private:
 
-    //setStyleSheet("#IconBar { background-color: #636363; border: 3px solid #ff5900;\
-    //        border-radius: 15px; }");
+    QLoggingCategory        logC{"PlaceholderElement"};
 
-}
+};
+
+#endif // TOOLBOX_H
