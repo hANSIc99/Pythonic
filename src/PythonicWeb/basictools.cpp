@@ -19,5 +19,9 @@
 
 BasicTools::BasicTools(QWidget *parent) : QWidget(parent)
 {
-
+    qCDebug(logC, "called");
+    setLayout(&m_layout);
+    m_layout.setContentsMargins(0, 0, 0, 0);
+    m_layout.setSizeConstraint(QLayout::SetMinimumSize);
+    m_layout.addWidget(&m_BasicOperation);
 }

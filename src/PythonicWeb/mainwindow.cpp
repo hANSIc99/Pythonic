@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
         // tbd gridoperator
     }
 
-    m_toolboxTabs.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    //m_toolboxTabs.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
 
     //m_toolboxTabs.addTab() Basictools
 
@@ -61,7 +61,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_bottomArea.setLayout(&m_bottomAreaLayout);
     m_bottomAreaLayout.setContentsMargins(5, 0, 5, 5);
+    m_bottomAreaLayout.setSizeConstraint(QLayout::SetMaximumSize);
     m_bottomAreaLayout.addWidget(&m_workingTabs); // doueble free
+
     //m_bottomAreaLayout.addWidget(&m_scrollDropBox); // double free
 
 
@@ -80,14 +82,17 @@ MainWindow::MainWindow(QWidget *parent)
     //m_testWidget.setMinimumWidth(50);
     //m_testWidget.setStyleSheet("background-color: red");
     m_mainWidgetLayout.addWidget(&m_menuBar);
-    //m_mainWidgetLayout.addWidget(&m_testWidget);
+    //m_mainWidgetLayout.addWidget(dynamic_cast<QWidget*>(&m_toolBox));
+    m_mainWidgetLayout.addWidget(&m_toolBox);
 
     //m_mainLayout.addWidget(&m_topMenuBar);
 
-    //m_mainWidgetLayout.addWidget(&m_toolboxTabs);
     m_mainWidgetLayout.addWidget(&m_bottomArea);
+    /* Stretch BottomArea (working grids) always to maximum */
+    m_mainWidgetLayout.setStretchFactor(&m_bottomArea, 1);
     m_mainWidgetLayout.addWidget(&m_bottomBorder);
     m_mainWidgetLayout.setSpacing(0);
+
 
 
 

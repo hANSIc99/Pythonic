@@ -36,7 +36,7 @@
 #include "logger.h"
 #include "workingarea.h"
 #include "menubar.h"
-
+#include "toolbox.h"
 
 
 
@@ -104,11 +104,10 @@ private:
      * m_bottomArea der parent ist
      */
     QTabWidget              m_workingTabs;
-    QTabWidget              m_toolboxTabs;
     QVector<QScrollArea*>   m_arr_workingTabs;
     QVector<WorkingArea*>   m_arr_workingArea;
     QScrollArea             m_workingScrollAreas; // Scroll area for each grid
-
+    Toolbox                 m_toolBox;
 
     /* Bottom Border (Info Text & Size Grip) */
 

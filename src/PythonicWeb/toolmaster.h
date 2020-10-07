@@ -25,6 +25,7 @@
 
 #define TOOL_SIZE QSize(120, 60)
 
+
 struct ToolData {
     QString typeName;
     int     nOutputs;

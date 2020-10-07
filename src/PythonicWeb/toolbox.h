@@ -20,8 +20,11 @@
 
 #include <QWidget>
 #include <QLoggingCategory>
+#include <QTabWidget>
 
-class Toolbox : public QWidget
+#include "basictools.h"
+
+class Toolbox : public QTabWidget
 {
     Q_OBJECT
 public:
@@ -31,7 +34,9 @@ public:
 
 private:
 
-    QLoggingCategory        logC{"PlaceholderElement"};
+    QLoggingCategory        logC{"Toolbox"};
+
+    BasicTools              m_basicTools;
 
 };
 

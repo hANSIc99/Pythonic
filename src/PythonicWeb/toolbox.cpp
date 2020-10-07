@@ -17,7 +17,9 @@
 
 #include "toolbox.h"
 
-Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
+Toolbox::Toolbox(QWidget *parent) : QTabWidget(parent)
 {
     qCDebug(logC, "called");
+
+    addTab(&m_basicTools, tr("Basic tools"));
 }
