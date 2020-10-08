@@ -24,8 +24,7 @@
 
 #include "toolmaster.h"
 
-#define OPERATION_DATA ToolData
-#define OPERATION_URL QUrl("http://localhost:7000/ExecOp.png")
+#define OPERATION_DATA ToolData{"ExecOp", 1}
 
 class BasicTools : public QWidget
 {
@@ -37,10 +36,7 @@ private:
     QLoggingCategory        logC{"BasicTools"};
     QHBoxLayout             m_layout;
     //ToolData toolData, QUrl imageUrl, QWidget *parent = 0)
-    ToolMaster              m_BasicOperation{   ToolData{"BasicOperation", 1},
-                                                OPERATION_URL};
-
-
+    ToolMaster              m_BasicOperation{OPERATION_DATA};
 };
 
 #endif // BASICTOOLS_H

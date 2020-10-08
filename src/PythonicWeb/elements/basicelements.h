@@ -93,20 +93,13 @@ public:
 
 protected:
 
-    /* DBG
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-    };
-
-    void leaveEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit  hover");
-    };
-    */
-    void dropEvent(QDropEvent *event)  {
+    void dropEvent(QDropEvent *event) override {
         QString mimeData = event->mimeData()->text();
-        qCInfo(logC, "called - mime data: %s", mimeData.toStdString().c_str());
+
+        if(event->mimeData()->hasText()){
+            qCInfo(logC, "called - mime data: %s", mimeData.toStdString().c_str());
+            event->acceptProposedAction();
+        }
     }
 
 

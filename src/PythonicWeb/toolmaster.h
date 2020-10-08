@@ -21,6 +21,10 @@
 #include <QUrl>
 #include <QString>
 #include <QSize>
+#include <QMouseEvent>
+#include <QMimeData>
+#include <QLoggingCategory>
+#include <QDrag>
 #include "baselabel.h"
 
 #define TOOL_SIZE QSize(120, 60)
@@ -34,17 +38,44 @@ struct ToolData {
 class ToolMaster : public BaseLabel
 {
 public:
-    ToolMaster(ToolData toolData, QUrl imageUrl, QWidget *parent = 0)
-        : BaseLabel(imageUrl, TOOL_SIZE, parent)
+    ToolMaster(ToolData toolData, QWidget *parent = 0)
+        : BaseLabel(QUrl("http://localhost:7000/" + toolData.typeName + ".png"), TOOL_SIZE, parent)
         , m_toolData(toolData)
-        {};
+        {
+            qCDebug(logC, "called");
+        };
 
     /* Wird die funktion wirklich benötigt? */
     ToolData getToolData() const {
         return m_toolData;
     }
-
+    // m_toolData.typename = "ExecOp
     ToolData m_toolData;
+
+protected:
+
+    void mousePressEvent(QMouseEvent *event) override{
+
+        qCInfo(logC, "%s called", m_toolData.typeName.toStdString().c_str());
+
+        if (event->button() == Qt::LeftButton) {
+
+
+            QMimeData *mimeData = new QMimeData;
+            mimeData->setText(m_toolData.typeName);
+
+            QDrag *drag = new QDrag(this);
+            drag->setMimeData(mimeData);
+            drag->setPixmap(m_pixMap);
+
+
+            /* CopyAction because it is copied to another widged */
+            drag->exec(Qt::CopyAction);
+        }
+    }
+
+private:
+    QLoggingCategory        logC{"ToolMaster"};
 };
 
 #endif // TOOLMASTER_H

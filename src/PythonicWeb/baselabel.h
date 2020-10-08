@@ -65,13 +65,15 @@ private slots:
         setPixmap(m_pixMap);
     };
 
+protected:
 
+    QPixmap                 m_pixMap;
 
 private:
 
     QLoggingCategory    logC{"BaseLabel"};
     QNetworkAccessManager   m_WebCtrl;
-    QPixmap                 m_pixMap;
+
     QByteArray              m_DownloadedData;
     QSize                   m_size;
 

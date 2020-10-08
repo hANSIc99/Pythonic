@@ -36,11 +36,17 @@ int main(int argc, char *argv[])
                                                     "debug=true\n"
                                                     "info=true\n"
 
+                                                    /* Miscellaneous */
 
                                                     "Logger.debug=true\n"
                                                     "Logger.info=false\n"
                                                     "Logger.warning=true\n"
                                                     "Logger.critical=true\n"
+
+                                                    "FileDownloader.debug=false\n"
+                                                    "FileDownloader.info=false\n"
+
+                                                    /* GUI Elements */
 
                                                     "MainWindow.debug=true\n"
                                                     "MainWindow.info=false\n"
@@ -48,8 +54,13 @@ int main(int argc, char *argv[])
                                                     "WorkingArea.debug=true\n"
                                                     "WorkingArea.info=true\n"
 
+                                                    "Toolbox.debug=true\n"
+                                                    "Toolbox.info=true\n"
+
                                                     "MenuBar.debug=true\n"
                                                     "MenuBar.info=true\n"
+
+                                                    /* GUI Buttons */
 
                                                     "MenuBar.NewFileBtn.debug=true\n"
                                                     "MenuBar.NewFileBtn.info=true\n"
@@ -75,11 +86,12 @@ int main(int argc, char *argv[])
                                                     "MenuBar.RunBtn.debug=false\n"
                                                     "MenuBar.RunBtn.info=false\n"
 
-                                                    "ElementMaster.debug=false\n"
-                                                    "ElementMaster.info=false\n"
+                                                    /* Toolbox elements */
 
-                                                    "FileDownloader.debug=false\n"
-                                                    "FileDownloader.info=false\n"
+                                                    "BasicTools.debug=true\n"
+                                                    "BasicTools.info=true\n"
+
+                                                    /* Master Classes */
 
                                                     "BaseLabel.debug=false\n"
                                                     "BaseLabel.info=false\n"
@@ -90,8 +102,13 @@ int main(int argc, char *argv[])
                                                     "ElementIconBar.debug=false\n"
                                                     "ElementIconBar.info=false\n"
 
-                                                    "StartElement.debug=false\n"
-                                                    "StartElement.info=false\n"
+                                                    "ToolMaster.debug=true\n"
+                                                    "ToolMaster.info=true\n"
+
+                                                    "ElementMaster.debug=false\n"
+                                                    "ElementMaster.info=false\n"
+
+                                                    /* Element Buttons  */
 
                                                     "EditElementBtn.debug=false\n"
                                                     "EditElementBtn.info=false\n"
@@ -102,14 +119,14 @@ int main(int argc, char *argv[])
                                                     "DeleteElementBtn.debug=false\n"
                                                     "DeleteElementBtn.info=false\n"
 
-                                                    "Toolbox.debug=true\n"
-                                                    "Toolbox.info=true\n"
+                                                    /* Elements */
 
-                                                    "BasicTools.debug=true\n"
-                                                    "BasicTools.info=true\n"
+                                                    "StartElement.debug=false\n"
+                                                    "StartElement.info=false\n"
 
                                                     "PlaceholderElement.debug=true\n"
                                                     "PlaceholderElement.info=true\n"
+
                                                     ));
     QApplication a(argc, argv);
     MainWindow w;

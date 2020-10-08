@@ -75,11 +75,6 @@ public:
      */
     ChildConfig         m_childPositions;
 
-//signals:
-
-//private slots:
-    //void imageDownloaded(QNetworkReply* reply);
-
 private:
 
 
