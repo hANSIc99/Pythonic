@@ -11,5 +11,7 @@
 
 ![Alt text](../../../screenshot-4.png)
 
+Compiled with EMSDK 1.39.9
+
 [Repository on GitHub](https://github.com/hANSIc99/Pythonic)
 
