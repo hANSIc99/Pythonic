@@ -91,7 +91,8 @@ def dispatch(environ, start_response):
     root_static      = 'PythonicWeb/static/'
 
     global execTimer
-    png_req = environ['PATH_INFO'][-4:] # last 4 characters '.png'
+    png_req4 = environ['PATH_INFO'][-4:] # last 4 characters '.png'
+    png_req3 = environ['PATH_INFO'][-3:] # last 4 characters '.js'
 
     if environ['PATH_INFO'] == '/data':
         logging.debug('PATH_INFO == \'/data\'')     
@@ -120,19 +121,23 @@ def dispatch(environ, start_response):
         logging.debug('PATH_INFO == \'/\'')
         #print(environ['test1'])
         
-        start_response('200 OK', [('content-type', 'text/html')])
+        start_response('200 OK', [  ('content-type', 'text/html'),
+                                    ('Cross-Origin-Opener-Policy', 'same-origin'),
+                                    ('Cross-Origin-Embedder-Policy', 'require-corp')])
         return [open(os.path.join(os.path.dirname(__file__),
             root_url + 'templates/PythonicWeb.html')).read()]
 
         
-   
+        """
     elif environ['PATH_INFO'] == '/qtloader.js':
         logging.debug('PATH_INFO == \'/qtloader.js\'')
         str_data = open(os.path.join(os.path.dirname(__file__),
             root_url + 'static/qtloader.js')).read() 
         start_response('200 OK', [('content-type', 'application/javascript') ])
+        #start_response('200 OK', [('content-type', 'text/plain; charset=utf-8') ])
 
         return [str_data]
+        """
 
     elif environ['PATH_INFO'] == '/qtlogo.svg':
         logging.debug('PATH_INFO == \'/qtlogo.svg\'')
@@ -142,7 +147,9 @@ def dispatch(environ, start_response):
                                 ('content-length', str(len(img_data)))])
 
         return [img_data]
-    elif png_req == '.png':
+
+    # IMAGES (*.png)
+    elif png_req4 == '.png':
         logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
         
         img_data = open(os.path.join(os.path.dirname(__file__),
@@ -153,13 +160,26 @@ def dispatch(environ, start_response):
         
         return [img_data]
 
+    # JAVS SCRIPT (*.js)
+
+    elif png_req3 == '.js':
+        logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
+        
+        img_data = open(os.path.join(os.path.dirname(__file__),
+            root_static + environ['PATH_INFO']), 'rb').read() 
+        
+        start_response('200 OK', [('content-type', 'application/javascript')])
+        
+        return [img_data]
+
+        """
     elif environ['PATH_INFO'] == '/PythonicWeb.js':
         logging.debug('PATH_INFO == \'/PythonicWeb.js\'')
         str_data = open(os.path.join(os.path.dirname(__file__),
             root_url + 'static/PythonicWeb.js')).read() 
         start_response('200 OK', [('content-type', 'application/javascript')])
         return [str_data]
-
+        """
     elif environ['PATH_INFO'] == '/PythonicWeb.wasm':
         logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
         bin_data = open(os.path.join(os.path.dirname(__file__),

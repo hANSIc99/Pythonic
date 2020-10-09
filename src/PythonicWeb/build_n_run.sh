@@ -7,8 +7,12 @@
 #https://wiki.qt.io/Qt_for_WebAssembly
 
 source ~/Dokumente/emsdk/emsdk_env.sh
-~/Qt/5.15.1/wasm_32/bin/qmake
-make
+
+#EMMAKEN_CFLAGS= -pthread -s PROXY_TO_PTHREAD
+
+#~/Qt/5.15.1/wasm_32/bin/qmake
+~/Dokumente/qt5/qtbase/bin/qmake
+make EMMAKEN_CFLAGS="-s PROXY_TO_PTHREAD"
 #emrun --browser firefox PythonicWeb.html
-python3 main.py
+#python3 main.py
 
