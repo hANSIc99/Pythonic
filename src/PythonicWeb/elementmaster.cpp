@@ -20,16 +20,16 @@
 
 
 
-ElementMaster::ElementMaster(int row,
-                             int coloumn,
+ElementMaster::ElementMaster(bool input,
+                             bool output,
                              QUrl pixMapPath,
                              ChildConfig childPosition,
                              bool bIconBar,
                              QWidget *parent)
     : QWidget(parent)
     , m_bIconBar(bIconBar)
-    , m_row(row)
-    , m_column(coloumn)
+    , m_input(input)
+    , m_output(output)
     , m_childPositions(childPosition)
     , m_label(pixMapPath, LABEL_SIZE, this)
 {
@@ -41,6 +41,7 @@ ElementMaster::ElementMaster(int row,
     //FileDownloader downloader(pixMapPath, this);
 
     m_labelText.setText("Test12343");
+    m_label.setObjectName("element_label");
 
     //resize(200, 200);
     /* Setup inner QWidget */
@@ -48,13 +49,29 @@ ElementMaster::ElementMaster(int row,
     m_innerWidget.setLayout(&m_innerWidgetLayout);
     m_innerWidgetLayout.setSizeConstraint(QLayout::SetFixedSize);
 
-    m_innerWidgetLayout.addWidget(&m_label);
     m_innerWidgetLayout.addWidget(&m_labelText);
+    m_innerWidgetLayout.addWidget(&m_label);
 
 
-    m_layout.addWidget(&m_iconBar);
     m_layout.addWidget(&m_innerWidget);
+    m_layout.addWidget(&m_iconBar);
+
     m_layout.setSizeConstraint(QLayout::SetFixedSize);
     //setSizePolicy(m_sizePolicy);
     setLayout(&m_layout);
+    startHighlight();
+}
+
+void ElementMaster::startHighlight()
+{
+    qCDebug(logC, "called");
+    m_label.setStyleSheet("#element { background-color: #636363;\
+                  border: 3px solid #fce96f; border-radius: 20px; }");
+}
+
+void ElementMaster::stopHighlight()
+{
+    qCDebug(logC, "called");
+    m_label.setStyleSheet("#element { background-color: #636363;\
+                  border: 3px solid #ff5900; border-radius: 20px; }");
 }

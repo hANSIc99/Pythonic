@@ -22,6 +22,8 @@
 #include <QVBoxLayout>
 #include <QLoggingCategory>
 #include <QSizePolicy>
+#include <QStyleOption>
+#include <QPainter>
 
 #include "baselabel.h"
 
@@ -84,12 +86,15 @@ class ElementIconBar : public QWidget
 public:
     explicit ElementIconBar(QWidget *parent = nullptr);
 
-//signals:
+protected:
+
+    void paintEvent(QPaintEvent *event) override;
+
 private:
 
     QLoggingCategory        logC{"ElementIconBar"};
 
-    QVBoxLayout             m_iconBarLayout;
+    QHBoxLayout             m_iconBarLayout;
 
     EditElementButton       m_editBtn;
     DebugElementButton      m_debugBtn;

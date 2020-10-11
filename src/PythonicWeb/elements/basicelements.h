@@ -43,9 +43,9 @@ class StartElement : public ElementMaster
     Q_OBJECT
 public:
 
-    explicit StartElement(int row, int column, QWidget *parent = nullptr)
-        : ElementMaster(row,
-                        column,
+    explicit StartElement(QWidget *parent = nullptr)
+        : ElementMaster(false,
+                        true,
                         QUrl("http://localhost:7000/start.png"),
                         ChildConfig{true, false},
                         true,

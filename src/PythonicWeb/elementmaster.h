@@ -54,8 +54,8 @@ class ElementMaster : public QWidget
 public:
 
     explicit ElementMaster(
-            int row,
-            int coloumn,
+            bool input,
+            bool output,
             QUrl pixMapPath,
             ChildConfig childPosition,
             bool bIconBar = true,        
@@ -68,8 +68,8 @@ public:
     //! Indicates if the icon bar is visible
     bool                m_bIconBar;
 
-    int                 m_row;
-    int                 m_column;
+    bool                m_input;
+    bool                m_output;
     /*! @brief Indicates the possible child positions of an element
      *
      * true  | false = only a bottom child\n
@@ -77,13 +77,16 @@ public:
      */
     ChildConfig         m_childPositions;
 
+    void                startHighlight();
+    void                stopHighlight();
+
 private:
 
 
     QLoggingCategory        logC{"ElementMaster"};
 
     //! Layout for IconBar and ElementPicture
-    QHBoxLayout             m_layout;
+    QVBoxLayout             m_layout;
     //! Holds label and position text
     QWidget                 m_innerWidget;
     //! Layout for position-text

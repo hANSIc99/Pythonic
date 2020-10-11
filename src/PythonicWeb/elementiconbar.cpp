@@ -25,8 +25,17 @@ ElementIconBar::ElementIconBar(QWidget *parent) : QWidget(parent)
     m_iconBarLayout.addWidget(&m_debugBtn);
     m_iconBarLayout.addWidget(&m_deleteBtn);
 
+    setObjectName("IconBar");
+    setStyleSheet("#IconBar { background-color: #636363; border: 3px solid #ff5900;\
+                  border-radius: 15px; }");
+}
 
-    //setStyleSheet("#IconBar { background-color: #636363; border: 3px solid #ff5900;\
-    //        border-radius: 15px; }");
+void ElementIconBar::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event)
+    QStyleOption style_opt;
+    style_opt.initFrom(this);
+    QPainter p(this);
 
+    style()->drawPrimitive(QStyle::PE_Widget, &style_opt, &p, this);
 }
