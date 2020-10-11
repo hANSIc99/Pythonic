@@ -41,12 +41,14 @@ class WorkingArea : public QFrame
 public:
     explicit WorkingArea(QWidget *parent = nullptr);
 
+protected:
+
+    void mousePressEvent(QMouseEvent *event) override;
+
 private:
 
     void addPlaceholder(int row, int column);
 
-    QGridLayout                 m_mastergridLayout;
-    QGridLayout                 m_grid;
 
     QVector<ElementMaster*>     m_vectorElements;
 

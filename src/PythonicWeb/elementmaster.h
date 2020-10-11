@@ -25,6 +25,8 @@
 #include <QVBoxLayout>
 #include <QPair>
 #include <QJsonObject>
+#include <QSizePolicy>
+#include <QMouseEvent>
 
 #include "baselabel.h"
 #include "elementiconbar.h"
@@ -98,6 +100,7 @@ private:
     QNetworkRequest         m_request;
     QByteArray              m_DownloadedData;
     */
+    QSizePolicy             m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
 };
 
 #endif // ELEMENTMASTER_H

@@ -29,19 +29,27 @@ WorkingArea::WorkingArea(QWidget *parent)
     setStyleSheet("#workBackground { background-color: \
                   qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #366a97, stop: 0.5 silver, stop:1 #ffc634)}");
 
-    m_mastergridLayout.addLayout(&m_grid, 0, 0, Qt::AlignCenter);
-    m_mastergridLayout.setRowStretch(1, 1);
-    m_mastergridLayout.setColumnStretch(1, 1);
 
-    setLayout(&m_mastergridLayout);
 
     StartElement *startElement = new StartElement(0, 0, this);
     m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
 
-    m_grid.addWidget(startElement, 0, 0, Qt::AlignCenter);
-    /* add first placeholder to the grid */
-    addPlaceholder(1, 0);
+    startElement->move(400, 10);
+
     qCDebug(log_workingarea, "called");
+    }
+
+    void WorkingArea::mousePressEvent(QMouseEvent *event)
+    {
+        QLabel *child = qobject_cast<QLabel*>(childAt(event->pos()));
+        if (!child){
+            qCDebug(log_workingarea, "called - no child");
+            return;
+        }
+
+        qCDebug(log_workingarea, "called - on child XYZ, Pos[X,Y]: %d, %d", child->pos().x(), child->pos().y());
+        //qCDebug(log_workingarea, "called - on child XYZ, Pos[X,Y]: %d, %d", event->pos().x(), event->pos().y());
+
     }
 
 
@@ -49,7 +57,7 @@ WorkingArea::WorkingArea(QWidget *parent)
 
     void WorkingArea::addPlaceholder(int row, int column)
     {
-
+#if 0
         ElementMaster *botChild = dynamic_cast<ElementMaster*>(m_grid.itemAtPosition(row, column));
 
         if (botChild){
@@ -62,5 +70,6 @@ WorkingArea::WorkingArea(QWidget *parent)
 
         Placeholder *target = new Placeholder(row-1, column);
         m_grid.addWidget(target);
+#endif
         qCDebug(log_workingarea, "called - row: %d column: %d", row, column);
     }

@@ -34,7 +34,7 @@ ElementMaster::ElementMaster(int row,
     , m_label(pixMapPath, LABEL_SIZE, this)
 {
     qCDebug(logC, "called");
-
+    setAttribute(Qt::WA_DeleteOnClose);
     m_layout.setContentsMargins(10, 0, 30, 0);
     m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
 
@@ -42,11 +42,11 @@ ElementMaster::ElementMaster(int row,
 
     m_labelText.setText("Test12343");
 
-
+    //resize(200, 200);
     /* Setup inner QWidget */
 
     m_innerWidget.setLayout(&m_innerWidgetLayout);
-
+    m_innerWidgetLayout.setSizeConstraint(QLayout::SetFixedSize);
 
     m_innerWidgetLayout.addWidget(&m_label);
     m_innerWidgetLayout.addWidget(&m_labelText);
@@ -54,7 +54,7 @@ ElementMaster::ElementMaster(int row,
 
     m_layout.addWidget(&m_iconBar);
     m_layout.addWidget(&m_innerWidget);
-
+    m_layout.setSizeConstraint(QLayout::SetFixedSize);
+    //setSizePolicy(m_sizePolicy);
     setLayout(&m_layout);
 }
-
