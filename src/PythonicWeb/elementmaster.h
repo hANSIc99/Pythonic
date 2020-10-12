@@ -70,6 +70,8 @@ public:
 
     bool                m_input;
     bool                m_output;
+
+    bool                m_debugEnabled;
     /*! @brief Indicates the possible child positions of an element
      *
      * true  | false = only a bottom child\n

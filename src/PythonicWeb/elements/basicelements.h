@@ -46,7 +46,7 @@ public:
     explicit StartElement(QWidget *parent = nullptr)
         : ElementMaster(false,
                         true,
-                        QUrl("http://localhost:7000/start.png"),
+                        QUrl("http://localhost:7000/start_web.png"),
                         ChildConfig{true, false},
                         true,
                         parent)

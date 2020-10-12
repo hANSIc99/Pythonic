@@ -51,9 +51,22 @@ public:
         : BaseButton(QUrl("http://localhost:7000/debug.png"), BTN_SIZE, parent)
     {
         qCDebug(logC, "called");
+        setCheckable(true);
+
+        connect(this, &QAbstractButton::toggled, [this](bool checked){
+            qCInfo(logC, "called - debug: %d", checked);
+            if(checked){
+                setStyleSheet("background-color: #e9d37c;border: 3px solid #fce96f;");
+            } else {
+                setStyleSheet("");
+            }
+
+        });
     };
+
 private:
     QLoggingCategory    logC{"DebugElementBtn"};
+
 };
 
 

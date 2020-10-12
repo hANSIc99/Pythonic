@@ -73,5 +73,5 @@ void ElementMaster::stopHighlight()
 {
     qCDebug(logC, "called");
     m_label.setStyleSheet("#element { background-color: #636363;\
-                  border: 3px solid #ff5900; border-radius: 20px; }");
+                          border: 3px solid #ff5900; border-radius: 20px; }");
 }
