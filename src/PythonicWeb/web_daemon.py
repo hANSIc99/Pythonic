@@ -128,17 +128,6 @@ def dispatch(environ, start_response):
             root_url + 'templates/PythonicWeb.html')).read()]
 
         
-        """
-    elif environ['PATH_INFO'] == '/qtloader.js':
-        logging.debug('PATH_INFO == \'/qtloader.js\'')
-        str_data = open(os.path.join(os.path.dirname(__file__),
-            root_url + 'static/qtloader.js')).read() 
-        start_response('200 OK', [('content-type', 'application/javascript') ])
-        #start_response('200 OK', [('content-type', 'text/plain; charset=utf-8') ])
-
-        return [str_data]
-        """
-
     elif environ['PATH_INFO'] == '/qtlogo.svg':
         logging.debug('PATH_INFO == \'/qtlogo.svg\'')
         img_data = open(os.path.join(os.path.dirname(__file__),
