@@ -44,10 +44,9 @@ class StartElement : public ElementMaster
 public:
 
     explicit StartElement(QWidget *parent = nullptr)
-        : ElementMaster(false,
+        : ElementMaster(true,
                         true,
                         QUrl("http://localhost:7000/start_web.png"),
-                        ChildConfig{true, false},
                         true,
                         parent)
 
@@ -77,11 +76,10 @@ class Placeholder : public ElementMaster
     Q_OBJECT
 public:
 
-    explicit Placeholder(int row, int column, QWidget *parent = nullptr)
-        : ElementMaster(row,
-                        column,
+    explicit Placeholder(bool socket, bool plug, QWidget *parent = nullptr)
+        : ElementMaster(socket,
+                        plug,
                         QUrl("http://localhost:7000/placeholder.png"),
-                        ChildConfig{false, false},
                         true,
                         parent)
 

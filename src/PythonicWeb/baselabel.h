@@ -54,6 +54,13 @@ private slots:
 
     void fileDownloaded(QNetworkReply* pReply){
         m_DownloadedData = pReply->readAll();
+
+        if(m_DownloadedData.isEmpty()){
+            qCWarning(logC, "could not be loaded: %s",
+                     pReply->url().toString().toStdString().c_str());
+            return;
+        }
+
         //emit a signal
         pReply->deleteLater();
         //emit downloaded();
@@ -101,6 +108,13 @@ private slots:
 
     void fileDownloaded(QNetworkReply* pReply){
         m_DownloadedData = pReply->readAll();
+
+        if(m_DownloadedData.isEmpty()){
+            qCWarning(logC, "could not be loaded: %s",
+                     pReply->url().toString().toStdString().c_str());
+            return;
+        }
+
         //emit a signal
         pReply->deleteLater();
         //emit downloaded();

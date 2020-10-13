@@ -48,28 +48,61 @@ struct ChildConfig {
  */
 
 
+class ElementSocket : public BaseLabel
+{
+    Q_OBJECT
+public:
+    explicit ElementSocket(QWidget *parent = nullptr)
+        : BaseLabel(QUrl("http://localhost:7000/socket.png"), BTN_SIZE, parent)
+    {
+        qCDebug(logC, "called");
+    };
+protected:
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+private:
+    QLoggingCategory    logC{"ElementSocket"};
+};
+
+
+class ElementPlug : public BaseLabel
+{
+    Q_OBJECT
+public:
+    explicit ElementPlug(QWidget *parent = nullptr)
+        : BaseLabel(QUrl("http://localhost:7000/plug.png"), BTN_SIZE, parent)
+    {
+        qCDebug(logC, "called");
+    };
+
+protected:
+
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+private:
+    QLoggingCategory    logC{"ElementPlug"};
+};
+
+
 class ElementMaster : public QWidget
 {
     Q_OBJECT
 public:
 
     explicit ElementMaster(
-            bool input,
-            bool output,
+            bool socket,
+            bool plug,
             QUrl pixMapPath,
-            ChildConfig childPosition,
-            bool bIconBar = true,        
+            bool iconBar = true,
             QWidget *parent = nullptr);
 
 
 
     //! Indicates if program should stop in debug mode
     bool                m_bDebug{false};
-    //! Indicates if the icon bar is visible
-    bool                m_bIconBar;
 
-    bool                m_input;
-    bool                m_output;
+    //! Indicates if the icon bar is visible
+    //bool                m_bIconBar;
 
     bool                m_debugEnabled;
     /*! @brief Indicates the possible child positions of an element
@@ -77,7 +110,7 @@ public:
      * true  | false = only a bottom child\n
      * false | true  = right child
      */
-    ChildConfig         m_childPositions;
+    //ChildConfig         m_childPositions;
 
     void                startHighlight();
     void                stopHighlight();
@@ -93,9 +126,18 @@ private:
     QWidget                 m_innerWidget;
     //! Layout for position-text
     QVBoxLayout             m_innerWidgetLayout;
+
+    QWidget                 m_symbolWidget;
+    //! Layout for symbol, socket and plug
+    QHBoxLayout             m_symbolWidgetLayout;
     //! Symbol of element
-    BaseLabel               m_label;
+    BaseLabel               m_symbol;
+    //! Label of the element
     QLabel                  m_labelText{"labe text"};
+    //! Connector icon
+    ElementSocket           m_socket;
+    //! Plug icon
+    ElementPlug             m_plug;
 
     ElementIconBar          m_iconBar;
 

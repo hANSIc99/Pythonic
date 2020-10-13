@@ -20,37 +20,51 @@
 
 
 
-ElementMaster::ElementMaster(bool input,
-                             bool output,
+ElementMaster::ElementMaster(bool socket,
+                             bool plug,
                              QUrl pixMapPath,
-                             ChildConfig childPosition,
-                             bool bIconBar,
+                             bool iconBar,
                              QWidget *parent)
     : QWidget(parent)
-    , m_bIconBar(bIconBar)
-    , m_input(input)
-    , m_output(output)
-    , m_childPositions(childPosition)
-    , m_label(pixMapPath, LABEL_SIZE, this)
+    , m_symbol(pixMapPath, LABEL_SIZE, this)
 {
     qCDebug(logC, "called");
     setAttribute(Qt::WA_DeleteOnClose);
     m_layout.setContentsMargins(10, 0, 30, 0);
     m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
 
-    //FileDownloader downloader(pixMapPath, this);
+    /* Enable / disable socket/plug */
+
+    m_socket.setVisible(socket);
+    m_plug.setVisible(plug);
+
+    /* Enable / disable iconbar of element */
+
+    m_iconBar.setVisible(iconBar);
+
+    /* m_symbol needs object name to apply stylesheet */
+
+    m_symbol.setObjectName("element_label");
+
+    /* Setup symbol widget */
+    m_symbolWidget.setLayout(&m_symbolWidgetLayout);
+    m_symbolWidgetLayout.addWidget(&m_socket);
+    m_symbolWidgetLayout.addWidget(&m_symbol);
+    m_symbolWidgetLayout.addWidget(&m_plug);
+
+    /* TBD */
 
     m_labelText.setText("Test12343");
-    m_label.setObjectName("element_label");
+
 
     //resize(200, 200);
-    /* Setup inner QWidget */
+    /* Setup inner widget: symbolWidget and text-label */
 
     m_innerWidget.setLayout(&m_innerWidgetLayout);
     m_innerWidgetLayout.setSizeConstraint(QLayout::SetFixedSize);
 
     m_innerWidgetLayout.addWidget(&m_labelText);
-    m_innerWidgetLayout.addWidget(&m_label);
+    m_innerWidgetLayout.addWidget(&m_symbolWidget);
 
 
     m_layout.addWidget(&m_innerWidget);
@@ -65,13 +79,52 @@ ElementMaster::ElementMaster(bool input,
 void ElementMaster::startHighlight()
 {
     qCDebug(logC, "called");
-    m_label.setStyleSheet("#element { background-color: #636363;\
+    m_symbol.setStyleSheet("#element { background-color: #636363;\
                   border: 3px solid #fce96f; border-radius: 20px; }");
 }
 
 void ElementMaster::stopHighlight()
 {
     qCDebug(logC, "called");
-    m_label.setStyleSheet("#element { background-color: #636363;\
+    m_symbol.setStyleSheet("#element { background-color: #636363;\
                           border: 3px solid #ff5900; border-radius: 20px; }");
+}
+
+
+/*****************************************************
+ *                                                   *
+ *                       PLUG                        *
+ *                                                   *
+ *****************************************************/
+
+void ElementPlug::enterEvent(QEvent *event)
+{
+    qCInfo(logC, "called");
+    setStyleSheet("background-color: gold;");
+}
+
+void ElementPlug::leaveEvent(QEvent *event)
+{
+    qCInfo(logC, "called");
+    setStyleSheet("background-color: transparent;");
+}
+
+
+
+/*****************************************************
+ *                                                   *
+ *                      SOCKET                       *
+ *                                                   *
+ *****************************************************/
+
+void ElementSocket::enterEvent(QEvent *event)
+{
+    qCInfo(logC, "called");
+    setStyleSheet("background-color: chartreuse;");
+}
+
+void ElementSocket::leaveEvent(QEvent *event)
+{
+    qCInfo(logC, "called");
+    setStyleSheet("background-color: transparent;");
 }

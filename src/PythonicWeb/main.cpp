@@ -102,8 +102,8 @@ int main(int argc, char *argv[])
                                                     "ElementIconBar.debug=false\n"
                                                     "ElementIconBar.info=false\n"
 
-                                                    "ToolMaster.debug=true\n"
-                                                    "ToolMaster.info=true\n"
+                                                    "ToolMaster.debug=false\n"
+                                                    "ToolMaster.info=false\n"
 
                                                     "ElementMaster.debug=true\n"
                                                     "ElementMaster.info=true\n"
@@ -118,6 +118,14 @@ int main(int argc, char *argv[])
 
                                                     "DeleteElementBtn.debug=false\n"
                                                     "DeleteElementBtn.info=false\n"
+
+                                                    /* Element Connector Buttons  */
+
+                                                    "ElementSocket.debug=true\n"
+                                                    "ElementSocket.info=true\n"
+
+                                                    "ElementPlug.debug=true\n"
+                                                    "ElementPlug.info=true\n"
 
                                                     /* Elements */
 
