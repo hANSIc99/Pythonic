@@ -99,6 +99,10 @@ class ElementIconBar : public QWidget
 public:
     explicit ElementIconBar(QWidget *parent = nullptr);
 
+    EditElementButton       m_editBtn;
+    DebugElementButton      m_debugBtn;
+    DeleteElementButton     m_deleteBtn;
+
 protected:
 
     void paintEvent(QPaintEvent *event) override;
@@ -108,11 +112,6 @@ private:
     QLoggingCategory        logC{"ElementIconBar"};
 
     QHBoxLayout             m_iconBarLayout;
-
-    EditElementButton       m_editBtn;
-    DebugElementButton      m_debugBtn;
-    DeleteElementButton     m_deleteBtn;
-
 };
 
 #endif // ELEMENTICONBAR_H

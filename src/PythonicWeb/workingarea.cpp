@@ -41,17 +41,33 @@ WorkingArea::WorkingArea(QWidget *parent)
 
     void WorkingArea::mousePressEvent(QMouseEvent *event)
     {
-        //QLabel *child = qobject_cast<QLabel*>(childAt(event->pos()));
-        /*
+        QLabel *child = qobject_cast<QLabel*>(childAt(event->pos()));
+
         if (!child){
             qCDebug(logC, "called - no child");
             return;
         }
-        */
+        /*
+         *  Hierarchy of ElementMaster
+         *
+         *  m_symbol(QLabel) --(parent)-->
+         *                   m_symbolWidget(QWidget) --(parent)-->
+         *                                           m_innerWidget(QLabel) --(parent)-->
+         *                                                                 ElementMaster
+         */
+        ElementMaster *element = qobject_cast<ElementMaster*>(child->parent()->parent()->parent());
+
+        if (!element){
+            qCDebug(logC, "master not found");
+            return;
+        }
+
+        qCDebug(logC, "Debug state of element: %d", element->getDebugState());
         //qCDebug(logC, "called - on child XYZ, Pos[X,Y]: %d, %d", child->pos().x(), child->pos().y());
         //qCDebug(log_workingarea, "called - on child XYZ, Pos[X,Y]: %d, %d", event->pos().x(), event->pos().y());
 
 
+        /*
         if (event->buttons() & Qt::LeftButton){
             if(!m_drawing){
                 m_drawStartPos = event->pos();
@@ -65,6 +81,7 @@ WorkingArea::WorkingArea(QWidget *parent)
             }
             m_drawing = !m_drawing;
         }
+        */
         update();
     }
 

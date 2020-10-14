@@ -115,6 +115,8 @@ public:
     void                startHighlight();
     void                stopHighlight();
 
+    bool                getDebugState() const;
+
 private:
 
 
