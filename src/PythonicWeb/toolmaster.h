@@ -60,22 +60,39 @@ protected:
 
         if (event->button() == Qt::LeftButton) {
 
-
+            //m_dragLabel = new BaseLabel(QUrl("http://localhost:7000/placeholder.png"), TOOL_SIZE, this);
+            //m_dragLabel->show();
+            //m_pressed = true;
+            //cursor().setShape()
+                    this->setCursor(Qt::ClosedHandCursor);
+            /*
             QMimeData *mimeData = new QMimeData;
             mimeData->setText(m_toolData.typeName);
 
             QDrag *drag = new QDrag(this);
             drag->setMimeData(mimeData);
             drag->setPixmap(m_pixMap);
-
+            */
 
             /* CopyAction because it is copied to another widged */
-            drag->exec(Qt::CopyAction);
+            //drag->exec(Qt::CopyAction);
+        }
+    }
+
+    void mouseReleaseEvent(QMouseEvent *event) override{
+        this->setCursor(Qt::ArrowCursor);
+    }
+
+    void mouseMoveEvent(QMouseEvent *event) override{
+        if(m_pressed){
+            m_dragLabel->move(event->pos());
         }
     }
 
 private:
     QLoggingCategory        logC{"ToolMaster"};
+    BaseLabel               *m_dragLabel;
+    bool                    m_pressed{false};
 };
 
 #endif // TOOLMASTER_H
