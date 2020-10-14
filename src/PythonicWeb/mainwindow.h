@@ -42,6 +42,8 @@
 
 
 #define N_WORKING_GRIDS 1
+#define DEFAULT_MAINWINDOW_SIZE     QSize(1200, 800)
+#define DEFAULT_WORKINGAREA_SIZE    DEFAULT_MAINWINDOW_SIZE - QSize(10, 200)
 
 //https://stackoverflow.com/questions/39931734/qt-specific-difference-of-stack-vs-heap-attributes
 
@@ -103,10 +105,11 @@ private:
      * m_toolboxTabs muss unnnterhalb von m_bottomArea eingeordnet werden da
      * m_bottomArea der parent ist
      */
+
     QTabWidget              m_workingTabs;
     QVector<QScrollArea*>   m_arr_workingTabs;
     QVector<WorkingArea*>   m_arr_workingArea;
-    QScrollArea             m_workingScrollAreas; // Scroll area for each grid
+
     Toolbox                 m_toolBox;
 
     /* Bottom Border (Info Text & Size Grip) */

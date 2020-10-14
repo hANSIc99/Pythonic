@@ -26,6 +26,7 @@ WorkingArea::WorkingArea(QWidget *parent)
     setAcceptDrops(true);
     setMouseTracking(true);
     setObjectName("workBackground");
+
     setStyleSheet("#workBackground { background-color: \
                   qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #366a97, stop: 0.5 silver, stop:1 #ffc634)}");
 
@@ -37,97 +38,156 @@ WorkingArea::WorkingArea(QWidget *parent)
     startElement->move(400, 10);
 
     qCDebug(logC, "called");
+}
+
+
+
+void WorkingArea::mousePressEvent(QMouseEvent *event)
+{
+    qCDebug(logC, "Event Position: X: %d Y: %d", event->x(), event->y());
+    QLabel *child = qobject_cast<QLabel*>(childAt(event->pos()));
+
+    if (!child){
+        qCDebug(logC, "called - no child");
+        return;
+    }
+    /*
+     *  Hierarchy of ElementMaster
+     *
+     *  m_symbol(QLabel) --(parent)-->
+     *                   m_symbolWidget(QWidget) --(parent)-->
+     *                                           m_innerWidget(QLabel) --(parent)-->
+     *                                                                 ElementMaster
+     */
+    m_dragElement= qobject_cast<ElementMaster*>(child->parent()->parent()->parent());
+
+    if (!m_dragElement){
+        qCDebug(logC, "master not found");
+        return;
+    } else {
+        this->setCursor(Qt::OpenHandCursor);
+        m_dragging = true;
+
+        qCDebug(logC, "Widget Position: X: %d Y: %d", m_dragElement->x(), m_dragElement->y());
+
+        m_dragPosOffset = m_dragElement->pos() - event->pos();
     }
 
-    void WorkingArea::mousePressEvent(QMouseEvent *event)
+    qCDebug(logC, "Debug state of element: %d", m_dragElement->getDebugState());
+
+
+
+
+
+
+
+
+    //qCDebug(logC, "called - on child XYZ, Pos[X,Y]: %d, %d", child->pos().x(), child->pos().y());
+    //qCDebug(log_workingarea, "called - on child XYZ, Pos[X,Y]: %d, %d", event->pos().x(), event->pos().y());
+
+
+    /*
+    if (event->buttons() & Qt::LeftButton){
+        if(!m_drawing){
+            m_drawStartPos = event->pos();
+            qCInfo(logC, "start drawing");
+        }else{
+            m_drawEndPos = event->pos();
+
+            QLine line = QLine(m_drawStartPos, event->pos());
+            m_connections.append(line);
+            qCInfo(logC, "end drawing");
+        }
+        m_drawing = !m_drawing;
+    }
+    */
+    update();
+}
+
+void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
+{
+    //qCDebug(logC, "Element Position: X: %d Y: %d", m_dragElement->pos().x(), m_dragElement->pos().y());
+    qCDebug(logC, "Event Position: X: %d Y: %d", event->x(), event->y());
+    qCDebug(logC, "Size workingarea: X: %d Y: %d", width(), height());
+    //qCDebug(logC, "Size workingarea: X: %d Y: %d", p);
+    if(m_dragging){
+        this->setCursor(Qt::ArrowCursor);
+        /* Prevent that the element moves out of the
+         * leftmost / topmost area */
+        if(m_dragElement->pos().x() < 0) m_dragElement->move(0, m_dragElement->pos().y());
+        if(m_dragElement->pos().y() < 0) m_dragElement->move(m_dragElement->pos().x(), 0);
+        /* Resize the workingarea if the element was
+         * moved out of the rightmost/bottommost initial size*/
+        if(event->x() > width()) {
+            setMinimumSize(event->x(), height());
+            qCDebug(logC, "RESIZE: X: %d Y: %d", width(), height());
+        }
+        if(event->y() > height())     resize(width(), m_dragElement->pos().y() + 200);
+        setMinimumSize(size());
+        m_dragElement = NULL;
+        m_dragging = false;
+    }
+}
+
+void WorkingArea::mouseMoveEvent(QMouseEvent *event)
+{
+    /* Prevent to drag the element in the leftmost / topmost nirvana */
+    if(     m_dragging &&
+            event->x() > 0 &&
+            event->y() > 0)
+            //event->x() + m_dragPosOffset.x() > 0 &&
+            //event->y() + m_dragPosOffset.y() > 0)
     {
-        QLabel *child = qobject_cast<QLabel*>(childAt(event->pos()));
+        //qCDebug(logC, "Element Position: X: %d Y: %d", m_dragElement->pos().x(), m_dragElement->pos().y());
 
-        if (!child){
-            qCDebug(logC, "called - no child");
-            return;
-        }
-        /*
-         *  Hierarchy of ElementMaster
-         *
-         *  m_symbol(QLabel) --(parent)-->
-         *                   m_symbolWidget(QWidget) --(parent)-->
-         *                                           m_innerWidget(QLabel) --(parent)-->
-         *                                                                 ElementMaster
-         */
-        ElementMaster *element = qobject_cast<ElementMaster*>(child->parent()->parent()->parent());
+        QPoint position(m_dragElement->width() /2, m_dragElement->height() /2 );
 
-        if (!element){
-            qCDebug(logC, "master not found");
-            return;
-        }
-
-        qCDebug(logC, "Debug state of element: %d", element->getDebugState());
-        //qCDebug(logC, "called - on child XYZ, Pos[X,Y]: %d, %d", child->pos().x(), child->pos().y());
-        //qCDebug(log_workingarea, "called - on child XYZ, Pos[X,Y]: %d, %d", event->pos().x(), event->pos().y());
-
-
-        /*
-        if (event->buttons() & Qt::LeftButton){
-            if(!m_drawing){
-                m_drawStartPos = event->pos();
-                qCInfo(logC, "start drawing");
-            }else{
-                m_drawEndPos = event->pos();
-
-                QLine line = QLine(m_drawStartPos, event->pos());
-                m_connections.append(line);
-                qCInfo(logC, "end drawing");
-            }
-            m_drawing = !m_drawing;
-        }
-        */
+        //m_dragElement->move(event->pos() -= position);
+        m_dragElement->move(event->pos() += m_dragPosOffset);
+    }
+    /*
+    if(m_drawing){
+        m_drawEndPos = event->pos();
         update();
     }
+    */
+}
 
-    void WorkingArea::mouseMoveEvent(QMouseEvent *event)
-    {
-        if(m_drawing){
-            m_drawEndPos = event->pos();
-            update();
-        }
-    }
+void WorkingArea::paintEvent(QPaintEvent *event)
+{
+    QPainter    p(this);
+    QPen        pen;
 
-    void WorkingArea::paintEvent(QPaintEvent *event)
-    {
-        QPainter    p(this);
-        QPen        pen;
+    pen.setColor(CONNECTION_COLOR);
+    pen.setWidth(CONNECTION_THICKNESS);
 
-        pen.setColor(CONNECTION_COLOR);
-        pen.setWidth(CONNECTION_THICKNESS);
-
-        p.setPen(pen);
-        drawConnections(&p);
-    }
+    p.setPen(pen);
+    drawConnections(&p);
+}
 
 
 
 
-    void WorkingArea::addPlaceholder(int row, int column)
-    {
+void WorkingArea::addPlaceholder(int row, int column)
+{
 #if 0
-        ElementMaster *botChild = dynamic_cast<ElementMaster*>(m_grid.itemAtPosition(row, column));
+    ElementMaster *botChild = dynamic_cast<ElementMaster*>(m_grid.itemAtPosition(row, column));
 
-        if (botChild){
-            /* recursive call if there is already a element in the desired position */
-            qCDebug(log_workingarea, "botChild found");
-        } else {
-            /* actual position is valid */
-            qCDebug(log_workingarea, "botChild NOT found");
-        }
+    if (botChild){
+        /* recursive call if there is already a element in the desired position */
+        qCDebug(log_workingarea, "botChild found");
+    } else {
+        /* actual position is valid */
+        qCDebug(log_workingarea, "botChild NOT found");
+    }
 
-        Placeholder *target = new Placeholder(row-1, column);
-        m_grid.addWidget(target);
+    Placeholder *target = new Placeholder(row-1, column);
+    m_grid.addWidget(target);
 #endif
-        qCDebug(logC, "called - row: %d column: %d", row, column);
-    }
+    qCDebug(logC, "called - row: %d column: %d", row, column);
+}
 
-    void WorkingArea::drawConnections(QPainter *p)
-    {
-        p->drawLines(m_connections);
-    }
+void WorkingArea::drawConnections(QPainter *p)
+{
+    p->drawLines(m_connections);
+}

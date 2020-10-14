@@ -27,12 +27,14 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPen>
+#include <QSize>
 
 #include "elements/basicelements.h"
 #include "elementmaster.h"
 
 #define CONNECTION_THICKNESS 4
 #define CONNECTION_COLOR Qt::red
+#define MINIMUM_SIZE QSize(1000, 600)
 
 /*! @brief WorkingArea holds and manages all programming elements
  *
@@ -53,6 +55,7 @@ public:
 protected:
 
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
@@ -62,6 +65,12 @@ private:
     void drawConnections(QPainter *p);
 
     bool                        m_drawing{false};
+    /* Drag & Drop */
+    bool                        m_dragging{false};
+    ElementMaster*              m_dragElement;
+    QPoint                      m_dragPosOffset;
+
+    /* Drawing */
     QPoint                      m_drawStartPos;
     QPoint                      m_drawEndPos;
     QVector<ElementMaster*>     m_vectorElements;

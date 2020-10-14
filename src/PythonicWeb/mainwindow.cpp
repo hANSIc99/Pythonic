@@ -36,14 +36,14 @@ MainWindow::MainWindow(QWidget *parent)
         //WorkingArea *new_workingArea = new WorkingArea(&m_workingTabs);
         WorkingArea *new_workingArea = new WorkingArea();
         m_arr_workingArea.append(new_workingArea);
+        new_workingArea->setMinimumSize(DEFAULT_WORKINGAREA_SIZE);
 
-        //QScrollArea *new_scroll_area = new QScrollArea(new_workingArea);
-        //m_arr_workingTabs.append(new_scroll_area);
-        //m_arr_workingTabs[i]->setWidgetResizable(true);
+        QScrollArea *new_scroll_area = new QScrollArea(&m_workingTabs);
+        new_scroll_area->setWidget(new_workingArea);
+        new_scroll_area->setWidgetResizable(true);
+        m_arr_workingTabs.append(new_scroll_area);
 
-        m_workingTabs.addTab(m_arr_workingArea[i], QString("Grid %1").arg(i+1));
-
-        // tbd gridoperator
+        m_workingTabs.addTab(new_scroll_area, QString("Grid %1").arg(i+1));
     }
 
     //m_toolboxTabs.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
@@ -101,7 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
     setContentsMargins(0, 0, 0, 0);
     setCentralWidget(&m_mainWidget);
 
-    resize(1200, 800);
+    resize(DEFAULT_MAINWINDOW_SIZE);
     //m_sendDebugMessage = new QPushButton(this);
     setAcceptDrops(true);
 

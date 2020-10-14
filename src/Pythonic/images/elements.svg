@@ -15,7 +15,7 @@
    viewBox="0 0 744.09448819 1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.4 (unknown)"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="elements.svg">
   <defs
      id="defs4">
@@ -1449,10 +1449,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.8799999"
-     inkscape:cx="383.43383"
-     inkscape:cy="951.97467"
+     inkscape:cx="260.29553"
+     inkscape:cy="525.3789"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      showguides="true"
      inkscape:snap-object-midpoints="true"
@@ -1462,7 +1462,7 @@
      inkscape:snap-smooth-nodes="false"
      inkscape:snap-midpoints="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1043"
+     inkscape:window-height="1017"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -2175,73 +2175,53 @@
          id="g8521">
         <g
            id="g8461">
-	<g
-   id="auto-fix">
-		<polygon
-   points="137.7,63.75 102,127.5 165.75,91.8 229.5,127.5 193.799,63.75 229.5,0 165.75,35.7 102,0 "
-   id="polygon8452" />
-
-		<polygon
-   points="499.8,369.75 535.5,306 471.75,341.7 408,306 443.7,369.75 408,433.5 471.75,397.8 535.5,433.5 "
-   id="polygon8454" />
-
-		<polygon
-   points="535.5,127.5 499.8,63.75 535.5,0 471.75,35.7 408,0 443.7,63.75 408,127.5 471.75,91.8 "
-   id="polygon8456" />
-
-		<path
-   inkscape:connector-curvature="0"
-   d="m 341.7,135.15 c -10.2,-10.2 -25.5,-10.2 -35.7,0 L 7.649,433.5 c -10.2,10.2 -10.2,25.5 0,35.7 l 58.65,58.649 c 10.2,10.2 25.5,10.2 35.7,0 L 400.35,229.5 c 10.2,-10.2 10.2,-25.5 0,-35.7 z m -28.05,140.25 -53.55,-53.55 61.2,-61.2 53.55,53.55 z"
-   id="path8458" />
-
-	</g>
-
-</g>
+          <g
+             id="auto-fix">
+            <polygon
+               points="137.7,63.75 102,127.5 165.75,91.8 229.5,127.5 193.799,63.75 229.5,0 165.75,35.7 102,0 "
+               id="polygon8452" />
+            <polygon
+               points="499.8,369.75 535.5,306 471.75,341.7 408,306 443.7,369.75 408,433.5 471.75,397.8 535.5,433.5 "
+               id="polygon8454" />
+            <polygon
+               points="535.5,127.5 499.8,63.75 535.5,0 471.75,35.7 408,0 443.7,63.75 408,127.5 471.75,91.8 "
+               id="polygon8456" />
+            <path
+               inkscape:connector-curvature="0"
+               d="m 341.7,135.15 c -10.2,-10.2 -25.5,-10.2 -35.7,0 L 7.649,433.5 c -10.2,10.2 -10.2,25.5 0,35.7 l 58.65,58.649 c 10.2,10.2 25.5,10.2 35.7,0 L 400.35,229.5 c 10.2,-10.2 10.2,-25.5 0,-35.7 z m -28.05,140.25 -53.55,-53.55 61.2,-61.2 53.55,53.55 z"
+               id="path8458" />
+          </g>
+        </g>
         <g
-           id="g8463">
-</g>
+           id="g8463" />
         <g
-           id="g8465">
-</g>
+           id="g8465" />
         <g
-           id="g8467">
-</g>
+           id="g8467" />
         <g
-           id="g8469">
-</g>
+           id="g8469" />
         <g
-           id="g8471">
-</g>
+           id="g8471" />
         <g
-           id="g8473">
-</g>
+           id="g8473" />
         <g
-           id="g8475">
-</g>
+           id="g8475" />
         <g
-           id="g8477">
-</g>
+           id="g8477" />
         <g
-           id="g8479">
-</g>
+           id="g8479" />
         <g
-           id="g8481">
-</g>
+           id="g8481" />
         <g
-           id="g8483">
-</g>
+           id="g8483" />
         <g
-           id="g8485">
-</g>
+           id="g8485" />
         <g
-           id="g8487">
-</g>
+           id="g8487" />
         <g
-           id="g8489">
-</g>
+           id="g8489" />
         <g
-           id="g8491">
-</g>
+           id="g8491" />
       </g>
       <g
          transform="matrix(0.63654891,0,0,0.68070652,-46.178264,89.803637)"
@@ -2833,5 +2813,15 @@
       <g
          id="g1282" />
     </g>
+    <rect
+       style="display:inline;fill:none;stroke:#000000;stroke-width:3.42345643;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4213-29-9-3"
+       width="135.29083"
+       height="66.248276"
+       x="57.354595"
+       y="520.8338"
+       ry="22.160515"
+       inkscape:export-xdpi="103.81051"
+       inkscape:export-ydpi="103.81051" />
   </g>
 </svg>
