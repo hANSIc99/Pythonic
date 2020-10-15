@@ -19,17 +19,22 @@
 
 
 
-WorkingArea::WorkingArea(QWidget *parent)
+WorkingArea::WorkingArea(int gridNo, QWidget *parent)
     : QFrame(parent)
+    , m_gridNo(gridNo)
     , logC("WorkingArea")
 {
     setAcceptDrops(true);
     setMouseTracking(true);
-    setObjectName("workBackground");
+    //setObjectName("workBackground");
+    QString objectName = QString("workingArea_%1").arg(gridNo);
 
-    setStyleSheet("#workBackground { background-color: \
-                  qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #366a97, stop: 0.5 silver, stop:1 #ffc634)}");
+    setObjectName(objectName);
+    /* Styleshee must contain the object name */
+    QString styleSheet = QString("#%1 { background-color: \
+    qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #366a97, stop: 0.5 silver, stop:1 #ffc634)}").arg(objectName);
 
+    setStyleSheet(styleSheet);
 
 
     StartElement *startElement = new StartElement(this);
@@ -114,8 +119,8 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         this->setCursor(Qt::ArrowCursor);
         /* Prevent that the element moves out of the
          * leftmost / topmost area */
-        if(m_dragElement->pos().x() < 0) m_dragElement->move(0, m_dragElement->pos().y());
-        if(m_dragElement->pos().y() < 0) m_dragElement->move(m_dragElement->pos().x(), 0);
+        if(m_dragElement->pos().x() < 0) m_dragElement->move(0, m_dragElement->y());
+        if(m_dragElement->pos().y() < 0) m_dragElement->move(m_dragElement->x(), 0);
 
         /* Resize the workingarea if the element was
          * moved out of the rightmost/bottommost initial size*/

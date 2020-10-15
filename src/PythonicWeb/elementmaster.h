@@ -27,7 +27,7 @@
 #include <QJsonObject>
 #include <QSizePolicy>
 #include <QMouseEvent>
-
+#include <QRandomGenerator>
 #include "baselabel.h"
 #include "elementiconbar.h"
 
@@ -96,8 +96,8 @@ public:
             bool iconBar = true,
             QWidget *parent = nullptr);
 
-
-
+    //! Unique 32 bit id of each element
+    quint32             m_id;
     //! Indicates if program should stop in debug mode
     bool                m_bDebug{false};
 

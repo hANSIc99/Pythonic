@@ -28,8 +28,11 @@ ElementMaster::ElementMaster(bool socket,
     : QWidget(parent)
     , m_symbol(pixMapPath, LABEL_SIZE, this)
 {
-    qCDebug(logC, "called");
+
     setAttribute(Qt::WA_DeleteOnClose);
+
+    m_id = QRandomGenerator::global()->generate();
+    qCDebug(logC, "called, id: %u", m_id);
     m_layout.setContentsMargins(10, 0, 30, 0);
     m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
 

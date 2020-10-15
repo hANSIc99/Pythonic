@@ -17,6 +17,7 @@ SOURCES += \
     main.cpp \
     menubar.cpp \
     toolbox.cpp \
+    toolmaster.cpp \
     workingarea.cpp
 
 HEADERS += \

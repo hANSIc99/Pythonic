@@ -32,14 +32,16 @@ MainWindow::MainWindow(QWidget *parent)
     for (int i = 0; i < N_WORKING_GRIDS; i++){
 
         //WorkingArea *new_workingArea = new WorkingArea(&m_workingTabs);
-        WorkingArea *new_workingArea = new WorkingArea();
+        WorkingArea *new_workingArea = new WorkingArea(i);
         m_arr_workingArea.append(new_workingArea);
         new_workingArea->setMinimumSize(DEFAULT_WORKINGAREA_SIZE);
+
 
         QScrollArea *new_scroll_area = new QScrollArea(&m_workingTabs);
         new_scroll_area->setWidget(new_workingArea);
         new_scroll_area->setWidgetResizable(true);
         m_arr_workingTabs.append(new_scroll_area);
+
 
         m_workingTabs.addTab(new_scroll_area, QString("Grid %1").arg(i+1));
     }

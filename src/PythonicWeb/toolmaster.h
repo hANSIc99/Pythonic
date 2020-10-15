@@ -25,6 +25,7 @@
 #include <QMimeData>
 #include <QLoggingCategory>
 #include <QDrag>
+#include <QtGui>
 #include "baselabel.h"
 
 
@@ -41,12 +42,7 @@ struct ToolData {
 class ToolMaster : public BaseLabel
 {
 public:
-    ToolMaster(ToolData toolData, QWidget *parent = 0)
-        : BaseLabel(QUrl("http://localhost:7000/" + toolData.typeName + ".png"), TOOL_SIZE, parent)
-        , m_toolData(toolData)
-        {
-            qCDebug(logC, "called");
-        };
+    explicit ToolMaster(ToolData toolData, QWidget *parent = 0);
 
     /* Wird die funktion wirklich benötigt? */
     ToolData getToolData() const {
@@ -59,36 +55,16 @@ public:
 
 public slots:
 
-    void setCurrentWorkingArea(QWidget* workingAreaWidget){
-        qCInfo(logC, "called");
-        m_workingAreaWidget = workingAreaWidget;
-    };
+    void setCurrentWorkingArea(QWidget* workingAreaWidget);
+
 
 protected:
 
-    void mousePressEvent(QMouseEvent *event) override{
-
-        qCInfo(logC, "%s called", m_toolData.typeName.toStdString().c_str());
-
-        if (event->button() == Qt::LeftButton) {
-            this->setCursor(Qt::ClosedHandCursor);
-        }
-    };
-
-    void mouseReleaseEvent(QMouseEvent *event) override{
-
-        this->setCursor(Qt::ArrowCursor);
+    void mousePressEvent(QMouseEvent *event) override;
 
 
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
-        qCInfo(logC, " called");
-        /*
-        if (!m_dragElement){
-            qCDebug(logC, "master not found");
-            return;
-            }
-            */
-    };
 
 private:
     QLoggingCategory        logC{"ToolMaster"};

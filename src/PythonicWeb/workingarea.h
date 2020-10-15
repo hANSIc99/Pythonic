@@ -45,12 +45,17 @@
  *  @copyright [GPLv3](../../../LICENSE)
  */
 
+struct RegisteredElement {
+    ElementMaster*    element;
+    int               id;
+};
 
 class WorkingArea : public QFrame
 {
     Q_OBJECT
 public:
-    explicit WorkingArea(QWidget *parent = nullptr);
+    explicit WorkingArea(int gridNo, QWidget *parent = nullptr);
+
 
 protected:
 
@@ -64,6 +69,7 @@ private:
     void addPlaceholder(int row, int column);
     void drawConnections(QPainter *p);
 
+    int                         m_gridNo;
     bool                        m_drawing{false};
     /* Drag & Drop */
     bool                        m_dragging{false};
