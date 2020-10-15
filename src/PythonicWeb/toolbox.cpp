@@ -22,4 +22,9 @@ Toolbox::Toolbox(QWidget *parent) : QTabWidget(parent)
     qCDebug(logC, "called");
 
     addTab(&m_basicTools, tr("Basic tools"));
+
+    /* Signals & Slots */
+
+    connect(this, &Toolbox::updateCurrentWorkingArea,
+            &m_basicTools, &BasicTools::setCurrentWorkingArea);
 }

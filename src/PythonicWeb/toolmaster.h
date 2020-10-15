@@ -27,7 +27,10 @@
 #include <QDrag>
 #include "baselabel.h"
 
+
 #define TOOL_SIZE QSize(120, 60)
+
+
 
 
 struct ToolData {
@@ -48,9 +51,18 @@ public:
     /* Wird die funktion wirklich benötigt? */
     ToolData getToolData() const {
         return m_toolData;
-    }
+    };
     // m_toolData.typename = "ExecOp
-    ToolData m_toolData;
+    ToolData                m_toolData;
+
+    QWidget*                m_workingAreaWidget;
+
+public slots:
+
+    void setCurrentWorkingArea(QWidget* workingAreaWidget){
+        qCInfo(logC, "called");
+        m_workingAreaWidget = workingAreaWidget;
+    };
 
 protected:
 
@@ -59,20 +71,24 @@ protected:
         qCInfo(logC, "%s called", m_toolData.typeName.toStdString().c_str());
 
         if (event->button() == Qt::LeftButton) {
-
-
-            QMimeData *mimeData = new QMimeData;
-            mimeData->setText(m_toolData.typeName);
-
-            QDrag *drag = new QDrag(this);
-            drag->setMimeData(mimeData);
-            drag->setPixmap(m_pixMap);
-
-
-            /* CopyAction because it is copied to another widged */
-            drag->exec(Qt::CopyAction);
+            this->setCursor(Qt::ClosedHandCursor);
         }
-    }
+    };
+
+    void mouseReleaseEvent(QMouseEvent *event) override{
+
+        this->setCursor(Qt::ArrowCursor);
+
+
+
+        qCInfo(logC, " called");
+        /*
+        if (!m_dragElement){
+            qCDebug(logC, "master not found");
+            return;
+            }
+            */
+    };
 
 private:
     QLoggingCategory        logC{"ToolMaster"};

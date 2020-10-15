@@ -22,7 +22,13 @@
 #include <QLoggingCategory>
 #include <QTabWidget>
 
+#include "workingarea.h"
 #include "basictools.h"
+
+/* Forward declarations to prevent
+ * circular includes */
+class WorkingArea;
+
 
 class Toolbox : public QTabWidget
 {
@@ -30,7 +36,17 @@ class Toolbox : public QTabWidget
 public:
     explicit Toolbox(QWidget *parent = nullptr);
 
-//signals:
+    WorkingArea*                m_currentWorkingArea;
+
+public slots:
+
+    void setCurrentWorkingArea(QWidget* workingAreaWidget){
+        qCInfo(logC, "called");
+        emit updateCurrentWorkingArea(workingAreaWidget);
+    };
+
+signals:
+    void updateCurrentWorkingArea(QWidget* currentWokringArea);
 
 private:
 

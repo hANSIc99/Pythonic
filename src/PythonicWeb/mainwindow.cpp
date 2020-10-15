@@ -17,8 +17,6 @@
 
 #include "mainwindow.h"
 
-Q_LOGGING_CATEGORY(log_mainwindow, "MainWindow")
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_sizeGrip(&m_mainWidget)
@@ -105,18 +103,46 @@ MainWindow::MainWindow(QWidget *parent)
     //m_sendDebugMessage = new QPushButton(this);
     setAcceptDrops(true);
 
+    connect(&m_workingTabs, &QTabWidget::currentChanged,
+                    this, &MainWindow::setCurrentWorkingArea);
+
+    connect(this, &MainWindow::updateCurrentWorkingArea,
+            &m_toolBox, &Toolbox::setCurrentWorkingArea);
     //qCDebug(log_mainwindow, QString("Parent: %1").arg((qulonglong)m_mainWidget.pa));
     //connect(m_sendDebugMessage, SIGNAL(released()), this, SLOT(debugMessage()));
+    /* Set current working area on initialization */
+    setCurrentWorkingArea(m_workingTabs.currentIndex());
 }
 
 void MainWindow::debugMessage()
 {
     //qInfo() << "MainWindow::wsSendMsg() called";
-    qCDebug(log_mainwindow, "Debug Message");
-    qCInfo(log_mainwindow, "Info Message");
+    qCDebug(logC, "Debug Message");
+    qCInfo(logC, "Info Message");
     //QUrl ws_url(QStringLiteral("ws://localhost:7000/message"));
     //qDebug() << "Open ws URL: " << ws_url.toString();
 
     m_logger.logMsg("Stephan Hallo!", LogLvl::FATAL);
 }
 
+void MainWindow::setCurrentWorkingArea(int tabIndex)
+{
+    qCInfo(logC, "called, current tabIndex %d", tabIndex);
+    emit updateCurrentWorkingArea(dynamic_cast<QWidget*>(m_arr_workingArea[tabIndex]));
+}
+#if 0
+void MainWindow::setCurrentWorkingArea()
+{
+
+    /*
+     *  Hierarchy of m_workingTabs
+     *
+     *  m_workingTabs(vector) --(parent)-->
+     *                        QScrollArea --(parent)-->
+     *                                    WorkingArea
+     */
+    QScrollArea *currenScrollArea = dynamic_cast<QScrollArea*>(m_workingTabs.currentWidget());
+    m_toolBox.m_currentWorkingArea = dynamic_cast<WorkingArea*>(currenScrollArea->widget());
+
+}
+#endif

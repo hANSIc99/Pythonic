@@ -108,7 +108,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 {
     //qCDebug(logC, "Element Position: X: %d Y: %d", m_dragElement->pos().x(), m_dragElement->pos().y());
     qCDebug(logC, "Event Position: X: %d Y: %d", event->x(), event->y());
-    qCDebug(logC, "Size workingarea: X: %d Y: %d", width(), height());
+    //qCDebug(logC, "Size workingarea: X: %d Y: %d", width(), height());
     //qCDebug(logC, "Size workingarea: X: %d Y: %d", p);
     if(m_dragging){
         this->setCursor(Qt::ArrowCursor);
@@ -123,16 +123,17 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         /* Increase size */
         if(event->x() > (width() - (m_dragElement->width() / 2) ) ) {
             setMinimumSize(event->x() + m_dragElement->width(), height());
-            qCDebug(logC, "RESIZE: X: %d Y: %d", width(), height());
+            qCDebug(logC, "Resize to: X: %d Y: %d", width(), height());
         }
 
         if(event->y() > (height() - (m_dragElement->height() / 2) ) ) {
             setMinimumSize(width(), event->y() + m_dragElement->height());
-            qCDebug(logC, "RESIZE: X: %d Y: %d", width(), height());
+            qCDebug(logC, "Resize to: X: %d Y: %d", width(), height());
         }
+
         /* Decrease size */
 
-        //setMinimumSize(size());
+
         m_dragElement = NULL;
         m_dragging = false;
     }

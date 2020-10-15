@@ -32,6 +32,16 @@ class BasicTools : public QWidget
 public:
     explicit BasicTools(QWidget *parent = nullptr);
 
+public slots:
+
+    void setCurrentWorkingArea(QWidget* workingAreaWidget){
+        qCInfo(logC, "called");
+        emit updateCurrentWorkingArea(workingAreaWidget);
+    };
+
+signals:
+    void updateCurrentWorkingArea(QWidget* currentWokringArea);
+
 private:
     QLoggingCategory        logC{"BasicTools"};
     QHBoxLayout             m_layout;

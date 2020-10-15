@@ -24,4 +24,9 @@ BasicTools::BasicTools(QWidget *parent) : QWidget(parent)
     m_layout.setContentsMargins(0, 0, 0, 0);
     m_layout.setSizeConstraint(QLayout::SetMinimumSize);
     m_layout.addWidget(&m_BasicOperation);
+
+    /* Signals & Slots */
+
+    connect(this, &BasicTools::updateCurrentWorkingArea,
+            &m_BasicOperation, &ToolMaster::setCurrentWorkingArea);
 }

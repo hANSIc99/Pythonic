@@ -41,7 +41,7 @@
 
 
 
-#define N_WORKING_GRIDS 1
+#define N_WORKING_GRIDS 3
 #define DEFAULT_MAINWINDOW_SIZE     QSize(1200, 800)
 #define DEFAULT_WORKINGAREA_SIZE    DEFAULT_MAINWINDOW_SIZE - QSize(10, 200)
 
@@ -67,8 +67,17 @@ public:
       * Used to log at websocket /log of PythonicWebDaemon
       */
     Logger m_logger{this};
+
+signals:
+    void updateCurrentWorkingArea(QWidget* currentWokringArea);
+
 private slots:
     void debugMessage();
+    /* Sets the current WorkingArea */
+    void setCurrentWorkingArea(int tabIndex);
+
+
+
 
 private:
     /* Die Reihenfolge hier ist entscheidend */
@@ -119,7 +128,7 @@ private:
     QSizeGrip               m_sizeGrip;
     QLabel                  m_infoText;
 
-
+    QLoggingCategory        logC{"MainWindow"};
 };
 #endif // MAINWINDOW_H
 
