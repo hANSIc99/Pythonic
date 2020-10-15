@@ -116,14 +116,23 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
          * leftmost / topmost area */
         if(m_dragElement->pos().x() < 0) m_dragElement->move(0, m_dragElement->pos().y());
         if(m_dragElement->pos().y() < 0) m_dragElement->move(m_dragElement->pos().x(), 0);
+
         /* Resize the workingarea if the element was
          * moved out of the rightmost/bottommost initial size*/
-        if(event->x() > width()) {
-            setMinimumSize(event->x(), height());
+
+        /* Increase size */
+        if(event->x() > (width() - (m_dragElement->width() / 2) ) ) {
+            setMinimumSize(event->x() + m_dragElement->width(), height());
             qCDebug(logC, "RESIZE: X: %d Y: %d", width(), height());
         }
-        if(event->y() > height())     resize(width(), m_dragElement->pos().y() + 200);
-        setMinimumSize(size());
+
+        if(event->y() > (height() - (m_dragElement->height() / 2) ) ) {
+            setMinimumSize(width(), event->y() + m_dragElement->height());
+            qCDebug(logC, "RESIZE: X: %d Y: %d", width(), height());
+        }
+        /* Decrease size */
+
+        //setMinimumSize(size());
         m_dragElement = NULL;
         m_dragging = false;
     }
