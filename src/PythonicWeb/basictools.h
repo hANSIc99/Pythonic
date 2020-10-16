@@ -47,11 +47,11 @@ signals:
     void updateCurrentWorkingArea(QWidget* currentWokringArea);
 
 private:
-    QLoggingCategory        logC{"BasicTools"};
-    QHBoxLayout             m_layout;
+    QLoggingCategory            logC{"BasicTools"};
+    QHBoxLayout                 m_layout;
     //ToolData toolData, QUrl imageUrl, QWidget *parent = 0)
     // Hier Instanz von ElementInstantiator mit übergeben
-    ToolMaster              m_BasicOperation{OPERATION_DATA};
+    ToolTemplate<StartElement>  m_BasicOperation{OPERATION_DATA};
 };
 
 #endif // BASICTOOLS_H

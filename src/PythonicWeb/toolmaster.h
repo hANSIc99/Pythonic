@@ -31,21 +31,10 @@
 
 #define TOOL_SIZE QSize(120, 60)
 
-#if 1
-template<typename T> class ElementInstantiator
-{
-public:
-
-    virtual void* instantiate() const {return new T; };
-
-};
-#endif
-
 
 struct ToolData {
     QString                         typeName;
     int                             nOutputs;
-    ElementInstantiator             elementType;
 };
 
 
@@ -54,16 +43,10 @@ class ToolMaster : public BaseLabel
 public:
     explicit ToolMaster(ToolData toolData, QWidget *parent = 0);
 
-    /* Wird die funktion wirklich benötigt? */
-    /*
-    ToolData getToolData() const {
-        return m_toolData;
-    };
-    */
-    // m_toolData.typename = "ExecOp
     ToolData                m_toolData;
 
     QWidget*                m_workingAreaWidget;
+
 
 public slots:
 
@@ -75,11 +58,69 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
 
 
-    void mouseReleaseEvent(QMouseEvent *event) override;
 
+    //void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     QLoggingCategory        logC{"ToolMaster"};
 };
 
+
+
+
+template<typename T> class ToolTemplate : public ToolMaster
+{
+public:
+
+    explicit ToolTemplate(ToolData toolData, QWidget *parent = 0)
+        : ToolMaster(toolData, parent){};
+
+    T*  m_elementType;
+
+protected:
+
+    void mouseReleaseEvent(QMouseEvent *event) override{
+
+        this->setCursor(Qt::ArrowCursor);
+
+
+
+        //qCInfo(logC, "called - global position X: %d Y: %d", event->globalX(), event->globalY());
+        QPoint wrkAreaGlobalPos     = m_workingAreaWidget->mapFromGlobal(event->globalPos());
+        QWidget* wrkAreaScrollArea  = dynamic_cast<QWidget*>(m_workingAreaWidget->parent());
+        int wrkAreaVisibleWidth     = wrkAreaScrollArea->width();
+        int wrkAreaVisibleHeight    = wrkAreaScrollArea->height();
+
+        if( wrkAreaGlobalPos.x() > 0 &&
+            wrkAreaGlobalPos.y() > 0 &&
+            wrkAreaGlobalPos.x() < wrkAreaVisibleWidth &&
+            wrkAreaGlobalPos.y() < wrkAreaVisibleHeight)
+        {
+            qCDebug(logC, "mouse cursor inside working area");
+            T *element = new T(m_workingAreaWidget);
+            //element = dynamic_cast<QWidget*>(element);
+            element->move(100,200);
+            element->show();
+            //StartElement *startElement = new StartElement(this);
+            //m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
+            //m_elem
+            //m_elementType
+            //startElement->move(400, 10);
+
+
+        }else{
+            qCDebug(logC, "mouse cursor outside working area");
+        }
+        //qCInfo(logC, "workinArea global pos - X: %d Y: %d", wrkAreaGlobalPos.x(), wrkAreaGlobalPos.y());
+        // https://doc.qt.io/archives/qt-4.8/qapplication.html#qApp
+        //QWidget* widget = qApp->widgetAt(event->pos());
+
+        //qCInfo(logC, "called - workingArea under mouse: %d", m_workingAreaWidget->underMouse());
+
+    };
+
+private:
+    QLoggingCategory        logC{"ToolMaster"};
+
+};
 #endif // TOOLMASTER_H

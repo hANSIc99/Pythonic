@@ -36,6 +36,7 @@ void ToolMaster::mousePressEvent(QMouseEvent *event)
     }
 }
 
+#if 0
 void ToolMaster::mouseReleaseEvent(QMouseEvent *event)
 {
 
@@ -54,11 +55,12 @@ void ToolMaster::mouseReleaseEvent(QMouseEvent *event)
         wrkAreaGlobalPos.x() < wrkAreaVisibleWidth &&
         wrkAreaGlobalPos.y() < wrkAreaVisibleHeight)
     {
-        //qCDebug(logC, "mouse cursor inside working area");
-        StartElement *startElement = new StartElement(this);
-        m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
-
-        startElement->move(400, 10);
+        qCDebug(logC, "mouse cursor inside working area");
+        //StartElement *startElement = new StartElement(this);
+        //m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
+        //m_elem
+        //m_elementType
+        //startElement->move(400, 10);
 
     }else{
         qCDebug(logC, "mouse cursor outside working area");
@@ -75,9 +77,10 @@ void ToolMaster::mouseReleaseEvent(QMouseEvent *event)
         }
         */
 }
-
+#endif
 void ToolMaster::setCurrentWorkingArea(QWidget* workingAreaWidget)
 {
     qCInfo(logC, "called");
     m_workingAreaWidget = workingAreaWidget;
 }
+
