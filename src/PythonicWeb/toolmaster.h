@@ -31,13 +31,23 @@
 
 #define TOOL_SIZE QSize(120, 60)
 
+#if 1
+template<typename T> class ElementInstantiator
+{
+public:
 
+    virtual void* instantiate() const {return new T; };
+
+};
+#endif
 
 
 struct ToolData {
-    QString typeName;
-    int     nOutputs;
+    QString                         typeName;
+    int                             nOutputs;
+    ElementInstantiator             elementType;
 };
+
 
 class ToolMaster : public BaseLabel
 {
@@ -45,9 +55,11 @@ public:
     explicit ToolMaster(ToolData toolData, QWidget *parent = 0);
 
     /* Wird die funktion wirklich benötigt? */
+    /*
     ToolData getToolData() const {
         return m_toolData;
     };
+    */
     // m_toolData.typename = "ExecOp
     ToolData                m_toolData;
 

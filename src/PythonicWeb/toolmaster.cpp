@@ -43,12 +43,31 @@ void ToolMaster::mouseReleaseEvent(QMouseEvent *event)
 
 
 
-    //qCInfo(logC, "called - X: %d Y: %d", event->x(), event->y());
-    //qCInfo(logC, "workinArea pos - X: %d Y: %d", m_workingAreaWidget->x(), m_workingAreaWidget->y());
+    //qCInfo(logC, "called - global position X: %d Y: %d", event->globalX(), event->globalY());
+    QPoint wrkAreaGlobalPos     = m_workingAreaWidget->mapFromGlobal(event->globalPos());
+    QWidget* wrkAreaScrollArea  = dynamic_cast<QWidget*>(m_workingAreaWidget->parent());
+    int wrkAreaVisibleWidth     = wrkAreaScrollArea->width();
+    int wrkAreaVisibleHeight    = wrkAreaScrollArea->height();
+
+    if( wrkAreaGlobalPos.x() > 0 &&
+        wrkAreaGlobalPos.y() > 0 &&
+        wrkAreaGlobalPos.x() < wrkAreaVisibleWidth &&
+        wrkAreaGlobalPos.y() < wrkAreaVisibleHeight)
+    {
+        //qCDebug(logC, "mouse cursor inside working area");
+        StartElement *startElement = new StartElement(this);
+        m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
+
+        startElement->move(400, 10);
+
+    }else{
+        qCDebug(logC, "mouse cursor outside working area");
+    }
+    //qCInfo(logC, "workinArea global pos - X: %d Y: %d", wrkAreaGlobalPos.x(), wrkAreaGlobalPos.y());
     // https://doc.qt.io/archives/qt-4.8/qapplication.html#qApp
     //QWidget* widget = qApp->widgetAt(event->pos());
 
-    qCInfo(logC, "called - workingArea under mouse: %d", m_workingAreaWidget->underMouse());
+    //qCInfo(logC, "called - workingArea under mouse: %d", m_workingAreaWidget->underMouse());
     /*
     if (!m_dragElement){
         qCDebug(logC, "master not found");

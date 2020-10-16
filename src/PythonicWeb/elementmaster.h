@@ -84,6 +84,7 @@ private:
 };
 
 
+
 class ElementMaster : public QWidget
 {
     Q_OBJECT
@@ -151,5 +152,9 @@ private:
     */
     QSizePolicy             m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
 };
+
+// https://stackoverflow.com/questions/2562176/storing-a-type-in-c
+
+
 
 #endif // ELEMENTMASTER_H

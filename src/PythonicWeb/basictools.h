@@ -23,8 +23,12 @@
 #include <QHBoxLayout>
 
 #include "toolmaster.h"
+#include "elements/basicelements.h"
 
-#define OPERATION_DATA ToolData{"ExecOp", 1}
+#define OPERATION_DATA ToolData {"ExecOp", 1}
+
+
+
 
 class BasicTools : public QWidget
 {
@@ -46,6 +50,7 @@ private:
     QLoggingCategory        logC{"BasicTools"};
     QHBoxLayout             m_layout;
     //ToolData toolData, QUrl imageUrl, QWidget *parent = 0)
+    // Hier Instanz von ElementInstantiator mit übergeben
     ToolMaster              m_BasicOperation{OPERATION_DATA};
 };
 
