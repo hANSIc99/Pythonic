@@ -82,7 +82,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override{
 
         this->setCursor(Qt::ArrowCursor);
-
+        // BAUSTELLE: Update gridSize auslösen wenn das hier aufgerufen wird
 
         //qCInfo(logC, "called - global position X: %d Y: %d", event->globalX(), event->globalY());
         QPoint wrkAreaGlobalPos     = m_workingAreaWidget->mapFromGlobal(event->globalPos());

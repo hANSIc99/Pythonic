@@ -29,6 +29,7 @@
 #include <QMouseEvent>
 #include <QRandomGenerator>
 #include <QStringLiteral>
+#include <QMoveEvent>
 #include "baselabel.h"
 #include "elementiconbar.h"
 
@@ -127,6 +128,9 @@ signals:
 private slots:
 
     void deleteSelf();
+protected:
+
+    void moveEvent(QMoveEvent *event) override;
 
 private:
 

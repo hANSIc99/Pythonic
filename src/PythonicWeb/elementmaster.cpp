@@ -115,6 +115,12 @@ void ElementMaster::deleteSelf()
     emit remove(this);
 }
 
+void ElementMaster::moveEvent(QMoveEvent *event)
+{
+    // Linien neu malen
+    //qCInfo(logC, "called");
+}
+
 
 /*****************************************************
  *                                                   *
