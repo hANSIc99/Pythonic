@@ -23,6 +23,7 @@
 ElementMaster::ElementMaster(bool socket,
                              bool plug,
                              QUrl pixMapPath,
+                             QString objectName,
                              bool iconBar,
                              QWidget *parent)
     : QWidget(parent)
@@ -32,7 +33,9 @@ ElementMaster::ElementMaster(bool socket,
     setAttribute(Qt::WA_DeleteOnClose);
 
     m_id = QRandomGenerator::global()->generate();
-    qCDebug(logC, "called, id: %u", m_id);
+    QString widgetName = QStringLiteral("%1 - 0x%2").arg(objectName).arg(m_id, 8, 16);
+    setObjectName(widgetName);
+    qCDebug(logC, "called - %s added", widgetName.toStdString().c_str());
     m_layout.setContentsMargins(10, 0, 30, 0);
     m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
 

@@ -31,6 +31,7 @@
 
 #include "elements/basicelements.h"
 #include "elementmaster.h"
+#include "helper.h"
 
 #define CONNECTION_THICKNESS 4
 #define CONNECTION_COLOR Qt::red
@@ -45,10 +46,7 @@
  *  @copyright [GPLv3](../../../LICENSE)
  */
 
-struct RegisteredElement {
-    ElementMaster*    element;
-    int               id;
-};
+
 
 class WorkingArea : public QFrame
 {
@@ -56,7 +54,9 @@ class WorkingArea : public QFrame
 public:
     explicit WorkingArea(int gridNo, QWidget *parent = nullptr);
 
+public slots:
 
+    void updateSize();
 protected:
 
     void mousePressEvent(QMouseEvent *event) override;
@@ -79,7 +79,7 @@ private:
     /* Drawing */
     QPoint                      m_drawStartPos;
     QPoint                      m_drawEndPos;
-    QVector<ElementMaster*>     m_vectorElements;
+    //QVector<ElementMaster*>     m_vectorElements;
     QVector<QLine>              m_connections;
 
     QLoggingCategory            logC;

@@ -47,6 +47,7 @@ public:
         : ElementMaster(true,
                         true,
                         QUrl("http://localhost:7000/start_web.png"),
+                        QString("StartElement"),
                         true,
                         parent)
 
@@ -58,66 +59,9 @@ public:
 private:
 
     QLoggingCategory        logC{"StartElement"};
-    //QUrl        m_imageUrl{"http://localhost:7000/start.png"};
-
 };
 
 
-/*! @brief Placeholder holds the edit, debug and delete button for each element
- *
- *  Detailed description follows here.
- *  @author Stephan Avenwedde
- *  @date October 2020
- *  @copyright [GPLv3](../../../LICENSE)
- */
 
-class Placeholder : public ElementMaster
-{
-    Q_OBJECT
-public:
-
-    explicit Placeholder(bool socket, bool plug, QWidget *parent = nullptr)
-        : ElementMaster(socket,
-                        plug,
-                        QUrl("http://localhost:7000/placeholder.png"),
-                        true,
-                        parent)
-
-    {
-        qCDebug(logC, "called");
-        setAcceptDrops(true);
-    };
-
-
-protected:
-
-    void dropEvent(QDropEvent *event) override {
-        QString mimeData = event->mimeData()->text();
-
-        if(event->mimeData()->hasText()){
-            qCInfo(logC, "called - mime data: %s", mimeData.toStdString().c_str());
-            event->acceptProposedAction();
-        }
-    }
-
-
-    void dragEnterEvent(QDragEnterEvent *event) override {
-        qCDebug(logC, "called dragEnterEvent");
-        if(event->mimeData()->hasText()){
-            event->accept();
-        }
-    }
-
-    void dragLeaveEvent(QDragLeaveEvent *event) override {
-        Q_UNUSED(event)
-        qCDebug(logC, "called dragLeaveEvent");
-    }
-
-
-private:
-
-    QLoggingCategory        logC{"PlaceholderElement"};
-
-};
 
 #endif // BASICELEMENTS_H

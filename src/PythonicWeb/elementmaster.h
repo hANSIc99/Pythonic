@@ -28,6 +28,7 @@
 #include <QSizePolicy>
 #include <QMouseEvent>
 #include <QRandomGenerator>
+#include <QStringLiteral>
 #include "baselabel.h"
 #include "elementiconbar.h"
 
@@ -94,6 +95,7 @@ public:
             bool socket,
             bool plug,
             QUrl pixMapPath,
+            QString objectName,
             bool iconBar = true,
             QWidget *parent = nullptr);
 
@@ -118,6 +120,8 @@ public:
 
     bool                getDebugState() const;
 
+
+
 private:
 
 
@@ -135,15 +139,16 @@ private:
     QHBoxLayout             m_symbolWidgetLayout;
     //! Symbol of element
     BaseLabel               m_symbol;
-    //! Label of the element
-    QLabel                  m_labelText{"labe text"};
+
     //! Connector icon
     ElementSocket           m_socket;
     //! Plug icon
     ElementPlug             m_plug;
-
+    //! Label of the element
+    QLabel                  m_labelText{"labe text"};
+    //! Config, Debug and Delete-Button
     ElementIconBar          m_iconBar;
-
+    //! Backend-configuration of the element
     QJsonObject             m_config;
     /*
     QNetworkAccessManager   m_WebCtrl;

@@ -38,11 +38,16 @@ WorkingArea::WorkingArea(int gridNo, QWidget *parent)
 
 
     StartElement *startElement = new StartElement(this);
-    m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
+    //m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
 
     startElement->move(400, 10);
 
     qCDebug(logC, "called");
+}
+
+void WorkingArea::updateSize()
+{
+    qCInfo(logC, "called");
 }
 
 
@@ -52,8 +57,18 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
     qCDebug(logC, "Event Position: X: %d Y: %d", event->x(), event->y());
     QLabel *child = qobject_cast<QLabel*>(childAt(event->pos()));
 
+    QObjectList objectList = children();
+
+    for(auto const &qobj : objectList){
+
+        ElementMaster* element = dynamic_cast<ElementMaster*>(qobj);
+
+        qCDebug(logC, "Found %s on grid %d",
+                qobj->objectName().toStdString().c_str(),
+                m_gridNo);
+    }
     if (!child){
-        qCDebug(logC, "called - no child");
+        //qCDebug(logC, "called - no child");
         return;
     }
     /*

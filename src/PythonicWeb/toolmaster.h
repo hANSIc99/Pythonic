@@ -27,15 +27,13 @@
 #include <QDrag>
 #include <QtGui>
 #include "baselabel.h"
+#include "helper.h"
 
 
 #define TOOL_SIZE QSize(120, 60)
 
 
-struct ToolData {
-    QString                         typeName;
-    int                             nOutputs;
-};
+
 
 
 class ToolMaster : public BaseLabel
@@ -58,8 +56,8 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
 
 
+    /* mouseReleaseEvent implemented in ToolTemplate */
 
-    //void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     QLoggingCategory        logC{"ToolMaster"};
@@ -101,6 +99,10 @@ protected:
             //element = dynamic_cast<QWidget*>(element);
             element->move(100,200);
             element->show();
+
+            /* Object name setzen in constructor von ElementMaster */
+
+            //m_workingAreaWidget->reg
             //StartElement *startElement = new StartElement(this);
             //m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
             //m_elem

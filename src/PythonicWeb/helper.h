@@ -20,8 +20,17 @@
 
 #include <QString>
 
-
-
+struct ToolData {
+    QString                         typeName;
+    int                             nOutputs;
+    // Pointer auf ElementMaster?
+};
+/*
+struct RegisteredElement {
+    ElementMaster*    element;
+    int               id;
+};
+*/
 //CV_PRINT(string_format("height: %i weight: weight", height).c_str());
 
 //#define CV_PRINT_1(X) __android_log_write(ANDROID_LOG_ERROR, APPNAME, string_format("CvImageProcessor::%s() %s", __func__, X).c_str())
