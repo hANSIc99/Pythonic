@@ -50,7 +50,7 @@ ElementMaster::ElementMaster(bool socket,
 
     /* m_symbol needs object name to apply stylesheet */
 
-    m_symbol.setObjectName("element_label");
+    m_symbol.setObjectName("element");
 
     /* Setup symbol widget */
     m_symbolWidget.setLayout(&m_symbolWidgetLayout);
@@ -58,9 +58,9 @@ ElementMaster::ElementMaster(bool socket,
     m_symbolWidgetLayout.addWidget(&m_symbol);
     m_symbolWidgetLayout.addWidget(&m_plug);
 
-    /* TBD */
+    /* Defualt name = object name */
 
-    m_labelText.setText("Test12343");
+    m_labelText.setText(widgetName);
 
 
     //resize(200, 200);
@@ -79,7 +79,15 @@ ElementMaster::ElementMaster(bool socket,
     m_layout.setSizeConstraint(QLayout::SetFixedSize);
     //setSizePolicy(m_sizePolicy);
     setLayout(&m_layout);
-    startHighlight();
+    //startHighlight();
+    stopHighlight();
+
+
+
+    /* Signals and Slots */
+    connect(&m_iconBar.m_deleteBtn, &QPushButton::clicked,
+            this, &ElementMaster::deleteSelf);
+
 }
 
 void ElementMaster::startHighlight()
@@ -99,6 +107,12 @@ void ElementMaster::stopHighlight()
 bool ElementMaster::getDebugState() const
 {
     return m_iconBar.m_debugBtn.isChecked();
+}
+
+void ElementMaster::deleteSelf()
+{
+    qCInfo(logC, "called %s", objectName().toStdString().c_str());
+    emit remove(this);
 }
 
 

@@ -120,7 +120,13 @@ public:
 
     bool                getDebugState() const;
 
+signals:
 
+    void remove(ElementMaster *element);
+
+private slots:
+
+    void deleteSelf();
 
 private:
 

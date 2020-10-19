@@ -26,9 +26,10 @@
 #include <QLoggingCategory>
 #include <QDrag>
 #include <QtGui>
+#include <QCursor>
 #include "baselabel.h"
 #include "helper.h"
-
+#include "workingarea.h"
 
 #define TOOL_SIZE QSize(120, 60)
 
@@ -45,7 +46,7 @@ public:
 
     QWidget*                m_workingAreaWidget;
 
-
+    QPoint                  m_dragPosOffset;
 public slots:
 
     void setCurrentWorkingArea(QWidget* workingAreaWidget);
@@ -61,6 +62,7 @@ protected:
 
 private:
     QLoggingCategory        logC{"ToolMaster"};
+
 };
 
 
@@ -82,7 +84,6 @@ protected:
         this->setCursor(Qt::ArrowCursor);
 
 
-
         //qCInfo(logC, "called - global position X: %d Y: %d", event->globalX(), event->globalY());
         QPoint wrkAreaGlobalPos     = m_workingAreaWidget->mapFromGlobal(event->globalPos());
         QWidget* wrkAreaScrollArea  = dynamic_cast<QWidget*>(m_workingAreaWidget->parent());
@@ -96,12 +97,18 @@ protected:
         {
             qCDebug(logC, "mouse cursor inside working area");
             T *element = new T(m_workingAreaWidget);
-            //element = dynamic_cast<QWidget*>(element);
-            element->move(100,200);
+
+            element->move(wrkAreaGlobalPos.x() - 170,
+                          wrkAreaGlobalPos.y() - 100);
+
+            /*
+            element->move(wrkAreaGlobalPos.x() - (dynamic_cast<QWidget*>(element)->width()),
+                          wrkAreaGlobalPos.y() - (dynamic_cast<QWidget*>(element)->height()));
+            */
             element->show();
 
-            /* Object name setzen in constructor von ElementMaster */
-
+            dynamic_cast<WorkingArea*>(m_workingAreaWidget)->registerElement(element);
+            //m_workingAreaWidget->dregisterElement(element);
             //m_workingAreaWidget->reg
             //StartElement *startElement = new StartElement(this);
             //m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
@@ -123,6 +130,8 @@ protected:
 
 private:
     QLoggingCategory        logC{"ToolMaster"};
+
+
 
 };
 #endif // TOOLMASTER_H

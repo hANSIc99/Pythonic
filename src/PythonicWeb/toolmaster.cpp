@@ -32,8 +32,9 @@ void ToolMaster::mousePressEvent(QMouseEvent *event)
     qCInfo(logC, "%s called", m_toolData.typeName.toStdString().c_str());
 
     if (event->button() == Qt::LeftButton) {
-        this->setCursor(Qt::ClosedHandCursor);
+        setCursor(QCursor(m_pixMap));
     }
+    m_dragPosOffset = pos() - event->pos();
 }
 
 #if 0

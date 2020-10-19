@@ -121,11 +121,11 @@ int main(int argc, char *argv[])
 
                                                     /* Element Connector Buttons  */
 
-                                                    "ElementSocket.debug=true\n"
-                                                    "ElementSocket.info=true\n"
+                                                    "ElementSocket.debug=false\n"
+                                                    "ElementSocket.info=false\n"
 
-                                                    "ElementPlug.debug=true\n"
-                                                    "ElementPlug.info=true\n"
+                                                    "ElementPlug.debug=false\n"
+                                                    "ElementPlug.info=false\n"
 
                                                     /* Elements */
 

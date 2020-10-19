@@ -36,18 +36,57 @@ WorkingArea::WorkingArea(int gridNo, QWidget *parent)
 
     setStyleSheet(styleSheet);
 
-
+#if 0
     StartElement *startElement = new StartElement(this);
     //m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
 
     startElement->move(400, 10);
-
+#endif
     qCDebug(logC, "called");
 }
 
 void WorkingArea::updateSize()
 {
     qCInfo(logC, "called");
+}
+
+void WorkingArea::deleteElement(ElementMaster *element)
+{
+    qCInfo(logC, "called");
+    delete element;
+#if 0
+    QObjectList objectList = children();
+
+    if(objectList.contains(element)){
+        qCDebug(logC, "Element gefunden");
+        delete element;
+    } else {
+        qCDebug(logC, "Element nicht gefunden");
+    }
+
+
+    for(auto const &qobj : objectList){
+
+        ElementMaster* e = dynamic_cast<ElementMaster*>(qobj);
+        /*
+        qCDebug(logC, "Found %s on grid %d",
+                qobj->objectName().toStdString().c_str(),
+                m_gridNo);
+        */
+
+    }
+#endif
+
+
+}
+
+void WorkingArea::registerElement(const ElementMaster *new_element)
+{
+    qCDebug(logC, "called with element %s", new_element->objectName().toStdString().c_str());
+    connect(new_element, &ElementMaster::remove,
+            this, &WorkingArea::deleteElement);
+//remove
+    //m_iconBar
 }
 
 
@@ -57,20 +96,12 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
     qCDebug(logC, "Event Position: X: %d Y: %d", event->x(), event->y());
     QLabel *child = qobject_cast<QLabel*>(childAt(event->pos()));
 
-    QObjectList objectList = children();
 
-    for(auto const &qobj : objectList){
-
-        ElementMaster* element = dynamic_cast<ElementMaster*>(qobj);
-
-        qCDebug(logC, "Found %s on grid %d",
-                qobj->objectName().toStdString().c_str(),
-                m_gridNo);
-    }
     if (!child){
         //qCDebug(logC, "called - no child");
         return;
     }
+
     /*
      *  Hierarchy of ElementMaster
      *
@@ -170,7 +201,7 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
     {
         //qCDebug(logC, "Element Position: X: %d Y: %d", m_dragElement->pos().x(), m_dragElement->pos().y());
 
-        QPoint position(m_dragElement->width() /2, m_dragElement->height() /2 );
+        //QPoint position(m_dragElement->width() /2, m_dragElement->height() /2 );
 
         //m_dragElement->move(event->pos() -= position);
         m_dragElement->move(event->pos() += m_dragPosOffset);

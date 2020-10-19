@@ -54,9 +54,13 @@ class WorkingArea : public QFrame
 public:
     explicit WorkingArea(int gridNo, QWidget *parent = nullptr);
 
+    void registerElement(const ElementMaster *new_element);
+
 public slots:
 
     void updateSize();
+    void deleteElement(ElementMaster *element);
+
 protected:
 
     void mousePressEvent(QMouseEvent *event) override;
@@ -64,10 +68,12 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
+
 private:
 
     void addPlaceholder(int row, int column);
     void drawConnections(QPainter *p);
+
 
     int                         m_gridNo;
     bool                        m_drawing{false};
