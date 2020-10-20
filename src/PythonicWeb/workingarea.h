@@ -28,6 +28,7 @@
 #include <QPainter>
 #include <QPen>
 #include <QSize>
+#include <QApplication>
 
 #include "elements/basicelements.h"
 #include "elementmaster.h"
@@ -85,6 +86,7 @@ private:
     /* Drawing */
     QPoint                      m_drawStartPos;
     QPoint                      m_drawEndPos;
+    bool                        m_draw{false};
     //QVector<ElementMaster*>     m_vectorElements;
     QVector<QLine>              m_connections;
 

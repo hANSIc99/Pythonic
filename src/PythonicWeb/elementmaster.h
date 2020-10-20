@@ -121,6 +121,8 @@ public:
 
     bool                getDebugState() const;
 
+
+
 signals:
 
     void remove(ElementMaster *element);
@@ -150,10 +152,13 @@ private:
     //! Symbol of element
     BaseLabel               m_symbol;
 
+public:
     //! Connector icon
     ElementSocket           m_socket;
     //! Plug icon
     ElementPlug             m_plug;
+
+private:
     //! Label of the element
     QLabel                  m_labelText{"labe text"};
     //! Config, Debug and Delete-Button

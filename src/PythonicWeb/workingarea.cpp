@@ -104,6 +104,12 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
     if (!m_dragElement){
         qCDebug(logC, "master not found");
         return;
+    } else if (m_dragElement->m_plug.underMouse()){
+        // begin drawing
+        m_draw = true;
+        qCDebug(logC, "Plug under Mouse: %d", m_dragElement->m_plug.underMouse());
+    } else if (m_dragElement->m_socket.underMouse()){
+        return;
     } else {
         this->setCursor(Qt::OpenHandCursor);
         m_dragging = true;
@@ -113,7 +119,7 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
         m_dragPosOffset = m_dragElement->pos() - event->pos();
     }
 
-    qCDebug(logC, "Debug state of element: %d", m_dragElement->getDebugState());
+    //qCDebug(logC, "Debug state of element: %d", m_dragElement->getDebugState());
 
 
 
@@ -150,7 +156,50 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
     //qCDebug(logC, "Event Position: X: %d Y: %d", event->x(), event->y());
     //qCDebug(logC, "Size workingarea: X: %d Y: %d", width(), height());
     //qCDebug(logC, "Size workingarea: X: %d Y: %d", p);
-    if(m_dragging){
+    if(m_draw){
+        QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
+
+        if (!e){
+            qCDebug(logC, "called - no child");
+            return;
+        }
+        /*
+         *  Hierarchy of ElementMaster
+         *
+         *  m_symbol(QLabel) --(parent)-->
+         *                   m_symbolWidget(QWidget) --(parent)-->
+         *                                           m_innerWidget(QLabel) --(parent)-->
+         *                                                                 ElementMaster
+         */
+        m_dragElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
+
+        /* Position abfragen */
+
+        if (!m_dragElement){
+            qCDebug(logC, "no endpoint");
+            return;
+        }
+
+        QPoint withinSocketPos = m_dragElement->m_socket.mapFromGlobal(event->globalPos());
+
+        if( withinSocketPos.x() >= 0 &&
+            withinSocketPos.x() <= m_dragElement->m_socket.width() &&
+            withinSocketPos.y() >= 0 &&
+            withinSocketPos.y() <= m_dragElement->m_socket.height()){
+
+            qCDebug(logC, "Endpoint found!");
+        }
+
+        //qCDebug(logC, "widget position: x: %d y: %d", withinSocketPos.x(), withinSocketPos.y());
+
+
+
+
+
+
+
+    } else if (m_dragging){
+
         this->setCursor(Qt::ArrowCursor);
         /* Prevent that the element moves out of the
          * leftmost / topmost area */
@@ -194,9 +243,11 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         setMinimumSize(new_x, new_y);
         qCDebug(logC, "MaxX: %d MaxY: %d", max_x, max_y);
         qCDebug(logC, "Resize to X: %d Y: %d", width(), height());
-        m_dragElement = NULL;
+
         m_dragging = false;
     }
+    m_dragElement = NULL;
+    m_draw = false;
 }
 
 void WorkingArea::mouseMoveEvent(QMouseEvent *event)
@@ -214,6 +265,45 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
 
         //m_dragElement->move(event->pos() -= position);
         m_dragElement->move(event->pos() += m_dragPosOffset);
+    } else if (m_draw){
+        QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
+
+        if (!e){
+            //qCDebug(logC, "called - no child");
+            return;
+        }
+        /*
+         *  Hierarchy of ElementMaster
+         *
+         *  m_symbol(QLabel) --(parent)-->
+         *                   m_symbolWidget(QWidget) --(parent)-->
+         *                                           m_innerWidget(QLabel) --(parent)-->
+         *                                                                 ElementMaster
+         */
+        m_dragElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
+
+        /* Position abfragen */
+
+        if (!m_dragElement){
+            //qCDebug(logC, "no endpoint");
+            return;
+        }
+
+
+        QPoint withinSocketPos = m_dragElement->m_socket.mapFromGlobal(event->globalPos());
+
+        if( withinSocketPos.x() >= 0 &&
+            withinSocketPos.x() <= m_dragElement->m_socket.width() &&
+            withinSocketPos.y() >= 0 &&
+            withinSocketPos.y() <= m_dragElement->m_socket.height()){
+
+            //QApplication::postEvent(qobject_cast<ElementSocket*>((m_dragElement->m_socket)) , new QEvent(QEvent::Enter));
+            QEnterEvent enter(event->pos(), event->windowPos(), event->screenPos());
+            // https://doc.qt.io/archives/qq/qq11-events.html Baustelle
+            QObject *socketObject = qobject_cast<QObject*>(&(m_dragElement->m_socket));
+            QApplication::sendEvent(socketObject, &enter);
+            //qCDebug(logC, "Endpoint found!");
+        }
     }
     /*
     if(m_drawing){
