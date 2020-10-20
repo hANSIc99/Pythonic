@@ -65,16 +65,7 @@ void WorkingArea::deleteElement(ElementMaster *element)
     }
 
 
-    for(auto const &qobj : objectList){
 
-        ElementMaster* e = dynamic_cast<ElementMaster*>(qobj);
-        /*
-        qCDebug(logC, "Found %s on grid %d",
-                qobj->objectName().toStdString().c_str(),
-                m_gridNo);
-        */
-
-    }
 #endif
 
 
@@ -85,8 +76,6 @@ void WorkingArea::registerElement(const ElementMaster *new_element)
     qCDebug(logC, "called with element %s", new_element->objectName().toStdString().c_str());
     connect(new_element, &ElementMaster::remove,
             this, &WorkingArea::deleteElement);
-//remove
-    //m_iconBar
 }
 
 
@@ -158,7 +147,7 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
 void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 {
     //qCDebug(logC, "Element Position: X: %d Y: %d", m_dragElement->pos().x(), m_dragElement->pos().y());
-    qCDebug(logC, "Event Position: X: %d Y: %d", event->x(), event->y());
+    //qCDebug(logC, "Event Position: X: %d Y: %d", event->x(), event->y());
     //qCDebug(logC, "Size workingarea: X: %d Y: %d", width(), height());
     //qCDebug(logC, "Size workingarea: X: %d Y: %d", p);
     if(m_dragging){
@@ -171,20 +160,40 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         /* Resize the workingarea if the element was
          * moved out of the rightmost/bottommost initial size*/
 
-        /* Increase size */
-        if(event->x() > (width() - (m_dragElement->width() / 2) ) ) {
-            setMinimumSize(event->x() + m_dragElement->width(), height());
-            qCDebug(logC, "Resize to: X: %d Y: %d", width(), height());
+        int max_x = 0;
+        int max_y = 0;
+        int new_x = MINIMUM_SIZE.width();
+        int new_y = MINIMUM_SIZE.height();
+
+
+        for(auto const &qobj : children()){
+
+            ElementMaster* e = dynamic_cast<ElementMaster*>(qobj);
+
+            max_x = e->pos().x() > max_x ? e->pos().x() : max_x;
+            max_y = e->pos().y() > max_y ? e->pos().y() : max_y;
+
+        }
+        max_x += (m_dragElement->width() / 2);
+        max_y += (m_dragElement->height() / 2);
+
+
+        if( max_x < (width() + m_dragElement->width()) &&
+            max_x > MINIMUM_SIZE.width()){
+
+            new_x = max_x + m_dragElement->width();
+
         }
 
-        if(event->y() > (height() - (m_dragElement->height() / 2) ) ) {
-            setMinimumSize(width(), event->y() + m_dragElement->height());
-            qCDebug(logC, "Resize to: X: %d Y: %d", width(), height());
+        if( max_y < (height() + m_dragElement->height()) &&
+            max_y > MINIMUM_SIZE.height()){
+
+            new_y = max_y + m_dragElement->height();
         }
 
-        /* Decrease size */
-
-
+        setMinimumSize(new_x, new_y);
+        qCDebug(logC, "MaxX: %d MaxY: %d", max_x, max_y);
+        qCDebug(logC, "Resize to X: %d Y: %d", width(), height());
         m_dragElement = NULL;
         m_dragging = false;
     }

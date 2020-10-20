@@ -27,7 +27,7 @@
 
 #include "baselabel.h"
 
-#define BTN_SIZE QSize(32, 32)
+#define BTN_SIZE QSize(30, 30)
 
 class EditElementButton : public BaseButton
 {
