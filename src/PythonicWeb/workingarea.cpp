@@ -252,24 +252,38 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 
 void WorkingArea::mouseMoveEvent(QMouseEvent *event)
 {
-    /* Prevent to drag the element in the leftmost / topmost nirvana */
+    /*
+     * Dragging an element
+     *
+     * Prevent to drag the element in the leftmost / topmost nirvana
+     */
     if(     m_dragging &&
             event->x() > 0 &&
             event->y() > 0)
-            //event->x() + m_dragPosOffset.x() > 0 &&
-            //event->y() + m_dragPosOffset.y() > 0)
     {
-        //qCDebug(logC, "Element Position: X: %d Y: %d", m_dragElement->pos().x(), m_dragElement->pos().y());
 
-        //QPoint position(m_dragElement->width() /2, m_dragElement->height() /2 );
-
-        //m_dragElement->move(event->pos() -= position);
         m_dragElement->move(event->pos() += m_dragPosOffset);
+
     } else if (m_draw){
+
+    /*
+     * Draw connections
+     */
+
+        /* Stop highlighting the socket */
+
+        if( m_dragElement &&
+            m_mouseOverSocket &&
+            !mouseOverElement(qobject_cast<QWidget*>(&(m_dragElement->m_socket)), event->globalPos()) )
+        {
+                QApplication::postEvent(&(m_dragElement->m_socket), new QEvent(QEvent::Leave));
+                m_mouseOverSocket = false;
+        }
+
+        /* Returns NULL if nothing is found */
         QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
 
         if (!e){
-            //qCDebug(logC, "called - no child");
             return;
         }
         /*
@@ -282,35 +296,35 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
          */
         m_dragElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
 
-        /* Position abfragen */
-
         if (!m_dragElement){
-            //qCDebug(logC, "no endpoint");
             return;
         }
 
 
-        QPoint withinSocketPos = m_dragElement->m_socket.mapFromGlobal(event->globalPos());
+        if( !m_mouseOverSocket &&
+            mouseOverElement(qobject_cast<QWidget*>(&(m_dragElement->m_socket)), event->globalPos())){
 
-        if( withinSocketPos.x() >= 0 &&
-            withinSocketPos.x() <= m_dragElement->m_socket.width() &&
-            withinSocketPos.y() >= 0 &&
-            withinSocketPos.y() <= m_dragElement->m_socket.height()){
-
-            //QApplication::postEvent(qobject_cast<ElementSocket*>((m_dragElement->m_socket)) , new QEvent(QEvent::Enter));
-            QEnterEvent enter(event->pos(), event->windowPos(), event->screenPos());
-            // https://doc.qt.io/archives/qq/qq11-events.html Baustelle
-            QObject *socketObject = qobject_cast<QObject*>(&(m_dragElement->m_socket));
-            QApplication::sendEvent(socketObject, &enter);
-            //qCDebug(logC, "Endpoint found!");
+            /* Start highlighting the socket */
+            QApplication::postEvent(&(m_dragElement->m_socket),
+                                    new QEnterEvent(event->pos(),
+                                                    event->windowPos(),
+                                                    event->screenPos()));
+            m_mouseOverSocket = true;
         }
-    }
-    /*
-    if(m_drawing){
-        m_drawEndPos = event->pos();
-        update();
-    }
-    */
+
+
+    } // else if (m_draw)
+
+}
+
+bool WorkingArea::mouseOverElement(const QWidget *element, const QPoint &globalPos)
+{
+    QPoint withinElementPos = element->mapFromGlobal(globalPos);
+
+    return (withinElementPos.x() >= 0 &&
+            withinElementPos.x() <= element->width() &&
+            withinElementPos.y() >= 0 &&
+            withinElementPos.y() <= element->height());
 }
 
 void WorkingArea::paintEvent(QPaintEvent *event)
@@ -328,26 +342,9 @@ void WorkingArea::paintEvent(QPaintEvent *event)
 
 
 
-void WorkingArea::addPlaceholder(int row, int column)
-{
-#if 0
-    ElementMaster *botChild = dynamic_cast<ElementMaster*>(m_grid.itemAtPosition(row, column));
-
-    if (botChild){
-        /* recursive call if there is already a element in the desired position */
-        qCDebug(log_workingarea, "botChild found");
-    } else {
-        /* actual position is valid */
-        qCDebug(log_workingarea, "botChild NOT found");
-    }
-
-    Placeholder *target = new Placeholder(row-1, column);
-    m_grid.addWidget(target);
-#endif
-    qCDebug(logC, "called - row: %d column: %d", row, column);
-}
-
 void WorkingArea::drawConnections(QPainter *p)
 {
     p->drawLines(m_connections);
 }
+
+

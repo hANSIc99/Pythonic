@@ -72,8 +72,8 @@ protected:
 
 private:
 
-    void addPlaceholder(int row, int column);
     void drawConnections(QPainter *p);
+    bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
 
     int                         m_gridNo;
@@ -87,6 +87,7 @@ private:
     QPoint                      m_drawStartPos;
     QPoint                      m_drawEndPos;
     bool                        m_draw{false};
+    bool                        m_mouseOverSocket{false};
     //QVector<ElementMaster*>     m_vectorElements;
     QVector<QLine>              m_connections;
 
