@@ -107,6 +107,8 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
     } else if (m_dragElement->m_plug.underMouse()){
         // begin drawing
         m_draw = true;
+        m_previewConnection = QLine(); // reset connection
+        m_drawStartPos = event->pos(); // set start position
         qCDebug(logC, "Plug under Mouse: %d", m_dragElement->m_plug.underMouse());
     } else if (m_dragElement->m_socket.underMouse()){
         return;
@@ -122,31 +124,11 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
     //qCDebug(logC, "Debug state of element: %d", m_dragElement->getDebugState());
 
 
-
-
-
-
-
-
     //qCDebug(logC, "called - on child XYZ, Pos[X,Y]: %d, %d", child->pos().x(), child->pos().y());
     //qCDebug(log_workingarea, "called - on child XYZ, Pos[X,Y]: %d, %d", event->pos().x(), event->pos().y());
 
 
-    /*
-    if (event->buttons() & Qt::LeftButton){
-        if(!m_drawing){
-            m_drawStartPos = event->pos();
-            qCInfo(logC, "start drawing");
-        }else{
-            m_drawEndPos = event->pos();
 
-            QLine line = QLine(m_drawStartPos, event->pos());
-            m_connections.append(line);
-            qCInfo(logC, "end drawing");
-        }
-        m_drawing = !m_drawing;
-    }
-    */
     update();
 }
 
@@ -161,6 +143,8 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 
         if (!e){
             qCDebug(logC, "called - no child");
+            m_draw = false;
+            update();
             return;
         }
         /*
@@ -177,26 +161,19 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 
         if (!m_dragElement){
             qCDebug(logC, "no endpoint");
+            m_draw = false;
+            update();
             return;
         }
 
-        QPoint withinSocketPos = m_dragElement->m_socket.mapFromGlobal(event->globalPos());
-
-        if( withinSocketPos.x() >= 0 &&
-            withinSocketPos.x() <= m_dragElement->m_socket.width() &&
-            withinSocketPos.y() >= 0 &&
-            withinSocketPos.y() <= m_dragElement->m_socket.height()){
-
-            qCDebug(logC, "Endpoint found!");
+        if(mouseOverElement(qobject_cast<QWidget*>(&(m_dragElement->m_socket)), event->globalPos())){
+            qCDebug(logC, "Socket found - add Connection!");
         }
 
+        m_draw = false;
+        update();
+
         //qCDebug(logC, "widget position: x: %d y: %d", withinSocketPos.x(), withinSocketPos.y());
-
-
-
-
-
-
 
     } else if (m_dragging){
 
@@ -247,7 +224,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         m_dragging = false;
     }
     m_dragElement = NULL;
-    m_draw = false;
+
 }
 
 void WorkingArea::mouseMoveEvent(QMouseEvent *event)
@@ -269,6 +246,14 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
     /*
      * Draw connections
      */
+
+    /* Draw preview */
+    m_previewConnection = QLine(m_drawStartPos, event->pos());
+    update();
+
+     /*
+      * Start & Stop highlighting the socket
+      */
 
         /* Stop highlighting the socket */
 
@@ -336,7 +321,12 @@ void WorkingArea::paintEvent(QPaintEvent *event)
     pen.setWidth(CONNECTION_THICKNESS);
 
     p.setPen(pen);
-    drawConnections(&p);
+    if(m_draw){
+        drawConnections(&p);
+    } else {
+        QFrame::paintEvent(event);
+    }
+
 }
 
 
@@ -344,7 +334,10 @@ void WorkingArea::paintEvent(QPaintEvent *event)
 
 void WorkingArea::drawConnections(QPainter *p)
 {
-    p->drawLines(m_connections);
+
+    p->drawLine(m_previewConnection);
+
+    //p->drawLines(m_connections);
 }
 
 

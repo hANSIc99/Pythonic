@@ -90,6 +90,7 @@ private:
     bool                        m_mouseOverSocket{false};
     //QVector<ElementMaster*>     m_vectorElements;
     QVector<QLine>              m_connections;
+    QLine                       m_previewConnection;
 
     QLoggingCategory            logC;
 };
