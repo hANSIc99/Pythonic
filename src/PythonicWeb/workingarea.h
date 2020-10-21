@@ -38,6 +38,14 @@
 #define CONNECTION_COLOR Qt::red
 #define MINIMUM_SIZE QSize(1000, 600)
 
+
+
+struct Connection {
+    ElementMaster* sender;
+    ElementMaster* receiver;
+    QLine          connLine;
+};
+
 /*! @brief WorkingArea holds and manages all programming elements
  *
  *  Detailed description follows here.
@@ -72,15 +80,22 @@ protected:
 
 private:
 
+    void drawPreviewConnection(QPainter *p);
     void drawConnections(QPainter *p);
+    void updateConnection();
     bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
 
     int                         m_gridNo;
     bool                        m_drawing{false};
+
+    /* Pointer to specific element,
+     * used for drawing and drag & drop
+     */
+    ElementMaster*              m_tmpElement;
+
     /* Drag & Drop */
     bool                        m_dragging{false};
-    ElementMaster*              m_dragElement;
     QPoint                      m_dragPosOffset;
 
     /* Drawing */
@@ -89,8 +104,11 @@ private:
     bool                        m_draw{false};
     bool                        m_mouseOverSocket{false};
     //QVector<ElementMaster*>     m_vectorElements;
-    QVector<QLine>              m_connections;
+    //QVector<QLine>              m_connections;
     QLine                       m_previewConnection;
+
+    /* Connections */
+    QVector<Connection>         m_connections;
 
     QLoggingCategory            logC;
 };

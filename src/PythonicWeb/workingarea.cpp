@@ -99,26 +99,26 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
      *                                           m_innerWidget(QLabel) --(parent)-->
      *                                                                 ElementMaster
      */
-    m_dragElement= qobject_cast<ElementMaster*>(child->parent()->parent()->parent());
+    m_tmpElement= qobject_cast<ElementMaster*>(child->parent()->parent()->parent());
 
-    if (!m_dragElement){
+    if (!m_tmpElement){
         qCDebug(logC, "master not found");
         return;
-    } else if (m_dragElement->m_plug.underMouse()){
+    } else if (m_tmpElement->m_plug.underMouse()){
         // begin drawing
         m_draw = true;
         m_previewConnection = QLine(); // reset connection
         m_drawStartPos = event->pos(); // set start position
-        qCDebug(logC, "Plug under Mouse: %d", m_dragElement->m_plug.underMouse());
-    } else if (m_dragElement->m_socket.underMouse()){
+        qCDebug(logC, "Plug under Mouse: %d", m_tmpElement->m_plug.underMouse());
+    } else if (m_tmpElement->m_socket.underMouse()){
         return;
     } else {
         this->setCursor(Qt::OpenHandCursor);
         m_dragging = true;
 
-        qCDebug(logC, "Widget Position: X: %d Y: %d", m_dragElement->x(), m_dragElement->y());
+        qCDebug(logC, "Widget Position: X: %d Y: %d", m_tmpElement->x(), m_tmpElement->y());
 
-        m_dragPosOffset = m_dragElement->pos() - event->pos();
+        m_dragPosOffset = m_tmpElement->pos() - event->pos();
     }
 
     //qCDebug(logC, "Debug state of element: %d", m_dragElement->getDebugState());
@@ -155,19 +155,27 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
          *                                           m_innerWidget(QLabel) --(parent)-->
          *                                                                 ElementMaster
          */
-        m_dragElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
+        ElementMaster* targetElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
 
         /* Position abfragen */
 
-        if (!m_dragElement){
+        if (!targetElement){
             qCDebug(logC, "no endpoint");
             m_draw = false;
             update();
             return;
         }
 
-        if(mouseOverElement(qobject_cast<QWidget*>(&(m_dragElement->m_socket)), event->globalPos())){
+        if(mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_socket)), event->globalPos())){
             qCDebug(logC, "Socket found - add Connection!");
+
+            /*
+             *  sender  = m_tmpElement
+             * receiver = targetElement
+             */
+            // QLine initialisieren?
+            m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
+
         }
 
         m_draw = false;
@@ -180,8 +188,8 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         this->setCursor(Qt::ArrowCursor);
         /* Prevent that the element moves out of the
          * leftmost / topmost area */
-        if(m_dragElement->pos().x() < 0) m_dragElement->move(0, m_dragElement->y());
-        if(m_dragElement->pos().y() < 0) m_dragElement->move(m_dragElement->x(), 0);
+        if(m_tmpElement->pos().x() < 0) m_tmpElement->move(0, m_tmpElement->y());
+        if(m_tmpElement->pos().y() < 0) m_tmpElement->move(m_tmpElement->x(), 0);
 
         /* Resize the workingarea if the element was
          * moved out of the rightmost/bottommost initial size*/
@@ -200,21 +208,21 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
             max_y = e->pos().y() > max_y ? e->pos().y() : max_y;
 
         }
-        max_x += (m_dragElement->width() / 2);
-        max_y += (m_dragElement->height() / 2);
+        max_x += (m_tmpElement->width() / 2);
+        max_y += (m_tmpElement->height() / 2);
 
 
-        if( max_x < (width() + m_dragElement->width()) &&
+        if( max_x < (width() + m_tmpElement->width()) &&
             max_x > MINIMUM_SIZE.width()){
 
-            new_x = max_x + m_dragElement->width();
+            new_x = max_x + m_tmpElement->width();
 
         }
 
-        if( max_y < (height() + m_dragElement->height()) &&
+        if( max_y < (height() + m_tmpElement->height()) &&
             max_y > MINIMUM_SIZE.height()){
 
-            new_y = max_y + m_dragElement->height();
+            new_y = max_y + m_tmpElement->height();
         }
 
         setMinimumSize(new_x, new_y);
@@ -223,7 +231,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 
         m_dragging = false;
     }
-    m_dragElement = NULL;
+    m_tmpElement = NULL;
 
 }
 
@@ -239,7 +247,7 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
             event->y() > 0)
     {
 
-        m_dragElement->move(event->pos() += m_dragPosOffset);
+        m_tmpElement->move(event->pos() += m_dragPosOffset);
 
     } else if (m_draw){
 
@@ -257,11 +265,11 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
 
         /* Stop highlighting the socket */
 
-        if( m_dragElement &&
+        if( m_tmpElement &&
             m_mouseOverSocket &&
-            !mouseOverElement(qobject_cast<QWidget*>(&(m_dragElement->m_socket)), event->globalPos()) )
+            !mouseOverElement(qobject_cast<QWidget*>(&(m_tmpElement->m_socket)), event->globalPos()) )
         {
-                QApplication::postEvent(&(m_dragElement->m_socket), new QEvent(QEvent::Leave));
+                QApplication::postEvent(&(m_tmpElement->m_socket), new QEvent(QEvent::Leave));
                 m_mouseOverSocket = false;
         }
 
@@ -279,18 +287,18 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
          *                                           m_innerWidget(QLabel) --(parent)-->
          *                                                                 ElementMaster
          */
-        m_dragElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
+        ElementMaster *elm = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
 
-        if (!m_dragElement){
+        if (!elm){
             return;
         }
 
 
         if( !m_mouseOverSocket &&
-            mouseOverElement(qobject_cast<QWidget*>(&(m_dragElement->m_socket)), event->globalPos())){
+            mouseOverElement(qobject_cast<QWidget*>(&(elm->m_socket)), event->globalPos())){
 
             /* Start highlighting the socket */
-            QApplication::postEvent(&(m_dragElement->m_socket),
+            QApplication::postEvent(&(elm->m_socket),
                                     new QEnterEvent(event->pos(),
                                                     event->windowPos(),
                                                     event->screenPos()));
@@ -322,9 +330,12 @@ void WorkingArea::paintEvent(QPaintEvent *event)
 
     p.setPen(pen);
     if(m_draw){
-        drawConnections(&p);
+        drawPreviewConnection(&p);
     } else {
-        QFrame::paintEvent(event);
+
+        QFrame::paintEvent(event); //! C
+        updateConnection();
+        drawConnections(&p);
     }
 
 }
@@ -332,12 +343,30 @@ void WorkingArea::paintEvent(QPaintEvent *event)
 
 
 
-void WorkingArea::drawConnections(QPainter *p)
+void WorkingArea::drawPreviewConnection(QPainter *p)
 {
 
     p->drawLine(m_previewConnection);
 
     //p->drawLines(m_connections);
+}
+
+void WorkingArea::drawConnections(QPainter *p)
+{
+    for(const auto &pair : m_connections){
+
+        p->drawLine(pair.connLine);
+    }
+}
+
+void WorkingArea::updateConnection()
+{
+    for(auto &pair : m_connections){
+        QPoint start    = mapTo(this, pair.sender->m_plug.pos());
+        QPoint end      = mapTo(this, pair.receiver->m_socket.pos());
+        pair.connLine.setP1(start);
+        pair.connLine.setP2(end);
+    }
 }
 
 
