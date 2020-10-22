@@ -34,8 +34,8 @@
 #include "elementmaster.h"
 #include "helper.h"
 
-#define CONNECTION_THICKNESS 4
-#define CONNECTION_COLOR Qt::red
+#define CONNECTION_THICKNESS 5
+#define CONNECTION_COLOR QColor(57, 57, 172)
 #define MINIMUM_SIZE QSize(1000, 600)
 #define SOCKET_OFFSET_POSITION QPoint(15, 90)
 #define PLUG_OFFSET_POSITION QPoint(290, 90)
@@ -119,6 +119,10 @@ private:
     /* Background */
 
     QLinearGradient             m_backgroundGradient;
+
+    /* Painter */
+
+    QPainter                    m_painter;
 
     QLoggingCategory            logC;
 };

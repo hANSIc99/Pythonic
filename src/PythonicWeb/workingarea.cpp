@@ -32,6 +32,7 @@ WorkingArea::WorkingArea(int gridNo, QWidget *parent)
     setObjectName(objectName);
 
 
+
     /* Setup background */
 
     m_backgroundGradient.setStart(0.0, 0.0);
@@ -43,6 +44,8 @@ WorkingArea::WorkingArea(int gridNo, QWidget *parent)
 
     m_pen.setColor(CONNECTION_COLOR);
     m_pen.setWidth(CONNECTION_THICKNESS);
+
+
 
     qCDebug(logC, "called");
 }
@@ -323,30 +326,27 @@ bool WorkingArea::mouseOverElement(const QWidget *element, const QPoint &globalP
 
 void WorkingArea::paintEvent(QPaintEvent *event)
 {
-    QPainter    p(this);
-
-
+    m_painter.begin(this);
 
     /* Reset background */
 
     m_backgroundGradient.setFinalStop(frameRect().bottomRight());
     QBrush brush = QBrush(m_backgroundGradient);
-    p.fillRect(frameRect(), brush);
+    m_painter.fillRect(frameRect(), brush);
 
     /* Draw connections */
 
+    m_painter.setPen(m_pen);
 
-    p.setPen(m_pen);
 
     if(m_draw){
 
-        drawPreviewConnection(&p);
+        drawPreviewConnection(&m_painter);
     }
 
-
     updateConnection();
-    drawConnections(&p);
-
+    drawConnections(&m_painter);
+    m_painter.end();
 }
 
 
