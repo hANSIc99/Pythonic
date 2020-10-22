@@ -90,6 +90,10 @@ protected:
         int wrkAreaVisibleWidth     = wrkAreaScrollArea->width();
         int wrkAreaVisibleHeight    = wrkAreaScrollArea->height();
 
+        if(helper::mouseOverElement(wrkAreaScrollArea, event->globalPos())){
+            qCDebug(logC, "mouse cursor inside working area");
+            // BAUSTELLE: funktioniert nicht am unteren rand
+        }
         if( wrkAreaGlobalPos.x() > 0 &&
             wrkAreaGlobalPos.y() > 0 &&
             wrkAreaGlobalPos.x() < wrkAreaVisibleWidth &&

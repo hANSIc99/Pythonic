@@ -13,6 +13,7 @@ SOURCES += \
     basictools.cpp \
     elementiconbar.cpp \
     elementmaster.cpp \
+    helper.cpp \
     mainwindow.cpp \
     main.cpp \
     menubar.cpp \

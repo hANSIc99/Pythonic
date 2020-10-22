@@ -19,12 +19,29 @@
 #define HELPER_H
 
 #include <QString>
+#include <QWidget>
+#include <QPoint>
 
 struct ToolData {
     QString                         typeName;
     int                             nOutputs;
     // Pointer auf ElementMaster?
 };
+
+class helper {
+
+public:
+    static bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
+
+
+
+
+};
+
+
+
+
+
 /*
 struct RegisteredElement {
     ElementMaster*    element;

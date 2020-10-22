@@ -87,7 +87,7 @@ private:
     void drawPreviewConnection(QPainter *p);
     void drawConnections(QPainter *p);
     void updateConnection();
-    bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
+    //bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
 
     int                         m_gridNo;

@@ -171,7 +171,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
             return;
         }
 
-        if(mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_socket)), event->globalPos())){
+        if(helper::mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_socket)), event->globalPos())){
             qCDebug(logC, "Socket found - add Connection!");
 
             /*
@@ -272,7 +272,7 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
 
         if( m_tmpElement &&
             m_mouseOverSocket &&
-            !mouseOverElement(qobject_cast<QWidget*>(&(m_tmpElement->m_socket)), event->globalPos()) )
+            !helper::mouseOverElement(qobject_cast<QWidget*>(&(m_tmpElement->m_socket)), event->globalPos()) )
         {
                 QApplication::postEvent(&(m_tmpElement->m_socket), new QEvent(QEvent::Leave));
                 m_mouseOverSocket = false;
@@ -300,7 +300,7 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
 
 
         if( !m_mouseOverSocket &&
-            mouseOverElement(qobject_cast<QWidget*>(&(elm->m_socket)), event->globalPos())){
+            helper::mouseOverElement(qobject_cast<QWidget*>(&(elm->m_socket)), event->globalPos())){
 
             /* Start highlighting the socket */
             QApplication::postEvent(&(elm->m_socket),
@@ -313,7 +313,7 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
 
     } // else if (m_draw)
 }
-
+#if 0
 bool WorkingArea::mouseOverElement(const QWidget *element, const QPoint &globalPos)
 {
     QPoint withinElementPos = element->mapFromGlobal(globalPos);
@@ -323,7 +323,7 @@ bool WorkingArea::mouseOverElement(const QWidget *element, const QPoint &globalP
             withinElementPos.y() >= 0 &&
             withinElementPos.y() <= element->height());
 }
-
+#endif
 void WorkingArea::paintEvent(QPaintEvent *event)
 {
     m_painter.begin(this);
