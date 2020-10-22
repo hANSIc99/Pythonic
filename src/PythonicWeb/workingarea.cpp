@@ -30,18 +30,20 @@ WorkingArea::WorkingArea(int gridNo, QWidget *parent)
     QString objectName = QString("workingArea_%1").arg(gridNo);
 
     setObjectName(objectName);
-    /* Styleshee must contain the object name */
-    QString styleSheet = QString("#%1 { background-color: \
-    qlineargradient(x1:0 y1:0, x2:1 y2:1, stop:0 #366a97, stop: 0.5 silver, stop:1 #ffc634)}").arg(objectName);
 
-    setStyleSheet(styleSheet);
 
-#if 0
-    StartElement *startElement = new StartElement(this);
-    //m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
+    /* Setup background */
 
-    startElement->move(400, 10);
-#endif
+    m_backgroundGradient.setStart(0.0, 0.0);
+    m_backgroundGradient.setColorAt(0,      BACKGROUND_COLOR_A);
+    m_backgroundGradient.setColorAt(0.5,    BACKGROUND_COLOR_B);
+    m_backgroundGradient.setColorAt(1.0,    BACKGROUND_COLOR_C);
+
+    /* Setup connections settings */
+
+    m_pen.setColor(CONNECTION_COLOR);
+    m_pen.setWidth(CONNECTION_THICKNESS);
+
     qCDebug(logC, "called");
 }
 
@@ -171,7 +173,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 
             /*
              *  sender  = m_tmpElement
-             * receiver = targetElement
+             *  receiver = targetElement
              */
             // QLine initialisieren?
             m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
@@ -232,7 +234,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         m_dragging = false;
     }
     m_tmpElement = NULL;
-
+    update();
 }
 
 void WorkingArea::mouseMoveEvent(QMouseEvent *event)
@@ -248,6 +250,7 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
     {
 
         m_tmpElement->move(event->pos() += m_dragPosOffset);
+        update();
 
     } else if (m_draw){
 
@@ -258,7 +261,6 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
     /* Draw preview */
     m_previewConnection = QLine(m_drawStartPos, event->pos());
     update();
-
      /*
       * Start & Stop highlighting the socket
       */
@@ -307,7 +309,6 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
 
 
     } // else if (m_draw)
-
 }
 
 bool WorkingArea::mouseOverElement(const QWidget *element, const QPoint &globalPos)
@@ -323,20 +324,28 @@ bool WorkingArea::mouseOverElement(const QWidget *element, const QPoint &globalP
 void WorkingArea::paintEvent(QPaintEvent *event)
 {
     QPainter    p(this);
-    QPen        pen;
 
-    pen.setColor(CONNECTION_COLOR);
-    pen.setWidth(CONNECTION_THICKNESS);
 
-    p.setPen(pen);
+
+    /* Reset background */
+
+    m_backgroundGradient.setFinalStop(frameRect().bottomRight());
+    QBrush brush = QBrush(m_backgroundGradient);
+    p.fillRect(frameRect(), brush);
+
+    /* Draw connections */
+
+
+    p.setPen(m_pen);
+
     if(m_draw){
-        drawPreviewConnection(&p);
-    } else {
 
-        QFrame::paintEvent(event); //! C
-        updateConnection();
-        drawConnections(&p);
+        drawPreviewConnection(&p);
     }
+
+
+    updateConnection();
+    drawConnections(&p);
 
 }
 
@@ -353,19 +362,20 @@ void WorkingArea::drawPreviewConnection(QPainter *p)
 
 void WorkingArea::drawConnections(QPainter *p)
 {
+
     for(const auto &pair : m_connections){
 
         p->drawLine(pair.connLine);
     }
+
+
 }
 
 void WorkingArea::updateConnection()
 {
     for(auto &pair : m_connections){
-        QPoint start    = mapTo(this, pair.sender->m_plug.pos());
-        QPoint end      = mapTo(this, pair.receiver->m_socket.pos());
-        pair.connLine.setP1(start);
-        pair.connLine.setP2(end);
+        pair.connLine.setP1(pair.sender->pos() + PLUG_OFFSET_POSITION);
+        pair.connLine.setP2(pair.receiver->pos() + SOCKET_OFFSET_POSITION);
     }
 }
 

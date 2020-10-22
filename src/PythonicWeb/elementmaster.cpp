@@ -83,7 +83,6 @@ ElementMaster::ElementMaster(bool socket,
     stopHighlight();
 
 
-
     /* Signals and Slots */
     connect(&m_iconBar.m_deleteBtn, &QPushButton::clicked,
             this, &ElementMaster::deleteSelf);

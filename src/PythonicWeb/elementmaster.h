@@ -36,6 +36,7 @@
 #define LABEL_SIZE QSize(200, 100)
 
 
+
 struct ChildConfig {
     bool bottomChild;
     bool rightChild;
@@ -59,6 +60,8 @@ public:
     {
         qCDebug(logC, "called");
     };
+
+
 protected:
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
@@ -120,8 +123,6 @@ public:
     void                stopHighlight();
 
     bool                getDebugState() const;
-
-
 
 signals:
 

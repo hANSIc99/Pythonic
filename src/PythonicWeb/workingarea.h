@@ -37,8 +37,12 @@
 #define CONNECTION_THICKNESS 4
 #define CONNECTION_COLOR Qt::red
 #define MINIMUM_SIZE QSize(1000, 600)
+#define SOCKET_OFFSET_POSITION QPoint(15, 90)
+#define PLUG_OFFSET_POSITION QPoint(290, 90)
 
-
+#define BACKGROUND_COLOR_A QColor(54, 106, 151)
+#define BACKGROUND_COLOR_B QColor(192, 192, 192)
+#define BACKGROUND_COLOR_C QColor(255, 198, 52)
 
 struct Connection {
     ElementMaster* sender;
@@ -109,6 +113,12 @@ private:
 
     /* Connections */
     QVector<Connection>         m_connections;
+
+    QPen                        m_pen;
+
+    /* Background */
+
+    QLinearGradient             m_backgroundGradient;
 
     QLoggingCategory            logC;
 };
