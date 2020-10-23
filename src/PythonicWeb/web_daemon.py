@@ -193,6 +193,20 @@ def dispatch(environ, start_response):
         return None
 
 
+class WSGI_Server(QThread):
+
+    def __init__(self, mainWorker):
+        super().__init__()
+        self.mainWorker = { 'mainWorker' : mainWorker }
+
+    def run(self):
+
+        listener = eventlet.listen(('127.0.0.1', 7000))
+        wsgi.server(listener, dispatch, log_output=False, environ=self.mainWorker)
+
+
+
+
 
 
 def reset_screen():
@@ -223,19 +237,6 @@ def reset_screen():
     print(applog_info_msg)
 
 
-class WSGI_Server(QThread):
-
-    def __init__(self, mainWorker):
-        super().__init__()
-        self.mainWorker = { 'mainWorker' : mainWorker }
-
-    def run(self):
-
-        listener = eventlet.listen(('127.0.0.1', 7000))
-        wsgi.server(listener, dispatch, log_output=False, environ=self.mainWorker)
-
-
-
 class stdinReader(QThread):
 
     print_procs = pyqtSignal(name='print_procs')
@@ -251,6 +252,7 @@ class stdinReader(QThread):
 
     def __init__(self):
         super().__init__()
+        self.startTime = time.time()
 
     def run(self):
 
@@ -310,9 +312,19 @@ class stdinReader(QThread):
             self.tail(self.max_log_lines)
             tty.setraw(sys.stdin.fileno()) 
 
-        sys.stdout.write('Running... ' + next(self.spinner))
+        uptime  = time.time() - self.startTime
+        minutes = int(uptime // 60 % 60)
+        hours   = int(uptime // 3600 % 24)
+        days    = int(uptime // 86400)
+
+        sys.stdout.write('Running... ' + next(self.spinner) + 
+        '                                           ' +
+         'Uptime: {:02d}:{:02d} - {:03d} days'.format(hours, minutes, days))
+
         sys.stdout.flush()
         sys.stdout.write('\r')
+
+
 
     def tail(self, lines):
 
