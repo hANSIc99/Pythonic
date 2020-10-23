@@ -47,20 +47,23 @@ public:
     QWidget*                m_workingAreaWidget;
 
     QPoint                  m_dragPosOffset;
+
 public slots:
 
     void setCurrentWorkingArea(QWidget* workingAreaWidget);
-
 
 protected:
 
     void mousePressEvent(QMouseEvent *event) override;
 
-
     /* mouseReleaseEvent implemented in ToolTemplate */
 
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+    QLabel                  *m_preview;
 
 private:
+
     QLoggingCategory        logC{"ToolMaster"};
 
 };
@@ -82,60 +85,37 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override{
 
         this->setCursor(Qt::ArrowCursor);
+        if(m_preview){
+            /* Delete preview in case it is still part of the workingarea */
+            delete m_preview;
+            m_preview = NULL;
+        }
+
         // BAUSTELLE: Update gridSize auslösen wenn das hier aufgerufen wird
 
-        //qCInfo(logC, "called - global position X: %d Y: %d", event->globalX(), event->globalY());
         QPoint wrkAreaGlobalPos     = m_workingAreaWidget->mapFromGlobal(event->globalPos());
-        QWidget* wrkAreaScrollArea  = dynamic_cast<QWidget*>(m_workingAreaWidget->parent());
-        int wrkAreaVisibleWidth     = wrkAreaScrollArea->width();
-        int wrkAreaVisibleHeight    = wrkAreaScrollArea->height();
+        QWidget* wrkAreaScrollArea  = qobject_cast<QWidget*>(m_workingAreaWidget->parent());
 
         if(helper::mouseOverElement(wrkAreaScrollArea, event->globalPos())){
-            qCDebug(logC, "mouse cursor inside working area");
-            // BAUSTELLE: funktioniert nicht am unteren rand
-        }
-        if( wrkAreaGlobalPos.x() > 0 &&
-            wrkAreaGlobalPos.y() > 0 &&
-            wrkAreaGlobalPos.x() < wrkAreaVisibleWidth &&
-            wrkAreaGlobalPos.y() < wrkAreaVisibleHeight)
-        {
+
             qCDebug(logC, "mouse cursor inside working area");
             T *element = new T(m_workingAreaWidget);
 
             element->move(wrkAreaGlobalPos.x() - 170,
                           wrkAreaGlobalPos.y() - 100);
 
-            /*
-            element->move(wrkAreaGlobalPos.x() - (dynamic_cast<QWidget*>(element)->width()),
-                          wrkAreaGlobalPos.y() - (dynamic_cast<QWidget*>(element)->height()));
-            */
             element->show();
 
-            dynamic_cast<WorkingArea*>(m_workingAreaWidget)->registerElement(element);
-            //m_workingAreaWidget->dregisterElement(element);
-            //m_workingAreaWidget->reg
-            //StartElement *startElement = new StartElement(this);
-            //m_vectorElements.append(dynamic_cast<ElementMaster*>(startElement));
-            //m_elem
-            //m_elementType
-            //startElement->move(400, 10);
-
+            qobject_cast<WorkingArea*>(m_workingAreaWidget)->registerElement(element);
 
         }else{
             qCDebug(logC, "mouse cursor outside working area");
         }
-        //qCInfo(logC, "workinArea global pos - X: %d Y: %d", wrkAreaGlobalPos.x(), wrkAreaGlobalPos.y());
-        // https://doc.qt.io/archives/qt-4.8/qapplication.html#qApp
-        //QWidget* widget = qApp->widgetAt(event->pos());
-
-        //qCInfo(logC, "called - workingArea under mouse: %d", m_workingAreaWidget->underMouse());
-
     };
 
 private:
+
     QLoggingCategory        logC{"ToolMaster"};
-
-
 
 };
 #endif // TOOLMASTER_H

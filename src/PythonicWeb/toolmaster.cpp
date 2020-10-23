@@ -21,6 +21,7 @@
 ToolMaster::ToolMaster(ToolData toolData, QWidget *parent)
     : BaseLabel(QUrl("http://localhost:7000/" + toolData.typeName + ".png"), TOOL_SIZE, parent)
     , m_toolData(toolData)
+    , m_preview(NULL)
 {
         qCDebug(logC, "called");
 }
@@ -31,10 +32,43 @@ void ToolMaster::mousePressEvent(QMouseEvent *event)
 
     qCInfo(logC, "%s called", m_toolData.typeName.toStdString().c_str());
 
+
     if (event->button() == Qt::LeftButton) {
-        setCursor(QCursor(m_pixMap));
+        /* Custom QCursor is not working with WASM
+         *
+         * setCursor(QCursor(m_pixMap));
+         */
+        setCursor(Qt::ClosedHandCursor);
+
     }
+    /* funktioniert */
+
+    /* Delete old preview if it mouseReleaseEvent was not triggered */
+    if(m_preview){
+        delete m_preview;
+    }
+    m_preview = new QLabel(m_workingAreaWidget);
+    m_preview->setPixmap(m_pixMap);
+    /* Add preview outside of visible area */
+    m_preview->move(-100, -100);
+    m_preview->show();
+
+    qCDebug(logC, "preview!");
     m_dragPosOffset = pos() - event->pos();
+}
+
+void ToolMaster::mouseMoveEvent(QMouseEvent *event)
+{
+
+    QWidget* wrkAreaScrollArea  = qobject_cast<QWidget*>(m_workingAreaWidget->parent());
+
+    if(helper::mouseOverElement(wrkAreaScrollArea, event->globalPos())){
+        //qCDebug(logC, "WorkingArea under cursor");
+        /* Center position */
+        QPoint previewPos = wrkAreaScrollArea->mapFromGlobal(event->globalPos());
+        previewPos -= QPoint((m_preview->width() / 2), (m_preview->height()/2));
+        m_preview->move(previewPos);
+    }
 }
 
 #if 0

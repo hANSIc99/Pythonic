@@ -204,7 +204,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         int new_x = MINIMUM_SIZE.width();
         int new_y = MINIMUM_SIZE.height();
 
-
+        /* Get the left- and botmost element position */
         for(auto const &qobj : children()){
 
             ElementMaster* e = dynamic_cast<ElementMaster*>(qobj);
@@ -213,6 +213,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
             max_y = e->pos().y() > max_y ? e->pos().y() : max_y;
 
         }
+
         max_x += (m_tmpElement->width() / 2);
         max_y += (m_tmpElement->height() / 2);
 

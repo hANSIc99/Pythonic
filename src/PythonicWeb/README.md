@@ -2,6 +2,13 @@
 
 ## Graphical programming (Python) for trading and automation
 
+ToDos:
+
+- PlayButton for each Element
+- Global Play, Pause, Stop, Kill Buttons
+- Grid Specific Play, Pause, Stop and Kill Buttons
+- Move Toolbar to the left side of the screen
+
 <img src="https://img.shields.io/pypi/l/Pythonic.svg">
 <img src="https://img.shields.io/pypi/pyversions/Pythonic.svg">
 [<img src="https://img.shields.io/pypi/format/Pythonic.svg">](https://pypi.org/project/Pythonic/)
