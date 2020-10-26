@@ -5,7 +5,7 @@ from PyQt5.QtCore import QCoreApplication as QC
 import logging
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.elementmaster import ElementMaster
-import ccxt
+import ccxt, inspect
 #from Pythonic.elements.binance_ohlc_func import BinanceOHLCFUnction
 
 
@@ -72,7 +72,7 @@ class CCXT(ElementMaster):
 
         self.selectExchange.setCurrentIndex(interval_index)
 
-        exchange = getattr(ccxt, self.selectExchange.currentData())()
+        self.current_exchange = getattr(ccxt, self.selectExchange.currentData())()
 
         self.pub_key_txt = QLabel()
         self.pub_key_txt.setText(QC.translate('', 'Enter API key:'))
@@ -88,16 +88,7 @@ class CCXT(ElementMaster):
         self.method_txt.setText(QC.translate('', 'Select method'))
 
         self.selectMethod = QComboBox()
-        
-        for method in inspect.getmembers(parser, predicate=inspect.ismethod):
-            try:
-                exchange = getattr(ccxt, exchange_id)()
-                self.selectExchange.addItem(exchange.name, QVariant(exchange_id))
-            except Exception as e:
-                print(e)
-
-        self.selectMethod.setCurrentIndex(interval_index)
-
+        self.updateMethods()
 
         self.help_txt = QWidget()
         self.help_txt_layout = QVBoxLayout(self.help_txt)
@@ -140,11 +131,12 @@ class CCXT(ElementMaster):
         self.selectExchange.currentIndexChanged.connect(self.exchangeChanged)
 
         self.ccxt_layout.addWidget(self.exchange_txt)
-        self.ccxt_layout.addWidget(self.selectExchange)
+        self.ccxt_layout.addWidget(self.selectExchange)  
         self.ccxt_layout.addWidget(self.pub_key_txt)
         self.ccxt_layout.addWidget(self.pub_key_input)
         self.ccxt_layout.addWidget(self.prv_key_txt)
         self.ccxt_layout.addWidget(self.prv_key_input)
+        self.ccxt_layout.addWidget(self.selectMethod)
 
         self.ccxt_layout.addWidget(self.log_line)
         self.ccxt_layout.addStretch(1)
@@ -154,10 +146,24 @@ class CCXT(ElementMaster):
         self.ccxt_edit.show()
 
     def exchangeChanged(self, event):
+        
+        logging.debug('CCXT::exchangeChanged() called {}'.format(event))
+        
+        self.current_exchange = getattr(ccxt, self.selectExchange.currentData())()
+        self.updateMethods()
 
-        current_index = event
-        logging.debug('CCXT::exchangeChanged() called {}'.format(current_index))
-        #self.order_box.setCurrentIndex(current_index)
+    def updateMethods(self):
+
+        logging.debug('CCXT::updateMethods() called')
+        self.selectMethod.clear()
+
+        for method in inspect.getmembers(self.current_exchange, predicate=inspect.ismethod):
+            if method[0][:2] != '__' :
+                # mit getattr lässt sich die methode dann wieder aufrufen
+                self.selectMethod.addItem(method[0], QVariant(method[0]))
+        self.selectMethod.show()
+
+  
 
     def edit_done(self):
 
@@ -175,4 +181,4 @@ class CCXT(ElementMaster):
         # interval-str, inteval-index, symbol_txt, log-state
         #self.config = (interval_str, interval_index, symbol_txt, log_state)
 
-        self.addFunction(BinanceOHLCFUnction)
+        #self.addFunction(BinanceOHLCFUnction)
