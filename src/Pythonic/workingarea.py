@@ -12,6 +12,8 @@ from Pythonic.elements.basic_stack       import ExecStack
 from Pythonic.elements.binance_sched     import BinanceSched
 from Pythonic.elements.binance_ohlc      import BinanceOHLC
 from Pythonic.elements.binance_order     import BinanceOrder
+#dev
+from elements.ccxt import CCXT
 from Pythonic.elements.conn_mail         import ConnMail
 from Pythonic.elements.conn_rest         import ConnREST
 from Pythonic.elements.ml_svm            import MLSVM

@@ -7,9 +7,9 @@ from Pythonic.workingarea import WorkingArea
 from Pythonic.mastertool import MasterTool
 
 
-class BinanceTools(QFrame):
+class CryptoTools(QFrame):
 
-    reg_tool = pyqtSignal(tuple, name='register_tool_binance')
+    reg_tool = pyqtSignal(tuple, name='register_tool_cryptos')
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -31,9 +31,13 @@ class BinanceTools(QFrame):
         self.order = MasterTool(self, 'BinanceOrder', 1)
         self.order.setPixmap(QPixmap(join(mod_path, 'images/BinanceOrder.png')).scaled(120, 60))
 
+        self.ccxt = MasterTool(self, 'CCXT', 1)
+        self.ccxt.setPixmap(QPixmap(join(mod_path, 'images/CCXT.png')).scaled(120, 60))
+
         self.layout_h.addWidget(self.scheduler)
         self.layout_h.addWidget(self.ohlc)
         self.layout_h.addWidget(self.order)
+        self.layout_h.addWidget(self.ccxt)
         self.layout_h.addStretch(1)
 
         self.setLayout(self.layout_h)
@@ -69,9 +73,10 @@ class BinanceTools(QFrame):
             child.setPixmap(pixmap)
 
     def register_tools(self):
-        logging.debug('BinanceTools::register_tools() called')
+        logging.debug('CryptoTools::register_tools() called')
         self.reg_tool.emit(self.scheduler.toolData())
         self.reg_tool.emit(self.ohlc.toolData())
         self.reg_tool.emit(self.order.toolData())
+        self.reg_tool.emit(self.ccxt.toolData())
 
 

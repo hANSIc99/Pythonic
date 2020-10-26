@@ -1453,8 +1453,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.6587214"
-     inkscape:cx="389.90556"
-     inkscape:cy="986.57327"
+     inkscape:cx="204.81621"
+     inkscape:cy="961.79506"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1465,8 +1465,8 @@
      inkscape:object-nodes="true"
      inkscape:snap-smooth-nodes="false"
      inkscape:snap-midpoints="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1389"
+     inkscape:window-width="1920"
+     inkscape:window-height="1029"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
@@ -2282,16 +2282,16 @@
        x="32.231651"
        y="794.77466"
        inkscape:export-filename="/home/stephan/Bilder/BinanceOHLC.png"
-       inkscape:export-xdpi="89.444427"
-       inkscape:export-ydpi="89.444427" />
+       inkscape:export-xdpi="89.44442"
+       inkscape:export-ydpi="89.44442" />
     <path
        style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.99983;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 112.23168,874.76541 c 0,-14.642 0,-14.642 0,-14.642"
        id="path4173-7-6-6-5"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/stephan/Bilder/BinanceOHLC.png"
-       inkscape:export-xdpi="89.444427"
-       inkscape:export-ydpi="89.444427" />
+       inkscape:export-xdpi="89.44442"
+       inkscape:export-ydpi="89.44442" />
     <rect
        style="display:inline;fill:none;stroke:#000000;stroke-width:2.99983;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4213-1-7-0"
@@ -2300,22 +2300,22 @@
        x="44.875328"
        y="809.41669"
        inkscape:export-filename="/home/stephan/Bilder/BinanceOHLC.png"
-       inkscape:export-xdpi="89.444427"
-       inkscape:export-ydpi="89.444427" />
+       inkscape:export-xdpi="89.44442"
+       inkscape:export-ydpi="89.44442" />
     <path
        style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.99983;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 112.23169,809.41203 c 0,-14.64201 0,-14.64201 0,-14.64201"
        id="path4173-7-5-8-5-9"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/stephan/Bilder/BinanceOHLC.png"
-       inkscape:export-xdpi="89.444427"
-       inkscape:export-ydpi="89.444427" />
+       inkscape:export-xdpi="89.44442"
+       inkscape:export-ydpi="89.44442" />
     <g
        id="g1313-6"
        transform="matrix(0.10356206,0,0,0.10356206,126.10299,809.42771)"
        inkscape:export-filename="/home/stephan/Bilder/BinanceOHLC.png"
-       inkscape:export-xdpi="89.444427"
-       inkscape:export-ydpi="89.444427"
+       inkscape:export-xdpi="89.44442"
+       inkscape:export-ydpi="89.44442"
        style="display:inline">
       <g
          id="g1252-3">
@@ -2376,17 +2376,17 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:1.25;font-family:'Khmer OS';-inkscape-font-specification:'Khmer OS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.9375"
-       x="88.283112"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:'Khmer OS';-inkscape-font-specification:'Khmer OS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.9375"
+       x="50.567165"
        y="855.54077"
        id="text772-1"
-       inkscape:export-xdpi="89.444427"
-       inkscape:export-ydpi="89.444427"><tspan
+       inkscape:export-xdpi="89.44442"
+       inkscape:export-ydpi="89.44442"><tspan
          sodipodi:role="line"
          id="tspan770-7"
-         x="88.283112"
+         x="50.567165"
          y="855.54077"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;font-family:'Khmer OS';-inkscape-font-specification:'Khmer OS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.9375">ccxt</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:'Khmer OS';-inkscape-font-specification:'Khmer OS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.9375">ccxt</tspan></text>
     <rect
        style="display:inline;fill:none;stroke:none;stroke-width:0.990703;stroke-opacity:1"
        id="rect4136-3-2-5"
