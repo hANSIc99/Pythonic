@@ -4,9 +4,9 @@
 
 ToDos:
 
-- PlayButton for each Element
+- Manual trigger for the StartElement (Scheduler)
+- Add time server synchronization to scheduler element
 - Global Play, Pause, Stop, Kill Buttons
-- Grid Specific Play, Pause, Stop and Kill Buttons
 - Move Toolbar to the left side of the screen
 
 <img src="https://img.shields.io/pypi/l/Pythonic.svg">
