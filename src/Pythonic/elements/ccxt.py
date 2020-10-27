@@ -14,6 +14,9 @@ class CCXT(ElementMaster):
     pixmap_path = 'images/CCXT.png'
     child_pos = (True, False)
 
+    current_exchange    = 'kraken'
+    current_method      = ''
+
     def __init__(self, row, column):
         self.row = row
         self.column = column
@@ -90,22 +93,9 @@ class CCXT(ElementMaster):
         self.selectMethod = QComboBox()
         self.updateMethods()
 
-        self.help_txt = QWidget()
-        self.help_txt_layout = QVBoxLayout(self.help_txt)
+        self.method_params = QWidget()
+        self.method_params_layout = QVBoxLayout(self.method_params)
 
-        self.help_txt_1 = QLabel()
-        self.help_txt_1.setText(QC.translate('', 'Outputs a Pandas dataframe in the following format:')) 
-
-        self.help_txt_2 = QLabel()
-        self.help_txt_2.setText('\r\n')
-
-        self.help_txt_3 = QLabel()
-        self.help_txt_3.setText(QC.translate('','open_time [Unix, 10 digits], open, high, low, close,\r\nvolume, close_time [Unix, 10 digits], quote_assetv,\r\n' \
-            'trades, taker_b_asset_v, taker_b_asset_v, datetime'))
-
-        self.help_txt_layout.addWidget(self.help_txt_1)
-        self.help_txt_layout.addWidget(self.help_txt_2)
-        self.help_txt_layout.addWidget(self.help_txt_3)
 
 
         # hier logging option einfügen
@@ -129,6 +119,7 @@ class CCXT(ElementMaster):
         self.confirm_button.clicked.connect(self.ccxt_edit.closeEvent)
         self.ccxt_edit.window_closed.connect(self.edit_done)
         self.selectExchange.currentIndexChanged.connect(self.exchangeChanged)
+        self.selectMethod.currentIndexChanged.connect(self.methodChanged)
 
         self.ccxt_layout.addWidget(self.exchange_txt)
         self.ccxt_layout.addWidget(self.selectExchange)  
@@ -137,10 +128,10 @@ class CCXT(ElementMaster):
         self.ccxt_layout.addWidget(self.prv_key_txt)
         self.ccxt_layout.addWidget(self.prv_key_input)
         self.ccxt_layout.addWidget(self.selectMethod)
-
+        self.ccxt_layout.addWidget(self.method_params)
         self.ccxt_layout.addWidget(self.log_line)
         self.ccxt_layout.addStretch(1)
-        self.ccxt_layout.addWidget(self.help_txt)
+        
         self.ccxt_layout.addWidget(self.confirm_button)
         self.ccxt_edit.setLayout(self.ccxt_layout)
         self.ccxt_edit.show()
@@ -152,6 +143,17 @@ class CCXT(ElementMaster):
         self.current_exchange = getattr(ccxt, self.selectExchange.currentData())()
         self.updateMethods()
 
+    def methodChanged(self, event):
+        
+        logging.debug('updateSignature() called CCXT')
+         
+        self.current_method = getattr(self.current_exchange, self.selectMethod.currentData())
+        signature = inspect.signature(self.current_method)
+        print('test')
+
+    def newmethod584(self):
+        return self.current_method
+
     def updateMethods(self):
 
         logging.debug('CCXT::updateMethods() called')
@@ -160,8 +162,15 @@ class CCXT(ElementMaster):
         for method in inspect.getmembers(self.current_exchange, predicate=inspect.ismethod):
             if method[0][:2] != '__' :
                 # mit getattr lässt sich die methode dann wieder aufrufen
+                
                 self.selectMethod.addItem(method[0], QVariant(method[0]))
         self.selectMethod.show()
+
+    def updateSignature(self):
+
+        #signature = inspect.signature()
+        logging.debug('updateSignature() called CCXT')
+
 
   
 
