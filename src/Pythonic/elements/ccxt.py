@@ -1,12 +1,103 @@
 from PyQt5.QtCore import QVariant
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton,
-        QLabel, QWidget, QComboBox, QCheckBox)
+        QLabel, QWidget, QComboBox, QCheckBox, QStyle, QLayout, QScrollArea)
 from PyQt5.QtCore import QCoreApplication as QC
+from PyQt5.QtGui import QIcon
 import logging
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.elementmaster import ElementMaster
 import ccxt, inspect
 #from Pythonic.elements.binance_ohlc_func import BinanceOHLCFUnction
+
+class VarArg(QWidget):
+
+    def __init__(self):
+        super().__init__()
+
+        self.layout = QHBoxLayout()
+
+        self.argname = QLineEdit()
+        self.argname.setPlaceholderText(QC.translate('', 'Name of argument'))
+
+        self.argvalue = QLineEdit()
+        self.argvalue.setPlaceholderText(QC.translate('', 'Value of argument'))
+
+        self.layout.addWidget(self.argname)
+        self.layout.addWidget(self.argvalue)
+
+
+        self.setLayout(self.layout)
+
+
+
+
+class VarPositionalParser(QScrollArea):
+
+    arg_list = []
+
+    def __init__(self):
+        super().__init__()
+
+        self.mainWidget = QWidget()
+
+        self.layout = QVBoxLayout(self.mainWidget)
+
+        self.layout.setSizeConstraint(QLayout.SetFixedSize)
+        self.argName = QLabel('args*')
+        
+
+        firstVarArg = VarArg()
+        self.arg_list.append(firstVarArg)
+
+        self.button_line = QWidget()
+        self.button_line_layout = QHBoxLayout(self.button_line)
+
+        self.addButton = QPushButton()
+        self.addButton.setIcon(self.style().standardIcon(QStyle.SP_ArrowDown))
+
+        self.removeButton = QPushButton()
+        self.removeButton.setIcon(self.style().standardIcon(QStyle.SP_ArrowUp))
+
+        self.button_line_layout.addWidget(self.addButton)
+        self.button_line_layout.addWidget(self.removeButton)
+
+        self.layout.addWidget(self.argName)
+        self.layout.addWidget(firstVarArg)
+        self.layout.addWidget(self.button_line)
+
+        self.addButton.clicked.connect(self.addArgument)
+        self.removeButton.clicked.connect(self.removeArgument)
+
+        #self.setLayout(self.layout)
+        self.setWidget(self.mainWidget)
+        self.setWidgetResizable(True)
+
+
+    def addArgument(self):
+
+        argument = VarArg()
+        self.layout.insertWidget(self.layout.count() - 1, argument)
+        self.arg_list.append(argument)
+
+    def removeArgument(self):
+
+
+        #self.layout.removeWidget(self.lastAddedArgument)
+        if self.arg_list:
+            lastAddedArgument = self.arg_list[-1]
+            lastAddedArgument.deleteLater()
+            lastAddedArgument = None
+            del self.arg_list[-1]
+
+        #self.update()
+        """
+            element = self.grid.itemAtPosition(row, col)
+            if element:
+                if (isinstance(element.widget(), ExecRB) and 
+        """
+
+
+
 
 
 class CCXT(ElementMaster):
@@ -15,19 +106,19 @@ class CCXT(ElementMaster):
     child_pos = (True, False)
 
     current_exchange    = 'kraken'
-    current_method      = ''
+    current_method      = 'createOrder'
+    current_params      = {}
 
     def __init__(self, row, column):
         self.row = row
         self.column = column
 
-        interval_str = '1m'
-        interval_index = 0
-        log_state = False
-        symbol_txt = None
 
-        # interval-str, inteval-index, symbol_txt, log-state
-        self.config = (interval_str, interval_index, symbol_txt, log_state)
+        log_state = False
+
+
+        # exchange, method, params, log_state
+        self.config = (self.current_exchange, self.current_method, self.current_params, log_state)
         #new
         # exchange_index,
 
@@ -41,7 +132,7 @@ class CCXT(ElementMaster):
         self.row, self.column, self.config = state
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
-        self.addFunction(BinanceOHLCFUnction)
+        #self.addFunction(BinanceOHLCFUnction)
 
     def __getstate__(self):
         logging.debug('__getstate__() called CCXT')
@@ -73,8 +164,12 @@ class CCXT(ElementMaster):
             except Exception as e:
                 print(e)
 
-        self.selectExchange.setCurrentIndex(interval_index)
+        # load exchange from config
 
+        index = ccxt.exchanges.index(self.current_exchange)
+        self.selectExchange.setCurrentIndex(index)
+
+        # load current exchange object
         self.current_exchange = getattr(ccxt, self.selectExchange.currentData())()
 
         self.pub_key_txt = QLabel()
@@ -85,7 +180,7 @@ class CCXT(ElementMaster):
         self.prv_key_txt.setText(QC.translate('', 'Enter secret key:'))
         self.prv_key_input = QLineEdit()
 
-        # List all available functions
+        # List all available methods
 
         self.method_txt = QLabel()
         self.method_txt.setText(QC.translate('', 'Select method'))
@@ -93,10 +188,12 @@ class CCXT(ElementMaster):
         self.selectMethod = QComboBox()
         self.updateMethods()
 
+        # List method parameters
+
         self.method_params = QWidget()
         self.method_params_layout = QVBoxLayout(self.method_params)
 
-
+        self.updateParams()
 
         # hier logging option einfügen
         self.log_line = QWidget()
@@ -146,13 +243,10 @@ class CCXT(ElementMaster):
     def methodChanged(self, event):
         
         logging.debug('updateSignature() called CCXT')
-         
-        self.current_method = getattr(self.current_exchange, self.selectMethod.currentData())
-        signature = inspect.signature(self.current_method)
-        print('test')
-
-    def newmethod584(self):
-        return self.current_method
+        method_name = self.selectMethod.currentData()
+        if method_name:
+            self.current_method = method_name
+            self.updateParams()
 
     def updateMethods(self):
 
@@ -164,29 +258,42 @@ class CCXT(ElementMaster):
                 # mit getattr lässt sich die methode dann wieder aufrufen
                 
                 self.selectMethod.addItem(method[0], QVariant(method[0]))
-        self.selectMethod.show()
+        #self.selectMethod.show()
 
-    def updateSignature(self):
 
-        #signature = inspect.signature()
-        logging.debug('updateSignature() called CCXT')
+    def updateParams(self):
 
+        logging.debug('CCXT::updateParams() called')
+
+        method = getattr(self.current_exchange, self.current_method)
+        signature = inspect.signature(method)
+
+        # remove widgets fomr layout 
+
+        for i in reversed(range(self.method_params_layout.count())): 
+            self.method_params_layout.itemAt(i).widget().setParent(None)
+
+        for param in signature.parameters.values():
+            if param.kind == param.POSITIONAL_OR_KEYWORD:
+                paramLabel = QLabel('{}:'.format(param.name.capitalize()))
+                self.method_params_layout.addWidget(paramLabel)
+                paramInput = QLineEdit()
+                self.method_params_layout.addWidget(paramInput)
+
+        if param.kind == param.VAR_POSITIONAL:
+            # e.g. createLimitOrder
+            varArgs = VarPositionalParser()
+            self.method_params_layout.addWidget(varArgs)
 
   
 
     def edit_done(self):
 
         logging.debug('edit_done() called CCXT')
-        """
-        if self.symbol_input.text() == '':
-            symbol_txt = None
-        else:
-            symbol_txt = self.symbol_input.text()
-       
-        interval_str    = self.selectInterval.currentData()
-        interval_index  = self.selectInterval.currentIndex()
-        log_state       = self.log_checkbox.isChecked()
-        """
+
+        log_state = True
+        # exchange, method, params, log_state
+        self.config = (self.current_exchange, self.current_method, self.current_params, log_state)
         # interval-str, inteval-index, symbol_txt, log-state
         #self.config = (interval_str, interval_index, symbol_txt, log_state)
 
