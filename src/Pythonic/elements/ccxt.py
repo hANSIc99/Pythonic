@@ -11,6 +11,9 @@ import ccxt, inspect
 
 class VarArg(QWidget):
 
+    s_arg_name  = ''
+    s_arg_val   = ''
+
     def __init__(self):
         super().__init__()
 
@@ -18,15 +21,24 @@ class VarArg(QWidget):
 
         self.argname = QLineEdit()
         self.argname.setPlaceholderText(QC.translate('', 'Name of argument'))
+        self.argname.textChanged.connect(self.updateName)
 
         self.argvalue = QLineEdit()
         self.argvalue.setPlaceholderText(QC.translate('', 'Value of argument'))
+        self.argvalue.textChanged.connect(self.updateValue)
 
         self.layout.addWidget(self.argname)
         self.layout.addWidget(self.argvalue)
 
 
         self.setLayout(self.layout)
+
+    def updateName(self, event):
+        self.s_arg_name = event
+    
+    def updateValue(self, event):
+        self.s_arg_val = event
+
 
 
 
@@ -47,8 +59,7 @@ class VarPositionalParser(QScrollArea):
         
 
         firstVarArg = VarArg()
-        self.arg_list.append(firstVarArg)
-
+        
         self.button_line = QWidget()
         self.button_line_layout = QHBoxLayout(self.button_line)
 
@@ -64,6 +75,10 @@ class VarPositionalParser(QScrollArea):
         self.layout.addWidget(self.argName)
         self.layout.addWidget(firstVarArg)
         self.layout.addWidget(self.button_line)
+        # BAUSTELLE
+        # wird durch edit->methodChanged->updateParams und edit->updateParams aufgerufen()
+        self.arg_list.append(firstVarArg)
+
 
         self.addButton.clicked.connect(self.addArgument)
         self.removeButton.clicked.connect(self.removeArgument)
@@ -89,12 +104,6 @@ class VarPositionalParser(QScrollArea):
             lastAddedArgument = None
             del self.arg_list[-1]
 
-        #self.update()
-        """
-            element = self.grid.itemAtPosition(row, col)
-            if element:
-                if (isinstance(element.widget(), ExecRB) and 
-        """
 
 
 
@@ -104,10 +113,12 @@ class CCXT(ElementMaster):
 
     pixmap_path = 'images/CCXT.png'
     child_pos = (True, False)
-
+    current_exchangeObj = None
     current_exchange    = 'kraken'
-    current_method      = 'createOrder'
-    current_params      = {}
+    #current_method      = 'fetchOHLCV'
+    current_method      = 'create_limit_order'
+    current_params      = {} # actual parameter values
+    positional_params   = [] # list of object references of parameter input
 
     def __init__(self, row, column):
         self.row = row
@@ -145,8 +156,10 @@ class CCXT(ElementMaster):
 
         logging.debug('edit() called CCXT')
 
-        # interval-str, inteval-index, symbol_txt, log-state
-        interval_str, interval_index, symbol_txt, log_state = self.config
+         # exchange, method, params, log_state
+        self.current_exchange, self.current_method, self.current_params, log_state = self.config
+
+
 
         self.ccxt_layout = QVBoxLayout()
         self.confirm_button = QPushButton(QC.translate('', 'Ok'))
@@ -154,7 +167,7 @@ class CCXT(ElementMaster):
         self.exchange_txt = QLabel()
         self.exchange_txt.setText(QC.translate('', 'Choose Exchange'))
 
-        # https://github.com/sammchardy/python-binance/blob/master/binance/client.py
+        # create list of exchanges 
         self.selectExchange = QComboBox()
 
         for exchange_id in ccxt.exchanges:
@@ -164,13 +177,14 @@ class CCXT(ElementMaster):
             except Exception as e:
                 print(e)
 
-        # load exchange from config
+
+        # load current exchange object
+        self.current_exchangeObj = getattr(ccxt, self.selectExchange.currentData())()
+
+        # select saved exchange from config
 
         index = ccxt.exchanges.index(self.current_exchange)
         self.selectExchange.setCurrentIndex(index)
-
-        # load current exchange object
-        self.current_exchange = getattr(ccxt, self.selectExchange.currentData())()
 
         self.pub_key_txt = QLabel()
         self.pub_key_txt.setText(QC.translate('', 'Enter API key:'))
@@ -196,6 +210,7 @@ class CCXT(ElementMaster):
         self.updateParams()
 
         # hier logging option einfügen
+        #??????
         self.log_line = QWidget()
         self.ask_for_logging = QLabel()
         self.ask_for_logging.setText(QC.translate('', 'Log output?'))
@@ -231,13 +246,32 @@ class CCXT(ElementMaster):
         
         self.ccxt_layout.addWidget(self.confirm_button)
         self.ccxt_edit.setLayout(self.ccxt_layout)
+
+
+
+        # select saved method from config
+        
+        methodsList = [m[0] for m in 
+                        inspect.getmembers(self.current_exchangeObj, predicate=inspect.ismethod)
+                        if m[0][:2] != '__' ]
+        
+        index = methodsList.index(self.current_method)
+        self.selectMethod.setCurrentIndex(index)
+
+        # load saved parameter values
+
+        self.loadSavedParams()
+
+        # display element editor
+
         self.ccxt_edit.show()
 
     def exchangeChanged(self, event):
         
         logging.debug('CCXT::exchangeChanged() called {}'.format(event))
         
-        self.current_exchange = getattr(ccxt, self.selectExchange.currentData())()
+        self.current_exchange       = self.selectExchange.currentData()
+        self.current_exchangeObj    = getattr(ccxt, self.current_exchange)()
         self.updateMethods()
 
     def methodChanged(self, event):
@@ -253,7 +287,7 @@ class CCXT(ElementMaster):
         logging.debug('CCXT::updateMethods() called')
         self.selectMethod.clear()
 
-        for method in inspect.getmembers(self.current_exchange, predicate=inspect.ismethod):
+        for method in inspect.getmembers(self.current_exchangeObj, predicate=inspect.ismethod):
             if method[0][:2] != '__' :
                 # mit getattr lässt sich die methode dann wieder aufrufen
                 
@@ -265,7 +299,7 @@ class CCXT(ElementMaster):
 
         logging.debug('CCXT::updateParams() called')
 
-        method = getattr(self.current_exchange, self.current_method)
+        method = getattr(self.current_exchangeObj, self.current_method)
         signature = inspect.signature(method)
 
         # remove widgets fomr layout 
@@ -273,28 +307,62 @@ class CCXT(ElementMaster):
         for i in reversed(range(self.method_params_layout.count())): 
             self.method_params_layout.itemAt(i).widget().setParent(None)
 
+        # remove params from list
+
+        self.positional_params.clear()
+
         for param in signature.parameters.values():
             if param.kind == param.POSITIONAL_OR_KEYWORD:
                 paramLabel = QLabel('{}:'.format(param.name.capitalize()))
                 self.method_params_layout.addWidget(paramLabel)
+
                 paramInput = QLineEdit()
+                paramInput.setObjectName(param.name)
+                self.positional_params.append(paramInput)
                 self.method_params_layout.addWidget(paramInput)
 
-        if param.kind == param.VAR_POSITIONAL:
-            # e.g. createLimitOrder
-            varArgs = VarPositionalParser()
-            self.method_params_layout.addWidget(varArgs)
+            if param.kind == param.VAR_POSITIONAL:
+                # e.g. createLimitOrder
+                varArgs = VarPositionalParser()
+                self.positional_params.append(varArgs)
+                self.method_params_layout.addWidget(varArgs)
 
-  
+    def loadSavedParams(self):
+
+        for param in self.positional_params:
+            if isinstance(param, VarPositionalParser):
+                print('treffer')
+            else:
+                key =  param.objectName()
+                if key in self.current_params:
+                    param.setText(self.current_params[key])
+                
 
     def edit_done(self):
 
         logging.debug('edit_done() called CCXT')
 
-        log_state = True
+        varArgs = {} # only used in case of variable length argument list
+
+        log_state       = self.log_checkbox.isChecked()
+
+        self.current_params.clear()
+
+        for param in self.positional_params:
+            if isinstance(param, VarPositionalParser):
+                for arg in param.arg_list:
+
+                    varArgs[arg.s_arg_name] = arg.s_arg_val
+
+            else:
+                name =  param.objectName()
+                self.current_params[name] = param.text()
+
+
         # exchange, method, params, log_state
+
         self.config = (self.current_exchange, self.current_method, self.current_params, log_state)
-        # interval-str, inteval-index, symbol_txt, log-state
+        # interval-str, inteval-index, symbol_txt, log-self.current_params
         #self.config = (interval_str, interval_index, symbol_txt, log_state)
 
         #self.addFunction(BinanceOHLCFUnction)
