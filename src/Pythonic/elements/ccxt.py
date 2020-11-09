@@ -7,15 +7,22 @@ import logging
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.elementmaster import ElementMaster
 import ccxt, inspect
-#from Pythonic.elements.binance_ohlc_func import BinanceOHLCFUnction
+#from Pythonic.elements.ccxt_func import CCXTFunction
+from elements.ccxt_func import CCXTFunction
 
-class VarArg(QWidget):
 
+class VarArgBase:
+    #https://stackoverflow.com/questions/3277367/how-does-pythons-super-work-with-multiple-inheritance
+    #loadSavedParams
     def __init__(self):
-        super().__init__()
 
         self.s_arg_name  = ''
         self.s_arg_val   = ''
+
+class VarArg(QWidget, VarArgBase):
+
+    def __init__(self):
+        super().__init__()
 
         self.layout = QHBoxLayout()
 
@@ -46,8 +53,6 @@ class VarArg(QWidget):
 
 class VarPositionalParser(QScrollArea):
 
-    
-
     def __init__(self, loadSaved=False):
         super().__init__()
         self.arg_list = []
@@ -57,9 +62,7 @@ class VarPositionalParser(QScrollArea):
 
         self.layout.setSizeConstraint(QLayout.SetFixedSize)
         self.argName = QLabel('args*')
-        
-
-        
+           
         
         self.button_line = QWidget()
         self.button_line_layout = QHBoxLayout(self.button_line)
@@ -153,14 +156,14 @@ class CCXT(ElementMaster):
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
         logging.debug('CCXT called at row {}, column {}'.format(row, column))
-        #self.addFunction(BinanceOHLCFUnction)
+        self.addFunction(CCXTFunction)
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called CCXT')
         self.row, self.column, self.config = state
         super().__init__(self.row, self.column, self.pixmap_path, True, self.config)
         super().edit_sig.connect(self.edit)
-        #self.addFunction(BinanceOHLCFUnction)
+        self.addFunction(CCXTFunction)
 
     def __getstate__(self):
         logging.debug('__getstate__() called CCXT')
@@ -270,7 +273,6 @@ class CCXT(ElementMaster):
         self.ccxt_edit.setLayout(self.ccxt_layout)
 
 
-
         # select saved method from config
         
         methodsList = [m[0] for m in 
@@ -314,7 +316,6 @@ class CCXT(ElementMaster):
                 # mit getattr lässt sich die methode dann wieder aufrufen
                 
                 self.selectMethod.addItem(method[0], QVariant(method[0]))
-        #self.selectMethod.show()
 
 
     def updateParams(self):
@@ -363,10 +364,7 @@ class CCXT(ElementMaster):
                 if key in self.current_params:
                     param.setText(self.current_params[key])
 
-
-
                 
-
     def edit_done(self):
 
         logging.debug('edit_done() called CCXT')
@@ -402,7 +400,5 @@ class CCXT(ElementMaster):
                         sec_key,
                         self.current_method,
                         self.current_params, log_state)
-        # interval-str, inteval-index, symbol_txt, log-self.current_params
-        #self.config = (interval_str, interval_index, symbol_txt, log_state)
 
-        #self.addFunction(BinanceOHLCFUnction)
+        self.addFunction(CCXTFunction)

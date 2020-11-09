@@ -18,7 +18,9 @@ for exchange_id in ccxt.exchanges:
 
 current_exchange = getattr(ccxt, 'kraken')()
 
-
+kraken = ccxt.kraken()
+kraken.secret = 'secret'
+kraken.apiKey = 'api_kay'
 def list_methods(t):
     for name, item in type(t).__dict__.items():
         if isinstance(item, types.FunctionType):
