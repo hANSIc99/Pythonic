@@ -34,6 +34,23 @@ class CCXTFunction(Function):
                     method_args.append(varArgs[varKey])
                 
             else:
+                param_value = params[key]
+
+                # first check if argument can be converted to int
+                try:
+                    method_args.append(int(param_value))
+                    continue
+                except Exception:
+                    pass
+                
+                # second check if value can be converted to float
+                try:
+                    method_args.append(float(param_value))
+                    continue
+                except Exception:
+                    pass
+                
+                # append argument as it is (string)
                 method_args.append(params[key])
 
         #signature = inspect.signature(method)
@@ -44,6 +61,7 @@ class CCXTFunction(Function):
         else:
             res = method(**method_kwargs)
         """
+        #res = method('BTC/USDT', '1h', 1604929467, 100)
         res = method(*method_args)
 
         """
@@ -57,7 +75,7 @@ class CCXTFunction(Function):
         logging.error('stopPrice = {}'.format(stopPrice))
         """
 
-        log_txt = '{{CCXT}}                   {} {} EXECUTED'.format('test1', 'test2')
+        log_txt = '{{CCXT}}                   EXECUTED'
         result = Record(self.getPos(), (self.row +1, self.column), res,
                  log=log_state, log_txt=log_txt)
 
