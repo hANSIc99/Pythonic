@@ -19,7 +19,6 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , m_sizeGrip(&m_mainWidget)
 {
 
     // https://doc.qt.io/qt-5/objecttrees.html
@@ -62,7 +61,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_bottomArea.setLayout(&m_bottomAreaLayout);
     m_bottomAreaLayout.setContentsMargins(5, 0, 5, 5);
     m_bottomAreaLayout.setSizeConstraint(QLayout::SetMaximumSize);
-    m_bottomAreaLayout.addWidget(&m_workingTabs); // doueble free
+    m_bottomAreaLayout.addWidget(&m_toolBox);
+    m_bottomAreaLayout.addWidget(&m_workingTabs);
 
     //m_bottomAreaLayout.addWidget(&m_scrollDropBox); // double free
 
@@ -73,7 +73,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_bottomBorder.setLayout(&m_bottomBorderLayout);
     m_bottomBorderLayout.setSpacing(0);
     m_bottomBorderLayout.addWidget(&m_infoText);
-    m_bottomAreaLayout.addWidget(&m_sizeGrip, 0, Qt::AlignRight);
 
 
     /* Setup Main Widget */
@@ -83,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
     //m_testWidget.setStyleSheet("background-color: red");
     m_mainWidgetLayout.addWidget(&m_menuBar);
     //m_mainWidgetLayout.addWidget(dynamic_cast<QWidget*>(&m_toolBox));
-    m_mainWidgetLayout.addWidget(&m_toolBox);
+    //m_mainWidgetLayout.addWidget(&m_toolBox);
 
     //m_mainLayout.addWidget(&m_topMenuBar);
 

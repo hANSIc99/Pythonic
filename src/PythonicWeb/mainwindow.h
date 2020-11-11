@@ -125,7 +125,7 @@ private:
 
     QWidget                 m_bottomBorder;
     QHBoxLayout             m_bottomBorderLayout;
-    QSizeGrip               m_sizeGrip;
+
     QLabel                  m_infoText;
 
     QLoggingCategory        logC{"MainWindow"};

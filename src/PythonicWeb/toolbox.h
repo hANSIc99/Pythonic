@@ -25,12 +25,15 @@
 #include "workingarea.h"
 #include "basictools.h"
 
+
+#define OPERATION_DATA ToolData {"ExecOp", 1}
+
 /* Forward declarations to prevent
  * circular includes */
 class WorkingArea;
 
 
-class Toolbox : public QTabWidget
+class Toolbox : public QWidget
 {
     Q_OBJECT
 public:
@@ -52,8 +55,10 @@ private:
 
     QLoggingCategory        logC{"Toolbox"};
 
-    BasicTools              m_basicTools;
+    QVBoxLayout             m_layout;
+    //BasicTools              m_basicTools;
 
+    ToolTemplate<StartElement>  m_BasicOperation{OPERATION_DATA};
 };
 
 #endif // TOOLBOX_H

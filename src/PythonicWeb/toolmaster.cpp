@@ -47,6 +47,7 @@ void ToolMaster::mousePressEvent(QMouseEvent *event)
     if(m_preview){
         delete m_preview;
     }
+    // BAUSTELLE: m_workinAreaWIdget ist  NULL
     m_preview = new QLabel(m_workingAreaWidget);
     m_preview->setPixmap(m_pixMap);
     /* Add preview outside of visible area */

@@ -17,14 +17,19 @@
 
 #include "toolbox.h"
 
-Toolbox::Toolbox(QWidget *parent) : QTabWidget(parent)
+Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
 {
     qCDebug(logC, "called");
 
-    addTab(&m_basicTools, tr("Basic tools"));
-
+    //addTab(&m_basicTools, tr("Basic tools"));
+    setLayout(&m_layout);
+    m_layout.setContentsMargins(0, 0, 0, 0);
+    m_layout.setSizeConstraint(QLayout::SetMinimumSize);
+    m_layout.addWidget(&m_BasicOperation);
     /* Signals & Slots */
 
+    /*
     connect(this, &Toolbox::updateCurrentWorkingArea,
             &m_basicTools, &BasicTools::setCurrentWorkingArea);
+    */
 }
