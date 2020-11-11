@@ -1,7 +1,8 @@
 import ccxt, inspect
+from Pythonic.record_function import Record, Function
 
-from record_function import Record, Function
-#from Pythonic.record_function import Record, Function
+# uncomment this during development
+#from record_function import Record, Function
 
 class CCXTFunction(Function):
 
@@ -9,6 +10,7 @@ class CCXTFunction(Function):
 
         super().__init__(config, b_debug, row, column)
         #logging.debug('__init__() called BinanceOHLCFUnction')
+
 
     def execute(self, record):
 
@@ -24,13 +26,27 @@ class CCXTFunction(Function):
 
         method          = getattr(exchange, current_method)
 
-        method_kwargs   = {}
         method_args     = []
 
         for key in params:
             if key == 'args':
                 varArgs = params['args']
                 for varKey in varArgs:
+                   
+                    # first check if argument can be converted to int
+                    try:
+                        method_args.append(int(varArgs[varKey]))
+                        continue
+                    except Exception:
+                        pass
+                    
+                    # second check if value can be converted to float
+                    try:
+                        method_args.append(float(varArgs[varKey]))
+                        continue
+                    except Exception:
+                        pass
+
                     method_args.append(varArgs[varKey])
                 
             else:
@@ -53,29 +69,12 @@ class CCXTFunction(Function):
                 # append argument as it is (string)
                 method_args.append(params[key])
 
-        #signature = inspect.signature(method)
-        #arguments = signature.parameters.values()
-        """
-        if method_args:
-            res = method(*method_args, **method_kwargs)
-        else:
-            res = method(**method_kwargs)
-        """
-        #res = method('BTC/USDT', '1h', 1604929467, 100)
+
         res = method(*method_args)
 
-        """
-        logging.error('Order: {}'.format(order)) 
-        logging.error('symbol = {}'.format(symbol_txt))
-        logging.error('side = {}'.format(side_txt))
-        logging.error('type = {}'.format(order_string))
-        logging.error('quantity = {}'.format(quantity))
-        logging.error('timeInForce = {}'.format(timeInForce))
-        logging.error('price = {}'.format(price))
-        logging.error('stopPrice = {}'.format(stopPrice))
-        """
 
-        log_txt = '{{CCXT}}                   EXECUTED'
+
+        log_txt = '{{CCXT}}                   {}::{} CALLED'.format(current_exchange, current_method)
         result = Record(self.getPos(), (self.row +1, self.column), res,
                  log=log_state, log_txt=log_txt)
 

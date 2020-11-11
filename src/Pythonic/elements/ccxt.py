@@ -7,8 +7,10 @@ import logging
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.elementmaster import ElementMaster
 import ccxt, inspect
-#from Pythonic.elements.ccxt_func import CCXTFunction
-from elements.ccxt_func import CCXTFunction
+from Pythonic.elements.ccxt_func import CCXTFunction
+
+# uncomment this during development
+#from elements.ccxt_func import CCXTFunction
 
 
 class VarArgBase:

@@ -28,7 +28,8 @@ setuptools.setup(
             'pandas>=0.20.3',
             'pythonic-binance>=0.7.2',
             'requests>=2.21.0',
-            'scikit-learn>=0.21.3'],
+            'scikit-learn>=0.21.3',
+            'ccxt>=1.37.38'],
         classifiers = [
             'Programming Language :: Python :: 3 :: Only',
             'Programming Language :: Python :: 3.6',
