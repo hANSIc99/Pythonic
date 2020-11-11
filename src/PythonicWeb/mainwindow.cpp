@@ -1,199 +1,122 @@
-﻿#include "mainwindow.h"
-#include <QDebug>
-#include <QString>
-#include <QDir>
-#include <QFileDialog>
-#include <QObject>
-#include <QMetaEnum>
+﻿/*
+ * This file is part of Pythonic.
 
-#ifndef WASM
-#include <QNetworkAccessManager>
-#include <QHttpPart>
-#endif
+ * Pythonic is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
 
+ * Pythonic is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
 
+ * You should have received a copy of the GNU General Public License
+ * along with Pythonic. If not, see <https://www.gnu.org/licenses/>
+ */
 
+#include "mainwindow.h"
 
+Q_LOGGING_CATEGORY(log_mainwindow, "MainWindow")
 
-
-MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
-    : QMainWindow(parent, flags)
-
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , m_sizeGrip(&m_mainWidget)
 {
-    this->resize(500, 400);
-    net_mgr = new QNetworkAccessManager(this);
-    connect(net_mgr, SIGNAL(finished(QNetworkReply*)), this, SLOT(netFinished(QNetworkReply*)));
 
-    connect(&m_websocket_timer, &QWebSocket::connected, this, &MainWindow::wsOnConnected);
-    connect(&m_websocket_timer, &QWebSocket::disconnected, this, &MainWindow::wsClosed);
-    connect(&m_websocket_timer, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &MainWindow::wsError);
-    //connect(&m_webSocket, &QWebSocket::sslErrors, this, &MainWindow::wsSSLerror);
-    connect(&m_websocket_timer, &QWebSocket::textMessageReceived, this, &MainWindow::wsOnTextMessageReceived);
+    // https://doc.qt.io/qt-5/objecttrees.html
+    //m_sendDebugMessage = new QPushButton("Send Debug Message", this);
+    //m_sendDebugMessage->setGeometry((QRect(QPoint(30, 170), QSize(200, 50))));
 
-    /*
-     * WEBSOCKET CONNECT BUTTON
-     */
+    /* Setup Working Area Tabs */
+    m_workingTabs.setMinimumSize(300, 300);
 
-    m_websocket_connect_button = new QPushButton("Connect Websocket", this);
-    m_websocket_connect_button->setGeometry((QRect(QPoint(30, 30), QSize(200, 50))));
-    connect(m_websocket_connect_button, &QAbstractButton::released, this, &MainWindow::connectWebSocket );
+    for (int i = 0; i < N_WORKING_GRIDS; i++){
 
-    /*
-     * WEBSOCKET CLOSE BUTTON
-     */
+        //WorkingArea *new_workingArea = new WorkingArea(&m_workingTabs);
+        WorkingArea *new_workingArea = new WorkingArea();
+        m_arr_workingArea.append(new_workingArea);
 
-    m_websocket_disconnect_button = new QPushButton("Disconnect Websocket", this);
-    m_websocket_disconnect_button->setGeometry((QRect(QPoint(30, 100), QSize(200, 50))));
-    connect(m_websocket_disconnect_button, SIGNAL(released()), this, SLOT(wsDisconnect()) );
+        //QScrollArea *new_scroll_area = new QScrollArea(new_workingArea);
+        //m_arr_workingTabs.append(new_scroll_area);
+        //m_arr_workingTabs[i]->setWidgetResizable(true);
 
-    /*
-     * UPLOAD FILE BUTTON
-     */
+        m_workingTabs.addTab(m_arr_workingArea[i], QString("Grid %1").arg(i+1));
 
-    m_upload_file_btn = new QPushButton("Upload File", this);
-    m_upload_file_btn->setGeometry((QRect(QPoint(30, 170), QSize(200, 50))));
-    connect(m_upload_file_btn, SIGNAL(released()), this, SLOT(openFileBrowser()) );
+        // tbd gridoperator
+    }
 
-    /*
-     *  START TIMER
-     */
+    //m_toolboxTabs.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
 
-    m_start_timer_btn = new QPushButton("Start Timer", this);
-    m_start_timer_btn->setGeometry(QRect(QPoint(30, 240), QSize(200, 50)));
-    connect(m_start_timer_btn, &QAbstractButton::released, this, &MainWindow::wsStartTimer );
+    //m_toolboxTabs.addTab() Basictools
 
+    //https://doc.qt.io/qt-5/layout.html
 
+    /* Setup Dropbox */
+    //m_scrollDropBox.setWidget(Storagebar)
+    //m_scrollDropBox->setWidgetResizable(true);
+    //m_scrollDropBox->setMaximumWidth(270);
 
+    /* Setup Bottom Area */
+
+    m_bottomArea.setLayout(&m_bottomAreaLayout);
+    m_bottomAreaLayout.setContentsMargins(5, 0, 5, 5);
+    m_bottomAreaLayout.setSizeConstraint(QLayout::SetMaximumSize);
+    m_bottomAreaLayout.addWidget(&m_workingTabs); // doueble free
+
+    //m_bottomAreaLayout.addWidget(&m_scrollDropBox); // double free
 
 
+    /* Setup Bottom Border */
+
+    m_infoText.setText("Info Test Label");
+    m_bottomBorder.setLayout(&m_bottomBorderLayout);
+    m_bottomBorderLayout.setSpacing(0);
+    m_bottomBorderLayout.addWidget(&m_infoText);
+    m_bottomAreaLayout.addWidget(&m_sizeGrip, 0, Qt::AlignRight);
+
+
+    /* Setup Main Widget */
+    m_mainWidget.setLayout(&m_mainWidgetLayout);
+    //m_testWidget.setMinimumHeight(50);
+    //m_testWidget.setMinimumWidth(50);
+    //m_testWidget.setStyleSheet("background-color: red");
+    m_mainWidgetLayout.addWidget(&m_menuBar);
+    //m_mainWidgetLayout.addWidget(dynamic_cast<QWidget*>(&m_toolBox));
+    m_mainWidgetLayout.addWidget(&m_toolBox);
+
+    //m_mainLayout.addWidget(&m_topMenuBar);
+
+    m_mainWidgetLayout.addWidget(&m_bottomArea);
+    /* Stretch BottomArea (working grids) always to maximum */
+    m_mainWidgetLayout.setStretchFactor(&m_bottomArea, 1);
+    m_mainWidgetLayout.addWidget(&m_bottomBorder);
+    m_mainWidgetLayout.setSpacing(0);
+
+
+
+
+    /* Setup self layout */
+    //m_mainWidget.setStyleSheet("background-color: blue");
+    setContentsMargins(0, 0, 0, 0);
+    setCentralWidget(&m_mainWidget);
+
+    resize(1200, 800);
+    //m_sendDebugMessage = new QPushButton(this);
+    setAcceptDrops(true);
+
+    //qCDebug(log_mainwindow, QString("Parent: %1").arg((qulonglong)m_mainWidget.pa));
+    //connect(m_sendDebugMessage, SIGNAL(released()), this, SLOT(debugMessage()));
 }
 
-
-void MainWindow::wsStartTimer(){
-    qDebug() << "MainWindow::wsStartTimer() called";
-    //QByteArray net_data("Hello");
-
-    //net_mgr->post(QNetworkRequest(QUrl("http://localhost:5000/test_1")), net_data);
-    //m_webSocket.sendTextMessage("Start Timer");
-
-    QUrl ws_url(QStringLiteral("ws://localhost:7000/timer"));
-    qDebug() << "Open Websocket:: " << ws_url.toString();
-    m_websocket_timer.open(ws_url);
-
-}
-
-
-
-
-
-void MainWindow::openFileBrowser(){
-    qDebug() << "MainWindow::openFileBrowser() called";
-    QString s_homePath = QDir::homePath();
-    //QFileDialog::getOpenFileContent
-
-
-    QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
-    ws_uploadData.open(ws_url);
-    connect(&ws_uploadData, &QWebSocket::connected, []{ qDebug() << "wsUplData_onConnected() called"; });
-    connect(&ws_uploadData, &QWebSocket::disconnected, []{ qDebug() << "wsUplData_onClosed() called"; });
-
-
-    auto fileOpenCompleted = [this](const QString &filePath, const QByteArray &fileContent) {
-        if (filePath.isEmpty()) {
-            qDebug() << "No file was selected";
-        } else {
-            qDebug() << "Size of file: " << fileContent.size() / 1000 << "kb";
-            qDebug() << "Selected file: " << filePath;
-
-
-            QFileInfo fileName(filePath);
-            //QByteArray uploadData(fileName.fileName().toUtf8());
-            ws_uploadData.sendTextMessage(fileName.fileName());
-            ws_uploadData.sendBinaryMessage(fileContent);
-#ifndef WASM
-            QString content_header = QString("form-data; name=\"file\"; filename=\"%1\"").arg(fileName.fileName());
-            QHttpPart fileDataPart;
-            fileDataPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(content_header));
-            fileDataPart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/jpeg"));
-            fileDataPart.setBody(fileContent);
-
-            QUrl url("http://localhost:5000/test");
-            QNetworkRequest qnet_req(url);
-
-            QHttpMultiPart *multipart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-            multipart->append(fileDataPart);
-            QByteArray data(multipart->boundary());
-            data.append(fileContent);
-            net_mgr->post(qnet_req, data);
-            QNetworkReply *reply = net_mgr->post(qnet_req, multipart);
-#endif
-        }
-    };
-
-    QFileDialog::getOpenFileContent("", fileOpenCompleted);
-    //qDebug() <<  s_filename;
-}
-
-void MainWindow::netFinished(QNetworkReply *data){
-
-    qDebug() << "POST finished: " << data;
-}
-
-void MainWindow::fileOpenComplete(const QString &fileName, const QByteArray &data){
-    qDebug() << "MainWindow::fileOpenComplete() called";
-    qDebug() << "Filename: " << fileName;
-    qDebug() << "Size: " << data.size();
-}
-
-void MainWindow::connectWebSocket()
+void MainWindow::debugMessage()
 {
-    qDebug() << "MainWindow::connectWebSocket() called";
-    QUrl ws_url(QStringLiteral("ws://localhost:7000/timer"));
-    qDebug() << "Open ws URL: " << ws_url.toString();
-    m_websocket_timer.open(ws_url);
+    //qInfo() << "MainWindow::wsSendMsg() called";
+    qCDebug(log_mainwindow, "Debug Message");
+    qCInfo(log_mainwindow, "Info Message");
+    //QUrl ws_url(QStringLiteral("ws://localhost:7000/message"));
+    //qDebug() << "Open ws URL: " << ws_url.toString();
 
+    m_logger.logMsg("Stephan Hallo!", LogLvl::FATAL);
 }
 
-void MainWindow::wsOnConnected()
-{
-    qDebug() << "MainWindow::wsOnConnected() called";
-}
-
-void MainWindow::wsClosed()
-{
-    qDebug() << "MainWindow::wsClosed() called";
-}
-
-void MainWindow::wsDisconnect()
-{
-    qDebug() << "MainWindow::wsDisconnect() called";
-    m_websocket_timer.close(QWebSocketProtocol::CloseCodeNormal,"Closed by User");
-}
-
-void MainWindow::wsError(QAbstractSocket::SocketError error)
-{
-    QMetaEnum metaEnum = QMetaEnum::fromType<QAbstractSocket::SocketError>();
-    qDebug() << "WS Error: " << metaEnum.valueToKey(error);
-}
-
-void MainWindow::wsSSLerror(const QList<QSslError> &errors)
-{
-    qDebug() << "SSL Error";
-}
-
-void MainWindow::wsOnTextMessageReceived(QString message)
-{
-    qDebug() << "MainWindow::wsOnTextMessageReceived: " << message;
-}
-
-#if 0
-    QString path("/home/stephan/Dokumente/Pythonic/src/PythonicWeb/testdir/");
-    QDir dir; // Initialize to the desired dir if 'path' is relative
-          // By default the program's working directory "." is used.
-    // We create the directory if needed
-    if (!dir.exists(path))
-        dir.mkpath(path); // You can check the success if needed
-
-    QFile file(path + "NewFile.kml");
-    file.open(QIODevice::WriteOnly); // Or QIODevice::ReadWrite
-#endif

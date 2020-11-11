@@ -10,19 +10,34 @@ from os.path import join
 from zipfile import ZipFile
 import sys, logging, datetime, os, Pythonic, pickle
 import multiprocessing as mp
+
+# uncomment this during development
+from workingarea        import WorkingArea
+from menubar            import MenuBar
+from executor           import GridOperator
+from top_menubar        import topMenuBar
+from basictools         import BasicTools
+from cryptotools        import CryptoTools
+from connectivitytools  import ConnectivityTools
+from mltools            import MLTools
+from mastertool         import MasterTool
+from settings           import Settings
+from info               import InfoWindow
+from storagebar         import StorageBar
+"""
 from Pythonic.workingarea               import WorkingArea
 from Pythonic.menubar                   import MenuBar
 from Pythonic.executor                  import GridOperator
 from Pythonic.top_menubar               import topMenuBar
 from Pythonic.basictools                import BasicTools
-from Pythonic.binancetools              import BinanceTools
+from Pythonic.cryptotools               import CryptoTools
 from Pythonic.connectivitytools         import ConnectivityTools
 from Pythonic.mltools                   import MLTools
 from Pythonic.mastertool                import MasterTool
 from Pythonic.settings                  import Settings
 from Pythonic.info                      import InfoWindow
 from Pythonic.storagebar                import StorageBar
-
+"""
 
 class MainWindow(QWidget):
 
@@ -133,14 +148,14 @@ class MainWindow(QWidget):
         
         #self.gridoperator = GridOperator(self)
 
-        self.toolbox_basics = BasicTools(self)
-        self.toolbox_binance = BinanceTools(self)
-        self.toolbox_connectivity = ConnectivityTools(self)
-        self.toolbox_ml = MLTools(self)
+        self.toolbox_basics         = BasicTools(self)
+        self.toolbox_cryptos        = CryptoTools(self)
+        self.toolbox_connectivity   = ConnectivityTools(self)
+        self.toolbox_ml             = MLTools(self)
 
         # add Tabs to the toolbox
         self.toolbox_tab.addTab(self.toolbox_basics, QC.translate('', 'Basic'))
-        self.toolbox_tab.addTab(self.toolbox_binance, QC.translate('', 'Binance'))
+        self.toolbox_tab.addTab(self.toolbox_cryptos, QC.translate('', 'Cryptos'))
         self.toolbox_tab.addTab(self.toolbox_connectivity, QC.translate('', 'Connectivity'))
         self.toolbox_tab.addTab(self.toolbox_ml, QC.translate('', 'Machine Learning'))
 
@@ -148,11 +163,7 @@ class MainWindow(QWidget):
         self.menubar.set_info_text.connect(self.setInfoText)
         self.menubar.start_debug.connect(self.startDebug)
         self.menubar.start_exec.connect(self.startExec)
-        #self.menubar.clear_grid.connect(self.working_area.setupDefault)
-        #self.menubar.stop_exec.connect(self.gridoperator.stop_execution)
-        #self.menubar.kill_proc.connect(self.gridoperator.kill_proc)
-        #self.menubar.kill_proc.connect(self.working_area.allStop)
-        #self.gridoperator.update_logger.connect(self.update_logfile)
+
         self.topMenuBar.switch_language.connect(self.changeTranslator)
         self.topMenuBar.close_signal.connect(self.closeEvent)
         self.topMenuBar.open_action.triggered.connect(self.menubar.openFileNameDialog)
@@ -161,12 +172,9 @@ class MainWindow(QWidget):
         self.topMenuBar.new_action.triggered.connect(self.menubar.saveQuestion)
         self.topMenuBar.settings_action.triggered.connect(self.settings.show)
         self.topMenuBar.info_action.triggered.connect(self.showInfo)
+
         self.working_tabs.currentChanged.connect(self.wrkIndexChanged)
-        #self.toolbox_binance.reg_tool.connect(self.working_area.regType)
-        #self.toolbox_connectivity.reg_tool.connect(self.working_area.regType)
-        #self.toolbox_basics.reg_tool.connect(self.working_area.regType)
-        #self.storagebar.forward_config.connect(self.working_area.receiveConfig)
-        #self.working_area.finish_dropbox.connect(self.storagebar.finishDropBox)
+
         self.menubar.stop_exec.connect(self.stopExecution)
         self.menubar.kill_proc.connect(self.killProcesses)
         self.menubar.load_file.connect(self.loadGrid)
@@ -175,7 +183,7 @@ class MainWindow(QWidget):
 
         for i in range(self.number_of_grids):
             
-            self.toolbox_binance.reg_tool.connect(self.wrk_area_arr[i].regType)
+            self.toolbox_cryptos.reg_tool.connect(self.wrk_area_arr[i].regType)
             self.toolbox_connectivity.reg_tool.connect(self.wrk_area_arr[i].regType)
             self.toolbox_ml.reg_tool.connect(self.wrk_area_arr[i].regType)
             self.toolbox_basics.reg_tool.connect(self.wrk_area_arr[i].regType)
@@ -189,7 +197,7 @@ class MainWindow(QWidget):
 
 
         # register tools
-        self.toolbox_binance.register_tools()
+        self.toolbox_cryptos.register_tools()
         self.toolbox_basics.register_tools()
         self.toolbox_connectivity.register_tools()
         self.toolbox_ml.register_tools()
@@ -293,9 +301,11 @@ class MainWindow(QWidget):
             err_msg = QMessageBox()
             err_msg.setIcon(QMessageBox.Critical)
             err_msg.setWindowTitle(QC.translate('', 'File Error'))
-            err_msg.setText(QC.translate('', 'File can\'t be read'))
+            #err_msg.setText(QC.translate('', 'File can\'t be read'))
+            err_msg.setText('{}'.format(e))
             err_msg.setAttribute(Qt.WA_DeleteOnClose)
             err_msg.exec()
+            raise
 
 
     def saveGrid(self, filename):
@@ -367,7 +377,7 @@ class MainWindow(QWidget):
     def changeEvent(self, event):
         if event.type() == QEvent.LanguageChange:
             logging.debug('changeEvent() called MainWindow')
-            self.setWindowTitle(QC.translate('', 'Pythonic - 0.18'))
+            self.setWindowTitle(QC.translate('', 'Pythonic - 0.19'))
 
     def showInfo(self, event):
 

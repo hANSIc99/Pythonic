@@ -1,0 +1,1 @@
+../../PythonicWeb.worker.js

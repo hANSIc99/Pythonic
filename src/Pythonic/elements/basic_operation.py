@@ -146,11 +146,14 @@ class ExecOp(ElementMaster):
                     '""" set the output variable to pass data to following elements """')
             self.placeholder_3 = QC.translate('',
                     '""" set the variable log_txt to adjust the logging text """')
+            self.placeholder_4 = QC.translate('',
+                    '""" use the variable callback to pass data without returning """')
             self.code_input.setPlaceholderText(self.placeholder_1 + '\r\n\r\n' +
                                            'print(input)\r\n\r\n' +
                                            self.placeholder_2 +
                                            '\r\n\r\n' + 'output = 5\r\n\r\n' + 
                                            self.placeholder_3 + '\r\n\r\n' +
+                                           self.placeholder_4 + '\r\n\r\n' +
                                            'log_txt = "debug text"')
 
         if cmd:

@@ -50,6 +50,7 @@ class stdinReader(QThread):
 
     def __init__(self):
         super().__init__()
+        self.startTime = time.time()
 
     def run(self):
 
@@ -109,7 +110,15 @@ class stdinReader(QThread):
             self.tail(self.max_log_lines)
             tty.setraw(sys.stdin.fileno()) 
 
-        sys.stdout.write('Running... ' + next(self.spinner))
+        uptime  = time.time() - self.startTime
+        minutes = int(uptime // 60 % 60)
+        hours   = int(uptime // 3600 % 24)
+        days    = int(uptime // 86400)
+
+        sys.stdout.write('Running... ' + next(self.spinner) + 
+        '                                           ' +
+         'Uptime: {:02d}:{:02d} - {:03d} days'.format(hours, minutes, days))
+
         sys.stdout.flush()
         sys.stdout.write('\r')
 

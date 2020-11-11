@@ -1,6 +1,29 @@
 from PyQt5.QtWidgets import QWidgetItem, QFrame, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSignal
 
+
+# uncomment this during development
+from elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
+from elements.basic_operation   import ExecOp
+from elements.basic_branch      import ExecBranch
+from elements.basic_return      import ExecReturn
+from elements.basic_process     import ExecProcess
+from elements.basic_ta          import ExecTA
+from elements.basic_sched       import ExecSched
+from elements.basic_stack       import ExecStack
+from elements.binance_sched     import BinanceSched
+from elements.binance_ohlc      import BinanceOHLC
+from elements.binance_order     import BinanceOrder
+
+from elements.ccxt              import CCXT
+from elements.conn_mail         import ConnMail
+from elements.conn_rest         import ConnREST
+from elements.ml_svm            import MLSVM
+from elements.ml_svm_predict    import MLSVM_Predict
+
+from elementmaster              import ElementMaster
+from dropbox                    import DropBox
+"""
 from Pythonic.elements.basicelements     import StartElement, ExecRB, ExecR, PlaceHolder
 from Pythonic.elements.basic_operation   import ExecOp
 from Pythonic.elements.basic_branch      import ExecBranch
@@ -12,6 +35,8 @@ from Pythonic.elements.basic_stack       import ExecStack
 from Pythonic.elements.binance_sched     import BinanceSched
 from Pythonic.elements.binance_ohlc      import BinanceOHLC
 from Pythonic.elements.binance_order     import BinanceOrder
+
+from Pythonic.elements.ccxt              import CCXT
 from Pythonic.elements.conn_mail         import ConnMail
 from Pythonic.elements.conn_rest         import ConnREST
 from Pythonic.elements.ml_svm            import MLSVM
@@ -19,7 +44,7 @@ from Pythonic.elements.ml_svm_predict    import MLSVM_Predict
 
 from Pythonic.elementmaster              import ElementMaster
 from Pythonic.dropbox                    import DropBox
-
+"""
 import logging, pickle
 
 class WorkingArea(QFrame):

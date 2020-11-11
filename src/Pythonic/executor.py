@@ -3,7 +3,19 @@ from PyQt5.QtCore import QRunnable, QObject, QThreadPool
 import multiprocessing as mp
 import logging, sys, time, traceback, os, signal
 from datetime import datetime
-from Pythonic.record_function import Record
+
+
+# uncomment this during development
+from record_function import Record, PipeRecord
+from elementeditor import ElementEditor
+from record_function import alphabet
+from exceptwindow import ExceptWindow
+from debugwindow import DebugWindow
+from elements.basic_stack import ExecStack
+from elements.basic_sched import ExecSched
+from elements.basicelements import ExecRB, ExecR
+"""
+from Pythonic.record_function import Record, PipeRecord
 from Pythonic.elementeditor import ElementEditor
 from Pythonic.record_function import alphabet
 from Pythonic.exceptwindow import ExceptWindow
@@ -11,10 +23,11 @@ from Pythonic.debugwindow import DebugWindow
 from Pythonic.elements.basic_stack import ExecStack
 from Pythonic.elements.basic_sched import ExecSched
 from Pythonic.elements.basicelements import ExecRB, ExecR
-
+"""
 class WorkerSignals(QObject):
 
     finished = pyqtSignal(object, name='element_finished' )
+    ret_pipe = pyqtSignal(object, name='pipe_data')
     pid_sig = pyqtSignal(object)
 
 class GridOperator(QObject):
@@ -28,7 +41,7 @@ class GridOperator(QObject):
         logging.debug('__init__() called on GridOperator')
         self.grid = grid
         self.number = number # number of workingarea [0-4]
-        self.stop_flag = False
+        self.stop_flag = False # indicates if normale execution is stopped
         self.fastpath = False # fastpath is active when debug is diasbled
         self.retry_counter = 0
         self.delay = 0
@@ -54,6 +67,7 @@ class GridOperator(QObject):
         self.update_logger.emit()
         executor = Executor(element, record, self.delay)
         executor.signals.finished.connect(self.execDone)
+        executor.signals.ret_pipe.connect(self.execDone)
         executor.signals.pid_sig.connect(self.register_pid)
         element.highlightStart()
         self.threadpool.start(executor)
@@ -63,6 +77,7 @@ class GridOperator(QObject):
         self.pid_register.append(pid)
         logging.debug('PID register: {}'.format(self.pid_register))
 
+
     def execDone(self, prg_return):
 
         logging.debug('execDone() called GridOperator from {}'.format(prg_return.source))
@@ -70,26 +85,27 @@ class GridOperator(QObject):
         element = self.grid.itemAtPosition(*prg_return.source).widget()
 
         logging.debug('PID returned: {}'.format(prg_return.pid))
-        # remove returned pid from register
-        try:
-            # does not work in case of an exception
-            self.pid_register.remove(prg_return.pid)
-        except Exception as e:
-            logging.error('De-registration of PID failed: {}'.format(e))
+        # remove returned pid from register if prg_return is not coming from pipe
+        if not type(prg_return).__name__ == PipeRecord.__name__:
+            try:
+                # does not work in case of an exception
+                self.pid_register.remove(prg_return.pid)
+            except Exception as e:
+                logging.error('De-registration of PID failed: {}'.format(e))
 
 
-        # if an execption occured
-        if(issubclass(prg_return.record_0.__class__, BaseException)):
-            logging.error('Grid {} Target {}|{} Exception found: {}'.format(
-                self.number + 1,
-                prg_return.source[0],
-                alphabet[prg_return.source[1]],
-                prg_return.record_0))
+            # if an execption occured
+            if(issubclass(prg_return.record_0.__class__, BaseException)):
+                logging.error('Grid {} Target {}|{} Exception found: {}'.format(
+                    self.number + 1,
+                    prg_return.source[0],
+                    alphabet[prg_return.source[1]],
+                    prg_return.record_0))
 
-            element.highlightException()
-            self.exceptwindow = ExceptWindow(str(prg_return.record_0), prg_return.source)
-            self.exceptwindow.window_closed.connect(self.highlightStop)
-            return
+                element.highlightException()
+                self.exceptwindow = ExceptWindow(str(prg_return.record_0), prg_return.source)
+                self.exceptwindow.window_closed.connect(self.highlightStop)
+                return
 
         ### proceed with regular execution ###
 
@@ -126,19 +142,21 @@ class GridOperator(QObject):
 
                 self.debugWindow = DebugWindow(str(prg_return.record_0), prg_return.source)
                 self.debugWindow.proceed_execution.connect(lambda: self.proceedExec(prg_return))
-                self.debugWindow.raiseWindow()
+                self.debugWindow.raiseWindow() # open debug window
 
                 #if not element.self_sync:
                 self.b_debug_window = True
 
+            
             else:
-
+                #queue element
                 self.pending_return.append(prg_return)
 
         else:
-            # highlight stop =!
-            
-            element.highlightStop()
+            # highlight stop only when element return
+            if not type(prg_return).__name__ == PipeRecord.__name__:
+                element.highlightStop() 
+
             self.goNext(prg_return)
 
     def checkPending(self):
@@ -152,7 +170,8 @@ class GridOperator(QObject):
     def proceedExec(self, prg_return):
 
         element = self.grid.itemAtPosition(*prg_return.source).widget()
-        element.highlightStop()
+        if not type(prg_return).__name__ == PipeRecord.__name__:
+            element.highlightStop()
         self.b_debug_window = False
         self.exec_pending.emit()
         self.goNext(prg_return)
@@ -278,13 +297,20 @@ class Executor(QRunnable):
         p_0.start()
         self.signals.pid_sig.emit(p_0.pid) 
         time.sleep(delay)
-        
         result = return_pipe_0.recv()
+        while type(result).__name__ != Record.__name__:
+            #logging.info('Passt!: {}'.format(result.record_0))
+            if type(result).__name__ == PipeRecord.__name__:
+                self.signals.ret_pipe.emit(result)
+
+            result = return_pipe_0.recv()
+
         p_0.join()
 
         self.signals.finished.emit(result)
 
 def target_0(function, record, feed_pipe):
 
-    ret = function.execute_ex(record)
+    def callback(feed_data): feed_pipe.send(feed_data)
+    ret = function.execute_ex(record, callback)
     feed_pipe.send(ret)

@@ -3,9 +3,10 @@ from itertools import cycle
 from datetime import datetime, date, time, timedelta
 from Pythonic.record_function import Record, Function
 
+
 class BasicScheduler(Function):
 
-    def __init(self, config, b_debug, row, column):
+    def __init__(self, config, b_debug, row, column):
 
         super().__init__(config, b_debug, row, column)
 

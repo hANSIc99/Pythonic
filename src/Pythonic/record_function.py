@@ -35,13 +35,28 @@ class Record():
                 self.record_0, self.record_1, self.log, self.log_txt,
                 self.pid)
 
+class PipeRecord(Record): 
+    # Class exist to distinguiosh between an ordinary Record and a 
+    # record coming through the pipe
+
+    def __init__(self, source, target_0, record_0, log=False, log_txt=None):
+        super().__init__(source, target_0, record_0, log=log, log_txt=log_txt)
+        
+    def __setstate__(self, state):
+        logging.debug('__setstate__() called PipeRecord')
+        source, target_0, record_0, log, log_txt = state
+        super().__init__(source, target_0, record_0, log=log, log_txt=log_txt)
+
+
+    def __getstate__(self):
+        logging.debug('__getstate__() called PipeRecord')
+        return (self.source, self.target_0, self.record_0, self.log, self.log_txt)
+
 
 class Function():
-    # baustelle: functionsträger
-    # erstelle in execute einen neuen record
 
     def __init__(self, config, b_debug, row, column):
-
+        logging.debug('Function.__init__()')
         self.config = config
         self.row = row
         self.column = column
@@ -56,8 +71,13 @@ class Function():
         logging.debug('__getstate__() called Function')
         return (self.config, self.b_debug, self.row, self.column)
 
-    def execute_ex(self, record):
+    def getSig(self):
+        return self.fire
+
+    def execute_ex(self, record, callback):
+
         logging.debug('execute_ex() called Function')
+        self.callback = callback
 
         try:
             result =self.execute(record)
