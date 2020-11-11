@@ -11,20 +11,6 @@ from zipfile import ZipFile
 import sys, logging, datetime, os, Pythonic, pickle
 import multiprocessing as mp
 
-# uncomment this during development
-from workingarea        import WorkingArea
-from menubar            import MenuBar
-from executor           import GridOperator
-from top_menubar        import topMenuBar
-from basictools         import BasicTools
-from cryptotools        import CryptoTools
-from connectivitytools  import ConnectivityTools
-from mltools            import MLTools
-from mastertool         import MasterTool
-from settings           import Settings
-from info               import InfoWindow
-from storagebar         import StorageBar
-"""
 from Pythonic.workingarea               import WorkingArea
 from Pythonic.menubar                   import MenuBar
 from Pythonic.executor                  import GridOperator
@@ -37,6 +23,22 @@ from Pythonic.mastertool                import MasterTool
 from Pythonic.settings                  import Settings
 from Pythonic.info                      import InfoWindow
 from Pythonic.storagebar                import StorageBar
+
+
+# uncomment this during development
+"""
+from workingarea        import WorkingArea
+from menubar            import MenuBar
+from executor           import GridOperator
+from top_menubar        import topMenuBar
+from basictools         import BasicTools
+from cryptotools        import CryptoTools
+from connectivitytools  import ConnectivityTools
+from mltools            import MLTools
+from mastertool         import MasterTool
+from settings           import Settings
+from info               import InfoWindow
+from storagebar         import StorageBar
 """
 
 class MainWindow(QWidget):
