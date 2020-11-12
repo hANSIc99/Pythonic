@@ -28,10 +28,9 @@
 #include <QPushButton>
 #include <QSize>
 
-//#include "filedownloader.h"
 #include "baselabel.h"
 
-#define BTN_SIZE QSize(32, 32)
+#define MENU_BTN_SIZE QSize(32, 32)
 #define LOGO_SIZE QSize(262, 58)
 
 class RunButton : public BaseButton {
@@ -39,7 +38,7 @@ class RunButton : public BaseButton {
 public:
 
     explicit RunButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/run.png"), BTN_SIZE, parent)
+        : BaseButton(QUrl("http://localhost:7000/run.png"), MENU_BTN_SIZE, parent)
         , logC("MenuBar.RunBtn")
     {
         //setStyleSheet("background-color: transparent;");
@@ -74,7 +73,7 @@ class NewFileButton : public BaseButton {
 public:
 
     explicit NewFileButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/new_file.png"), BTN_SIZE, parent)
+        : BaseButton(QUrl("http://localhost:7000/new_file.png"), MENU_BTN_SIZE, parent)
         , logC("MenuBar.NewFileBtn")
     {
         //setStyleSheet("background-color: transparent;");
@@ -109,7 +108,7 @@ class OpenFileButton : public BaseButton {
 public:
 
     explicit OpenFileButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/open_file.png"), BTN_SIZE, parent)
+        : BaseButton(QUrl("http://localhost:7000/open_file.png"), MENU_BTN_SIZE, parent)
         , logC("MenuBar.OpenFileBtn")
     {
         //setStyleSheet("background-color: transparent;");
@@ -144,7 +143,7 @@ class SaveButton : public BaseButton {
 public:
 
     explicit SaveButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/save.png"), BTN_SIZE, parent)
+        : BaseButton(QUrl("http://localhost:7000/save.png"), MENU_BTN_SIZE, parent)
         , logC("MenuBar.SaveBtn")
     {
         //setStyleSheet("background-color: transparent;");
@@ -179,7 +178,7 @@ class SaveAsButton : public BaseButton {
 public:
 
     explicit SaveAsButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/save_as.png"), BTN_SIZE, parent)
+        : BaseButton(QUrl("http://localhost:7000/save_as.png"), MENU_BTN_SIZE, parent)
         , logC("MenuBar.SaveAsBtn")
     {
         //setStyleSheet("background-color: transparent;");
@@ -214,7 +213,7 @@ class KillProcButton : public BaseButton {
 public:
 
     explicit KillProcButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/kill.png"), BTN_SIZE, parent)
+        : BaseButton(QUrl("http://localhost:7000/kill.png"), MENU_BTN_SIZE, parent)
         , logC("MenuBar.KillProcBtn")
     {
         //setStyleSheet("background-color: transparent;");
@@ -249,7 +248,7 @@ class StopExecButton : public BaseButton {
 public:
 
     explicit StopExecButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/stop_exec.png"), BTN_SIZE, parent)
+        : BaseButton(QUrl("http://localhost:7000/stop_exec.png"), MENU_BTN_SIZE, parent)
         , logC("MenuBar.StopExecBtn")
     {
         //setStyleSheet("background-color: transparent;");
@@ -284,7 +283,7 @@ class StartDebugButton : public BaseButton {
 public:
 
     explicit StartDebugButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/start_debug.png"), BTN_SIZE, parent)
+        : BaseButton(QUrl("http://localhost:7000/start_debug.png"), MENU_BTN_SIZE, parent)
         , logC("MenuBar.StartDebugBtn")
     {
         //setStyleSheet("background-color: transparent;");

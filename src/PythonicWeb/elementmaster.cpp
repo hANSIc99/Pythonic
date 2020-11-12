@@ -114,12 +114,6 @@ void ElementMaster::deleteSelf()
     emit remove(this);
 }
 
-void ElementMaster::moveEvent(QMoveEvent *event)
-{
-    // Linien neu malen
-    //qCInfo(logC, "called");
-}
-
 
 /*****************************************************
  *                                                   *
@@ -129,12 +123,14 @@ void ElementMaster::moveEvent(QMoveEvent *event)
 
 void ElementPlug::enterEvent(QEvent *event)
 {
+    Q_UNUSED(event)
     qCInfo(logC, "called");
     setStyleSheet("background-color: gold;");
 }
 
 void ElementPlug::leaveEvent(QEvent *event)
 {
+    Q_UNUSED(event)
     qCInfo(logC, "called");
     setStyleSheet("background-color: transparent;");
 }
@@ -149,12 +145,14 @@ void ElementPlug::leaveEvent(QEvent *event)
 
 void ElementSocket::enterEvent(QEvent *event)
 {
+    Q_UNUSED(event)
     qCInfo(logC, "called");
     setStyleSheet("background-color: chartreuse;");
 }
 
 void ElementSocket::leaveEvent(QEvent *event)
 {
+    Q_UNUSED(event)
     qCInfo(logC, "called");
     setStyleSheet("background-color: transparent;");
 }

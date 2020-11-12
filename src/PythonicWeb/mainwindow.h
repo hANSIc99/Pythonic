@@ -68,6 +68,7 @@ public:
       */
     Logger m_logger{this};
 
+
 signals:
     void updateCurrentWorkingArea(QWidget* currentWokringArea);
 

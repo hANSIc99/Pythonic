@@ -48,6 +48,7 @@ public:
 
     QPoint                  m_dragPosOffset;
 
+
 public slots:
 
     void setCurrentWorkingArea(QWidget* workingAreaWidget);

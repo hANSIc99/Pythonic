@@ -20,11 +20,10 @@
 
 #include <QWidget>
 #include <QLoggingCategory>
-#include <QTabWidget>
+#include <QScrollArea>
 
 #include "workingarea.h"
-#include "basictools.h"
-
+#include "toolmaster.h"
 
 #define OPERATION_DATA ToolData {"ExecOp", 1}
 
@@ -39,14 +38,13 @@ class Toolbox : public QWidget
 public:
     explicit Toolbox(QWidget *parent = nullptr);
 
-    WorkingArea*                m_currentWorkingArea;
-
 public slots:
 
     void setCurrentWorkingArea(QWidget* workingAreaWidget){
         qCInfo(logC, "called");
         emit updateCurrentWorkingArea(workingAreaWidget);
     };
+
 
 signals:
     void updateCurrentWorkingArea(QWidget* currentWokringArea);
@@ -55,8 +53,10 @@ private:
 
     QLoggingCategory        logC{"Toolbox"};
 
+    QVBoxLayout             m_masterLayout;
     QVBoxLayout             m_layout;
-    //BasicTools              m_basicTools;
+    QScrollArea             m_scrollArea;
+    QWidget                 m_mainWidget;
 
     ToolTemplate<StartElement>  m_BasicOperation{OPERATION_DATA};
 };

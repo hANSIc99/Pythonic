@@ -59,6 +59,10 @@ void WorkingArea::deleteElement(ElementMaster *element)
 {
     qCInfo(logC, "called");
     delete element;
+
+    // BAUSTELLE: m_connectionsdurchsuchen und Verbindungen entfernen
+    // Painter auslösen
+
 #if 0
     QObjectList objectList = children();
 
@@ -327,6 +331,7 @@ bool WorkingArea::mouseOverElement(const QWidget *element, const QPoint &globalP
 #endif
 void WorkingArea::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event)
     m_painter.begin(this);
 
     /* Reset background */

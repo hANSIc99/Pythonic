@@ -22,14 +22,28 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
     qCDebug(logC, "called");
 
     //addTab(&m_basicTools, tr("Basic tools"));
-    setLayout(&m_layout);
+
+    //setMinimumSize(300, 1200);
+    setMaximumWidth(200);
+
+    setLayout(&m_masterLayout);
+
+    m_mainWidget.setLayout(&m_layout);
+    m_mainWidget.setMinimumHeight(1200); // can be deleted
+
     m_layout.setContentsMargins(0, 0, 0, 0);
     m_layout.setSizeConstraint(QLayout::SetMinimumSize);
     m_layout.addWidget(&m_BasicOperation);
+    m_layout.addStretch(1);
+
+    m_scrollArea.setWidget(&m_mainWidget);
+
+    m_masterLayout.addWidget(&m_scrollArea);
+
     /* Signals & Slots */
 
-    /*
+
     connect(this, &Toolbox::updateCurrentWorkingArea,
-            &m_basicTools, &BasicTools::setCurrentWorkingArea);
-    */
+            &m_BasicOperation, &ToolMaster::setCurrentWorkingArea);
+
 }

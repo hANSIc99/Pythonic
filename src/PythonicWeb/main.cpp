@@ -53,11 +53,13 @@ int main(int argc, char *argv[])
                                                     "WorkingArea.debug=true\n"
                                                     "WorkingArea.info=true\n"
 
-                                                    "Toolbox.debug=true\n"
-                                                    "Toolbox.info=true\n"
-
                                                     "MenuBar.debug=true\n"
                                                     "MenuBar.info=true\n"
+
+                                                    /* Toolbox elements */
+
+                                                    "Toolbox.debug=true\n"
+                                                    "Toolbox.info=true\n"
 
                                                     /* GUI Buttons */
 
@@ -85,10 +87,6 @@ int main(int argc, char *argv[])
                                                     "MenuBar.RunBtn.debug=false\n"
                                                     "MenuBar.RunBtn.info=false\n"
 
-                                                    /* Toolbox elements */
-
-                                                    "BasicTools.debug=true\n"
-                                                    "BasicTools.info=true\n"
 
                                                     /* Master Classes */
 

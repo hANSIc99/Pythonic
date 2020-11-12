@@ -109,6 +109,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this, &MainWindow::updateCurrentWorkingArea,
             &m_toolBox, &Toolbox::setCurrentWorkingArea);
+
     //qCDebug(log_mainwindow, QString("Parent: %1").arg((qulonglong)m_mainWidget.pa));
     //connect(m_sendDebugMessage, SIGNAL(released()), this, SLOT(debugMessage()));
     /* Set current working area on initialization */
@@ -131,19 +132,3 @@ void MainWindow::setCurrentWorkingArea(int tabIndex)
     qCInfo(logC, "called, current tabIndex %d", tabIndex);
     emit updateCurrentWorkingArea(dynamic_cast<QWidget*>(m_arr_workingArea[tabIndex]));
 }
-#if 0
-void MainWindow::setCurrentWorkingArea()
-{
-
-    /*
-     *  Hierarchy of m_workingTabs
-     *
-     *  m_workingTabs(vector) --(parent)-->
-     *                        QScrollArea --(parent)-->
-     *                                    WorkingArea
-     */
-    QScrollArea *currenScrollArea = dynamic_cast<QScrollArea*>(m_workingTabs.currentWidget());
-    m_toolBox.m_currentWorkingArea = dynamic_cast<WorkingArea*>(currenScrollArea->widget());
-
-}
-#endif

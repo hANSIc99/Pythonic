@@ -131,9 +131,6 @@ signals:
 private slots:
 
     void deleteSelf();
-protected:
-
-    void moveEvent(QMoveEvent *event) override;
 
 private:
 
