@@ -38,15 +38,15 @@
  */
 
 
-class StartElement : public ElementMaster
+class Scheduler : public ElementMaster
 {
     Q_OBJECT
 public:
 
-    explicit StartElement(QWidget *parent = nullptr)
+    explicit Scheduler(QWidget *parent = nullptr)
         : ElementMaster(true,
                         true,
-                        QUrl("http://localhost:7000/start_web.png"),
+                        QUrl("http://localhost:7000/Scheduler.png"),
                         QString("StartElement"),
                         true,
                         parent)

@@ -177,7 +177,6 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
              *  sender  = m_tmpElement
              *  receiver = targetElement
              */
-            // QLine initialisieren?
             m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
 
         }
@@ -375,6 +374,10 @@ void WorkingArea::drawConnections(QPainter *p)
 void WorkingArea::updateConnection()
 {
     for(auto &pair : m_connections){
+        /*
+         * Correct the start- and end-position so that it looks like
+         * the line starts and ends in the middle of the plug / socket
+         */
         pair.connLine.setP1(pair.sender->pos() + PLUG_OFFSET_POSITION);
         pair.connLine.setP2(pair.receiver->pos() + SOCKET_OFFSET_POSITION);
     }

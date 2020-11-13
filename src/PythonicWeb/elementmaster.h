@@ -33,8 +33,8 @@
 #include "baselabel.h"
 #include "elementiconbar.h"
 
-#define LABEL_SIZE QSize(200, 100)
-
+#define LABEL_SIZE QSize(140, 47)
+#define PLUG_SOCKET_SIZE QSize(47, 47)
 
 
 struct ChildConfig {
@@ -56,16 +56,24 @@ class ElementSocket : public BaseLabel
     Q_OBJECT
 public:
     explicit ElementSocket(QWidget *parent = nullptr)
-        : BaseLabel(QUrl("http://localhost:7000/socket.png"), BTN_SIZE, parent)
+        : BaseLabel(QUrl("http://localhost:7000/PlugSocket.png"), PLUG_SOCKET_SIZE, parent)
+        , m_connected(false)
     {
         qCDebug(logC, "called");
+        setFixedSize(PLUG_SOCKET_SIZE);
+        // BAUSTELLE
     };
+
+public slots:
+
+    void connected(bool connectionState);
 
 
 protected:
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
 private:
+    bool                m_connected;
     QLoggingCategory    logC{"ElementSocket"};
 };
 
@@ -75,16 +83,23 @@ class ElementPlug : public BaseLabel
     Q_OBJECT
 public:
     explicit ElementPlug(QWidget *parent = nullptr)
-        : BaseLabel(QUrl("http://localhost:7000/plug.png"), BTN_SIZE, parent)
+        : BaseLabel(QUrl("http://localhost:7000/PlugSocket.png"), PLUG_SOCKET_SIZE, parent)
+        , m_connected(false)
     {
         qCDebug(logC, "called");
+        setFixedSize(PLUG_SOCKET_SIZE);
     };
+
+public slots:
+
+    void connected(bool connectionState);
 
 protected:
 
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
 private:
+    bool                m_connected;
     QLoggingCategory    logC{"ElementPlug"};
 };
 

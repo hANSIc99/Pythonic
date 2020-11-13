@@ -25,7 +25,7 @@
 #include "workingarea.h"
 #include "toolmaster.h"
 
-#define OPERATION_DATA ToolData {"ExecOp", 1}
+#define OPERATION_DATA ToolData {"Scheduler", 1}
 
 /* Forward declarations to prevent
  * circular includes */
@@ -53,12 +53,23 @@ private:
 
     QLoggingCategory        logC{"Toolbox"};
 
-    QVBoxLayout             m_masterLayout;
-    QVBoxLayout             m_layout;
+    //! Enables scrolling
     QScrollArea             m_scrollArea;
-    QWidget                 m_mainWidget;
+    //! contains m_scrollArea
+    QVBoxLayout             m_masterLayout;
 
-    ToolTemplate<StartElement>  m_BasicOperation{OPERATION_DATA};
+
+
+    //! This widgets picks up the elements
+    QWidget                 m_mainWidget;
+    //! Layout of #m_mainWidget
+    QVBoxLayout             m_layout;
+
+
+
+    /* Programming Elements */
+
+    ToolTemplate<Scheduler>  m_BasicOperation{OPERATION_DATA};
 };
 
 #endif // TOOLBOX_H

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -15,7 +13,7 @@
    viewBox="0 0 744.09448819 1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
    sodipodi:docname="elements.svg">
   <defs
      id="defs4">
@@ -1448,9 +1446,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.8799999"
-     inkscape:cx="260.29553"
-     inkscape:cy="525.3789"
+     inkscape:zoom="2.6587214"
+     inkscape:cx="194.55147"
+     inkscape:cy="554.06896"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -1461,14 +1459,15 @@
      inkscape:object-nodes="true"
      inkscape:snap-smooth-nodes="false"
      inkscape:snap-midpoints="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-width="2560"
+     inkscape:window-height="1389"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:snap-center="true"
      inkscape:snap-others="false"
-     inkscape:snap-nodes="false" />
+     inkscape:snap-nodes="false"
+     inkscape:document-rotation="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -2714,7 +2713,8 @@
            x="451.42856"
            y="597.16254" /></flowRegion><flowPara
          id="flowPara5583"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <rect
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>
+    <rect
        style="fill:none;stroke:none;stroke-width:0.99070722;stroke-opacity:1"
        id="rect4136-3-2-3"
        width="160.99384"
@@ -2823,5 +2823,31 @@
        ry="22.160515"
        inkscape:export-xdpi="103.81051"
        inkscape:export-ydpi="103.81051" />
+    <rect
+       style="display:inline;fill:none;stroke:#000000;stroke-width:2.25414;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4213-29-9-3-3"
+       width="110.24586"
+       height="35.245861"
+       x="328.71143"
+       y="533.27942"
+       ry="11.789985"
+       inkscape:export-xdpi="112"
+       inkscape:export-ydpi="112" />
+    <rect
+       style="display:inline;fill:none;stroke:#000000;stroke-width:2.17614;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4213-29-9-3-3-6"
+       width="118.33501"
+       height="30.603598"
+       x="352.67651"
+       y="595.77734"
+       ry="10.237119"
+       inkscape:export-xdpi="103.81051"
+       inkscape:export-ydpi="103.81051" />
+    <circle
+       style="fill:none;fill-rule:evenodd;stroke-width:2.81250001;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path727"
+       cx="267.36581"
+       cy="542.76843"
+       r="21.09375" />
   </g>
 </svg>

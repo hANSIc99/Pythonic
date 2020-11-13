@@ -31,7 +31,7 @@
 #include "helper.h"
 #include "workingarea.h"
 
-#define TOOL_SIZE QSize(120, 60)
+#define TOOL_SIZE QSize(140, 47)
 
 
 

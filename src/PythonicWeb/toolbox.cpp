@@ -31,7 +31,7 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
     m_mainWidget.setLayout(&m_layout);
     m_mainWidget.setMinimumHeight(1200); // can be deleted
 
-    m_layout.setContentsMargins(0, 0, 0, 0);
+    m_layout.setContentsMargins(15, 10, 0, 0);
     m_layout.setSizeConstraint(QLayout::SetMinimumSize);
     m_layout.addWidget(&m_BasicOperation);
     m_layout.addStretch(1);

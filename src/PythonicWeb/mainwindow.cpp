@@ -62,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_bottomAreaLayout.setContentsMargins(5, 0, 5, 5);
     m_bottomAreaLayout.setSizeConstraint(QLayout::SetMaximumSize);
     m_bottomAreaLayout.addWidget(&m_toolBox);
+
     m_bottomAreaLayout.addWidget(&m_workingTabs);
 
     //m_bottomAreaLayout.addWidget(&m_scrollDropBox); // double free
@@ -76,11 +77,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     /* Setup Main Widget */
+
     m_mainWidget.setLayout(&m_mainWidgetLayout);
-    //m_testWidget.setMinimumHeight(50);
-    //m_testWidget.setMinimumWidth(50);
-    //m_testWidget.setStyleSheet("background-color: red");
     m_mainWidgetLayout.addWidget(&m_menuBar);
+
     //m_mainWidgetLayout.addWidget(dynamic_cast<QWidget*>(&m_toolBox));
     //m_mainWidgetLayout.addWidget(&m_toolBox);
 

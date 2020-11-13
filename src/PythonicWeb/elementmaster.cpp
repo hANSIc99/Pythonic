@@ -32,10 +32,15 @@ ElementMaster::ElementMaster(bool socket,
 
     setAttribute(Qt::WA_DeleteOnClose);
 
+    /* Generate random element name */
+
     m_id = QRandomGenerator::global()->generate();
     QString widgetName = QStringLiteral("%1 - 0x%2").arg(objectName).arg(m_id, 8, 16);
     setObjectName(widgetName);
     qCDebug(logC, "called - %s added", widgetName.toStdString().c_str());
+
+
+
     m_layout.setContentsMargins(10, 0, 30, 0);
     m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
 
@@ -52,8 +57,9 @@ ElementMaster::ElementMaster(bool socket,
 
     m_symbol.setObjectName("element");
 
-    /* Setup symbol widget */
+    /* Setup symbol-widget (socket, symbol and plug) */
     m_symbolWidget.setLayout(&m_symbolWidgetLayout);
+    //m_symbolWidgetLayout.setContentsMargins(-10, 0, -50, 0);
     m_symbolWidgetLayout.addWidget(&m_socket);
     m_symbolWidgetLayout.addWidget(&m_symbol);
     m_symbolWidgetLayout.addWidget(&m_plug);
@@ -63,8 +69,7 @@ ElementMaster::ElementMaster(bool socket,
     m_labelText.setText(widgetName);
 
 
-    //resize(200, 200);
-    /* Setup inner widget: symbolWidget and text-label */
+    /* Setup inner widget: symbol-widget and text-label */
 
     m_innerWidget.setLayout(&m_innerWidgetLayout);
     m_innerWidgetLayout.setSizeConstraint(QLayout::SetFixedSize);
@@ -72,6 +77,7 @@ ElementMaster::ElementMaster(bool socket,
     m_innerWidgetLayout.addWidget(&m_labelText);
     m_innerWidgetLayout.addWidget(&m_symbolWidget);
 
+    /* overall layout: innwer-widget and icon-bar */
 
     m_layout.addWidget(&m_innerWidget);
     m_layout.addWidget(&m_iconBar);
@@ -80,7 +86,7 @@ ElementMaster::ElementMaster(bool socket,
     //setSizePolicy(m_sizePolicy);
     setLayout(&m_layout);
     //startHighlight();
-    stopHighlight();
+    //stopHighlight();
 
 
     /* Signals and Slots */
@@ -121,18 +127,36 @@ void ElementMaster::deleteSelf()
  *                                                   *
  *****************************************************/
 
+void ElementPlug::connected(bool connectionState)
+{
+    qCInfo(logC, "called");
+    m_connected = connectionState;
+    if(m_connected){
+        resetImage(QUrl("http://localhost:7000/PlugSocketOrange.png"));
+    } else {
+        resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
+    }
+}
+
+
 void ElementPlug::enterEvent(QEvent *event)
 {
     Q_UNUSED(event)
     qCInfo(logC, "called");
-    setStyleSheet("background-color: gold;");
+    if(!m_connected){
+        resetImage(QUrl("http://localhost:7000/PlugSocketOrange.png"));
+    }
+
 }
 
 void ElementPlug::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
     qCInfo(logC, "called");
-    setStyleSheet("background-color: transparent;");
+    if(!m_connected){
+      resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
+    }
+
 }
 
 
@@ -143,16 +167,33 @@ void ElementPlug::leaveEvent(QEvent *event)
  *                                                   *
  *****************************************************/
 
+
+
+void ElementSocket::connected(bool connectionState)
+{
+    qCInfo(logC, "called");
+    m_connected = connectionState;
+    if(m_connected){
+        resetImage(QUrl("http://localhost:7000/PlugSocketGreen.png"));
+    } else {
+        resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
+    }
+}
+
 void ElementSocket::enterEvent(QEvent *event)
 {
     Q_UNUSED(event)
     qCInfo(logC, "called");
-    setStyleSheet("background-color: chartreuse;");
+    if(!m_connected){
+       resetImage(QUrl("http://localhost:7000/PlugSocketGreen.png"));
+    }
 }
 
 void ElementSocket::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
     qCInfo(logC, "called");
-    setStyleSheet("background-color: transparent;");
+    if(!m_connected){
+        resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
+    }
 }

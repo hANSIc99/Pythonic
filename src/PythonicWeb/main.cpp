@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
 
                                                     /* Master Classes */
 
-                                                    "BaseLabel.debug=false\n"
-                                                    "BaseLabel.info=false\n"
+                                                    "BaseLabel.debug=true\n"
+                                                    "BaseLabel.info=true\n"
 
                                                     "BaseButton.debug=false\n"
                                                     "BaseButton.info=false\n"
@@ -118,8 +118,8 @@ int main(int argc, char *argv[])
 
                                                     /* Element Connector Buttons  */
 
-                                                    "ElementSocket.debug=false\n"
-                                                    "ElementSocket.info=false\n"
+                                                    "ElementSocket.debug=true\n"
+                                                    "ElementSocket.info=true\n"
 
                                                     "ElementPlug.debug=false\n"
                                                     "ElementPlug.info=false\n"
