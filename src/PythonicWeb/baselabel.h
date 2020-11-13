@@ -28,69 +28,6 @@
 #include <QPushButton>
 #include <QLoggingCategory>
 
-class VarLabel : public QLabel
-{
- Q_OBJECT
-public:
-    explicit VarLabel(QUrl imageUrl, QSize size, QWidget *parent = 0)
-        : QLabel(parent)
-        , m_size(size)
-    {
-        connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
-        SLOT (fileDownloaded(QNetworkReply*)));
-
-        QNetworkRequest request(imageUrl);
-        m_WebCtrl.get(request);
-        qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
-    };
-
-    //virtual ~BaseLabel();
-
-    void resetImage(QUrl imageUrl){
-        QNetworkRequest request(imageUrl);
-        m_WebCtrl.get(request);
-    }
-
-
-
-private slots:
-
-    void fileDownloaded(QNetworkReply* pReply){
-        m_DownloadedData = pReply->readAll();
-
-        if(m_DownloadedData.isEmpty()){
-            qCWarning(logC, "could not be loaded: %s",
-                     pReply->url().toString().toStdString().c_str());
-            return;
-        }
-
-        //emit a signal
-        pReply->deleteLater();
-        //emit downloaded();
-
-
-        m_pixMap.loadFromData(m_DownloadedData);
-        m_pixMap = m_pixMap.scaled(m_size);
-
-    };
-
-protected:
-
-    QPixmap                 m_pixMap;
-    QPixmap                 *m_storedPixMap;
-private:
-
-    QLoggingCategory    logC{"BaseLabel"};
-    QNetworkAccessManager   m_WebCtrl;
-
-    QByteArray              m_DownloadedData;
-    QSize                   m_size;
-
-
-};
-
-
-
 
 class BaseLabel : public QLabel
 {
@@ -115,6 +52,8 @@ public:
         m_WebCtrl.get(request);
     }
 
+    QPixmap                 m_pixMap;
+
 private slots:
 
     void fileDownloaded(QNetworkReply* pReply){
@@ -137,9 +76,8 @@ private slots:
         setPixmap(m_pixMap);
     };
 
-protected:
 
-    QPixmap                 m_pixMap;
+
 
 private:
 

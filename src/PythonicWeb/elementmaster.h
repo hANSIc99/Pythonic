@@ -60,8 +60,7 @@ public:
         , m_connected(false)
     {
         qCDebug(logC, "called");
-        setFixedSize(PLUG_SOCKET_SIZE);
-        // BAUSTELLE
+
     };
 
 public slots:

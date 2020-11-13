@@ -177,6 +177,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
              *  sender  = m_tmpElement
              *  receiver = targetElement
              */
+            // Baustelle: Auf duplikate checken
             m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
 
         }
@@ -267,15 +268,7 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
       * Start & Stop highlighting the socket
       */
 
-        /* Stop highlighting the socket */
 
-        if( m_tmpElement &&
-            m_mouseOverSocket &&
-            !helper::mouseOverElement(qobject_cast<QWidget*>(&(m_tmpElement->m_socket)), event->globalPos()) )
-        {
-                QApplication::postEvent(&(m_tmpElement->m_socket), new QEvent(QEvent::Leave));
-                m_mouseOverSocket = false;
-        }
 
         /* Returns NULL if nothing is found */
         QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
@@ -293,10 +286,19 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
          */
         ElementMaster *elm = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
 
+
         if (!elm){
+
+            /* Stop highlighting the socket */
+            if(m_drawTmpTarget){
+                QApplication::postEvent(&(m_drawTmpTarget->m_socket), new QEvent(QEvent::Leave));
+                m_drawTmpTarget = NULL;
+            }
+            m_mouseOverSocket = false;
             return;
         }
 
+        /* Start highlighting the socket */
 
         if( !m_mouseOverSocket &&
             helper::mouseOverElement(qobject_cast<QWidget*>(&(elm->m_socket)), event->globalPos())){
@@ -306,8 +308,13 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
                                     new QEnterEvent(event->pos(),
                                                     event->windowPos(),
                                                     event->screenPos()));
+
+
+            m_drawTmpTarget = elm;
             m_mouseOverSocket = true;
         }
+
+
 
 
     } // else if (m_draw)

@@ -37,7 +37,7 @@
 #define CONNECTION_THICKNESS 5
 #define CONNECTION_COLOR QColor(57, 57, 172)
 #define MINIMUM_SIZE QSize(1000, 600)
-#define SOCKET_OFFSET_POSITION QPoint(15, 90)
+#define SOCKET_OFFSET_POSITION QPoint(45, 61)
 #define PLUG_OFFSET_POSITION QPoint(245, 61)
 
 #define BACKGROUND_COLOR_A QColor(54, 106, 151)
@@ -92,10 +92,15 @@ private:
     int                         m_gridNo;
     bool                        m_drawing{false};
 
-    /* Pointer to specific element,
-     * used for drawing and drag & drop
+    /**
+     * Pointer to element during drag & drop
+     * Pointer to sender element during drawing
      */
-    ElementMaster*              m_tmpElement;
+    ElementMaster*              m_tmpElement{NULL};
+
+
+    //!Pointer to receiver element during drawing
+    ElementMaster*              m_drawTmpTarget{NULL};
 
     /* Drag & Drop */
     bool                        m_dragging{false};

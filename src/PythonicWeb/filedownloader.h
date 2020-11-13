@@ -25,6 +25,9 @@
 #include <QNetworkReply>
 #include <QLoggingCategory>
 
+
+
+
 class FileDownloader : public QObject
 {
  Q_OBJECT

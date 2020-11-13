@@ -130,12 +130,14 @@ void ElementMaster::deleteSelf()
 void ElementPlug::connected(bool connectionState)
 {
     qCInfo(logC, "called");
+
     m_connected = connectionState;
     if(m_connected){
         resetImage(QUrl("http://localhost:7000/PlugSocketOrange.png"));
     } else {
         resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
     }
+
 }
 
 
@@ -143,6 +145,7 @@ void ElementPlug::enterEvent(QEvent *event)
 {
     Q_UNUSED(event)
     qCInfo(logC, "called");
+
     if(!m_connected){
         resetImage(QUrl("http://localhost:7000/PlugSocketOrange.png"));
     }
@@ -153,6 +156,7 @@ void ElementPlug::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
     qCInfo(logC, "called");
+
     if(!m_connected){
       resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
     }
@@ -172,28 +176,34 @@ void ElementPlug::leaveEvent(QEvent *event)
 void ElementSocket::connected(bool connectionState)
 {
     qCInfo(logC, "called");
+
     m_connected = connectionState;
     if(m_connected){
         resetImage(QUrl("http://localhost:7000/PlugSocketGreen.png"));
     } else {
         resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
     }
+
 }
 
 void ElementSocket::enterEvent(QEvent *event)
 {
     Q_UNUSED(event)
     qCInfo(logC, "called");
+
     if(!m_connected){
        resetImage(QUrl("http://localhost:7000/PlugSocketGreen.png"));
     }
+
 }
 
 void ElementSocket::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
     qCInfo(logC, "called");
+
     if(!m_connected){
         resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
     }
+
 }
