@@ -60,24 +60,19 @@ void WorkingArea::deleteElement(ElementMaster *element)
     qCInfo(logC, "called");
     delete element;
 
-    // BAUSTELLE: m_connectionsdurchsuchen und Verbindungen entfernen
-    // Painter auslösen
+    /* Delete unnecessary connections */
 
-#if 0
-    QObjectList objectList = children();
+    QVector<Connection>::iterator it = m_connections.begin();
+    while (it != m_connections.end()){
 
-    if(objectList.contains(element)){
-        qCDebug(logC, "Element gefunden");
-        delete element;
-    } else {
-        qCDebug(logC, "Element nicht gefunden");
+        if (    it->receiver    == element ||
+                it->sender      == element){
+            it = m_connections.erase(it++);
+        }
     }
 
-
-
-#endif
-
-
+    /* Re-paint screen */
+    update();
 }
 
 void WorkingArea::registerElement(const ElementMaster *new_element)
