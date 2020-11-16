@@ -33,9 +33,6 @@ class helper {
 public:
     static bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
-
-
-
 };
 
 

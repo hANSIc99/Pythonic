@@ -30,11 +30,13 @@
 #include <QRandomGenerator>
 #include <QStringLiteral>
 #include <QMoveEvent>
+#include <QSet>
 #include "baselabel.h"
-#include "elementiconbar.h"
+
 
 #define LABEL_SIZE QSize(140, 47)
 #define PLUG_SOCKET_SIZE QSize(47, 47)
+
 
 
 struct ChildConfig {
@@ -60,7 +62,6 @@ public:
         , m_connected(false)
     {
         qCDebug(logC, "called");
-
     };
 
 public slots:
@@ -86,7 +87,7 @@ public:
         , m_connected(false)
     {
         qCDebug(logC, "called");
-        setFixedSize(PLUG_SOCKET_SIZE);
+        setContextMenuPolicy(Qt::CustomContextMenu);
     };
 
 public slots:
@@ -126,6 +127,10 @@ public:
     //bool                m_bIconBar;
 
     bool                m_debugEnabled;
+    //! Indicates if the element has a parent element
+    bool                m_parentConnected{false};
+    //! Indicates if the element has a child element
+    bool                m_childConnected{false};
     /*! @brief Indicates the possible child positions of an element
      *
      * true  | false = only a bottom child\n
@@ -136,18 +141,23 @@ public:
     void                startHighlight();
     void                stopHighlight();
 
-    bool                getDebugState() const;
+    void                addParent(ElementMaster *parent);
+    void                addChild(ElementMaster *child);
+
 
 signals:
 
     void remove(ElementMaster *element);
+    void plugConnectionHighlight(bool state);
+    void socketConnectionHighlight(bool state);
+
+
 
 private slots:
 
     void deleteSelf();
 
 private:
-
 
     QLoggingCategory        logC{"ElementMaster"};
 
@@ -173,16 +183,13 @@ public:
 private:
     //! Label of the element
     QLabel                  m_labelText{"labe text"};
-    //! Config, Debug and Delete-Button
-    ElementIconBar          m_iconBar;
     //! Backend-configuration of the element
     QJsonObject             m_config;
-    /*
-    QNetworkAccessManager   m_WebCtrl;
-    QNetworkRequest         m_request;
-    QByteArray              m_DownloadedData;
-    */
+
     QSizePolicy             m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
+
+    QSet<ElementMaster*>    m_parents;
+    QSet<ElementMaster*>    m_childs;
 };
 
 // https://stackoverflow.com/questions/2562176/storing-a-type-in-c

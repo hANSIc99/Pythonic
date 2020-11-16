@@ -108,6 +108,22 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
     if (!m_tmpElement){
         qCDebug(logC, "master not found");
         return;
+    } else if (event->button() == Qt::RightButton &&
+               m_tmpElement->m_plug.underMouse()){
+        qCDebug(logC, "rightklick on plug");
+    } else if (event->button() == Qt::RightButton &&
+               m_tmpElement->m_socket.underMouse()){
+        qCDebug(logC, "rightklick on socket");
+        QMenu menu;
+        QAction *at1 = new QAction("test 1");
+        QAction *at2 = new QAction("test 2");
+        //https://doc.qt.io/qt-5/qmenu.html#QMenu
+
+        menu.addAction(at1);
+        menu.addAction(at2);
+        //menu.show();
+        menu.exec(event->pos());
+
     } else if (m_tmpElement->m_plug.underMouse()){
         // begin drawing
         m_draw = true;
@@ -177,7 +193,16 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
              *  sender  = m_tmpElement
              *  receiver = targetElement
              */
-            // Baustelle: Auf duplikate checken
+
+            /* Register child at parent element */
+            m_tmpElement->addChild(m_tmpElement);
+
+            /* Register parent at child element */
+            targetElement->addParent(m_tmpElement);
+            // BAUSTELLE: Auf duplikate checken und es darf keine verbindung zu sich selbst hergestellt werden
+
+
+
             m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
 
         }

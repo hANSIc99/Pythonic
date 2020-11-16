@@ -29,6 +29,8 @@
 #include <QPen>
 #include <QSize>
 #include <QApplication>
+#include <QMenu>
+#include <QAction>
 
 #include "elements/basicelements.h"
 #include "elementmaster.h"
@@ -76,7 +78,9 @@ public slots:
 
 protected:
 
+    //! moving elements, drawing connections
     void mousePressEvent(QMouseEvent *event) override;
+    //! adding elements,
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;

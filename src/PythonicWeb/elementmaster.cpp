@@ -49,10 +49,6 @@ ElementMaster::ElementMaster(bool socket,
     m_socket.setVisible(socket);
     m_plug.setVisible(plug);
 
-    /* Enable / disable iconbar of element */
-
-    m_iconBar.setVisible(iconBar);
-
     /* m_symbol needs object name to apply stylesheet */
 
     m_symbol.setObjectName("element");
@@ -80,18 +76,18 @@ ElementMaster::ElementMaster(bool socket,
     /* overall layout: innwer-widget and icon-bar */
 
     m_layout.addWidget(&m_innerWidget);
-    m_layout.addWidget(&m_iconBar);
 
     m_layout.setSizeConstraint(QLayout::SetFixedSize);
     //setSizePolicy(m_sizePolicy);
     setLayout(&m_layout);
-    //startHighlight();
-    //stopHighlight();
 
+    /* Signals & Slots */
 
-    /* Signals and Slots */
-    connect(&m_iconBar.m_deleteBtn, &QPushButton::clicked,
-            this, &ElementMaster::deleteSelf);
+    connect(this, &ElementMaster::socketConnectionHighlight,
+            &m_socket, &ElementSocket::connected);
+
+    connect(this, &ElementMaster::plugConnectionHighlight,
+            &m_plug, &ElementPlug::connected);
 
 }
 
@@ -109,10 +105,20 @@ void ElementMaster::stopHighlight()
                            border: 3px solid #ff5900; border-radius: 20px; }");
 }
 
-bool ElementMaster::getDebugState() const
+void ElementMaster::addParent(ElementMaster *parent)
 {
-    return m_iconBar.m_debugBtn.isChecked();
+    qCDebug(logC, "called");
+    m_parents.insert(parent);
+    emit socketConnectionHighlight(true);
 }
+
+void ElementMaster::addChild(ElementMaster *child)
+{
+    qCDebug(logC, "called");
+    m_childs.insert(child);
+    emit plugConnectionHighlight(true);
+}
+
 
 void ElementMaster::deleteSelf()
 {
