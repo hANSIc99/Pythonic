@@ -299,11 +299,11 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         }
 
         if(helper::mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_socket)), event->globalPos())){
-            qCDebug(logC, "Socket found - add Connection!");
+            //qCDebug(logC, "Socket found - add Connection!");
 
             /*
-             *  sender  = m_tmpElement
-             *  receiver = targetElement
+             *  parent  = m_tmpElement
+             *  child = targetElement
              */
 
             /* Register child at parent element */
@@ -311,11 +311,26 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 
             /* Register parent at child element */
             targetElement->addParent(m_tmpElement);
-            // BAUSTELLE: Auf duplikate checken und es darf keine verbindung zu sich selbst hergestellt werden
 
+            /* Check if connection to parent already exist */
+            bool alreadyConnected = false;
+            for(QVector<Connection>::iterator it = m_connections.begin() ;
+                it != m_connections.end();
+                it++){
 
+                if (    it->parent  == m_tmpElement &&
+                        it->child   == targetElement
+                        ){
+                    alreadyConnected = true;
+                }
+            }
+            if(!alreadyConnected){
+                m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
+                qCDebug(logC, "Socket found - add Connection!");
+            } else {
+                qCDebug(logC, "Socket found - connection already exist!");
+            }
 
-            m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
 
         }
 
