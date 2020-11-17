@@ -31,6 +31,7 @@
 #include <QApplication>
 #include <QMenu>
 #include <QAction>
+#include <QList>
 
 #include "elements/basicelements.h"
 #include "elementmaster.h"
@@ -52,6 +53,36 @@ struct Connection {
     QLine          connLine;
 };
 
+/*! @brief Holds the pointer of two connected elements
+ *
+ *  This class is used to move the connection between elements
+ *  in QActions. Used in the context menu for deleting connections.
+ *
+ *  <a href="https://stackoverflow.com/questions/40764011/how-to-draw-a-smooth-curved-line-that-goes-through-several-points-in-qt">ToDo</a>
+ *  @author Stephan Avenwedde
+ *  @date October 2020
+ *  @copyright [GPLv3](../../../LICENSE)
+ */
+class ConnectionPair {
+    Q_GADGET
+public:
+    ConnectionPair() : parent(NULL), child(NULL) {};
+    ConnectionPair(ElementMaster *parent, ElementMaster *child)
+        : parent(parent)
+        , child(child){};
+    ConnectionPair(const ConnectionPair &other) {
+        parent = other.parent;
+        child = other.child;
+    }
+
+    ~ConnectionPair(){};
+
+    ElementMaster *parent;
+    ElementMaster *child;
+};
+Q_DECLARE_METATYPE(ConnectionPair)
+
+
 /*! @brief WorkingArea holds and manages all programming elements
  *
  *  Detailed description follows here.
@@ -71,10 +102,22 @@ public:
 
     void registerElement(const ElementMaster *new_element);
 
+signals:
+
+    void stopHighlightAllElements();
+
 public slots:
 
     void updateSize();
     void deleteElement(ElementMaster *element);
+
+private slots:
+
+    void disconnectHover(QAction *action);
+    void disconnectTrigger(QAction *action);
+    void disconnectHide();
+
+
 
 protected:
 
@@ -90,6 +133,8 @@ private:
     void drawPreviewConnection(QPainter *p);
     void drawConnections(QPainter *p);
     void updateConnection();
+    void createContextMenu(QSet<ElementMaster*> &elementSet, ElementMaster* currentElement, QPoint pos);
+
     //bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
 
@@ -133,6 +178,10 @@ private:
     QPainter                    m_painter;
 
     QLoggingCategory            logC;
+
+    QMenu                       m_contextDisconnect;
+
+    QList<ConnectionPair*>      m_discMenuConnections;
 };
 
 #endif // WORKINGAREA_H

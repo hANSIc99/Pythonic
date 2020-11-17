@@ -93,14 +93,14 @@ ElementMaster::ElementMaster(bool socket,
 
 void ElementMaster::startHighlight()
 {
-    qCDebug(logC, "called");
+    //qCDebug(logC, "called");
     m_symbol.setStyleSheet("#element { background-color: #636363;\
                   border: 3px solid #fce96f; border-radius: 20px; }");
 }
 
 void ElementMaster::stopHighlight()
 {
-    qCDebug(logC, "called");
+    //qCDebug(logC, "called");
     m_symbol.setStyleSheet("#element { background-color: #636363;\
                            border: 3px solid #ff5900; border-radius: 20px; }");
 }

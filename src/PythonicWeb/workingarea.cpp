@@ -45,9 +45,16 @@ WorkingArea::WorkingArea(int gridNo, QWidget *parent)
     m_pen.setColor(CONNECTION_COLOR);
     m_pen.setWidth(CONNECTION_THICKNESS);
 
+    /* Signals & Slots */
 
+    connect(&m_contextDisconnect, &QMenu::hovered,
+            this, &WorkingArea::disconnectHover);
 
-    qCDebug(logC, "called");
+    connect(&m_contextDisconnect, &QMenu::triggered,
+            this, &WorkingArea::disconnectTrigger);
+
+    connect(&m_contextDisconnect, &QMenu::aboutToHide,
+            this, &WorkingArea::disconnectHide);
 }
 
 void WorkingArea::updateSize()
@@ -71,15 +78,53 @@ void WorkingArea::deleteElement(ElementMaster *element)
         }
     }
 
+
+
     /* Re-paint screen */
     update();
+}
+
+void WorkingArea::disconnectHover(QAction *action)
+{
+    //qCInfo(logC, "called");
+    emit stopHighlightAllElements();
+
+    ConnectionPair* selectedElement = qvariant_cast<ConnectionPair*>(action->data());
+
+    selectedElement->child->startHighlight();
+    selectedElement->parent->startHighlight();
+}
+
+void WorkingArea::disconnectTrigger(QAction *action)
+{
+    ConnectionPair* selectedElement = qvariant_cast<ConnectionPair*>(action->data());
+    qCInfo(logC, "called");
+}
+
+void WorkingArea::disconnectHide()
+{
+    qCInfo(logC, "called");
+    /* Delete temporary connections pairs*/
+    while(!m_discMenuConnections.empty()){
+
+        delete m_discMenuConnections.front();
+        m_discMenuConnections.pop_front();
+    }
+    emit stopHighlightAllElements();
 }
 
 void WorkingArea::registerElement(const ElementMaster *new_element)
 {
     qCDebug(logC, "called with element %s", new_element->objectName().toStdString().c_str());
+
+    /* Element --> Workingarea */
     connect(new_element, &ElementMaster::remove,
             this, &WorkingArea::deleteElement);
+
+    /* Workingarea --> Element */
+
+    connect(this, &WorkingArea::stopHighlightAllElements,
+            new_element, &ElementMaster::stopHighlight);
 }
 
 
@@ -111,18 +156,15 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
     } else if (event->button() == Qt::RightButton &&
                m_tmpElement->m_plug.underMouse()){
         qCDebug(logC, "rightklick on plug");
+
+        /* Construct context menu with connected childs */
+        createContextMenu(m_tmpElement->m_childs, m_tmpElement, event->pos());
+
     } else if (event->button() == Qt::RightButton &&
                m_tmpElement->m_socket.underMouse()){
         qCDebug(logC, "rightklick on socket");
-        QMenu menu;
-        QAction *at1 = new QAction("test 1");
-        QAction *at2 = new QAction("test 2");
-        //https://doc.qt.io/qt-5/qmenu.html#QMenu
 
-        menu.addAction(at1);
-        menu.addAction(at2);
-        //menu.show();
-        menu.exec(event->pos());
+        createContextMenu(m_tmpElement->m_parents, m_tmpElement, event->pos());
 
     } else if (m_tmpElement->m_plug.underMouse()){
         // begin drawing
@@ -150,6 +192,32 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
 
 
     update();
+}
+
+void WorkingArea::createContextMenu(QSet<ElementMaster *> &elementSet, ElementMaster* currentElement, QPoint pos)
+{
+    qCDebug(logC, "called");
+
+    m_contextDisconnect.clear();
+
+    for(const auto& element : elementSet){
+        QString txt = QString("-/- %1").arg(element->objectName());
+
+        /* QAction data must contain parent and child element */
+
+        QAction *action = new QAction(txt, &m_contextDisconnect);
+        ConnectionPair *connPair = new ConnectionPair(currentElement, element);
+
+        m_discMenuConnections.append(connPair);
+
+        action->setData(QVariant::fromValue(connPair));
+        m_contextDisconnect.addAction(action);
+    }
+
+
+    if(!m_contextDisconnect.isEmpty()){
+        m_contextDisconnect.popup(mapToGlobal(pos));
+    }
 }
 
 void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
@@ -195,7 +263,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
              */
 
             /* Register child at parent element */
-            m_tmpElement->addChild(m_tmpElement);
+            m_tmpElement->addChild(targetElement);
 
             /* Register parent at child element */
             targetElement->addParent(m_tmpElement);
@@ -414,5 +482,7 @@ void WorkingArea::updateConnection()
         pair.connLine.setP2(pair.receiver->pos() + SOCKET_OFFSET_POSITION);
     }
 }
+
+
 
 

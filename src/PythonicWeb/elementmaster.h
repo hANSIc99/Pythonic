@@ -119,31 +119,39 @@ public:
             QWidget *parent = nullptr);
 
     //! Unique 32 bit id of each element
-    quint32             m_id;
+    quint32                 m_id;
     //! Indicates if program should stop in debug mode
-    bool                m_bDebug{false};
+    bool                    m_bDebug{false};
 
     //! Indicates if the icon bar is visible
-    //bool                m_bIconBar;
+    //bool                  m_bIconBar;
 
-    bool                m_debugEnabled;
+    bool                    m_debugEnabled;
     //! Indicates if the element has a parent element
-    bool                m_parentConnected{false};
+    bool                    m_parentConnected{false};
     //! Indicates if the element has a child element
-    bool                m_childConnected{false};
+    bool                    m_childConnected{false};
+
+    QSet<ElementMaster*>    m_parents;
+    QSet<ElementMaster*>    m_childs;
+
     /*! @brief Indicates the possible child positions of an element
      *
      * true  | false = only a bottom child\n
      * false | true  = right child
      */
-    //ChildConfig         m_childPositions;
+    //ChildConfig           m_childPositions;
 
-    void                startHighlight();
-    void                stopHighlight();
 
-    void                addParent(ElementMaster *parent);
-    void                addChild(ElementMaster *child);
 
+
+    void                    addParent(ElementMaster *parent);
+    void                    addChild(ElementMaster *child);
+
+public slots:
+
+    void                    stopHighlight();
+    void                    startHighlight();
 
 signals:
 
@@ -188,8 +196,7 @@ private:
 
     QSizePolicy             m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
 
-    QSet<ElementMaster*>    m_parents;
-    QSet<ElementMaster*>    m_childs;
+
 };
 
 // https://stackoverflow.com/questions/2562176/storing-a-type-in-c
