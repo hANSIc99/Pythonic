@@ -48,8 +48,8 @@
 #define BACKGROUND_COLOR_C QColor(255, 198, 52)
 
 struct Connection {
-    ElementMaster* sender;
-    ElementMaster* receiver;
+    ElementMaster* parent;
+    ElementMaster* child;
     QLine          connLine;
 };
 
@@ -133,7 +133,10 @@ private:
     void drawPreviewConnection(QPainter *p);
     void drawConnections(QPainter *p);
     void updateConnection();
-    void createContextMenu(QSet<ElementMaster*> &elementSet, ElementMaster* currentElement, QPoint pos);
+    void createContextMenu(QSet<ElementMaster*> &elementSet,
+                           ElementMaster* currentElement,
+                           QPoint pos,
+                           bool plug);
 
     //bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 

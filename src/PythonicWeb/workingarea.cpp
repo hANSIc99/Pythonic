@@ -72,8 +72,8 @@ void WorkingArea::deleteElement(ElementMaster *element)
     QVector<Connection>::iterator it = m_connections.begin();
     while (it != m_connections.end()){
 
-        if (    it->receiver    == element ||
-                it->sender      == element){
+        if (    it->child    == element ||
+                it->parent      == element){
             it = m_connections.erase(it++);
         }
     }
@@ -97,19 +97,44 @@ void WorkingArea::disconnectHover(QAction *action)
 
 void WorkingArea::disconnectTrigger(QAction *action)
 {
-    ConnectionPair* selectedElement = qvariant_cast<ConnectionPair*>(action->data());
-    qCInfo(logC, "called");
+    ConnectionPair* pair = qvariant_cast<ConnectionPair*>(action->data());
+
+    /* delete connections */
+
+    /* Parent: Get iterator to child element and delete it from m_childs */
+    pair->parent->m_childs.remove(pair->child);
+    //QSet<ElementMaster*>::const_iterator it = pair->parent->m_childs.find(pair->child);
+
+    /* Child: Get iterator to parent element and delete it from m_parents */
+
+    pair->child->m_parents.remove(pair->parent);
+
+    /* Delete painted connection line */
+
+    for(QVector<Connection>::iterator it = m_connections.begin() ;
+        it != m_connections.end();
+        it++){
+
+        if (    it->parent  == pair->parent &&
+                it->child   == pair->child){
+            //it = m_connections.erase(it++);
+            m_connections.erase(it);
+            break;
+        }
+    }
+
+    /* Reset socket / plug appearance */
+
+    pair->parent->checkConnectionState();
+    pair->child->checkConnectionState();
+
+    /* Re-paint screen */
+    update();
 }
 
 void WorkingArea::disconnectHide()
 {
     qCInfo(logC, "called");
-    /* Delete temporary connections pairs*/
-    while(!m_discMenuConnections.empty()){
-
-        delete m_discMenuConnections.front();
-        m_discMenuConnections.pop_front();
-    }
     emit stopHighlightAllElements();
 }
 
@@ -126,8 +151,6 @@ void WorkingArea::registerElement(const ElementMaster *new_element)
     connect(this, &WorkingArea::stopHighlightAllElements,
             new_element, &ElementMaster::stopHighlight);
 }
-
-
 
 void WorkingArea::mousePressEvent(QMouseEvent *event)
 {
@@ -158,13 +181,13 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
         qCDebug(logC, "rightklick on plug");
 
         /* Construct context menu with connected childs */
-        createContextMenu(m_tmpElement->m_childs, m_tmpElement, event->pos());
+        createContextMenu(m_tmpElement->m_childs, m_tmpElement, event->pos(), true);
 
     } else if (event->button() == Qt::RightButton &&
                m_tmpElement->m_socket.underMouse()){
         qCDebug(logC, "rightklick on socket");
 
-        createContextMenu(m_tmpElement->m_parents, m_tmpElement, event->pos());
+        createContextMenu(m_tmpElement->m_parents, m_tmpElement, event->pos(), false);
 
     } else if (m_tmpElement->m_plug.underMouse()){
         // begin drawing
@@ -194,11 +217,24 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
     update();
 }
 
-void WorkingArea::createContextMenu(QSet<ElementMaster *> &elementSet, ElementMaster* currentElement, QPoint pos)
+void WorkingArea::createContextMenu(QSet<ElementMaster *> &elementSet,
+                                    ElementMaster* currentElement,
+                                    QPoint pos,
+                                    bool plug)
 {
     qCDebug(logC, "called");
 
+    /* Clear menu */
+
     m_contextDisconnect.clear();
+
+    /* Delete temporary connections pairs*/
+
+    while(!m_discMenuConnections.empty()){
+
+        delete m_discMenuConnections.front();
+        m_discMenuConnections.pop_front();
+    }
 
     for(const auto& element : elementSet){
         QString txt = QString("-/- %1").arg(element->objectName());
@@ -206,8 +242,16 @@ void WorkingArea::createContextMenu(QSet<ElementMaster *> &elementSet, ElementMa
         /* QAction data must contain parent and child element */
 
         QAction *action = new QAction(txt, &m_contextDisconnect);
-        ConnectionPair *connPair = new ConnectionPair(currentElement, element);
 
+        ConnectionPair *connPair;
+        /* Switch parent / child wether socket or plug was clicked */
+        if(plug){
+            connPair = new ConnectionPair(currentElement, element);
+        } else {
+            connPair = new ConnectionPair(element, currentElement);
+        }
+
+        /* Save a pointer for later deletion (also in this method) */
         m_discMenuConnections.append(connPair);
 
         action->setData(QVariant::fromValue(connPair));
@@ -449,9 +493,6 @@ void WorkingArea::paintEvent(QPaintEvent *event)
     m_painter.end();
 }
 
-
-
-
 void WorkingArea::drawPreviewConnection(QPainter *p)
 {
 
@@ -478,11 +519,7 @@ void WorkingArea::updateConnection()
          * Correct the start- and end-position so that it looks like
          * the line starts and ends in the middle of the plug / socket
          */
-        pair.connLine.setP1(pair.sender->pos() + PLUG_OFFSET_POSITION);
-        pair.connLine.setP2(pair.receiver->pos() + SOCKET_OFFSET_POSITION);
+        pair.connLine.setP1(pair.parent->pos() + PLUG_OFFSET_POSITION);
+        pair.connLine.setP2(pair.child->pos() + SOCKET_OFFSET_POSITION);
     }
 }
-
-
-
-

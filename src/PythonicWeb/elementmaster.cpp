@@ -35,7 +35,7 @@ ElementMaster::ElementMaster(bool socket,
     /* Generate random element name */
 
     m_id = QRandomGenerator::global()->generate();
-    QString widgetName = QStringLiteral("%1 - 0x%2").arg(objectName).arg(m_id, 8, 16);
+    QString widgetName = QStringLiteral("%1 - 0x%2").arg(objectName).arg(m_id, 8, 16, QChar('0'));
     setObjectName(widgetName);
     qCDebug(logC, "called - %s added", widgetName.toStdString().c_str());
 
@@ -93,16 +93,18 @@ ElementMaster::ElementMaster(bool socket,
 
 void ElementMaster::startHighlight()
 {
-    //qCDebug(logC, "called");
-    m_symbol.setStyleSheet("#element { background-color: #636363;\
-                  border: 3px solid #fce96f; border-radius: 20px; }");
+    m_symbol.setStyleSheet("#element { border: 3px solid #fce96f; border-radius: 20px; }");
+}
+
+void ElementMaster::checkConnectionState()
+{
+    emit socketConnectionHighlight(!m_parents.empty());
+    emit plugConnectionHighlight(!m_childs.empty());
 }
 
 void ElementMaster::stopHighlight()
 {
-    //qCDebug(logC, "called");
-    m_symbol.setStyleSheet("#element { background-color: #636363;\
-                           border: 3px solid #ff5900; border-radius: 20px; }");
+    m_symbol.setStyleSheet(styleSheet());
 }
 
 void ElementMaster::addParent(ElementMaster *parent)

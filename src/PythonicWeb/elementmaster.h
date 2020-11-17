@@ -152,6 +152,7 @@ public slots:
 
     void                    stopHighlight();
     void                    startHighlight();
+    void                    checkConnectionState();
 
 signals:
 
