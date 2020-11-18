@@ -21,9 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
 
-    // https://doc.qt.io/qt-5/objecttrees.html
-    //m_sendDebugMessage = new QPushButton("Send Debug Message", this);
-    //m_sendDebugMessage->setGeometry((QRect(QPoint(30, 170), QSize(200, 50))));
+    // BAUSTELLE: Beim Laden des MainWindows Config hochladen laden
 
     /* Setup Working Area Tabs */
     m_workingTabs.setMinimumSize(300, 300);
@@ -47,6 +45,9 @@ MainWindow::MainWindow(QWidget *parent)
         /* Signals & Slots */
         connect(new_workingArea, &WorkingArea::startExec,
                 this, &MainWindow::startExec);
+
+        connect(new_workingArea, &WorkingArea::stopExec,
+                this, &MainWindow::stopExec);
     }
 
     //m_toolboxTabs.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
@@ -178,6 +179,12 @@ void MainWindow::startExec(quint32 id)
     //1. load config to daemon
     // 2. emit start command
 
+}
+
+void MainWindow::stopExec(quint32 id)
+{
+    qCInfo(logC, "called");
+    // Stop process at daemon
 }
 
 void MainWindow::testSlot(bool checked)

@@ -79,9 +79,10 @@ private slots:
     void wsCtrl(QJsonObject cmd);
     /* Sets the current WorkingArea */
     void setCurrentWorkingArea(int tabIndex);
-    /* Start execution */
+    /* Start execution of specific element */
     void startExec(quint32 id);
-
+    /* Stop execution of specific element */
+    void stopExec(quint32 id);
     /* DBG Slot */
     void testSlot(bool checked);
 

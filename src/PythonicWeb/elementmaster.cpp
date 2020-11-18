@@ -27,6 +27,7 @@ ElementMaster::ElementMaster(bool socket,
                              bool iconBar,
                              QWidget *parent)
     : QWidget(parent)
+    , m_hasSocket(socket)
     , m_symbol(pixMapPath, LABEL_SIZE, this)
 {
 
@@ -230,6 +231,19 @@ void ElementSocket::leaveEvent(QEvent *event)
  *                                                   *
  *****************************************************/
 
+
+
+
+void ElementStart::togggleRunning(bool running)
+{
+    qCInfo(logC, "called");
+    m_running = running;
+    if(!m_running){
+       resetImage(QUrl("http://localhost:7000/PlayDefault.png"));
+    } else {
+        resetImage(QUrl("http://localhost:7000/StopYellow.png"));
+    }
+}
 
 void ElementStart::enterEvent(QEvent *event)
 {

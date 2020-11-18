@@ -106,12 +106,12 @@ signals:
 
     void stopHighlightAllElements();
     void startExec(quint32 id);
+    void stopExec(quint32 id);
 
 public slots:
 
     void updateSize();
     void deleteElement(ElementMaster *element);
-    void invokeStartExec(quint32 id);
 
 private slots:
 
@@ -145,6 +145,7 @@ private:
 
     int                         m_gridNo;
     bool                        m_drawing{false};
+    bool                        m_startBtnPressed{false};
 
     /**
      * Pointer to element during drag & drop

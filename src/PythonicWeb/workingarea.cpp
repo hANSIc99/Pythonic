@@ -86,12 +86,6 @@ void WorkingArea::deleteElement(ElementMaster *element)
     update();
 }
 
-void WorkingArea::invokeStartExec(quint32 id)
-{
-    qCInfo(logC, "called");
-    emit startExec(id);
-}
-
 void WorkingArea::disconnectHover(QAction *action)
 {
     //qCInfo(logC, "called");
@@ -203,6 +197,9 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
         m_previewConnection = QLine(); // reset connection
         m_drawStartPos = event->pos(); // set start position
         qCDebug(logC, "Plug under Mouse: %d", m_tmpElement->m_plug.underMouse());
+    } else if (m_tmpElement->m_startBtn.underMouse()){
+        qCDebug(logC, "Start Button found");
+        m_startBtnPressed = true;
     } else if (m_tmpElement->m_socket.underMouse()){
         return;
     } else {
@@ -306,21 +303,12 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
             return;
         }
 
-        if(helper::mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_socket)), event->globalPos())){
+
+        if(     targetElement->m_hasSocket &&
+                helper::mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_socket)), event->globalPos())){
             //qCDebug(logC, "Socket found - add Connection!");
 
-            /*
-             *  parent  = m_tmpElement
-             *  child = targetElement
-             */
 
-            /* Register child at parent element */
-            m_tmpElement->addChild(targetElement);
-
-            /* Register parent at child element */
-            targetElement->addParent(m_tmpElement);
-
-            /* Check if connection to parent already exist */
             bool alreadyConnected = false;
             for(QVector<Connection>::iterator it = m_connections.begin() ;
                 it != m_connections.end();
@@ -333,22 +321,35 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
                 }
             }
             if(!alreadyConnected){
+
+                /*
+                 *  parent  = m_tmpElement
+                 *  child = targetElement
+                 */
+
+                /* Register child at parent element */
+                m_tmpElement->addChild(targetElement);
+
+                /* Register parent at child element */
+                targetElement->addParent(m_tmpElement);
+
+                /* Check if connection to parent already exist */
+
+
+
                 m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
                 qCDebug(logC, "Socket found - add Connection!");
             } else {
                 qCDebug(logC, "Socket found - connection already exist!");
             }
-
-
         }
 
         m_draw = false;
         update();
 
         //qCDebug(logC, "widget position: x: %d y: %d", withinSocketPos.x(), withinSocketPos.y());
-
     } else if (m_dragging){
-
+        /* Moving elements within the working area */
         this->setCursor(Qt::ArrowCursor);
         /* Prevent that the element moves out of the
          * leftmost / topmost area */
@@ -395,7 +396,49 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         qCDebug(logC, "Resize to X: %d Y: %d", width(), height());
 
         m_dragging = false;
-    }
+    } else if (m_startBtnPressed){
+
+        QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
+
+        if (!e){
+            qCDebug(logC, "called - no child");
+            m_draw = false;
+            update();
+            return;
+        }
+        /*
+         *  Hierarchy of ElementMaster
+         *
+         *  m_startBtn(QLabel) --(parent)-->
+         *                   m_symbolWidget(QWidget) --(parent)-->
+         *                                           m_innerWidget(QLabel) --(parent)-->
+         *                                                                 ElementMaster
+         */
+        ElementMaster* targetElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
+
+        /* Position abfragen */
+
+        if (!targetElement){
+            qCDebug(logC, "no button");
+            m_startBtnPressed = false;
+
+            return;
+        }
+        if(helper::mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_startBtn)), event->globalPos())){
+            qCDebug(logC, "Button Pressed");
+            if(m_tmpElement->m_startBtn.m_running){
+                // stop execution
+                m_tmpElement->m_startBtn.togggleRunning(false);
+                emit stopExec(m_tmpElement->m_id);
+            } else {
+                //start execution
+                m_tmpElement->m_startBtn.togggleRunning(true);
+
+                emit startExec(m_tmpElement->m_id);
+            }
+        }
+    } // m_startBtnPressed
+
     m_tmpElement = NULL;
     update();
 }
@@ -479,17 +522,7 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
 
     } // else if (m_draw)
 }
-#if 0
-bool WorkingArea::mouseOverElement(const QWidget *element, const QPoint &globalPos)
-{
-    QPoint withinElementPos = element->mapFromGlobal(globalPos);
 
-    return (withinElementPos.x() >= 0 &&
-            withinElementPos.x() <= element->width() &&
-            withinElementPos.y() >= 0 &&
-            withinElementPos.y() <= element->height());
-}
-#endif
 void WorkingArea::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)

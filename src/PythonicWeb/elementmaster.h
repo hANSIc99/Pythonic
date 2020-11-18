@@ -116,12 +116,15 @@ public:
         setContextMenuPolicy(Qt::CustomContextMenu);
     };
 
+    void togggleRunning(bool running);
+    bool m_running;
+
 protected:
 
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
 private:
-    bool                m_running;
+
     QLoggingCategory    logC{"ElementPlug"};
 };
 
@@ -152,7 +155,8 @@ public:
     bool                    m_parentConnected{false};
     //! Indicates if the element has a child element
     bool                    m_childConnected{false};
-
+    //! Indicates if elements accept parent connections
+    bool                    m_hasSocket;
     QSet<ElementMaster*>    m_parents;
     QSet<ElementMaster*>    m_childs;
 
@@ -182,10 +186,10 @@ signals:
     void socketConnectionHighlight(bool state);
 
 
-
 private slots:
 
     void deleteSelf();
+    //void playBtnClicked // on release
 
 private:
 
