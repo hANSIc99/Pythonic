@@ -33,7 +33,7 @@
 #include <QLabel>
 
 #include "helper.h"
-#include "logger.h"
+#include "websocket.h"
 #include "workingarea.h"
 #include "menubar.h"
 #include "toolbox.h"
@@ -66,18 +66,24 @@ public:
       *
       * Used to log at websocket /log of PythonicWebDaemon
       */
-    Logger m_logger{this};
+    Websocket   m_wsCtrl{"ws://localhost:7000/ctrl", this};
 
 
 signals:
     void updateCurrentWorkingArea(QWidget* currentWokringArea);
 
 private slots:
-    void debugMessage();
+    //! Send log-message to daemon
+    void logMessage(QString msg, LogLvl lvl);
+    //! Send control command to daemon
+    void wsCtrl(QJsonObject cmd);
     /* Sets the current WorkingArea */
     void setCurrentWorkingArea(int tabIndex);
+    /* Start execution */
+    void startExec(quint32 id);
 
-
+    /* DBG Slot */
+    void testSlot(bool checked);
 
 
 private:

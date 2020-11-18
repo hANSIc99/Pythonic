@@ -129,11 +129,11 @@ int main(int argc, char *argv[])
 
                                                     /* Elements */
 
-                                                    "StartElement.debug=false\n"
-                                                    "StartElement.info=false\n"
+                                                    "Scheduler.debug=true\n"
+                                                    "Scheduler.info=true\n"
 
-                                                    "PlaceholderElement.debug=true\n"
-                                                    "PlaceholderElement.info=true\n"
+                                                    "GenericPython.debug=true\n"
+                                                    "GenericPython.info=true\n"
 
                                                     ));
     QApplication a(argc, argv);

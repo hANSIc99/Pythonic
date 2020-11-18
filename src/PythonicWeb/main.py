@@ -1,5 +1,4 @@
 import eventlet, os, sys, logging
-from eventlet import wsgi, websocket, greenthread
 from web_daemon import MainWorker
 from PyQt5.QtCore import QCoreApplication, QTimer
 		

@@ -44,10 +44,33 @@ class Scheduler : public ElementMaster
 public:
 
     explicit Scheduler(QWidget *parent = nullptr)
+        : ElementMaster(false, // socket
+                        true, // plug
+                        QUrl("http://localhost:7000/Scheduler.png"),
+                        QString("Scheduler"),
+                        true,
+                        parent)
+
+    {
+        qCDebug(logC, "called");
+    };
+
+
+private:
+
+    QLoggingCategory        logC{"Scheduler"};
+};
+
+class GenericPython : public ElementMaster
+{
+    Q_OBJECT
+public:
+
+    explicit GenericPython(QWidget *parent = nullptr)
         : ElementMaster(true,
                         true,
-                        QUrl("http://localhost:7000/Scheduler.png"),
-                        QString("StartElement"),
+                        QUrl("http://localhost:7000/BaseElement.png"),
+                        QString("GenericPython"),
                         true,
                         parent)
 
@@ -60,8 +83,6 @@ private:
 
     QLoggingCategory        logC{"StartElement"};
 };
-
-
 
 
 #endif // BASICELEMENTS_H

@@ -43,6 +43,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 
         m_workingTabs.addTab(new_scroll_area, QString("Grid %1").arg(i+1));
+
+        /* Signals & Slots */
+        connect(new_workingArea, &WorkingArea::startExec,
+                this, &MainWindow::startExec);
     }
 
     //m_toolboxTabs.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
@@ -104,6 +108,14 @@ MainWindow::MainWindow(QWidget *parent)
     //m_sendDebugMessage = new QPushButton(this);
     setAcceptDrops(true);
 
+
+    /* Signals & Slots - Buttons */
+    //m_newFileBtn
+
+    connect(&m_menuBar.m_newFileBtn, &QPushButton::clicked,
+            this, &MainWindow::testSlot);
+
+    /* Signals & Slots : Miscellaneous */
     connect(&m_workingTabs, &QTabWidget::currentChanged,
                     this, &MainWindow::setCurrentWorkingArea);
 
@@ -116,7 +128,7 @@ MainWindow::MainWindow(QWidget *parent)
     setCurrentWorkingArea(m_workingTabs.currentIndex());
 }
 
-void MainWindow::debugMessage()
+void MainWindow::logMessage(QString msg, LogLvl lvl)
 {
     //qInfo() << "MainWindow::wsSendMsg() called";
     qCDebug(logC, "Debug Message");
@@ -124,11 +136,52 @@ void MainWindow::debugMessage()
     //QUrl ws_url(QStringLiteral("ws://localhost:7000/message"));
     //qDebug() << "Open ws URL: " << ws_url.toString();
 
-    m_logger.logMsg("Stephan Hallo!", LogLvl::FATAL);
+
+
+
+    QJsonObject data
+    {
+        {"logLvL", (int)lvl},
+        {"msg", msg}
+    };
+
+    QJsonObject logObj
+    {
+        {"cmd", "logMsg"},
+        {"data", data}
+    };
+
+    /* funktioniert auch so
+    QJsonObject logObj;
+    logObj["logLvL"] = (int)lvl;
+    logObj["msg"] = msg;
+    */
+
+    m_wsCtrl.send(logObj);
+}
+
+void MainWindow::wsCtrl(QJsonObject cmd)
+{
+    qCInfo(logC, "called");
+    m_wsCtrl.send(cmd);
 }
 
 void MainWindow::setCurrentWorkingArea(int tabIndex)
 {
     qCInfo(logC, "called, current tabIndex %d", tabIndex);
     emit updateCurrentWorkingArea(dynamic_cast<QWidget*>(m_arr_workingArea[tabIndex]));
+}
+
+void MainWindow::startExec(quint32 id)
+{
+    qCInfo(logC, "called");
+    //1. load config to daemon
+    // 2. emit start command
+
+}
+
+void MainWindow::testSlot(bool checked)
+{
+    qCInfo(logC, "called");
+    logMessage("test123", LogLvl::CRITICAL);
 }

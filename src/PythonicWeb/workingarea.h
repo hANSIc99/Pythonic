@@ -105,11 +105,13 @@ public:
 signals:
 
     void stopHighlightAllElements();
+    void startExec(quint32 id);
 
 public slots:
 
     void updateSize();
     void deleteElement(ElementMaster *element);
+    void invokeStartExec(quint32 id);
 
 private slots:
 

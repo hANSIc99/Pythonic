@@ -45,7 +45,9 @@ WorkingArea::WorkingArea(int gridNo, QWidget *parent)
     m_pen.setColor(CONNECTION_COLOR);
     m_pen.setWidth(CONNECTION_THICKNESS);
 
-    /* Signals & Slots */
+
+
+    /* Signals & Slots - Disconnect context menu */
 
     connect(&m_contextDisconnect, &QMenu::hovered,
             this, &WorkingArea::disconnectHover);
@@ -82,6 +84,12 @@ void WorkingArea::deleteElement(ElementMaster *element)
 
     /* Re-paint screen */
     update();
+}
+
+void WorkingArea::invokeStartExec(quint32 id)
+{
+    qCInfo(logC, "called");
+    emit startExec(id);
 }
 
 void WorkingArea::disconnectHover(QAction *action)

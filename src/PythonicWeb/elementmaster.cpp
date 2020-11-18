@@ -47,6 +47,7 @@ ElementMaster::ElementMaster(bool socket,
     /* Enable / disable socket/plug */
 
     m_socket.setVisible(socket);
+    m_startBtn.setVisible(!socket);
     m_plug.setVisible(plug);
 
     /* m_symbol needs object name to apply stylesheet */
@@ -56,7 +57,12 @@ ElementMaster::ElementMaster(bool socket,
     /* Setup symbol-widget (socket, symbol and plug) */
     m_symbolWidget.setLayout(&m_symbolWidgetLayout);
     //m_symbolWidgetLayout.setContentsMargins(-10, 0, -50, 0);
-    m_symbolWidgetLayout.addWidget(&m_socket);
+    if(socket){
+        m_symbolWidgetLayout.addWidget(&m_socket);
+    } else {
+        m_symbolWidgetLayout.addWidget(&m_startBtn);
+    }
+
     m_symbolWidgetLayout.addWidget(&m_symbol);
     m_symbolWidgetLayout.addWidget(&m_plug);
 
@@ -212,6 +218,37 @@ void ElementSocket::leaveEvent(QEvent *event)
 
     if(!m_connected){
         resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
+    }
+
+}
+
+
+
+/*****************************************************
+ *                                                   *
+ *                      START                        *
+ *                                                   *
+ *****************************************************/
+
+
+void ElementStart::enterEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+    qCInfo(logC, "called");
+
+    if(!m_running){
+       resetImage(QUrl("http://localhost:7000/PlayGreen.png"));
+    }
+
+}
+
+void ElementStart::leaveEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+    qCInfo(logC, "called");
+
+    if(!m_running){
+        resetImage(QUrl("http://localhost:7000/PlayDefault.png"));
     }
 
 }

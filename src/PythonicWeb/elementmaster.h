@@ -104,6 +104,27 @@ private:
 };
 
 
+class ElementStart : public BaseLabel
+{
+    Q_OBJECT
+public:
+    explicit ElementStart(QWidget *parent = nullptr)
+        : BaseLabel(QUrl("http://localhost:7000/PlayDefault.png"), PLUG_SOCKET_SIZE, parent)
+        , m_running(false)
+    {
+        qCDebug(logC, "called");
+        setContextMenuPolicy(Qt::CustomContextMenu);
+    };
+
+protected:
+
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+private:
+    bool                m_running;
+    QLoggingCategory    logC{"ElementPlug"};
+};
+
 
 class ElementMaster : public QWidget
 {
@@ -188,6 +209,8 @@ public:
     ElementSocket           m_socket;
     //! Plug icon
     ElementPlug             m_plug;
+    //! Start button
+    ElementStart            m_startBtn;
 
 private:
     //! Label of the element

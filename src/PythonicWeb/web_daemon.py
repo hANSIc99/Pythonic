@@ -39,33 +39,47 @@ def startTimer(ws):
             return
 
 @websocket.WebSocketWSGI
-def processMessage(ws):
+def ctrl(ws):
+    while True:
+        m = ws.wait()
+        if m is None:
+            logging.debug('PythonicDaemon - Logging WebSocket Closed')            
+            break;   
+        else:
+            msg = json.loads(m)
+            
+            if msg['cmd'] == 'logMsg':
+                # logging
+                logObj = msg['data']
+
+                if logObj['logLvL'] == LogLvl.DEBUG.value:
+                    logging.debug('PythonicWeb    - {}'.format(logObj['msg']))
+                if logObj['logLvL'] == LogLvl.DEBUG.value:
+                    logging.debug('PythonicWeb    - {}'.format(logObj['msg']))
+                elif logObj['logLvL'] == LogLvl.INFO.value:
+                    logging.info('PythonicWeb    - {}'.format(logObj['msg']))
+                elif logObj['logLvL'] == LogLvl.WARNING.value:
+                    logging.warning('PythonicWeb    - {}'.format(logObj['msg']))
+                elif logObj['logLvL'] == LogLvl.CRITICAL.value:
+                    logging.error('PythonicWeb    - {}'.format(logObj['msg']))
+                elif logObj['logLvL'] == LogLvl.FATAL.value:
+                    logging.critical('PythonicWeb    - {}'.format(logObj['msg']))
+
+            elif msg['cmd'] == 'start':
+                logging.debug('PythonicWeb    - {}'.format(START))
+
+
+
+
+    
+
+
+@websocket.WebSocketWSGI
+def processMessage(ws): # wird das noch benötigt?
     m = ws.wait()
     logging.debug('Message received: {}'.format(m))
     n_grid = ws.environ['mainWorker'].max_grid_size
     logging.debug('Max grid size: {}'.format(n_grid))
-
-@websocket.WebSocketWSGI
-def writeLog(ws):
-    while True:
-        m = ws.wait()
-        if m is None:
-            logging.debug('PythonicDaemon - Logging WebSocket Closed')
-            
-            break;         
-        else:
-            logObj = json.loads(m)
-            
-            if logObj['logLvL'] == LogLvl.DEBUG.value:
-                logging.debug('PythonicWeb    - {}'.format(logObj['msg']))
-            elif logObj['logLvL'] == LogLvl.INFO.value:
-                logging.info('PythonicWeb    - {}'.format(logObj['msg']))
-            elif logObj['logLvL'] == LogLvl.WARNING.value:
-                logging.warning('PythonicWeb    - {}'.format(logObj['msg']))
-            elif logObj['logLvL'] == LogLvl.CRITICAL.value:
-                logging.error('PythonicWeb    - {}'.format(logObj['msg']))
-            elif logObj['logLvL'] == LogLvl.FATAL.value:
-                logging.critical('PythonicWeb    - {}'.format(logObj['msg']))
 
        
 @websocket.WebSocketWSGI
@@ -97,9 +111,9 @@ def dispatch(environ, start_response):
     if environ['PATH_INFO'] == '/data':
         logging.debug('PATH_INFO == \'/data\'')     
         return saveData(environ, start_response)
-    elif environ['PATH_INFO'] == '/log':
-        logging.debug('PythonicDaemon - Open Logging WebSocket')     
-        return writeLog(environ, start_response)
+    elif environ['PATH_INFO'] == '/ctrl':
+        logging.debug('PythonicDaemon - Open CTRL WebSocket')     
+        return ctrl(environ, start_response)
     elif environ['PATH_INFO'] == '/message':
         logging.debug('PATH_INFO == \'/message\'')
         return processMessage(environ, start_response)
@@ -119,7 +133,6 @@ def dispatch(environ, start_response):
 
     elif environ['PATH_INFO'] == '/':
         logging.debug('PATH_INFO == \'/\'')
-        #print(environ['test1'])
         
         start_response('200 OK', [  ('content-type', 'text/html'),
                                     ('Cross-Origin-Opener-Policy', 'same-origin'),
@@ -127,17 +140,6 @@ def dispatch(environ, start_response):
         return [open(os.path.join(os.path.dirname(__file__),
             root_url + 'templates/PythonicWeb.html')).read()]
 
-        
-        """
-    elif environ['PATH_INFO'] == '/qtloader.js':
-        logging.debug('PATH_INFO == \'/qtloader.js\'')
-        str_data = open(os.path.join(os.path.dirname(__file__),
-            root_url + 'static/qtloader.js')).read() 
-        start_response('200 OK', [('content-type', 'application/javascript') ])
-        #start_response('200 OK', [('content-type', 'text/plain; charset=utf-8') ])
-
-        return [str_data]
-        """
 
     elif environ['PATH_INFO'] == '/qtlogo.svg':
         logging.debug('PATH_INFO == \'/qtlogo.svg\'')
@@ -172,14 +174,6 @@ def dispatch(environ, start_response):
         
         return [img_data]
 
-        """
-    elif environ['PATH_INFO'] == '/PythonicWeb.js':
-        logging.debug('PATH_INFO == \'/PythonicWeb.js\'')
-        str_data = open(os.path.join(os.path.dirname(__file__),
-            root_url + 'static/PythonicWeb.js')).read() 
-        start_response('200 OK', [('content-type', 'application/javascript')])
-        return [str_data]
-        """
     elif environ['PATH_INFO'] == '/PythonicWeb.wasm':
         logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
         bin_data = open(os.path.join(os.path.dirname(__file__),

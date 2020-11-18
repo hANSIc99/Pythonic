@@ -24,7 +24,7 @@
 
 #include "workingarea.h"
 #include "toolmaster.h"
-
+                               // typeName    outputs
 #define OPERATION_DATA ToolData {"Scheduler", 1}
 
 /* Forward declarations to prevent
@@ -69,7 +69,8 @@ private:
 
     /* Programming Elements */
 
-    ToolTemplate<Scheduler>  m_BasicOperation{OPERATION_DATA};
+    ToolTemplate<Scheduler>         m_scheduler{OPERATION_DATA};
+    ToolTemplate<GenericPython>     m_genericPython{OPERATION_DATA};
 };
 
 #endif // TOOLBOX_H

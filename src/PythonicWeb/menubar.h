@@ -331,6 +331,8 @@ private:
 
     BaseLabel           m_logoHorizontal{QUrl("http://localhost:7000/horizontal.png"), LOGO_SIZE};
 
+public:
+
     NewFileButton       m_newFileBtn;
     OpenFileButton      m_openFileBtn;
     SaveButton          m_saveBtn;

@@ -33,7 +33,8 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
 
     m_layout.setContentsMargins(15, 10, 0, 0);
     m_layout.setSizeConstraint(QLayout::SetMinimumSize);
-    m_layout.addWidget(&m_BasicOperation);
+    m_layout.addWidget(&m_scheduler);
+    m_layout.addWidget(&m_genericPython);
     m_layout.addStretch(1);
 
     m_scrollArea.setWidget(&m_mainWidget);
@@ -44,6 +45,9 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
 
 
     connect(this, &Toolbox::updateCurrentWorkingArea,
-            &m_BasicOperation, &ToolMaster::setCurrentWorkingArea);
+            &m_scheduler, &ToolMaster::setCurrentWorkingArea);
+
+    connect(this, &Toolbox::updateCurrentWorkingArea,
+            &m_genericPython, &ToolMaster::setCurrentWorkingArea);
 
 }

@@ -15,8 +15,8 @@
  * along with Pythonic. If not, see <https://www.gnu.org/licenses/>
  */
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef WEBSOCKET_H
+#define WEBSOCKET_H
 
 #include <QtWebSockets/QWebSocket>
 #include <QJsonObject>
@@ -42,37 +42,38 @@ enum class LogLvl {
 };
 
 
-class Logger : public QObject
+class Websocket : public QObject
 {
     Q_OBJECT
 public:
 
 
-    explicit Logger(QObject *parent = nullptr)
+    explicit Websocket(QString url, QObject *parent = nullptr)
         : QObject(parent)
         , logC("Logger")
         {
         qCDebug(logC, "called");
-
-        QUrl url_logger(QStringLiteral("ws://localhost:7000/log"));
+        //
+        QUrl url_logger(url);
 
         //qDebug(QString("%1::%2 - %3").arg("Logger").arg(__func__).arg("called"));
         //qDebug("%s::%s() - %s", "Logger", __func__, "called");
 
 
-        connect(&m_WsLogMsg, &QWebSocket::disconnected, [this] { qCInfo(logC, "m_WsLogMsg disconnected()");});
-        connect(&m_WsLogMsg, &QWebSocket::connected, [this] {
-                    if(m_WsLogMsg.isValid()){
+        connect(&m_socket, &QWebSocket::disconnected, [this] { qCInfo(logC, "m_WsLogMsg disconnected()");});
+        connect(&m_socket, &QWebSocket::connected, [this] {
+                    if(m_socket.isValid()){
                         qCDebug(logC, "WebSocket for logging opened");
                     } else {
-                        m_WsLogMsg.close(QWebSocketProtocol::CloseCodeAbnormalDisconnection,"Operation FAILED - closed");
+                        m_socket.close(QWebSocketProtocol::CloseCodeAbnormalDisconnection,"Operation FAILED - closed");
                         qCCritical(logC, "WebSocket for logging could not be opened");
                     }
                 });
 
-        m_WsLogMsg.open(url_logger);
+        m_socket.open(url_logger);
     }
-
+    /* obsolete */
+#if 0
     void logMsg(const QString msg, const LogLvl lvl){
 
         qCDebug(logC, "Log Message: LvL: %i, Msg: %s", (int)lvl, msg.toStdString().c_str());
@@ -90,11 +91,16 @@ public:
         logObj["msg"] = msg;
         */
         QJsonDocument doc(logObj);
-        m_WsLogMsg.sendTextMessage(doc.toJson(QJsonDocument::Compact));
+        m_socket.sendTextMessage(doc.toJson(QJsonDocument::Compact));
+    }
+#endif
+    void send(QJsonObject data){
+        QString dbg = QJsonDocument(data).toJson(QJsonDocument::Compact); // can be removed later
+        m_socket.sendTextMessage(QJsonDocument(data).toJson(QJsonDocument::Compact));
     }
 
 private:
-    QWebSocket  m_WsLogMsg;
+    QWebSocket  m_socket;
     QLoggingCategory logC;
 };
 
