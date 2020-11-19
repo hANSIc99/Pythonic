@@ -70,7 +70,13 @@ private:
 };
 
 
-
+/*! @brief ToolTemplate - Main purpose: register new elements on workingareas
+ *
+ *  Detailed description follows here.
+ *  @author Stephan Avenwedde
+ *  @date October 2020
+ *  @copyright [GPLv3](../../../LICENSE)
+ */
 
 template<typename T> class ToolTemplate : public ToolMaster
 {

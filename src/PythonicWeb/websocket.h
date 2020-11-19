@@ -72,28 +72,7 @@ public:
 
         m_socket.open(url_logger);
     }
-    /* obsolete */
-#if 0
-    void logMsg(const QString msg, const LogLvl lvl){
 
-        qCDebug(logC, "Log Message: LvL: %i, Msg: %s", (int)lvl, msg.toStdString().c_str());
-
-
-        QJsonObject logObj
-        {
-            {"logLvL", (int)lvl},
-            {"msg", msg}
-        };
-
-        /* funktioniert auch so
-        QJsonObject logObj;
-        logObj["logLvL"] = (int)lvl;
-        logObj["msg"] = msg;
-        */
-        QJsonDocument doc(logObj);
-        m_socket.sendTextMessage(doc.toJson(QJsonDocument::Compact));
-    }
-#endif
     void send(QJsonObject data){
         QString dbg = QJsonDocument(data).toJson(QJsonDocument::Compact); // can be removed later
         m_socket.sendTextMessage(QJsonDocument(data).toJson(QJsonDocument::Compact));

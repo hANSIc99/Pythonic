@@ -128,6 +128,11 @@ private:
     QLoggingCategory    logC{"ElementPlug"};
 };
 
+struct ElementVersion {
+    int     major;
+    int     minor;
+};
+
 
 class ElementMaster : public QWidget
 {
@@ -139,36 +144,42 @@ public:
             bool plug,
             QUrl pixMapPath,
             QString objectName,
-            bool iconBar = true,
+            QString filename,
+            ElementVersion version,
+            QString author,
+            QString license,
             QWidget *parent = nullptr);
 
-    //! Unique 32 bit id of each element
+    /* Element Configuration */
+
+    //! Unique 32 bit id of each element, automatic set (CONFIG)
     quint32                 m_id;
-    //! Indicates if program should stop in debug mode
+    //! Indicates if elements accept parent connections
+    bool                    m_hasSocket;
+    //! Filename for the related Python file (CONFIG)
+    QString                 m_filename;
+    //! Version of the element: Major:Minor (CONFIG)
+    ElementVersion          m_version;
+    //! Author of the element (CONFIG)
+    QString                 m_author;
+    //! License of the element (CONFIG)
+    QString                 m_license;
+
+    //! Indicates if program should stop in debug mode (CONFIG)
     bool                    m_bDebug{false};
 
-    //! Indicates if the icon bar is visible
-    //bool                  m_bIconBar;
+    /* Internal Configuration */
 
-    bool                    m_debugEnabled;
     //! Indicates if the element has a parent element
     bool                    m_parentConnected{false};
     //! Indicates if the element has a child element
     bool                    m_childConnected{false};
-    //! Indicates if elements accept parent connections
-    bool                    m_hasSocket;
+
     QSet<ElementMaster*>    m_parents;
     QSet<ElementMaster*>    m_childs;
 
-    /*! @brief Indicates the possible child positions of an element
-     *
-     * true  | false = only a bottom child\n
-     * false | true  = right child
-     */
-    //ChildConfig           m_childPositions;
-
-
-
+    //! Generate and return configuration
+    QJsonObject             genConfig() const;
 
     void                    addParent(ElementMaster *parent);
     void                    addChild(ElementMaster *child);
