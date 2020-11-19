@@ -19,15 +19,21 @@
 
 
 
-
 ElementMaster::ElementMaster(bool socket,
                              bool plug,
                              QUrl pixMapPath,
                              QString objectName,
-                             bool iconBar,
+                             QString filename,
+                             ElementVersion version,
+                             QString author,
+                             QString license,
                              QWidget *parent)
     : QWidget(parent)
     , m_hasSocket(socket)
+    , m_filename(filename)
+    , m_version(version)
+    , m_author(author)
+    , m_license(license)
     , m_symbol(pixMapPath, LABEL_SIZE, this)
 {
 
@@ -95,6 +101,26 @@ ElementMaster::ElementMaster(bool socket,
 
     connect(this, &ElementMaster::plugConnectionHighlight,
             &m_plug, &ElementPlug::connected);
+
+}
+
+QJsonObject ElementMaster::genConfig() const
+{
+    qCDebug(logC, "called");
+    // BAUSTELLE
+    /*
+    QJsonObject config
+    {
+        {"logLvL", (int)lvl},
+        {"msg", msg}
+    };
+
+    QJsonObject logObj
+    {
+        {"cmd", "logMsg"},
+        {"data", data}
+    };
+    */
 
 }
 

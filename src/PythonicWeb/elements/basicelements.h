@@ -36,8 +36,17 @@
  *  @date October 2020
  *  @copyright [GPLv3](../../../LICENSE)
  */
-
-
+/*
+bool socket,
+bool plug,
+QUrl pixMapPath,
+QString objectName,
+QString filename,
+ElementVersion version,
+QString author,
+QString license,
+QWidget *parent = nullptr);
+*/
 class Scheduler : public ElementMaster
 {
     Q_OBJECT
@@ -48,7 +57,10 @@ public:
                         true, // plug
                         QUrl("http://localhost:7000/Scheduler.png"),
                         QString("Scheduler"),
-                        true,
+                        QString("scheduler.py"),
+                        ElementVersion{0, 1},
+                        QString("Stephan Avenwedde"),
+                        QString("GPLv3"),
                         parent)
 
     {
@@ -71,7 +83,10 @@ public:
                         true,
                         QUrl("http://localhost:7000/BaseElement.png"),
                         QString("GenericPython"),
-                        true,
+                        QString("GenericPython.py"),
+                        ElementVersion{0, 1},
+                        QString("Stephan Avenwedde"),
+                        QString("GPLv3"),
                         parent)
 
     {
