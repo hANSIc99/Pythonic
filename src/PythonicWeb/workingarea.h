@@ -102,6 +102,7 @@ public:
 
     void registerElement(const ElementMaster *new_element);
 
+    int                         m_gridNo;
 signals:
 
     void stopHighlightAllElements();
@@ -143,9 +144,10 @@ private:
     //bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
 
-    int                         m_gridNo;
+
     bool                        m_drawing{false};
     bool                        m_startBtnPressed{false};
+    bool                        m_openConfig{false};
 
     /**
      * Pointer to element during drag & drop

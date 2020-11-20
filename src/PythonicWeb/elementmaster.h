@@ -25,6 +25,8 @@
 #include <QVBoxLayout>
 #include <QPair>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 #include <QSizePolicy>
 #include <QMouseEvent>
 #include <QRandomGenerator>
@@ -32,7 +34,6 @@
 #include <QMoveEvent>
 #include <QSet>
 #include "baselabel.h"
-
 
 #define LABEL_SIZE QSize(140, 47)
 #define PLUG_SOCKET_SIZE QSize(47, 47)
@@ -148,6 +149,7 @@ public:
             ElementVersion version,
             QString author,
             QString license,
+            int gridNo,
             QWidget *parent = nullptr);
 
     /* Element Configuration */
@@ -164,9 +166,14 @@ public:
     QString                 m_author;
     //! License of the element (CONFIG)
     QString                 m_license;
+    //! Number of the grid which holds the element
+    int                     m_gridNo;
 
     //! Indicates if program should stop in debug mode (CONFIG)
     bool                    m_bDebug{false};
+    //! Indicates if element should print the output when done (CONFIG)
+    bool                    m_showOutput{false};
+
 
     /* Internal Configuration */
 
@@ -216,10 +223,10 @@ private:
     QWidget                 m_symbolWidget;
     //! Layout for symbol, socket and plug
     QHBoxLayout             m_symbolWidgetLayout;
-    //! Symbol of element
-    BaseLabel               m_symbol;
 
 public:
+    //! Symbol of element
+    BaseLabel               m_symbol;
     //! Connector icon
     ElementSocket           m_socket;
     //! Plug icon

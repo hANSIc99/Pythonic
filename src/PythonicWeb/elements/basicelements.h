@@ -52,7 +52,7 @@ class Scheduler : public ElementMaster
     Q_OBJECT
 public:
 
-    explicit Scheduler(QWidget *parent = nullptr)
+    explicit Scheduler(int gridNo, QWidget *parent = nullptr)
         : ElementMaster(false, // socket
                         true, // plug
                         QUrl("http://localhost:7000/Scheduler.png"),
@@ -61,6 +61,7 @@ public:
                         ElementVersion{0, 1},
                         QString("Stephan Avenwedde"),
                         QString("GPLv3"),
+                        gridNo,
                         parent)
 
     {
@@ -78,7 +79,7 @@ class GenericPython : public ElementMaster
     Q_OBJECT
 public:
 
-    explicit GenericPython(QWidget *parent = nullptr)
+    explicit GenericPython(int gridNo, QWidget *parent = nullptr)
         : ElementMaster(true,
                         true,
                         QUrl("http://localhost:7000/BaseElement.png"),
@@ -87,6 +88,7 @@ public:
                         ElementVersion{0, 1},
                         QString("Stephan Avenwedde"),
                         QString("GPLv3"),
+                        gridNo,
                         parent)
 
     {

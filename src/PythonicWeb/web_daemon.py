@@ -66,7 +66,10 @@ def ctrl(ws):
                     logging.critical('PythonicWeb    - {}'.format(logObj['msg']))
 
             elif msg['cmd'] == 'start':
-                logging.debug('PythonicWeb    - {}'.format(START))
+                logging.debug('PythonicWeb    - {}'.format("START"))
+
+            elif msg['cmd'] == 'writeConfig':
+                logging.debug('Config loaded')
 
 
 

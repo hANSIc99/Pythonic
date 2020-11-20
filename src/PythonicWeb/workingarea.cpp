@@ -190,7 +190,10 @@ void WorkingArea::mousePressEvent(QMouseEvent *event)
         qCDebug(logC, "rightklick on socket");
 
         createContextMenu(m_tmpElement->m_parents, m_tmpElement, event->pos(), false);
-
+    } else if (event->button() == Qt::RightButton){
+        //qCDebug(logC, "rightklick on element ");
+        /* Open element configuration */
+        m_openConfig = true;
     } else if (m_tmpElement->m_plug.underMouse()){
         // begin drawing
         m_draw = true;
@@ -402,7 +405,7 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 
         if (!e){
             qCDebug(logC, "called - no child");
-            m_draw = false;
+            m_startBtnPressed = false;
             update();
             return;
         }
@@ -437,7 +440,40 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
                 emit startExec(m_tmpElement->m_id);
             }
         }
-    } // m_startBtnPressed
+
+    } else if (m_openConfig){
+        QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
+
+        if (!e){
+            qCDebug(logC, "called - no child");
+            m_openConfig = false;
+            update();
+            return;
+        }
+        /*
+         *  Hierarchy of ElementMaster
+         *
+         *  m_startBtn(QLabel) --(parent)-->
+         *                   m_symbolWidget(QWidget) --(parent)-->
+         *                                           m_innerWidget(QLabel) --(parent)-->
+         *                                                                 ElementMaster
+         */
+        ElementMaster* targetElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
+
+        /* Position abfragen */
+
+        if (!targetElement){
+            qCDebug(logC, "no element");
+            m_openConfig = false;
+
+            return;
+        }
+
+        if(helper::mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_symbol)), event->globalPos())){
+            // BAUSTELLE
+            qCDebug(logC, "Element Rightclick!");
+        }
+    } // m_openConfig
 
     m_tmpElement = NULL;
     update();

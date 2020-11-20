@@ -44,7 +44,7 @@ public:
 
     ToolData                m_toolData;
 
-    QWidget*                m_workingAreaWidget;
+    WorkingArea             *m_workingAreaWidget;
 
     QPoint                  m_dragPosOffset;
 
@@ -106,7 +106,7 @@ protected:
         if(helper::mouseOverElement(wrkAreaScrollArea, event->globalPos())){
 
             qCDebug(logC, "mouse cursor inside working area");
-            T *element = new T(m_workingAreaWidget);
+            T *element = new T(m_workingAreaWidget->m_gridNo, m_workingAreaWidget);
 
             element->move(wrkAreaGlobalPos.x() - 170,
                           wrkAreaGlobalPos.y() - 100);

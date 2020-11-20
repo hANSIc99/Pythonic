@@ -170,15 +170,40 @@ void MainWindow::wsCtrl(QJsonObject cmd)
 void MainWindow::setCurrentWorkingArea(int tabIndex)
 {
     qCInfo(logC, "called, current tabIndex %d", tabIndex);
-    emit updateCurrentWorkingArea(dynamic_cast<QWidget*>(m_arr_workingArea[tabIndex]));
+    // BAUSTELLE static_cast ?!
+    //emit updateCurrentWorkingArea(dynamic_cast<QWidget*>(m_arr_workingArea[tabIndex]));
+    emit updateCurrentWorkingArea(qobject_cast<QWidget*>(m_arr_workingArea[tabIndex]));
 }
 
 void MainWindow::startExec(quint32 id)
 {
     qCInfo(logC, "called");
-    //1. load config to daemon
-    // 2. emit start command
 
+    /* Step 1: Download configuration to daemon */
+    QJsonArray elementConfigrations;
+
+    for(auto const &grid : m_arr_workingArea){
+        for(auto const &elementObj : grid->children()){
+            ElementMaster* element = qobject_cast<ElementMaster*>(elementObj);
+            elementConfigrations.append(element->genConfig());
+            qCInfo(logC, "found");
+        }
+    }
+
+    QJsonObject currentConfig {
+        {"cmd", "writeConfig"},
+        {"data", elementConfigrations}
+    };
+
+    wsCtrl(currentConfig);
+
+    /* Step 2: Emit start command */
+    QJsonObject startCmd {
+        {"cmd", "start"},
+        {"data", (qint64)id}
+    };
+
+    wsCtrl(startCmd);
 }
 
 void MainWindow::stopExec(quint32 id)

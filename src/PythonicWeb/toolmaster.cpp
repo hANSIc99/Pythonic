@@ -117,6 +117,6 @@ void ToolMaster::mouseReleaseEvent(QMouseEvent *event)
 void ToolMaster::setCurrentWorkingArea(QWidget* workingAreaWidget)
 {
     qCInfo(logC, "called");
-    m_workingAreaWidget = workingAreaWidget;
+    m_workingAreaWidget = qobject_cast<WorkingArea*>(workingAreaWidget);
 }
 

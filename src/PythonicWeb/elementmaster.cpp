@@ -18,7 +18,6 @@
 #include "elementmaster.h"
 
 
-
 ElementMaster::ElementMaster(bool socket,
                              bool plug,
                              QUrl pixMapPath,
@@ -27,6 +26,7 @@ ElementMaster::ElementMaster(bool socket,
                              ElementVersion version,
                              QString author,
                              QString license,
+                             int     gridNo,
                              QWidget *parent)
     : QWidget(parent)
     , m_hasSocket(socket)
@@ -34,6 +34,7 @@ ElementMaster::ElementMaster(bool socket,
     , m_version(version)
     , m_author(author)
     , m_license(license)
+    , m_gridNo(gridNo)
     , m_symbol(pixMapPath, LABEL_SIZE, this)
 {
 
@@ -45,7 +46,6 @@ ElementMaster::ElementMaster(bool socket,
     QString widgetName = QStringLiteral("%1 - 0x%2").arg(objectName).arg(m_id, 8, 16, QChar('0'));
     setObjectName(widgetName);
     qCDebug(logC, "called - %s added", widgetName.toStdString().c_str());
-
 
 
     m_layout.setContentsMargins(10, 0, 30, 0);
@@ -107,21 +107,37 @@ ElementMaster::ElementMaster(bool socket,
 QJsonObject ElementMaster::genConfig() const
 {
     qCDebug(logC, "called");
-    // BAUSTELLE
-    /*
-    QJsonObject config
+
+    QJsonArray pos = { x(), y() };
+
+    QJsonArray parents;
+    for(const auto &parent : m_parents){
+        parents.append((qint64)parent->m_id);
+    }
+
+    QJsonArray childs;
+    for(const auto &child : m_childs){
+        childs.append((qint64)child->m_id);
+    }
+
+    QJsonObject data
     {
-        {"logLvL", (int)lvl},
-        {"msg", msg}
+        {"ID", (qint64)m_id},
+        {"ObjectName", objectName()},
+        {"Filename", m_filename},
+        {"Author", m_author},
+        {"License", m_license},
+        {"Position", pos},
+        {"Debug", m_bDebug},
+        {"ShowOutput", m_showOutput},
+        {"GridNo", m_gridNo},
+        {"Parents", parents},
+        {"Childs", childs},
+        {"Config", m_config}
     };
 
-    QJsonObject logObj
-    {
-        {"cmd", "logMsg"},
-        {"data", data}
-    };
-    */
 
+    return data;
 }
 
 void ElementMaster::startHighlight()
