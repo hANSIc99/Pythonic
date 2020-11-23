@@ -63,6 +63,7 @@ private slots:
             qCWarning(logC, "could not be loaded: %s",
                      pReply->url().toString().toStdString().c_str());
             return;
+            // BAUSTELLE could not be loaded pop error Exception
         }
 
         //emit a signal

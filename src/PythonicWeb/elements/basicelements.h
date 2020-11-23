@@ -57,7 +57,7 @@ public:
                         true, // plug
                         QUrl("http://localhost:7000/Scheduler.png"),
                         QString("Scheduler"),
-                        QString("scheduler.py"),
+                        QString("scheduler"),
                         ElementVersion{0, 1},
                         QString("Stephan Avenwedde"),
                         QString("GPLv3"),
@@ -84,7 +84,7 @@ public:
                         true,
                         QUrl("http://localhost:7000/BaseElement.png"),
                         QString("GenericPython"),
-                        QString("GenericPython.py"),
+                        QString("genericpython"),
                         ElementVersion{0, 1},
                         QString("Stephan Avenwedde"),
                         QString("GPLv3"),

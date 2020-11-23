@@ -76,7 +76,7 @@ def ctrl(ws):
             elif msg['cmd'] == 'startExec':
                 elementId = msg['data']
                 #ws.environ['mainWorker'].startExecution(elementId)
-                ws.environ['mainWorker'].startExec.emit(elementId)
+                ws.environ['mainWorker'].startExec.emit(elementId, ws.environ['mainWorker'].gridConfig)
 
 
 
@@ -386,7 +386,7 @@ class MainWorker(QObject):
     gridConfig      = None
 
 
-    startExec = pyqtSignal(int, name='startExec')
+    startExec = pyqtSignal('PyQt_PyObject' , 'PyQt_PyObject', name='startExec')
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
