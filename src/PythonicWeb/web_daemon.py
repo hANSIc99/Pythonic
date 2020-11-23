@@ -6,6 +6,8 @@ from threading import Timer, Thread, Event
 from pathlib import Path
 from zipfile import ZipFile
 from enum import Enum
+from execution_operator import Operator
+import operator
 from PyQt5.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PyQt5.QtCore import pyqtSignal
 
@@ -70,6 +72,12 @@ def ctrl(ws):
 
             elif msg['cmd'] == 'writeConfig':
                 logging.debug('Config loaded')
+                ws.environ['mainWorker'].gridConfig = msg['data']
+            elif msg['cmd'] == 'startExec':
+                elementId = msg['data']
+                #ws.environ['mainWorker'].startExecution(elementId)
+                ws.environ['mainWorker'].startExec.emit(elementId)
+
 
 
 
@@ -135,7 +143,7 @@ def dispatch(environ, start_response):
         """
 
     elif environ['PATH_INFO'] == '/':
-        logging.debug('PATH_INFO == \'/\'')
+        #logging.debug('PATH_INFO == \'/\'')
         
         start_response('200 OK', [  ('content-type', 'text/html'),
                                     ('Cross-Origin-Opener-Policy', 'same-origin'),
@@ -145,7 +153,7 @@ def dispatch(environ, start_response):
 
 
     elif environ['PATH_INFO'] == '/qtlogo.svg':
-        logging.debug('PATH_INFO == \'/qtlogo.svg\'')
+        #logging.debug('PATH_INFO == \'/qtlogo.svg\'')
         img_data = open(os.path.join(os.path.dirname(__file__),
             root_url + 'static/qtlogo.svg'), 'rb').read() 
         start_response('200 OK', [('content-type', 'image/svg+xml'),
@@ -155,7 +163,7 @@ def dispatch(environ, start_response):
 
     # IMAGES (*.png)
     elif png_req4 == '.png':
-        logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
+        #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
         
         img_data = open(os.path.join(os.path.dirname(__file__),
             root_static + environ['PATH_INFO']), 'rb').read() 
@@ -168,7 +176,7 @@ def dispatch(environ, start_response):
     # JAVS SCRIPT (*.js)
 
     elif png_req3 == '.js':
-        logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
+        #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
         
         img_data = open(os.path.join(os.path.dirname(__file__),
             root_static + environ['PATH_INFO']), 'rb').read() 
@@ -178,7 +186,7 @@ def dispatch(environ, start_response):
         return [img_data]
 
     elif environ['PATH_INFO'] == '/PythonicWeb.wasm':
-        logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
+        #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
         bin_data = open(os.path.join(os.path.dirname(__file__),
             root_url + 'static/PythonicWeb.wasm'), 'rb').read() 
         start_response('200 OK', [('content-type', 'application/wasm')])
@@ -373,18 +381,30 @@ class MainWorker(QObject):
     formatter       = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
     #wsgi_pool       = eventlet.GreenPool()
-    max_grid_size = 50
-    max_grid_cnt  = 5
-    
+    max_grid_size   = 50
+    max_grid_cnt    = 5
+    gridConfig      = None
+
+
+    startExec = pyqtSignal(int, name='startExec')
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
         self.app = app
         mp.set_start_method('spawn')
+
+        # Instantiate WSGI Server
         self.wsgi_server = WSGI_Server(self)
+
+        # Instantiate Standard Input Reader
         self.stdinReader = stdinReader()
         self.stdinReader.print_procs.connect(self.printProcessList)
         self.stdinReader.quit_app.connect(self.exitApp)
+
+        # Instantiate Execution Operator
+        self.operator = Operator()
+        self.startExec.connect(self.operator.startExec)
+
         self.update_logdate.connect(self.stdinReader.updateLogDate)
         self.grd_ops_arr    = []
         self.fd = sys.stdin.fileno()
@@ -481,6 +501,7 @@ class MainWorker(QObject):
 
         self.stdinReader.start() # call run() method in separate thread
         self.wsgi_server.start()
+        self.operator.start()
         """
         b_finished = False         
 

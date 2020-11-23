@@ -199,7 +199,7 @@ void MainWindow::startExec(quint32 id)
 
     /* Step 2: Emit start command */
     QJsonObject startCmd {
-        {"cmd", "start"},
+        {"cmd", "startExec"},
         {"data", (qint64)id}
     };
 
