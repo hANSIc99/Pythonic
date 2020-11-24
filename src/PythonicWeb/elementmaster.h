@@ -169,8 +169,10 @@ public:
     //! Number of the grid which holds the element
     int                     m_gridNo;
 
-    //! Indicates if program should stop in debug mode (CONFIG)
+    //! Debugging is only available in MP mode (CONFIG)
     bool                    m_bDebug{false};
+    //! Multiprocessing - if no, the element uses multithreading (CONFIG)
+    bool                    m_bMP{false};
     //! Indicates if element should print the output when done (CONFIG)
     bool                    m_showOutput{false};
 

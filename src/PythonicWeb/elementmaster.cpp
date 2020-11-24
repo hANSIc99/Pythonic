@@ -128,6 +128,7 @@ QJsonObject ElementMaster::genConfig() const
         {"Author", m_author},
         {"License", m_license},
         {"Position", pos},
+        {"Multiprocessing", m_bMP},
         {"Debug", m_bDebug},
         {"ShowOutput", m_showOutput},
         {"GridNo", m_gridNo},
