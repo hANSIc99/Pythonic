@@ -116,6 +116,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_menuBar.m_newFileBtn, &QPushButton::clicked,
             this, &MainWindow::testSlot);
 
+
+    /* Receive-Websocket connection */
+
+    connect(&m_wsRcv, &QWebSocket::textMessageReceived,
+            this, &MainWindow::wsRcv);
+
     /* Signals & Slots : Miscellaneous */
     connect(&m_workingTabs, &QTabWidget::currentChanged,
                     this, &MainWindow::setCurrentWorkingArea);
@@ -136,8 +142,6 @@ void MainWindow::logMessage(QString msg, LogLvl lvl)
     qCInfo(logC, "Info Message");
     //QUrl ws_url(QStringLiteral("ws://localhost:7000/message"));
     //qDebug() << "Open ws URL: " << ws_url.toString();
-
-
 
 
     QJsonObject data
@@ -165,6 +169,11 @@ void MainWindow::wsCtrl(QJsonObject cmd)
 {
     qCInfo(logC, "called");
     m_wsCtrl.send(cmd);
+}
+
+void MainWindow::wsRcv(const QString &message)
+{
+    qCInfo(logC, "called");
 }
 
 void MainWindow::setCurrentWorkingArea(int tabIndex)

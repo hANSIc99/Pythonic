@@ -33,8 +33,6 @@ class ProcessHandler(QThread):
     def run(self):
         
         elementCls = getattr(__import__(self.filename, fromlist=['Element']), 'Element')
-        record = ("input", "config")
-        #BAUSTELLE # element instanzieren mit config
         element = elementCls("input", "config", self.feed_pipe)
         result = None
 

@@ -42,6 +42,51 @@ enum class LogLvl {
 };
 
 
+class Websocket : public QWebSocket
+{
+    Q_OBJECT
+public:
+    explicit Websocket(QString url, QObject *parent = nullptr)
+        : QWebSocket(QString("http://localhost"),QWebSocketProtocol::Version13, parent)
+        , m_url(url)
+    {
+        qCDebug(logC, "called");
+
+        connect(this, &QWebSocket::connected, this, &Websocket::logConnected);
+        connect(this, &QWebSocket::disconnected, this, &Websocket::logDisconnected);
+        open(QUrl(url));
+    }
+
+
+    void send(QJsonObject data){
+        sendTextMessage(QJsonDocument(data).toJson(QJsonDocument::Compact));
+    }
+
+signals:
+    void disconnected();
+    void connected();
+
+    /*
+    void send(QJsonObject data){
+        //QString dbg = QJsonDocument(data).toJson(QJsonDocument::Compact); // can be removed later
+        //m_socket.sendTextMessage(QJsonDocument(data).toJson(QJsonDocument::Compact));
+    }
+    */
+private slots:
+    void logConnected(){
+        qCInfo(logC, "Websocket connected  %s", m_url.toStdString().c_str());
+    }
+    void logDisconnected(){
+        qCInfo(logC, "Websocket disconnected  %s", m_url.toStdString().c_str());
+    }
+private:
+    QLoggingCategory    logC{"Websocket"};
+    QString             m_url;
+};
+
+
+
+#if 0
 class Websocket : public QObject
 {
     Q_OBJECT
@@ -78,9 +123,11 @@ public:
         m_socket.sendTextMessage(QJsonDocument(data).toJson(QJsonDocument::Compact));
     }
 
+
+
 private:
     QWebSocket  m_socket;
     QLoggingCategory logC;
 };
-
+#endif
 #endif // LOGGER_H

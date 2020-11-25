@@ -1,4 +1,5 @@
 import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select
+import json
 import multiprocessing as mp
 import eventlet, json
 from eventlet import wsgi, websocket, greenthread
@@ -39,6 +40,19 @@ def startTimer(ws):
             print('Client websocket not available')
             ws.close()
             return
+
+
+@websocket.WebSocketWSGI
+def rcv(ws):
+
+    def send(command):
+        logging.debug('testfunc called')
+        ws.send(json.dumps(command))
+    
+    ws.environ['mainWorker'].frontendCtrl.connect(send)
+
+    while True:
+        greenthread.sleep(1)
 
 @websocket.WebSocketWSGI
 def ctrl(ws):
@@ -81,10 +95,6 @@ def ctrl(ws):
 
 
 
-
-    
-
-
 @websocket.WebSocketWSGI
 def processMessage(ws): # wird das noch benötigt?
     m = ws.wait()
@@ -125,6 +135,9 @@ def dispatch(environ, start_response):
     elif environ['PATH_INFO'] == '/ctrl':
         logging.debug('PythonicDaemon - Open CTRL WebSocket')     
         return ctrl(environ, start_response)
+    elif environ['PATH_INFO'] == '/rcv':
+        logging.debug('PythonicDaemon - Open RCV WebSocket')     
+        return rcv(environ, start_response)
     elif environ['PATH_INFO'] == '/message':
         logging.debug('PATH_INFO == \'/message\'')
         return processMessage(environ, start_response)
@@ -163,7 +176,7 @@ def dispatch(environ, start_response):
 
     # IMAGES (*.png)
     elif png_req4 == '.png':
-        #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
+        logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
         
         img_data = open(os.path.join(os.path.dirname(__file__),
             root_static + environ['PATH_INFO']), 'rb').read() 
@@ -386,7 +399,8 @@ class MainWorker(QObject):
     gridConfig      = None
 
 
-    startExec = pyqtSignal('PyQt_PyObject' , 'PyQt_PyObject', name='startExec')
+    startExec       = pyqtSignal('PyQt_PyObject' , 'PyQt_PyObject', name='startExec')
+    frontendCtrl    = pyqtSignal('PyQt_PyObject' , name='startExec')
 
     def __init__(self, app):
         super(MainWorker, self).__init__()

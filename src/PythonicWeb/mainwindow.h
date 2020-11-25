@@ -24,7 +24,6 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QLineEdit>
-#include <QtWebSockets/QWebSocket>
 #include <QRect>
 #include <QLoggingCategory>
 #include <QVector>
@@ -67,7 +66,7 @@ public:
       * Used to log at websocket /log of PythonicWebDaemon
       */
     Websocket   m_wsCtrl{"ws://localhost:7000/ctrl", this};
-
+    Websocket   m_wsRcv{"ws://localhost:7000/rcv", this};
 
 signals:
     void updateCurrentWorkingArea(QWidget* currentWokringArea);
@@ -77,6 +76,8 @@ private slots:
     void logMessage(QString msg, LogLvl lvl);
     //! Send control command to daemon
     void wsCtrl(QJsonObject cmd);
+    //! Receives commands from the daemon
+    void wsRcv(const QString &message);
     /* Sets the current WorkingArea */
     void setCurrentWorkingArea(int tabIndex);
     /* Start execution of specific element */
