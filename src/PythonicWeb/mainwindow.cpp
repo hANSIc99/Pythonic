@@ -50,17 +50,6 @@ MainWindow::MainWindow(QWidget *parent)
                 this, &MainWindow::stopExec);
     }
 
-    //m_toolboxTabs.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-
-    //m_toolboxTabs.addTab() Basictools
-
-    //https://doc.qt.io/qt-5/layout.html
-
-    /* Setup Dropbox */
-    //m_scrollDropBox.setWidget(Storagebar)
-    //m_scrollDropBox->setWidgetResizable(true);
-    //m_scrollDropBox->setMaximumWidth(270);
-
     /* Setup Bottom Area */
 
     m_bottomArea.setLayout(&m_bottomAreaLayout);
@@ -129,13 +118,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateCurrentWorkingArea,
             &m_toolBox, &Toolbox::setCurrentWorkingArea);
 
-    //qCDebug(log_mainwindow, QString("Parent: %1").arg((qulonglong)m_mainWidget.pa));
-    //connect(m_sendDebugMessage, SIGNAL(released()), this, SLOT(debugMessage()));
+    connect(&m_wsCtrl, &QWebSocket::connected,
+            this, &MainWindow::queryConfig);
+
     /* Set current working area on initialization */
     setCurrentWorkingArea(m_workingTabs.currentIndex());
+
+
 }
 
-void MainWindow::logMessage(QString msg, LogLvl lvl)
+void MainWindow::logMessage(const QString msg, const LogLvl lvl)
 {
     //qInfo() << "MainWindow::wsSendMsg() called";
     qCDebug(logC, "Debug Message");
@@ -165,7 +157,7 @@ void MainWindow::logMessage(QString msg, LogLvl lvl)
     m_wsCtrl.send(logObj);
 }
 
-void MainWindow::wsCtrl(QJsonObject cmd)
+void MainWindow::wsCtrl(const QJsonObject cmd)
 {
     qCInfo(logC, "called");
     m_wsCtrl.send(cmd);
@@ -173,18 +165,37 @@ void MainWindow::wsCtrl(QJsonObject cmd)
 
 void MainWindow::wsRcv(const QString &message)
 {
-    qCInfo(logC, "called");
+    // https://stackoverflow.com/questions/19822211/qt-parsing-json-using-qjsondocument-qjsonobject-qjsonarray
+    QJsonDocument cmd(QJsonDocument::fromJson(message.toUtf8()));
+    QJsonObject cmdObj(cmd.object());
+
+    QJsonValue jsCmd = cmdObj.value("cmd");
+
+    if(!jsCmd.isString()){
+        qCWarning(logC, "Command in wrong format");
+        return;
+    }
+
+    switch (helper::hashCmd(jsCmd.toString())) {
+        case Command::Heartbeat:
+        //qCDebug(logC, "Heartbeat received");
+        break;
+    case Command::CurrentConfig:
+
+        break;
+    default:
+        qCDebug(logC, "Unknown command: %s", jsCmd.toString().toStdString().c_str());
+        break;
+    }
 }
 
-void MainWindow::setCurrentWorkingArea(int tabIndex)
+void MainWindow::setCurrentWorkingArea(const int tabIndex)
 {
     qCInfo(logC, "called, current tabIndex %d", tabIndex);
-    // BAUSTELLE static_cast ?!
-    //emit updateCurrentWorkingArea(dynamic_cast<QWidget*>(m_arr_workingArea[tabIndex]));
     emit updateCurrentWorkingArea(qobject_cast<QWidget*>(m_arr_workingArea[tabIndex]));
 }
 
-void MainWindow::startExec(quint32 id)
+void MainWindow::startExec(const quint32 id)
 {
     qCInfo(logC, "called");
 
@@ -208,21 +219,44 @@ void MainWindow::startExec(quint32 id)
 
     /* Step 2: Emit start command */
     QJsonObject startCmd {
-        {"cmd", "startExec"},
+        {"cmd", "StartExec"},
         {"data", (qint64)id}
     };
 
     wsCtrl(startCmd);
 }
 
-void MainWindow::stopExec(quint32 id)
+void MainWindow::stopExec(const quint32 id)
 {
     qCInfo(logC, "called");
-    // Stop process at daemon
+
+    QJsonObject stopCmd {
+        {"cmd", "StopExec"},
+        {"data", (qint64)id}
+    };
+    wsCtrl(stopCmd);
 }
 
 void MainWindow::testSlot(bool checked)
 {
+    Q_UNUSED(checked)
     qCInfo(logC, "called");
     logMessage("test123", LogLvl::CRITICAL);
+}
+
+void MainWindow::loadSavedConfig(const QJsonObject config)
+{
+    qCInfo(logC, "called");
+}
+
+void MainWindow::queryConfig()
+{
+    qCDebug(logC, "Debug Message");
+    /* Query Config from Daemon */
+
+    QJsonObject queryCfg {
+        {"cmd", "QueryConfig"}
+    };
+    wsCtrl(queryCfg);
+
 }

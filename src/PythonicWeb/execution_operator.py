@@ -67,7 +67,6 @@ class Operator(QThread):
 
         while True:
             time.sleep(1)
-            #logging.debug('Operator::run() called')
 
     def startExec(self, id, config):
         self.currentConfig = config

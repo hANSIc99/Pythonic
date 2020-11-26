@@ -129,7 +129,7 @@ private:
     QLoggingCategory    logC{"ElementPlug"};
 };
 
-struct ElementVersion {
+struct Version {
     int     major;
     int     minor;
 };
@@ -146,7 +146,8 @@ public:
             QUrl pixMapPath,
             QString objectName,
             QString filename,
-            ElementVersion version,
+            Version version,
+            Version pythonicVersion,
             QString author,
             QString license,
             int gridNo,
@@ -161,7 +162,9 @@ public:
     //! Filename for the related Python file (CONFIG)
     QString                 m_filename;
     //! Version of the element: Major:Minor (CONFIG)
-    ElementVersion          m_version;
+    Version                 m_version;
+    //! Related version of Pythonic: Major:Minor (CONFIG)
+    Version                 m_pythonicVersion;
     //! Author of the element (CONFIG)
     QString                 m_author;
     //! License of the element (CONFIG)

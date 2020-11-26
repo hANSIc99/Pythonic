@@ -23,7 +23,8 @@ ElementMaster::ElementMaster(bool socket,
                              QUrl pixMapPath,
                              QString objectName,
                              QString filename,
-                             ElementVersion version,
+                             Version version,
+                             Version pythonicVersion,
                              QString author,
                              QString license,
                              int     gridNo,
@@ -32,6 +33,7 @@ ElementMaster::ElementMaster(bool socket,
     , m_hasSocket(socket)
     , m_filename(filename)
     , m_version(version)
+    , m_pythonicVersion(pythonicVersion)
     , m_author(author)
     , m_license(license)
     , m_gridNo(gridNo)
@@ -110,6 +112,13 @@ QJsonObject ElementMaster::genConfig() const
 
     QJsonArray pos = { x(), y() };
 
+    QJsonArray version = {m_version.major, m_version.minor};
+
+    QJsonArray pythonicVersion = {
+        m_pythonicVersion.major,
+        m_pythonicVersion.minor
+    };
+
     QJsonArray parents;
     for(const auto &parent : m_parents){
         parents.append((qint64)parent->m_id);
@@ -124,6 +133,8 @@ QJsonObject ElementMaster::genConfig() const
     {
         {"ID", (qint64)m_id},
         {"ObjectName", objectName()},
+        {"Version", version},
+        {"PythonicVersion", pythonicVersion},
         {"Filename", m_filename},
         {"Author", m_author},
         {"License", m_license},

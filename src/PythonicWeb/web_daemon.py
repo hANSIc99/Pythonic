@@ -50,16 +50,24 @@ def rcv(ws):
         ws.send(json.dumps(command))
     
     ws.environ['mainWorker'].frontendCtrl.connect(send)
-
-    while True:
+    bConnected = True
+    while bConnected:
         greenthread.sleep(1)
+        try:
+            ws.send( json.dumps({"cmd": "Heartbeat"}))
+        except Exception as e:
+            logging.info('PythonicWeb - RCV Socket connection lost: {}'.format(e))
+            ws.environ['mainWorker'].frontendCtrl.disconnect(send)
+            bConnected = False
+
+    logging.debug('PythonicWeb - RCV Socket closed')
 
 @websocket.WebSocketWSGI
 def ctrl(ws):
     while True:
         m = ws.wait()
         if m is None:
-            logging.debug('PythonicDaemon - Logging WebSocket Closed')            
+            logging.debug('PythonicDaemon - CTRL Socket Closed')            
             break;   
         else:
             msg = json.loads(m)
@@ -87,12 +95,14 @@ def ctrl(ws):
             elif msg['cmd'] == 'writeConfig':
                 logging.debug('Config loaded')
                 ws.environ['mainWorker'].gridConfig = msg['data']
-            elif msg['cmd'] == 'startExec':
+            elif msg['cmd'] == 'StartExec':
                 elementId = msg['data']
-                #ws.environ['mainWorker'].startExecution(elementId)
                 ws.environ['mainWorker'].startExec.emit(elementId, ws.environ['mainWorker'].gridConfig)
-
-
+            elif msg['cmd'] == 'StopExec':
+                elementId = msg['data']
+                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
+            elif msg['cmd'] == 'QueryConfig':
+                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
 
 
 @websocket.WebSocketWSGI
@@ -532,7 +542,7 @@ class MainWorker(QObject):
         self.stdinReader.run()
 
 
-    def loadGrid(self, filename):
+    def loadGrid(self):
 
         logging.debug('MainWindow::loadGrid() called')
         """

@@ -37,11 +37,6 @@ int main(int argc, char *argv[])
 
                                                     /* Miscellaneous */
 
-                                                    "Logger.debug=true\n"
-                                                    "Logger.info=false\n"
-                                                    "Logger.warning=true\n"
-                                                    "Logger.critical=true\n"
-
                                                     "FileDownloader.debug=false\n"
                                                     "FileDownloader.info=false\n"
 
@@ -49,7 +44,7 @@ int main(int argc, char *argv[])
                                                     "Websocket.info=true\n"
                                                     /* GUI Elements */
 
-                                                    "MainWindow.debug=false\n"
+                                                    "MainWindow.debug=true\n"
                                                     "MainWindow.info=true\n"
 
                                                     "WorkingArea.debug=true\n"

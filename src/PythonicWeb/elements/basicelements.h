@@ -56,9 +56,10 @@ public:
         : ElementMaster(false, // socket
                         true, // plug
                         QUrl("http://localhost:7000/Scheduler.png"),
-                        QString("Scheduler"),
-                        QString("scheduler"),
-                        ElementVersion{0, 1},
+                        QString("Scheduler"), // Element name
+                        QString("scheduler"), // Filename (excluding *.py)
+                        Version{0, 1}, // Element Version
+                        Version{0, 1}, // Pythonic Version
                         QString("Stephan Avenwedde"),
                         QString("GPLv3"),
                         gridNo,
@@ -85,7 +86,8 @@ public:
                         QUrl("http://localhost:7000/BaseElement.png"),
                         QString("GenericPython"),
                         QString("genericpython"),
-                        ElementVersion{0, 1},
+                        Version{0, 1},
+                        Version{0, 1},
                         QString("Stephan Avenwedde"),
                         QString("GPLv3"),
                         gridNo,

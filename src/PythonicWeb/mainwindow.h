@@ -73,19 +73,23 @@ signals:
 
 private slots:
     //! Send log-message to daemon
-    void logMessage(QString msg, LogLvl lvl);
+    void logMessage(const QString msg, const LogLvl lvl);
     //! Send control command to daemon
-    void wsCtrl(QJsonObject cmd);
+    void wsCtrl(const QJsonObject cmd);
     //! Receives commands from the daemon
     void wsRcv(const QString &message);
     /* Sets the current WorkingArea */
-    void setCurrentWorkingArea(int tabIndex);
+    void setCurrentWorkingArea(const int tabIndex);
     /* Start execution of specific element */
-    void startExec(quint32 id);
+    void startExec(const quint32 id);
     /* Stop execution of specific element */
-    void stopExec(quint32 id);
+    void stopExec(const quint32 id);
     /* DBG Slot */
     void testSlot(bool checked);
+    /* Load config from daemon */
+    void loadSavedConfig(const QJsonObject config);
+    /* Query config */
+    void queryConfig();
 
 
 private:
