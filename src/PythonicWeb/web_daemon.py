@@ -72,6 +72,8 @@ def ctrl(ws):
         else:
             msg = json.loads(m)
             
+            logging.debug('PythonicWeb    - Command: {}'.format(msg['cmd']))
+
             if msg['cmd'] == 'logMsg':
                 # logging
                 logObj = msg['data']
@@ -96,7 +98,7 @@ def ctrl(ws):
                 logging.debug('Config loaded')
                 ws.environ['mainWorker'].gridConfig = msg['data']
             elif msg['cmd'] == 'StartExec':
-                elementId = msg['data']
+                elementId = msg['data']        
                 ws.environ['mainWorker'].startExec.emit(elementId, ws.environ['mainWorker'].gridConfig)
             elif msg['cmd'] == 'StopExec':
                 elementId = msg['data']

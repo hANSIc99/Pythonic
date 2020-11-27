@@ -1,5 +1,6 @@
 import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select
 import json
+import random
 import multiprocessing as mp
 import threading as mt
 from element_types import Record
@@ -19,15 +20,16 @@ def target_0(instance, record, feed_pipe):
 
 class ProcessHandler(QThread):
 
-    execComplete  = pyqtSignal('PyQt_PyObject', 'PyQt_PyObject', name='execComplete')
+    execComplete  = pyqtSignal('PyQt_PyObject', 'PyQt_PyObject', 'PyQt_PyObject', name='execComplete')
 
-    def __init__(self, element, inputdata):
+    def __init__(self, element, inputdata, identifier):
         super().__init__()
         self.filename   = 'elements.' + element['Filename']
         self.id         = element['ID']
         self.config     = element['Config']
         self.mp         = element['Multiprocessing']
         self.inputData  = inputdata
+        self.identifier = identifier
 
         self.return_pipe, self.feed_pipe = mp.Pipe(duplex=False)
 
@@ -52,7 +54,7 @@ class ProcessHandler(QThread):
             logging.debug('ProcessHandler::run() - intemerdiate result')
 
 
-        self.execComplete.emit(self.id, "test2")
+        self.execComplete.emit(self.id, "test2", self.identifier)
         logging.debug('ProcessHandler::run() - execution done')
 
 
@@ -60,6 +62,7 @@ class ProcessHandler(QThread):
 class Operator(QThread):
 
     currentConfig = None
+    processHandles = {}
 
     def __init__(self,):
         super().__init__()
@@ -70,6 +73,7 @@ class Operator(QThread):
             time.sleep(1)
 
     def startExec(self, id, config):
+        logging.debug('Operator::startExec() bla')
         ## create processor and forward config and start filename
         self.currentConfig = config
         # https://stackoverflow.com/questions/34609935/passing-a-function-with-two-arguments-to-filter-in-python
@@ -79,13 +83,20 @@ class Operator(QThread):
         
         # register elements für den fall das alles gestoppt werden muss
         inputData = None
-        runElement = ProcessHandler(startElement,inputData)
+        #BAUSTELLE
+        # creating a random identifier
+        identifier = random.randint(0, 9999)
+        runElement = ProcessHandler(startElement,inputData, identifier)
         runElement.execComplete.connect(self.execComplete)
         runElement.start()
+        self.processHandles[identifier] = runElement
+        
 
-        logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
+        logging.debug('Operator::startExec() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
 
-    def execComplete(self, id, data):
+    def execComplete(self, id, data, identifier):
 
-        logging.debug('Operator::execComplete() called - id: 0x{:08x}'.format(id))
+        logging.debug('Operator::execComplete() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+        # remove processHandle from dict
+        del self.processHandles[identifier]
 

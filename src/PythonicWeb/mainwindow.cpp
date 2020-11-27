@@ -121,9 +121,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateCurrentWorkingArea,
             &m_toolBox, &Toolbox::setCurrentWorkingArea);
 
+    /*
     connect(&m_wsCtrl, &QWebSocket::connected,
             this, &MainWindow::queryConfig);
-
+    */
     /* Set current working area on initialization */
     setCurrentWorkingArea(m_workingTabs.currentIndex());
 
@@ -182,7 +183,7 @@ void MainWindow::wsRcv(const QString &message)
 
     switch (helper::hashCmd(jsCmd.toString())) {
         case Command::Heartbeat:
-        //qCDebug(logC, "Heartbeat received");
+        qCDebug(logC, "Heartbeat received");
 
         break;
     case Command::CurrentConfig:
