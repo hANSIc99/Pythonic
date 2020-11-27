@@ -78,6 +78,8 @@ private slots:
     void wsCtrl(const QJsonObject cmd);
     //! Receives commands from the daemon
     void wsRcv(const QString &message);
+    //! Reconnect to daemon
+    void reconnect();
     /* Sets the current WorkingArea */
     void setCurrentWorkingArea(const int tabIndex);
     /* Start execution of specific element */
@@ -91,8 +93,10 @@ private slots:
     /* Query config */
     void queryConfig();
 
-
 private:
+
+
+
     /* Die Reihenfolge hier ist entscheidend */
     QPushButton             *m_sendDebugMessage;
 
@@ -136,6 +140,7 @@ private:
     QHBoxLayout             m_bottomBorderLayout;
 
     QLabel                  m_infoText;
+
 
     QLoggingCategory        logC{"MainWindow"};
 };

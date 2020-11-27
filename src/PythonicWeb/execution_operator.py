@@ -1,4 +1,5 @@
 import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select
+import json
 import multiprocessing as mp
 import threading as mt
 from element_types import Record
@@ -69,6 +70,7 @@ class Operator(QThread):
             time.sleep(1)
 
     def startExec(self, id, config):
+        ## create processor and forward config and start filename
         self.currentConfig = config
         # https://stackoverflow.com/questions/34609935/passing-a-function-with-two-arguments-to-filter-in-python
 
@@ -80,7 +82,7 @@ class Operator(QThread):
         runElement = ProcessHandler(startElement,inputData)
         runElement.execComplete.connect(self.execComplete)
         runElement.start()
-        ## create processor and forward config and start filename
+
         logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
 
     def execComplete(self, id, data):

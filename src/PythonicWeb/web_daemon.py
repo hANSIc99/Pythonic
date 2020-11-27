@@ -103,6 +103,7 @@ def ctrl(ws):
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
             elif msg['cmd'] == 'QueryConfig':
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
+                ws.environ['mainWorker'].loadConfig()
 
 
 @websocket.WebSocketWSGI
@@ -410,7 +411,7 @@ class MainWorker(QObject):
 
 
     startExec       = pyqtSignal('PyQt_PyObject' , 'PyQt_PyObject', name='startExec')
-    frontendCtrl    = pyqtSignal('PyQt_PyObject' , name='startExec')
+    frontendCtrl    = pyqtSignal('PyQt_PyObject' , name='frontendCtrl')
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
@@ -428,6 +429,7 @@ class MainWorker(QObject):
         # Instantiate Execution Operator
         self.operator = Operator()
         self.startExec.connect(self.operator.startExec)
+        self.startExec.connect(self.saveConfig)
 
         self.update_logdate.connect(self.stdinReader.updateLogDate)
         self.grd_ops_arr    = []
@@ -540,11 +542,29 @@ class MainWorker(QObject):
     def on_callback(self):
 
         self.stdinReader.run()
+    
+    def saveConfig(self, id, config):
+
+        logging.debug('MainWorker::saveConfig() called')
+        with open('PythonicWeb/templates/current_config.json', 'w') as file:
+            json.dump(config, file)
 
 
-    def loadGrid(self):
 
-        logging.debug('MainWindow::loadGrid() called')
+    def loadConfig(self):
+
+        logging.debug('MainWorker::loadConfig() called')
+        
+        config = None
+        with open('PythonicWeb/templates/current_config.json', 'r') as file:
+            config = json.load(file)
+
+        
+        cmd = { 'cmd' : 'CurrentConfig',
+                'data' : config }
+
+        self.frontendCtrl.emit(cmd)
+        logging.debug('MainWorker::loadConfig() called2')
         """
         grid = [[[None for k in range(self.max_grid_size)]for i in range(self.max_grid_size)]
                 for j in range(self.max_grid_cnt)]

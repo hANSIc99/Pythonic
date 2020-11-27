@@ -104,6 +104,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&m_menuBar.m_newFileBtn, &QPushButton::clicked,
             this, &MainWindow::testSlot);
+    /* Reconnect-Button */
+    connect(&m_menuBar.m_openFileBtn, &QPushButton::clicked,
+            this, &MainWindow::reconnect);
 
 
     /* Receive-Websocket connection */
@@ -176,17 +179,28 @@ void MainWindow::wsRcv(const QString &message)
         return;
     }
 
+
     switch (helper::hashCmd(jsCmd.toString())) {
         case Command::Heartbeat:
         //qCDebug(logC, "Heartbeat received");
+
         break;
     case Command::CurrentConfig:
-
+        qCDebug(logC, "CurrentConfig received");
+        loadSavedConfig(cmdObj);
         break;
     default:
         qCDebug(logC, "Unknown command: %s", jsCmd.toString().toStdString().c_str());
         break;
     }
+}
+
+void MainWindow::reconnect()
+{
+    qCInfo(logC, "called");
+
+    m_wsCtrl.open(QUrl("ws://localhost:7000/ctrl"));
+    m_wsRcv.open(QUrl("ws://localhost:7000/rcv"));
 }
 
 void MainWindow::setCurrentWorkingArea(const int tabIndex)
@@ -247,6 +261,13 @@ void MainWindow::testSlot(bool checked)
 void MainWindow::loadSavedConfig(const QJsonObject config)
 {
     qCInfo(logC, "called");
+    QJsonArray elements = config["data"].toArray();
+
+    for(const auto& element : elements){
+        QJsonObject jsonElement(element.toObject());
+        qCDebug(logC, "BAUSTELLE");
+        // BAUSTELLE Hier weitermachen
+    }
 }
 
 void MainWindow::queryConfig()
@@ -260,3 +281,5 @@ void MainWindow::queryConfig()
     wsCtrl(queryCfg);
 
 }
+
+
