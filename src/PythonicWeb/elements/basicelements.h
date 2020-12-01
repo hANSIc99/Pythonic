@@ -47,6 +47,10 @@ QString author,
 QString license,
 QWidget *parent = nullptr);
 */
+
+
+
+
 class Scheduler : public ElementMaster
 {
     Q_OBJECT
@@ -56,7 +60,7 @@ public:
         : ElementMaster(false, // socket
                         true, // plug
                         QUrl("http://localhost:7000/Scheduler.png"),
-                        QString("Scheduler"), // Element name
+                        QString("Scheduler"), // Typename
                         QString("scheduler"), // Filename (excluding *.py)
                         Version{0, 1}, // Element Version
                         Version{0, 1}, // Pythonic Version

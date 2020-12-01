@@ -21,8 +21,8 @@
 ElementMaster::ElementMaster(bool socket,
                              bool plug,
                              QUrl pixMapPath,
-                             QString objectName,
-                             QString filename,
+                             QString typeName,
+                             QString fileName,
                              Version version,
                              Version pythonicVersion,
                              QString author,
@@ -31,7 +31,8 @@ ElementMaster::ElementMaster(bool socket,
                              QWidget *parent)
     : QWidget(parent)
     , m_hasSocket(socket)
-    , m_filename(filename)
+    , m_typeName(typeName)
+    , m_fileName(fileName)
     , m_version(version)
     , m_pythonicVersion(pythonicVersion)
     , m_author(author)
@@ -45,7 +46,7 @@ ElementMaster::ElementMaster(bool socket,
     /* Generate random element name */
 
     m_id = QRandomGenerator::global()->generate();
-    QString widgetName = QStringLiteral("%1 - 0x%2").arg(objectName).arg(m_id, 8, 16, QChar('0'));
+    QString widgetName = QStringLiteral("%1 - 0x%2").arg(typeName).arg(m_id, 8, 16, QChar('0'));
     setObjectName(widgetName);
     qCDebug(logC, "called - %s added", widgetName.toStdString().c_str());
 
@@ -133,9 +134,10 @@ QJsonObject ElementMaster::genConfig() const
     {
         {"ID", (qint64)m_id},
         {"ObjectName", objectName()},
+        {"Type", m_typeName},
         {"Version", version},
         {"PythonicVersion", pythonicVersion},
-        {"Filename", m_filename},
+        {"Filename", m_fileName},
         {"Author", m_author},
         {"License", m_license},
         {"Position", pos},

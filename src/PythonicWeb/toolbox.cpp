@@ -17,6 +17,12 @@
 
 #include "toolbox.h"
 
+
+template<typename T> ElementMaster *createInstance(int gridNo, QWidget *parent) { return new T(gridNo); }
+// Alternativ QMap
+// (*)() Pointer auf FUnktion ohne argumente
+
+
 Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
 {
     qCDebug(logC, "called");
@@ -31,6 +37,10 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
     m_mainWidget.setLayout(&m_layout);
     m_mainWidget.setMinimumHeight(1200); // can be deleted
 
+    m_mappedTypes["Scheduler"] = &createInstance<Scheduler>;
+    //(RegElement &registeredTypes, ToolData toolData, QWidget *parent = 0)
+
+
     m_layout.setContentsMargins(15, 10, 0, 0);
     m_layout.setSizeConstraint(QLayout::SetMinimumSize);
     m_layout.addWidget(&m_scheduler);
@@ -41,9 +51,16 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
 
     m_masterLayout.addWidget(&m_scrollArea);
 
+
+    /* Register element types */
+
+
+
     /* Signals & Slots */
+    //ElementMaster *myType = m_mappedTypes["Scheduler"](0, nullptr);
 
 
+    //m_scheduler{OPERATION_DATA};
     connect(this, &Toolbox::updateCurrentWorkingArea,
             &m_scheduler, &ToolMaster::setCurrentWorkingArea);
 

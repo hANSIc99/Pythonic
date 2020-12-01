@@ -144,8 +144,8 @@ public:
             bool socket,
             bool plug,
             QUrl pixMapPath,
-            QString objectName,
-            QString filename,
+            QString typeName,
+            QString fileName,
             Version version,
             Version pythonicVersion,
             QString author,
@@ -159,8 +159,10 @@ public:
     quint32                 m_id;
     //! Indicates if elements accept parent connections
     bool                    m_hasSocket;
+    //! Typename is the class (CONFIG)
+    QString                 m_typeName;
     //! Filename for the related Python file (CONFIG)
-    QString                 m_filename;
+    QString                 m_fileName;
     //! Version of the element: Major:Minor (CONFIG)
     Version                 m_version;
     //! Related version of Pythonic: Major:Minor (CONFIG)

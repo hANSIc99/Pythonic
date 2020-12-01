@@ -102,6 +102,8 @@ int main(int argc, char *argv[])
                                                     "ToolMaster.debug=true\n"
                                                     "ToolMaster.info=true\n"
 
+                                                    "ToolMaster2.debug=true\n"
+                                                    "ToolMaster2.info=true\n"
                                                     "ElementMaster.debug=true\n"
                                                     "ElementMaster.info=true\n"
 

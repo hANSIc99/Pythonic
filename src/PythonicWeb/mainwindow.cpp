@@ -100,7 +100,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     /* Signals & Slots - Buttons */
-    //m_newFileBtn
 
     connect(&m_menuBar.m_newFileBtn, &QPushButton::clicked,
             this, &MainWindow::testSlot);
@@ -121,10 +120,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateCurrentWorkingArea,
             &m_toolBox, &Toolbox::setCurrentWorkingArea);
 
-    /*
+
     connect(&m_wsCtrl, &QWebSocket::connected,
             this, &MainWindow::queryConfig);
-    */
+
     /* Set current working area on initialization */
     setCurrentWorkingArea(m_workingTabs.currentIndex());
 
@@ -183,7 +182,7 @@ void MainWindow::wsRcv(const QString &message)
 
     switch (helper::hashCmd(jsCmd.toString())) {
         case Command::Heartbeat:
-        qCDebug(logC, "Heartbeat received");
+        //qCDebug(logC, "Heartbeat received");
 
         break;
     case Command::CurrentConfig:
@@ -259,17 +258,38 @@ void MainWindow::testSlot(bool checked)
     logMessage("test123", LogLvl::CRITICAL);
 }
 
+
+/*
+template <typename T>
+struct foo {
+   foo( T t ) {}
+};
+*/
+
+
+
 void MainWindow::loadSavedConfig(const QJsonObject config)
 {
     qCInfo(logC, "called");
     QJsonArray elements = config["data"].toArray();
-
+    //map_type map;
+    //map["Scheduler"] = &createInstance<Scheduler>()
     for(const auto& element : elements){
         QJsonObject jsonElement(element.toObject());
+
+        int nWrkArea = jsonElement["GridNo"].toInt();
+        QString type = jsonElement["Type"].toString();
+        // toolmaster.h mouseReleaseElement
+
+        //WorkingArea::registerElement
+        //m_arr_workingArea
+        //foo <QString> f(type);
         qCDebug(logC, "BAUSTELLE");
         // BAUSTELLE Hier weitermachen
     }
 }
+
+
 
 void MainWindow::queryConfig()
 {

@@ -26,10 +26,15 @@
 #include "toolmaster.h"
                                // typeName    outputs
 #define OPERATION_DATA ToolData {"Scheduler", 1}
+#define SCHEDULER_TOOLDATA ToolData {"Scheduler", 1}
+
 
 /* Forward declarations to prevent
  * circular includes */
 class WorkingArea;
+
+
+
 
 
 class Toolbox : public QWidget
@@ -37,6 +42,8 @@ class Toolbox : public QWidget
     Q_OBJECT
 public:
     explicit Toolbox(QWidget *parent = nullptr);
+
+    RegElement          m_mappedTypes;
 
 public slots:
 
@@ -69,8 +76,10 @@ private:
 
     /* Programming Elements */
 
-    ToolTemplate<Scheduler>         m_scheduler{OPERATION_DATA};
-    ToolTemplate<GenericPython>     m_genericPython{OPERATION_DATA};
+    ToolTemplate<Scheduler>         m_scheduler{"Scheduler"};
+    //RegElement &registeredTypes, ToolData toolData, QWidget *parent = 0
+    //ToolMaster2                     *m_scheduler;
+    ToolTemplate<GenericPython>     m_genericPython{"BaseElement"};
 };
 
 #endif // TOOLBOX_H

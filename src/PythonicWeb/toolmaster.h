@@ -34,15 +34,11 @@
 #define TOOL_SIZE QSize(140, 47)
 
 
-
-
-
 class ToolMaster : public BaseLabel
 {
 public:
-    explicit ToolMaster(ToolData toolData, QWidget *parent = 0);
+    explicit ToolMaster(QString fileName, QWidget *parent = 0);
 
-    ToolData                m_toolData;
 
     WorkingArea             *m_workingAreaWidget;
 
@@ -78,12 +74,103 @@ private:
  *  @copyright [GPLv3](../../../LICENSE)
  */
 
+
+
+//ElementMaster*(*)(int gridNo, QWidget *parent)
+//https://stackoverflow.com/questions/954548/how-to-pass-a-function-pointer-that-points-to-constructor
+/*
+struct ToolData {
+    QString                         typeName;
+    int                             nOutputs;
+    // Pointer auf ElementMaster?
+};
+*/
+
+
+typedef std::map<QString, ElementMaster*(*)(int gridNo, QWidget *parent)> RegElement;
+
+#if 0
+class ToolMaster2 : public BaseLabel
+{
+public:
+    explicit ToolMaster2(ElementMaster*(*type)(int gridNo, QWidget *parent), QString typeName, QWidget *parent = 0)
+    : BaseLabel(QUrl("http://localhost:7000/" + typeName + ".png"), TOOL_SIZE, parent)
+    , m_master(type)
+    {
+        qCDebug(logC, "called");
+        //toolData.typeName;
+        //ElementMaster*(*c)(int gridNo),
+        //ElementMaster *myType = m_mappedTypes["Scheduler"](0);
+        //Gridnummer z.Z. noch unklar
+        //m_master = registeredTypes[typeName];
+
+    };
+
+    ElementMaster           *(*m_master)(int gridNo, QWidget *parent);
+
+    WorkingArea             *m_workingAreaWidget;
+
+    QPoint                  m_dragPosOffset;
+
+
+public slots:
+
+    void setCurrentWorkingArea(QWidget* workingAreaWidget);
+
+protected:
+
+    void mouseReleaseEvent(QMouseEvent *event) override{
+
+        this->setCursor(Qt::ArrowCursor);
+        if(m_preview){
+            /* Delete preview in case it is still part of the workingarea */
+            delete m_preview;
+            m_preview = NULL;
+        }
+
+        // BAUSTELLE: Update gridSize auslösen wenn das hier aufgerufen wird
+
+        QPoint wrkAreaGlobalPos     = m_workingAreaWidget->mapFromGlobal(event->globalPos());
+        QWidget* wrkAreaScrollArea  = qobject_cast<QWidget*>(m_workingAreaWidget->parent());
+
+        if(helper::mouseOverElement(wrkAreaScrollArea, event->globalPos())){
+
+            qCDebug(logC, "mouse cursor inside working area");
+            ElementMaster *element = m_master(m_workingAreaWidget->m_gridNo, m_workingAreaWidget);
+
+            element->move(wrkAreaGlobalPos.x() - 170,
+                          wrkAreaGlobalPos.y() - 100);
+
+            element->show();
+
+            qobject_cast<WorkingArea*>(m_workingAreaWidget)->registerElement(element);
+
+        }else{
+            qCDebug(logC, "mouse cursor outside working area");
+        }
+    };
+
+    void mousePressEvent(QMouseEvent *event) override;
+
+    /* mouseReleaseEvent implemented in ToolTemplate */
+
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+    QLabel                  *m_preview;
+
+private:
+
+    QLoggingCategory        logC{"ToolMaster2"};
+
+};
+#endif
+
 template<typename T> class ToolTemplate : public ToolMaster
 {
 public:
 
-    explicit ToolTemplate(ToolData toolData, QWidget *parent = 0)
-        : ToolMaster(toolData, parent){};
+    explicit ToolTemplate(QString fileName, QWidget *parent = 0)
+        : ToolMaster(fileName, parent){};
 
     T*  m_elementType;
 

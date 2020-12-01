@@ -9,8 +9,8 @@ from zipfile import ZipFile
 from enum import Enum
 from execution_operator import Operator
 import operator
-from PyQt5.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
-from PyQt5.QtCore import pyqtSignal
+from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
+from PySide2.QtCore import Signal
 
 
 class LogLvl(Enum):
@@ -44,6 +44,7 @@ def startTimer(ws):
 
 @websocket.WebSocketWSGI
 def rcv(ws):
+
 
     def send(command):
         logging.debug('testfunc called')
@@ -270,9 +271,9 @@ def reset_screen():
 
 class stdinReader(QThread):
 
-    print_procs = pyqtSignal(name='print_procs')
-    quit_app = pyqtSignal(name='quit_app')
-    finished = pyqtSignal(name='finished')
+    print_procs = Signal()
+    quit_app = Signal()
+    finished = Signal()
     b_init      = True
     b_exit      = False
     b_log       = False
@@ -401,8 +402,8 @@ class stdinReader(QThread):
 
 class MainWorker(QObject):
 
-    kill_all        = pyqtSignal(name='kill_all')
-    update_logdate  = pyqtSignal('PyQt_PyObject', name='update_logdate')
+    kill_all        = Signal()
+    update_logdate  = Signal(object)
     log_level       = logging.DEBUG
     formatter       = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
@@ -412,8 +413,8 @@ class MainWorker(QObject):
     gridConfig      = None
 
 
-    startExec       = pyqtSignal('PyQt_PyObject' , 'PyQt_PyObject', name='startExec')
-    frontendCtrl    = pyqtSignal('PyQt_PyObject' , name='frontendCtrl')
+    startExec       = Signal(object, object)
+    frontendCtrl    = Signal(object)
 
     def __init__(self, app):
         super(MainWorker, self).__init__()

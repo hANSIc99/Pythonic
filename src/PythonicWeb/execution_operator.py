@@ -4,8 +4,8 @@ import random
 import multiprocessing as mp
 import threading as mt
 from element_types import Record
-from PyQt5.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
-from PyQt5.QtCore import pyqtSignal
+from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
+from PySide2.QtCore import Signal
 
 """
 def target_0(instance, record, feed_pipe):
@@ -20,7 +20,7 @@ def target_0(instance, record, feed_pipe):
 
 class ProcessHandler(QThread):
 
-    execComplete  = pyqtSignal('PyQt_PyObject', 'PyQt_PyObject', 'PyQt_PyObject', name='execComplete')
+    execComplete  = Signal(object, object, object)
 
     def __init__(self, element, inputdata, identifier):
         super().__init__()
@@ -83,7 +83,7 @@ class Operator(QThread):
         
         # register elements für den fall das alles gestoppt werden muss
         inputData = None
-        #BAUSTELLE
+
         # creating a random identifier
         identifier = random.randint(0, 9999)
         runElement = ProcessHandler(startElement,inputData, identifier)

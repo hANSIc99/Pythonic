@@ -1,6 +1,6 @@
 import eventlet, os, sys, logging
 from web_daemon import MainWorker
-from PyQt5.QtCore import QCoreApplication, QTimer
+from PySide2.QtCore import QCoreApplication, QTimer
 		
 
 if __name__ == '__main__':
