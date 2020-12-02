@@ -120,9 +120,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateCurrentWorkingArea,
             &m_toolBox, &Toolbox::setCurrentWorkingArea);
 
-
+    // BAUSTELLE: Websocket schließt direkt nachdem QueryToolbox aufgerufen wird
     connect(&m_wsCtrl, &QWebSocket::connected,
-            this, &MainWindow::queryToolbox);
+            this, &MainWindow::connectionEstablished);
+
+    connect(&m_wsRcv, &QWebSocket::connected,
+            this, &MainWindow::connectionEstablished);
 
     /* Set current working area on initialization */
     setCurrentWorkingArea(m_workingTabs.currentIndex());
@@ -182,7 +185,7 @@ void MainWindow::wsRcv(const QString &message)
 
     switch (helper::hashCmd(jsCmd.toString())) {
         case Pythonic::Command::Heartbeat:
-        //qCDebug(logC, "Heartbeat received");
+        qCDebug(logC, "Heartbeat received");
 
         break;
     case Pythonic::Command::CurrentConfig:
@@ -336,8 +339,20 @@ void MainWindow::queryToolbox(){
 
     QJsonObject queryCfg {
         {"cmd", "QueryToolbox"}
+        //{"cmd", "QueryConfig"}// Das funktioniert
     };
     wsCtrl(queryCfg);
+}
+
+void MainWindow::connectionEstablished()
+{
+    QAbstractSocket::SocketState ctrlState = m_wsCtrl.state();
+    QAbstractSocket::SocketState rcvState  = m_wsRcv.state();
+    if(ctrlState == QAbstractSocket::SocketState::ConnectedState &&
+       rcvState == QAbstractSocket::SocketState::ConnectedState){
+        queryToolbox();
+        //queryConfig();
+    }
 }
 
 

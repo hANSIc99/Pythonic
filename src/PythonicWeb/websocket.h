@@ -54,6 +54,8 @@ public:
 
         connect(this, &QWebSocket::connected, this, &Websocket::logConnected);
         connect(this, &QWebSocket::disconnected, this, &Websocket::logDisconnected);
+        connect(this, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
+                this, &Websocket::logSocketError);
         open(QUrl(url));
     }
 
@@ -78,6 +80,10 @@ private slots:
     }
     void logDisconnected(){
         qCInfo(logC, "Websocket disconnected  %s", m_url.toStdString().c_str());
+    }
+    void logSocketError(QAbstractSocket::SocketError error){
+        Q_UNUSED(error)
+        qCInfo(logC, "Websocket disconnected  %s", this->errorString().toStdString().c_str());
     }
 private:
     QLoggingCategory    logC{"Websocket"};

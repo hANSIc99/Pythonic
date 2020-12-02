@@ -98,10 +98,13 @@ private slots:
     void queryConfig();
     //! Query Toolbox elements
     void queryToolbox();
+    //! Proceed with initialization when connection is established
+    void connectionEstablished();
 
 private:
 
-
+    //bool                    m_ctrlConnected{false};
+    //bool                    m_recvConnected{false};
 
     /* Die Reihenfolge hier ist entscheidend */
     QPushButton             *m_sendDebugMessage;

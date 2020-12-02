@@ -27,24 +27,6 @@ execTimer = False
 
 
 @websocket.WebSocketWSGI
-def startTimer(ws):
-    n_cnt = 0
-    global execTimer
-    while execTimer:
-        print('Timer fired! {}'.format(n_cnt))
-
-        greenthread.sleep(1)
-        n_cnt+=1
-
-        try:
-            ws.send('Timer fired! {}'.format(n_cnt))
-        except Exception as e:
-            print('Client websocket not available')
-            ws.close()
-            return
-
-
-@websocket.WebSocketWSGI
 def rcv(ws):
 
 
@@ -56,6 +38,7 @@ def rcv(ws):
     bConnected = True
     while bConnected:
         greenthread.sleep(1)
+        #QThread.sleep(1)
         try:
             ws.send( json.dumps({"cmd": "Heartbeat"}))
         except Exception as e:
@@ -65,8 +48,12 @@ def rcv(ws):
 
     logging.debug('PythonicWeb - RCV Socket closed')
 
+
+
+
 @websocket.WebSocketWSGI
 def ctrl(ws):
+    logging.debug('PythonicDaemon - CTRL WebSocket connected')   
     while True:
         m = ws.wait()
         if m is None:
@@ -160,15 +147,7 @@ def dispatch(environ, start_response):
     elif environ['PATH_INFO'] == '/message':
         logging.debug('PATH_INFO == \'/message\'')
         return processMessage(environ, start_response)
-    elif environ['PATH_INFO'] == '/timer':
-        logging.debug('PATH_INFO == \'/timer\'')
-        if execTimer:
-            execTimer = False
-            start_response('200 OK', [])
-            return []
-        else:
-            execTimer = True
-            return startTimer(environ, start_response)
+
 
         """
             STANDARD HTML ENDPOINTS
@@ -240,8 +219,6 @@ class WSGI_Server(QThread):
 
         listener = eventlet.listen(('127.0.0.1', 7000))
         wsgi.server(listener, dispatch, log_output=False, environ=self.mainWorker)
-
-
 
 
 
@@ -401,17 +378,15 @@ class MainWorker(QObject):
 
     def loadTools(self):
 
+        # BAUSTELLE: DAUER ALLES ZU LANGE: MUSS IN EINEN EIGENEN THREAD
         logging.debug('MainWorker::loadTools() called')
+        
         #toolDirs = glob('PythonicWeb/config/Toolbox/*/')
         #toolDirs = glob(os.path.join('PythonicWeb/config/Toolbox/',"*", ""))
+        
         toolDirs = [ f for f in os.scandir('PythonicWeb/config/Toolbox/') if f.is_dir() ]
         elements = [(d, f) for d in toolDirs for f in os.listdir(d.path) if f.endswith('.json')]
         elementsJSON = []
-        """
-        for d in toolDirs:
-            for f in os.listdir(d.path) if f.endswith('.json'):
-                
-                logging.debug('MainWorker::loadTools() - file found: {}'.format(jsonFile))
         """
         for d, f in elements:
             
@@ -429,9 +404,11 @@ class MainWorker(QObject):
         
         cmd = { 'cmd' : 'Toolbox',
                 'data' : elementsJSON }
+        """
+        #self.frontendCtrl.emit(cmd)
         
-        self.frontendCtrl.emit(cmd)
         
+
     def loadConfig(self):
 
         logging.debug('MainWorker::loadConfig() called')
