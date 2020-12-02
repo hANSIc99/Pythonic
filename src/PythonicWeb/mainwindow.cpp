@@ -122,7 +122,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     connect(&m_wsCtrl, &QWebSocket::connected,
-            this, &MainWindow::queryConfig);
+            this, &MainWindow::queryToolbox);
 
     /* Set current working area on initialization */
     setCurrentWorkingArea(m_workingTabs.currentIndex());
@@ -301,6 +301,17 @@ void MainWindow::queryConfig()
     };
     wsCtrl(queryCfg);
 
+}
+
+void MainWindow::queryToolbox(){
+
+    qCDebug(logC, "Debug Message");
+    /* Query Config from Daemon */
+
+    QJsonObject queryCfg {
+        {"cmd", "QueryToolbox"}
+    };
+    wsCtrl(queryCfg);
 }
 
 

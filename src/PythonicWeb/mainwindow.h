@@ -92,6 +92,8 @@ private slots:
     void loadSavedConfig(const QJsonObject config);
     /* Query config */
     void queryConfig();
+    //! Query Toolbox elements
+    void queryToolbox();
 
 private:
 
