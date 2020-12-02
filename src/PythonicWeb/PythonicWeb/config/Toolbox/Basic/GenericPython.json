@@ -1,9 +1,9 @@
 {
-    "Socket"           : false,
+    "Socket"           : true,
     "Plug"             : true,
-    "Typename"         : "MyType",
-    "Iconname"         : "my_type",
-    "Filename"         : "scheduler",
+    "Typename"         : "GenericPython",
+    "Iconname"         : "Scheduler",
+    "Filename"         : "generic_python",
     "Version"          : {
                              "Major" : 0,
                              "Minor" : 1

@@ -422,15 +422,16 @@ class MainWorker(QObject):
 
             element = { 'assignment' : d.name,
                         'config' : e}
+
+            elementsJSON.append(element)
             logging.debug('MainWorker::loadTools() called')
 
-        """
-        cmd = { 'cmd' : 'Toolbox',
-                'data' : config }
-        """
-        logging.debug('MainWorker::loadTools() called')
         
-
+        cmd = { 'cmd' : 'Toolbox',
+                'data' : elementsJSON }
+        
+        self.frontendCtrl.emit(cmd)
+        
     def loadConfig(self):
 
         logging.debug('MainWorker::loadConfig() called')

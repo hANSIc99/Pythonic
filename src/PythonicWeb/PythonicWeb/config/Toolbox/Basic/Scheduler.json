@@ -1,8 +1,8 @@
 {
     "Socket"           : false,
     "Plug"             : true,
-    "Typename"         : "MyType",
-    "Iconname"         : "my_type",
+    "Typename"         : "Scheduler",
+    "Iconname"         : "Scheduler",
     "Filename"         : "scheduler",
     "Version"          : {
                              "Major" : 0,

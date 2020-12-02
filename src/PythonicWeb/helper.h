@@ -23,33 +23,42 @@
 #include <QPoint>
 
 //https://stackoverflow.com/questions/34281682/how-to-convert-enum-to-qstring
-enum Command {
-    Heartbeat,
-    CurrentConfig,
-    Test,
-    NoCmd
-};
+
+namespace Pythonic {
+
+    enum Command {
+        Heartbeat,
+        CurrentConfig,
+        Toolbox,
+        Test,
+        NoCmd
+    };
+
+    struct ToolData {
+        QString                         typeName;
+        int                             nOutputs;
+        // Pointer auf ElementMaster?
+    };
+}
 
 
 
 
 
-struct ToolData {
-    QString                         typeName;
-    int                             nOutputs;
-    // Pointer auf ElementMaster?
-};
+
+
 
 class helper {
 
 public:
     static bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
-    static Command hashCmd(QString const &inString){
-        if(inString == "Heartbeat") return Heartbeat;
-        if(inString == "CurrentConfig") return CurrentConfig;
-        if(inString == "Test") return Test;
-        return NoCmd;
+    static Pythonic::Command hashCmd(QString const &inString){
+        if(inString == "Heartbeat") return Pythonic::Heartbeat;
+        if(inString == "CurrentConfig") return Pythonic::CurrentConfig;
+        if(inString == "Toolbox") return Pythonic::Toolbox;
+        if(inString == "Test") return Pythonic::Test;
+        return Pythonic::NoCmd;
     };
 
 };

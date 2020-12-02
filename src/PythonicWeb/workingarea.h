@@ -190,6 +190,7 @@ private:
     QMenu                       m_contextDisconnect;
 
     QList<ConnectionPair*>      m_discMenuConnections;
+
 };
 
 #endif // WORKINGAREA_H

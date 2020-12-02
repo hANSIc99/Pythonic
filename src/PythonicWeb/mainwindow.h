@@ -30,6 +30,8 @@
 #include <QScrollArea>
 #include <QSizeGrip>
 #include <QLabel>
+#include <QSet>
+#include <QMap>
 
 #include "helper.h"
 #include "websocket.h"
@@ -88,9 +90,11 @@ private slots:
     void stopExec(const quint32 id);
     /* DBG Slot */
     void testSlot(bool checked);
-    /* Load config from daemon */
+    //! Load config from daemon */
     void loadSavedConfig(const QJsonObject config);
-    /* Query config */
+    //! Load Toolbox
+    void loadToolbox(const QJsonObject toolbox);
+    //! Query config */
     void queryConfig();
     //! Query Toolbox elements
     void queryToolbox();
@@ -143,6 +147,7 @@ private:
 
     QLabel                  m_infoText;
 
+    QSet<QString>           m_toolboxAssignment;
 
     QLoggingCategory        logC{"MainWindow"};
 };

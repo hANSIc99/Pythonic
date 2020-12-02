@@ -181,13 +181,17 @@ void MainWindow::wsRcv(const QString &message)
 
 
     switch (helper::hashCmd(jsCmd.toString())) {
-        case Command::Heartbeat:
+        case Pythonic::Command::Heartbeat:
         //qCDebug(logC, "Heartbeat received");
 
         break;
-    case Command::CurrentConfig:
+    case Pythonic::Command::CurrentConfig:
         qCDebug(logC, "CurrentConfig received");
         loadSavedConfig(cmdObj);
+        break;
+    case Pythonic::Command::Toolbox:
+        qCDebug(logC, "Toolbox received");
+        loadToolbox(cmdObj);
         break;
     default:
         qCDebug(logC, "Unknown command: %s", jsCmd.toString().toStdString().c_str());
@@ -286,6 +290,28 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
         //foo <QString> f(type);
         qCDebug(logC, "BAUSTELLE");
         // BAUSTELLE Hier weitermachen
+    }
+}
+
+void MainWindow::loadToolbox(const QJsonObject toolbox)
+{
+    QJsonArray elements = toolbox["data"].toArray();
+    QString currentAssignment;
+    for(const auto& element : elements){
+
+        QJsonObject elementHeader(element.toObject());
+        QString assignment = elementHeader["assignment"].toString();
+        QJsonObject elementConfig = elementHeader["config"].toObject();
+
+        if(currentAssignment != assignment){
+            currentAssignment = assignment;
+            qCDebug(logC, "BAUSTELLE1");
+        } else {
+            qCDebug(logC, "BAUSTELLE2");
+        }
+
+        m_toolboxAssignment.insert(assignment);
+
     }
 }
 
