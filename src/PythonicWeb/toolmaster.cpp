@@ -18,17 +18,21 @@
 #include "toolbox.h"
 
 
-ToolMaster::ToolMaster(QString fileName, QWidget *parent)
-    : BaseLabel(QUrl("http://localhost:7000/" + fileName + ".png"), TOOL_SIZE, parent)
-    , m_preview(NULL)
+ToolMaster3::ToolMaster3(QJsonObject &toolData, QWidget *parent)
+    : BaseLabel(QUrl("http://localhost:7000/" + toolData["Iconname"].toString() + ".png"), TOOL_SIZE, parent)
+    , m_toolData(toolData)
 {
-        qCDebug(logC, "called");
+    qCInfo(logC, "called");
 }
 
-
-void ToolMaster::mousePressEvent(QMouseEvent *event)
+void ToolMaster3::setCurrentWorkingArea(QWidget *workingAreaWidget)
 {
+    qCInfo(logC, "called");
+    m_workingAreaWidget = qobject_cast<WorkingArea*>(workingAreaWidget);
+}
 
+void ToolMaster3::mousePressEvent(QMouseEvent *event)
+{
     //qCInfo(logC, "%s called", m_toolData.typeName.toStdString().c_str());
     qCInfo(logC, "called");
 
@@ -47,7 +51,7 @@ void ToolMaster::mousePressEvent(QMouseEvent *event)
     if(m_preview){
         delete m_preview;
     }
-    // BAUSTELLE: m_workinAreaWIdget ist  NULL
+    // Achtung: m_workingAreaWidget kann 0 sein wenn der setCurrentWorkingArea nicht aufgerufen wurde
     m_preview = new QLabel(m_workingAreaWidget);
     m_preview->setPixmap(m_pixMap);
     /* Add preview outside of visible area */
@@ -58,9 +62,61 @@ void ToolMaster::mousePressEvent(QMouseEvent *event)
     m_dragPosOffset = pos() - event->pos();
 }
 
-void ToolMaster::mouseMoveEvent(QMouseEvent *event)
+void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
 {
+    this->setCursor(Qt::ArrowCursor);
+    if(m_preview){
+        /* Delete preview in case it is still part of the workingarea */
+        delete m_preview;
+        m_preview = NULL;
+    }
 
+    // BAUSTELLE: Update gridSize auslösen wenn das hier aufgerufen wird
+
+    QPoint wrkAreaGlobalPos     = m_workingAreaWidget->mapFromGlobal(event->globalPos());
+    QWidget* wrkAreaScrollArea  = qobject_cast<QWidget*>(m_workingAreaWidget->parent());
+
+    if(helper::mouseOverElement(wrkAreaScrollArea, event->globalPos())){
+
+        qCDebug(logC, "mouse cursor inside working area");
+
+
+        QJsonObject elementVersionjson  = m_toolData["Version"].toObject();
+        QJsonObject pythonicVersionjson = m_toolData["PythonicVersion"].toObject();
+        Version elementVersion{elementVersionjson["Major"].toInt(), elementVersionjson["Minor"].toInt()};
+        Version pythonicVersion{pythonicVersionjson["Major"].toInt(), pythonicVersionjson["Minor"].toInt()};
+
+        ElementMaster *element = new ElementMaster(
+                        m_toolData["Socket"].toBool(),
+                        m_toolData["Plug"].toBool(),
+                        QUrl("http://localhost:7000/" + m_toolData["Iconname"].toString() + ".png"),
+                        m_toolData["Typename"].toString(),
+                        m_toolData["Filename"].toString(),
+                        elementVersion,
+                        pythonicVersion,
+                        m_toolData["Author"].toString(),
+                        m_toolData["License"].toString(),
+                        m_workingAreaWidget->m_gridNo,
+                        m_workingAreaWidget);
+
+
+
+
+
+        element->move(wrkAreaGlobalPos.x() - 170,
+                      wrkAreaGlobalPos.y() - 100);
+
+        element->show();
+
+        m_workingAreaWidget->registerElement(element);
+
+    }else{
+        qCDebug(logC, "mouse cursor outside working area");
+    }
+}
+
+void ToolMaster3::mouseMoveEvent(QMouseEvent *event)
+{
     QWidget* wrkAreaScrollArea  = qobject_cast<QWidget*>(m_workingAreaWidget->parent());
 
     if(helper::mouseOverElement(wrkAreaScrollArea, event->globalPos())){
@@ -71,11 +127,3 @@ void ToolMaster::mouseMoveEvent(QMouseEvent *event)
         m_preview->move(previewPos);
     }
 }
-
-
-void ToolMaster::setCurrentWorkingArea(QWidget* workingAreaWidget)
-{
-    qCInfo(logC, "called");
-    m_workingAreaWidget = qobject_cast<WorkingArea*>(workingAreaWidget);
-}
-

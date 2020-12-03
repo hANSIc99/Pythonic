@@ -71,7 +71,7 @@ public:
     Websocket   m_wsRcv{"ws://localhost:7000/rcv", this};
 
 signals:
-    void updateCurrentWorkingArea(QWidget* currentWokringArea);
+    void updateCurrentWorkingArea(WorkingArea* currentWokringArea);
 
 private slots:
     //! Send log-message to daemon
@@ -150,7 +150,6 @@ private:
 
     QLabel                  m_infoText;
 
-    QSet<QString>           m_toolboxAssignment;
 
     QLoggingCategory        logC{"MainWindow"};
 };

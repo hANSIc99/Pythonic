@@ -37,15 +37,15 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
     m_mainWidget.setLayout(&m_layout);
     m_mainWidget.setMinimumHeight(1200); // can be deleted
 
-    m_mappedTypes["Scheduler"] = &createInstance<Scheduler>;
+    //m_mappedTypes["Scheduler"] = &createInstance<Scheduler>;
     //(RegElement &registeredTypes, ToolData toolData, QWidget *parent = 0)
 
 
     m_layout.setContentsMargins(15, 10, 0, 0);
     m_layout.setSizeConstraint(QLayout::SetMinimumSize);
-    m_layout.addWidget(&m_scheduler);
-    m_layout.addWidget(&m_genericPython);
-    m_layout.addStretch(1);
+    //m_layout.addWidget(&m_scheduler);
+    //m_layout.addWidget(&m_genericPython);
+    //m_layout.addStretch(1);
 
     m_scrollArea.setWidget(&m_mainWidget);
 
@@ -61,10 +61,34 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
 
 
     //m_scheduler{OPERATION_DATA};
+    /*
     connect(this, &Toolbox::updateCurrentWorkingArea,
             &m_scheduler, &ToolMaster::setCurrentWorkingArea);
 
     connect(this, &Toolbox::updateCurrentWorkingArea,
             &m_genericPython, &ToolMaster::setCurrentWorkingArea);
+    */
+}
 
+void Toolbox::addAssignment(QString title)
+{
+    qCDebug(logC, "called");
+    QFont font("Arial", ASSIGNMENT_FONTSIZE, QFont::Bold);
+    QLabel *assignment = new QLabel(title);
+    assignment->setFont(font);
+    m_layout.addWidget(assignment);
+}
+
+void Toolbox::addTool(ToolMaster3 *tool)
+{
+    qCDebug(logC, "called");
+    tool->m_workingAreaWidget = m_workingAreaWidget;
+    m_layout.addWidget(tool);
+    connect(this, &Toolbox::updateCurrentWorkingArea,
+            tool, &ToolMaster3::setCurrentWorkingArea);
+}
+
+void Toolbox::addStretch()
+{
+    m_layout.addStretch(1);
 }

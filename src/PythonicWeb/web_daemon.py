@@ -10,6 +10,7 @@ from enum import Enum
 from execution_operator import Operator
 from stdin_reader import stdinReader
 from screen import reset_screen
+from configio import ToolboxLoader
 import operator
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
@@ -31,14 +32,14 @@ def rcv(ws):
 
 
     def send(command):
-        logging.debug('testfunc called')
+        #logging.debug('testfunc called')
         ws.send(json.dumps(command))
     
     ws.environ['mainWorker'].frontendCtrl.connect(send)
     bConnected = True
     while bConnected:
-        greenthread.sleep(1)
-        #QThread.sleep(1)
+        greenthread.sleep(0.2)
+        QCoreApplication.processEvents()
         try:
             ws.send( json.dumps({"cmd": "Heartbeat"}))
         except Exception as e:
@@ -257,6 +258,10 @@ class MainWorker(QObject):
         self.startExec.connect(self.operator.startExec)
         self.startExec.connect(self.saveConfig)
 
+        # Instantiate ToolboxLoader
+        self.toolbox_loader = ToolboxLoader()
+        self.toolbox_loader.tooldataLoaded.connect(self.forwardCmd)
+
         self.update_logdate.connect(self.stdinReader.updateLogDate)
         self.grd_ops_arr    = []
         self.fd = sys.stdin.fileno()
@@ -338,13 +343,6 @@ class MainWorker(QObject):
         reset_screen()        
         # first argument is main_console.py
         # second argument is script location
-        """
-        grid_file = self.checkArgs(args[1:])
-
-        if not grid_file:
-            print('No file specified - nothing to do')
-            sys.exit()
-        """
 
         logging.debug('MainWorker::start() called')
         #logging.debug('MainWorker::start() Open the following file: {}'.format(grid_file))
@@ -354,16 +352,7 @@ class MainWorker(QObject):
         self.stdinReader.start() # call run() method in separate thread
         self.wsgi_server.start()
         self.operator.start()
-        """
-        b_finished = False         
 
-        while not b_finished: # when thread return, exit application
-            time.sleep(1)
-            b_finished = self.stdinReader.isFinished()
- 
-        logging.info('MainWorker::Returning from thread')
-        self.kill_all.emit()
-        """
 
     def on_callback(self):
 
@@ -377,36 +366,17 @@ class MainWorker(QObject):
 
 
     def loadTools(self):
-
-        # BAUSTELLE: DAUER ALLES ZU LANGE: MUSS IN EINEN EIGENEN THREAD
+        
         logging.debug('MainWorker::loadTools() called')
-        
-        #toolDirs = glob('PythonicWeb/config/Toolbox/*/')
-        #toolDirs = glob(os.path.join('PythonicWeb/config/Toolbox/',"*", ""))
-        
-        toolDirs = [ f for f in os.scandir('PythonicWeb/config/Toolbox/') if f.is_dir() ]
-        elements = [(d, f) for d in toolDirs for f in os.listdir(d.path) if f.endswith('.json')]
-        elementsJSON = []
-        """
-        for d, f in elements:
-            
-            filepath = os.path.join(d.path, f)
-            e = None
-            with open(filepath, 'r') as file:
-                e = json.load(file)
+        self.toolbox_loader.start()
 
-            element = { 'assignment' : d.name,
-                        'config' : e}
 
-            elementsJSON.append(element)
-            logging.debug('MainWorker::loadTools() called')
+    def forwardCmd(self, cmd):
 
-        
-        cmd = { 'cmd' : 'Toolbox',
-                'data' : elementsJSON }
-        """
-        #self.frontendCtrl.emit(cmd)
-        
+        logging.debug('MainWorker::forwardCmd() called')
+        self.frontendCtrl.emit(cmd)
+
+
         
 
     def loadConfig(self):

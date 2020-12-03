@@ -28,6 +28,7 @@
 #define OPERATION_DATA ToolData {"Scheduler", 1}
 #define SCHEDULER_TOOLDATA ToolData {"Scheduler", 1}
 
+#define ASSIGNMENT_FONTSIZE 14
 
 /* Forward declarations to prevent
  * circular includes */
@@ -43,18 +44,25 @@ class Toolbox : public QWidget
 public:
     explicit Toolbox(QWidget *parent = nullptr);
 
-    RegElement          m_mappedTypes;
+    //RegElement          m_mappedTypes;
+
+    void addAssignment(QString title);
+
+    void addTool(ToolMaster3 *tool);
+
+    void addStretch();
 
 public slots:
 
-    void setCurrentWorkingArea(QWidget* workingAreaWidget){
+    void setCurrentWorkingArea(WorkingArea* workingAreaWidget){
         qCInfo(logC, "called");
+        m_workingAreaWidget = workingAreaWidget;
         emit updateCurrentWorkingArea(workingAreaWidget);
     };
 
 
 signals:
-    void updateCurrentWorkingArea(QWidget* currentWokringArea);
+    void updateCurrentWorkingArea(WorkingArea* currentWokringArea);
 
 private:
 
@@ -73,13 +81,13 @@ private:
     QVBoxLayout             m_layout;
 
 
-
+    WorkingArea             *m_workingAreaWidget;
     /* Programming Elements */
 
-    ToolTemplate<Scheduler>         m_scheduler{"Scheduler"};
+    //ToolTemplate<Scheduler>         m_scheduler{"Scheduler"};
     //RegElement &registeredTypes, ToolData toolData, QWidget *parent = 0
     //ToolMaster2                     *m_scheduler;
-    ToolTemplate<GenericPython>     m_genericPython{"BaseElement"};
+    //ToolTemplate<GenericPython>     m_genericPython{"BaseElement"};
 };
 
 #endif // TOOLBOX_H

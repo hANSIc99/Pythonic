@@ -1,16 +1,16 @@
 {
     "Socket"           : true,
     "Plug"             : true,
-    "Typename"         : "GenericPython",
+    "Typename"         : "E-Mail",
     "Iconname"         : "BaseElement",
-    "Filename"         : "generic_python",
+    "Filename"         : "email",
     "Version"          : {
-                             "Major" : 5,
-                             "Minor" : 6
+                             "Major" : 0,
+                             "Minor" : 1
                          },
     "PythonicVersion" :  {
-                             "Major" : 7,
-                             "Minor" : 8
+                             "Major" : 0,
+                             "Minor" : 1
                          },
     "Author"          : "Stephan Avenwedde",
     "License"         : "GPLv3"

@@ -185,7 +185,7 @@ void MainWindow::wsRcv(const QString &message)
 
     switch (helper::hashCmd(jsCmd.toString())) {
         case Pythonic::Command::Heartbeat:
-        qCDebug(logC, "Heartbeat received");
+        //qCDebug(logC, "Heartbeat received");
 
         break;
     case Pythonic::Command::CurrentConfig:
@@ -213,7 +213,7 @@ void MainWindow::reconnect()
 void MainWindow::setCurrentWorkingArea(const int tabIndex)
 {
     qCInfo(logC, "called, current tabIndex %d", tabIndex);
-    emit updateCurrentWorkingArea(qobject_cast<QWidget*>(m_arr_workingArea[tabIndex]));
+    emit updateCurrentWorkingArea(m_arr_workingArea[tabIndex]);
 }
 
 void MainWindow::startExec(const quint32 id)
@@ -308,14 +308,18 @@ void MainWindow::loadToolbox(const QJsonObject toolbox)
 
         if(currentAssignment != assignment){
             currentAssignment = assignment;
-            qCDebug(logC, "BAUSTELLE1");
-        } else {
-            qCDebug(logC, "BAUSTELLE2");
+            /* Add a new assignment target to the toolbox */
+            m_toolBox.addAssignment(assignment);
         }
 
-        m_toolboxAssignment.insert(assignment);
+        /* Create toolbox element */
+
+        ToolMaster3 *tool = new ToolMaster3(elementConfig);
+        m_toolBox.addTool(tool);
 
     }
+
+    m_toolBox.addStretch();
 }
 
 
