@@ -37,3 +37,25 @@ class ToolboxLoader(QThread):
                 'data' : elementsJSON }
         
         self.tooldataLoaded.emit(cmd)
+
+
+class ConfigLoader(QThread):
+
+    tooldataLoaded      = Signal(object)
+
+    def __init__(self):
+        super().__init__()
+    
+    
+    def run(self):
+
+
+        config = None
+        with open('PythonicWeb/config/current_config.json', 'r') as file:
+            config = json.load(file)
+
+        
+        cmd = { 'cmd' : 'CurrentConfig',
+                'data' : config }
+
+        self.tooldataLoaded.emit(cmd)

@@ -44,19 +44,19 @@ int main(int argc, char *argv[])
                                                     "Websocket.info=true\n"
                                                     /* GUI Elements */
 
-                                                    "MainWindow.debug=true\n"
-                                                    "MainWindow.info=true\n"
+                                                    "MainWindow.debug=false\n"
+                                                    "MainWindow.info=false\n"
 
-                                                    "WorkingArea.debug=true\n"
-                                                    "WorkingArea.info=true\n"
+                                                    "WorkingArea.debug=false\n"
+                                                    "WorkingArea.info=false\n"
 
                                                     "MenuBar.debug=true\n"
                                                     "MenuBar.info=true\n"
 
                                                     /* Toolbox elements */
 
-                                                    "Toolbox.debug=true\n"
-                                                    "Toolbox.info=true\n"
+                                                    "Toolbox.debug=false\n"
+                                                    "Toolbox.info=false\n"
 
                                                     /* GUI Buttons */
 
@@ -98,12 +98,6 @@ int main(int argc, char *argv[])
 
                                                     "ElementIconBar.debug=false\n"
                                                     "ElementIconBar.info=false\n"
-
-                                                    "ToolMaster.debug=true\n"
-                                                    "ToolMaster.info=true\n"
-
-                                                    "ToolMaster2.debug=true\n"
-                                                    "ToolMaster2.info=true\n"
 
                                                     "ToolMaster3.debug=true\n"
                                                     "ToolMaster3.info=true\n"

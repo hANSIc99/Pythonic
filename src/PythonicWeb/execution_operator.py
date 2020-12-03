@@ -33,6 +33,8 @@ class ProcessHandler(QThread):
 
         self.return_pipe, self.feed_pipe = mp.Pipe(duplex=False)
 
+        self.finished.connect(self.done)
+
     def run(self):
         
         elementCls = getattr(__import__(self.filename, fromlist=['Element']), 'Element')
@@ -51,12 +53,15 @@ class ProcessHandler(QThread):
         
         while not result.bComplete:
             result = self.return_pipe.recv()
-            logging.debug('ProcessHandler::run() - intemerdiate result')
+            logging.debug('ProcessHandler::run() - intemerdiate result - execution done - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
 
 
+        
+        logging.debug('ProcessHandler::run() - execution done - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
+
+    def done(self):
+        logging.debug('ProcessHandler::done() - execution done - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
         self.execComplete.emit(self.id, "test2", self.identifier)
-        logging.debug('ProcessHandler::run() - execution done')
-
 
 
 class Operator(QThread):
@@ -88,6 +93,7 @@ class Operator(QThread):
         identifier = random.randint(0, 9999)
         runElement = ProcessHandler(startElement,inputData, identifier)
         runElement.execComplete.connect(self.execComplete)
+        #runElement.finished.connect
         runElement.start()
         self.processHandles[identifier] = runElement
         

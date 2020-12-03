@@ -298,6 +298,9 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
 
 void MainWindow::loadToolbox(const QJsonObject toolbox)
 {
+    qCDebug(logC, "called");
+    m_toolBox.clearToolbox();
+
     QJsonArray elements = toolbox["data"].toArray();
     QString currentAssignment;
     for(const auto& element : elements){
@@ -355,7 +358,7 @@ void MainWindow::connectionEstablished()
     if(ctrlState == QAbstractSocket::SocketState::ConnectedState &&
        rcvState == QAbstractSocket::SocketState::ConnectedState){
         queryToolbox();
-        //queryConfig();
+        queryConfig();
     }
 }
 

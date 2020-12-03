@@ -52,6 +52,8 @@ public:
 
     void addStretch();
 
+    void clearToolbox();
+
 public slots:
 
     void setCurrentWorkingArea(WorkingArea* workingAreaWidget){

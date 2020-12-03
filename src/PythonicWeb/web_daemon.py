@@ -10,7 +10,7 @@ from enum import Enum
 from execution_operator import Operator
 from stdin_reader import stdinReader
 from screen import reset_screen
-from configio import ToolboxLoader
+from configio import ToolboxLoader, ConfigLoader
 import operator
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
@@ -262,6 +262,10 @@ class MainWorker(QObject):
         self.toolbox_loader = ToolboxLoader()
         self.toolbox_loader.tooldataLoaded.connect(self.forwardCmd)
 
+        # Instantiate ConfigLoader
+        self.config_loader = ConfigLoader()
+        self.config_loader.tooldataLoaded.connect(self.forwardCmd);
+
         self.update_logdate.connect(self.stdinReader.updateLogDate)
         self.grd_ops_arr    = []
         self.fd = sys.stdin.fileno()
@@ -382,17 +386,7 @@ class MainWorker(QObject):
     def loadConfig(self):
 
         logging.debug('MainWorker::loadConfig() called')
-        
-        config = None
-        with open('PythonicWeb/config/current_config.json', 'r') as file:
-            config = json.load(file)
-
-        
-        cmd = { 'cmd' : 'CurrentConfig',
-                'data' : config }
-
-        self.frontendCtrl.emit(cmd)
-        logging.debug('MainWorker::loadConfig() called2')
+        self.config_loader.start()
            
         
     def receiveTarget(self, prg_return):

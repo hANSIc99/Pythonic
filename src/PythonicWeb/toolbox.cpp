@@ -92,3 +92,15 @@ void Toolbox::addStretch()
 {
     m_layout.addStretch(1);
 }
+
+void Toolbox::clearToolbox()
+{
+    qCDebug(logC, "called");
+
+    QLayoutItem *item;
+    while((item = m_layout.layout()->takeAt(0)) != NULL){
+        delete item->widget();
+        delete item;
+    }
+
+}

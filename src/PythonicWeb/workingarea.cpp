@@ -399,49 +399,8 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         qCDebug(logC, "Resize to X: %d Y: %d", width(), height());
 
         m_dragging = false;
-    } else if (m_startBtnPressed){
+    } else if (m_openConfig ){
 
-        QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
-
-        if (!e){
-            qCDebug(logC, "called - no child");
-            m_startBtnPressed = false;
-            update();
-            return;
-        }
-        /*
-         *  Hierarchy of ElementMaster
-         *
-         *  m_startBtn(QLabel) --(parent)-->
-         *                   m_symbolWidget(QWidget) --(parent)-->
-         *                                           m_innerWidget(QLabel) --(parent)-->
-         *                                                                 ElementMaster
-         */
-        ElementMaster* targetElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
-
-        /* Position abfragen */
-
-        if (!targetElement){
-            qCDebug(logC, "no button");
-            m_startBtnPressed = false;
-
-            return;
-        }
-        if(helper::mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_startBtn)), event->globalPos())){
-            qCDebug(logC, "Button Pressed");
-            if(m_tmpElement->m_startBtn.m_running){
-                // stop execution
-                m_tmpElement->m_startBtn.togggleRunning(false);
-                emit stopExec(m_tmpElement->m_id);
-            } else {
-                //start execution
-                m_tmpElement->m_startBtn.togggleRunning(true);
-
-                emit startExec(m_tmpElement->m_id);
-            }
-        }
-
-    } else if (m_openConfig){
         QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
 
         if (!e){
@@ -473,8 +432,50 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
             // BAUSTELLE
             qCDebug(logC, "Element Rightclick!");
         }
-    } // m_openConfig
 
+    } else if (m_startBtnPressed){
+        QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
+
+        if (!e){
+            qCDebug(logC, "called - no child");
+            m_startBtnPressed = false;
+            update();
+            return;
+        }
+        /*
+         *  Hierarchy of ElementMaster
+         *
+         *  m_startBtn(QLabel) --(parent)-->
+         *                   m_symbolWidget(QWidget) --(parent)-->
+         *                                           m_innerWidget(QLabel) --(parent)-->
+         *                                                                 ElementMaster
+         */
+        ElementMaster* targetElement = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
+
+        /* Position abfragen */
+
+        if (!targetElement){
+            qCDebug(logC, "no button");
+            m_startBtnPressed = false;
+
+            return;
+        }
+        if(helper::mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_startBtn)), event->globalPos())){
+            qCDebug(logC, "Button Pressed");
+
+            if(m_tmpElement != NULL && m_tmpElement->m_startBtn.m_running){
+                // stop execution
+                m_tmpElement->m_startBtn.togggleRunning(false);
+                emit stopExec(m_tmpElement->m_id);
+            } else {
+                //start execution
+                m_tmpElement->m_startBtn.togggleRunning(true);
+
+                emit startExec(m_tmpElement->m_id);
+            }
+        }
+    } // m_openConfig
+    m_openConfig = false;
     m_tmpElement = NULL;
     update();
 }
