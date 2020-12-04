@@ -143,7 +143,7 @@ public:
     explicit ElementMaster(
             bool socket,
             bool plug,
-            QUrl pixMapPath,
+            QString iconName,
             QString typeName,
             QString fileName,
             Version version,
@@ -151,7 +151,10 @@ public:
             QString author,
             QString license,
             int gridNo,
-            QWidget *parent = nullptr);
+            QWidget *parent,
+            int id = 0, // Only if when loaded from file
+            QString objectName = QString() // Only if when loaded from file
+            );
 
     /* Element Configuration */
 
@@ -159,6 +162,8 @@ public:
     quint32                 m_id;
     //! Indicates if elements accept parent connections
     bool                    m_hasSocket;
+    //! Indicates if the element can be connected to childs
+    bool                    m_hasPlug;
     //! Typename is the class (CONFIG)
     QString                 m_typeName;
     //! Filename for the related Python file (CONFIG)
@@ -232,6 +237,8 @@ private:
     QHBoxLayout             m_symbolWidgetLayout;
 
 public:
+    //! Filename of the icon
+    QString                 m_iconName;
     //! Symbol of element
     BaseLabel               m_symbol;
     //! Connector icon

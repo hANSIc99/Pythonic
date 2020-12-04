@@ -51,11 +51,15 @@ class ConfigLoader(QThread):
 
 
         config = None
-        with open('PythonicWeb/config/current_config.json', 'r') as file:
-            config = json.load(file)
+        try:
+            with open('PythonicWeb/config/current_config.json', 'r') as file:
+                config = json.load(file)
 
         
-        cmd = { 'cmd' : 'CurrentConfig',
-                'data' : config }
+            cmd = { 'cmd' : 'CurrentConfig',
+                    'data' : config }
 
-        self.tooldataLoaded.emit(cmd)
+            self.tooldataLoaded.emit(cmd)
+        except Exception as e:
+            logging.warning('ConfigLoader::run() - no config found yet')
+

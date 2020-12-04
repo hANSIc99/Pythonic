@@ -104,5 +104,7 @@ class Operator(QThread):
 
         logging.debug('Operator::execComplete() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
         # remove processHandle from dict
+        qobject = self.processHandles[identifier]
+        qobject.deleteLater()
         del self.processHandles[identifier]
 

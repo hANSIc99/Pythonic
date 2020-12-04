@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
                                                     "MainWindow.debug=false\n"
                                                     "MainWindow.info=false\n"
 
-                                                    "WorkingArea.debug=false\n"
-                                                    "WorkingArea.info=false\n"
+                                                    "WorkingArea.debug=true\n"
+                                                    "WorkingArea.info=true\n"
 
                                                     "MenuBar.debug=true\n"
                                                     "MenuBar.info=true\n"

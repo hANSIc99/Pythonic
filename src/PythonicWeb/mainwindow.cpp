@@ -279,15 +279,48 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
 {
     qCInfo(logC, "called");
     QJsonArray elements = config["data"].toArray();
-    //map_type map;
-    //map["Scheduler"] = &createInstance<Scheduler>()
+
     for(const auto& element : elements){
+
         QJsonObject jsonElement(element.toObject());
 
         int nWrkArea = jsonElement["GridNo"].toInt();
-        QString type = jsonElement["Type"].toString();
-        // toolmaster.h mouseReleaseElement
 
+        /* Extracting position */
+        QJsonObject position = jsonElement["Position"].toObject();
+        int xPos = position["x"].toInt();
+        int yPos = position["y"].toInt();
+
+        /* Extracting versions */
+        QJsonObject elementVersionjson  = jsonElement["Version"].toObject();
+        QJsonObject pythonicVersionjson = jsonElement["PythonicVersion"].toObject();
+        Version elementVersion{elementVersionjson["Major"].toInt(), elementVersionjson["Minor"].toInt()};
+        Version pythonicVersion{pythonicVersionjson["Major"].toInt(), pythonicVersionjson["Minor"].toInt()};
+        //jsonElement["Id"] = 13;
+        QJsonValue ida(jsonElement["Id"].toInt());
+        quint32 id = jsonElement["Id"].toInt();
+
+        ElementMaster *newElement = new ElementMaster(
+                        jsonElement["Socket"].toBool(),
+                        jsonElement["Plug"].toBool(),
+                        jsonElement["Iconname"].toString(),
+                        jsonElement["Typename"].toString(),
+                        jsonElement["Filename"].toString(),
+                        elementVersion,
+                        pythonicVersion,
+                        jsonElement["Author"].toString(),
+                        jsonElement["License"].toString(),
+                        m_arr_workingArea[nWrkArea]->m_gridNo,
+                        m_arr_workingArea[nWrkArea],
+                        jsonElement["Id"].toInt(),
+                        jsonElement["ObjectName"].toString());
+
+
+        newElement->move(xPos, yPos);
+
+
+        newElement->show();
+        m_arr_workingArea[nWrkArea]->registerElement(newElement);
         //WorkingArea::registerElement
         //m_arr_workingArea
         //foo <QString> f(type);

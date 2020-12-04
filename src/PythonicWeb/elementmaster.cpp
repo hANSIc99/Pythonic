@@ -20,17 +20,20 @@
 
 ElementMaster::ElementMaster(bool socket,
                              bool plug,
-                             QUrl pixMapPath,
-                             QString typeName,
+                             QString iconName,
+                             QString typeName, // Object name is create
                              QString fileName,
                              Version version,
                              Version pythonicVersion,
                              QString author,
                              QString license,
                              int     gridNo,
-                             QWidget *parent)
+                             QWidget *parent,
+                             int     id,
+                             QString objectName)
     : QWidget(parent)
     , m_hasSocket(socket)
+    , m_hasPlug(plug)
     , m_typeName(typeName)
     , m_fileName(fileName)
     , m_version(version)
@@ -38,17 +41,26 @@ ElementMaster::ElementMaster(bool socket,
     , m_author(author)
     , m_license(license)
     , m_gridNo(gridNo)
-    , m_symbol(pixMapPath, LABEL_SIZE, this)
+    , m_iconName(iconName)
+    , m_symbol(QUrl("http://localhost:7000/" + iconName + ".png"), LABEL_SIZE, this)
 {
 
     setAttribute(Qt::WA_DeleteOnClose);
 
     /* Generate random element name */
 
-    m_id = QRandomGenerator::global()->generate();
-    QString widgetName = QStringLiteral("%1 - 0x%2").arg(typeName).arg(m_id, 8, 16, QChar('0'));
-    setObjectName(widgetName);
-    qCDebug(logC, "called - %s added", widgetName.toStdString().c_str());
+    if(!id){
+        m_id = QRandomGenerator::global()->bounded(quint32(INT_LEAST32_MAX));
+    }else {
+        m_id = id;
+    }
+
+    if(objectName.isNull()){
+        setObjectName(QStringLiteral("%1 - 0x%2").arg(typeName).arg(m_id, 8, 16, QChar('0')));
+    } else {
+        setObjectName(objectName);
+    }
+    //qCDebug(logC, "called - %s added", widgetName.toStdString().c_str());
 
 
     m_layout.setContentsMargins(10, 0, 30, 0);
@@ -78,7 +90,7 @@ ElementMaster::ElementMaster(bool socket,
 
     /* Defualt name = object name */
 
-    m_labelText.setText(widgetName);
+    m_labelText.setText(this->objectName());
 
 
     /* Setup inner widget: symbol-widget and text-label */
@@ -111,13 +123,19 @@ QJsonObject ElementMaster::genConfig() const
 {
     qCDebug(logC, "called");
 
-    QJsonArray pos = { x(), y() };
+    QJsonObject pos = {
+        {"x" , x()},
+        {"y" , y()}
+    };
 
-    QJsonArray version = {m_version.major, m_version.minor};
+    QJsonObject version = {
+        {"Major" , m_version.major},
+        {"Minor",  m_version.minor}
+    };
 
-    QJsonArray pythonicVersion = {
-        m_pythonicVersion.major,
-        m_pythonicVersion.minor
+    QJsonObject pythonicVersion = {
+        {"Major" , m_pythonicVersion.major },
+        {"Minor", m_pythonicVersion.minor }
     };
 
     QJsonArray parents;
@@ -132,12 +150,15 @@ QJsonObject ElementMaster::genConfig() const
 
     QJsonObject data
     {
-        {"ID", (qint64)m_id},
+        {"Id", (qint64)m_id},
         {"ObjectName", objectName()},
         {"Type", m_typeName},
+        {"Iconname", m_iconName},
+        {"Socket", m_hasSocket},
+        {"Plug", m_hasPlug},
+        {"Filename", m_fileName},
         {"Version", version},
         {"PythonicVersion", pythonicVersion},
-        {"Filename", m_fileName},
         {"Author", m_author},
         {"License", m_license},
         {"Position", pos},

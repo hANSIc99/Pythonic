@@ -89,7 +89,7 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
         ElementMaster *element = new ElementMaster(
                         m_toolData["Socket"].toBool(),
                         m_toolData["Plug"].toBool(),
-                        QUrl("http://localhost:7000/" + m_toolData["Iconname"].toString() + ".png"),
+                        m_toolData["Iconname"].toString(),
                         m_toolData["Typename"].toString(),
                         m_toolData["Filename"].toString(),
                         elementVersion,
@@ -98,9 +98,6 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
                         m_toolData["License"].toString(),
                         m_workingAreaWidget->m_gridNo,
                         m_workingAreaWidget);
-
-
-
 
 
         element->move(wrkAreaGlobalPos.x() - 170,

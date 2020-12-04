@@ -175,7 +175,7 @@ def dispatch(environ, start_response):
 
     # IMAGES (*.png)
     elif png_req4 == '.png':
-        logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
+        #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
         
         img_data = open(os.path.join(os.path.dirname(__file__),
             root_static + environ['PATH_INFO']), 'rb').read() 
