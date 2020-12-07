@@ -1,0 +1,53 @@
+{
+    "Dropdown"         : {
+			      "Name"  : "Mode",
+			      "Title" : "Choose the scheduler mode",
+			      "Items" : [ "None",
+					  "Interval",
+					  "Interval between times",
+					  "At specific time",
+					  "On every full interval",
+					  "Full interval between times"
+					]
+			 },
+    "Lineedit"          : {
+			      "Name"      : "Intervalinput",
+                              "Title"     : "Every",                             
+			      "Dependency" : {
+					         "Mode" : [
+							       "Interval",
+							       "Interval between times",
+							       "On every full interval",
+							       "Full interval between times"
+                                                          ]
+                                            },
+                               "RegExp" : "[1-9]" 
+                           },
+    "Dropdown"         : {
+                              "Name"       : "Timebase",
+                              "Title"      : "Timebase",
+                              "Items"      : [
+                                             "Seconds",
+                                             "Minutes",
+                                             "Hours"
+                                             ],
+                              "Dependency" : {
+                                                  "Lineedit" : [
+                                                                    "m_visible"
+                                                               ]
+                                             }
+                         },
+    "Typename"         : "GenericPython",
+    "Iconname"         : "BaseElement",
+    "Filename"         : "generic_python",
+    "Version"          : {
+                             "Major" : 5,
+                             "Minor" : 6
+                         },
+    "PythonicVersion" :  {
+                             "Major" : 7,
+                             "Minor" : 8
+                         },
+    "Author"          : "Stephan Avenwedde",
+    "License"         : "GPLv3"
+}
