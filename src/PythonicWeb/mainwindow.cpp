@@ -280,6 +280,10 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
     qCInfo(logC, "called");
     QJsonArray elements = config["data"].toArray();
 
+    /*
+     * Add elements to the workingarea
+     */
+
     for(const auto& element : elements){
 
         QJsonObject jsonElement(element.toObject());
@@ -296,9 +300,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
         QJsonObject pythonicVersionjson = jsonElement["PythonicVersion"].toObject();
         Version elementVersion{elementVersionjson["Major"].toInt(), elementVersionjson["Minor"].toInt()};
         Version pythonicVersion{pythonicVersionjson["Major"].toInt(), pythonicVersionjson["Minor"].toInt()};
-        //jsonElement["Id"] = 13;
-        QJsonValue ida(jsonElement["Id"].toInt());
-        quint32 id = jsonElement["Id"].toInt();
+
 
         ElementMaster *newElement = new ElementMaster(
                         jsonElement["Socket"].toBool(),
@@ -319,13 +321,88 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
         newElement->move(xPos, yPos);
 
 
+
+
         newElement->show();
         m_arr_workingArea[nWrkArea]->registerElement(newElement);
         //WorkingArea::registerElement
         //m_arr_workingArea
         //foo <QString> f(type);
-        qCDebug(logC, "BAUSTELLE");
-        // BAUSTELLE Hier weitermachen
+
+    }
+
+    /*
+     * Re-establish connections
+     */
+
+    for(const auto& element : elements){
+
+        QJsonObject jsonElement(element.toObject());
+        int nWrkArea = jsonElement["GridNo"].toInt();
+
+        QJsonArray childs  = jsonElement["Childs"].toArray();
+        QJsonArray parents = jsonElement["Parents"].toArray();
+
+        if(childs.isEmpty() && parents.isEmpty()){
+            continue;
+        }
+
+        quint32 currentId = jsonElement["Id"].toInt();
+        ElementMaster* currentElement = NULL;
+
+        /* Iterate over geristered childs of each element */
+        for(const QJsonValue &childObj : childs){
+
+            quint32 childId = childObj.toInt();
+            ElementMaster* childPtr = NULL;
+
+            QList<ElementMaster*> mylist = m_arr_workingArea[nWrkArea]->findChildren<ElementMaster*>();
+            foreach (ElementMaster* listElement, mylist) {
+                /* Assign current- and child-pointer */
+                if(listElement->m_id == currentId){
+                    currentElement = listElement;
+                } else if(listElement->m_id == childId){
+                    childPtr = listElement;
+                }
+                //ElementMaster* currentElement = qobject_cast<ElementMaster*>(current);
+
+            }
+
+            /* Now both pointers are available to register the connection */
+
+            qCDebug(logC, "BAUSTELLE");
+        }
+
+
+        /*
+        for (int i = 0; i < m_arr_workingArea[nWrkArea]->layout()->count(); i++){
+            QWidget *widgetElement =  m_arr_workingArea[nWrkArea]->layout()->itemAt(0)->widget();
+
+
+
+        }
+        */
+        //QLayoutItem *item;
+        //while((item = m_layout.layout()->takeAt(0)) != NULL){
+        //    delete item->widget();
+        //    delete item;
+        // }
+#if 0
+        /* Register child at parent element */
+        m_tmpElement->addChild(targetElement);
+
+        /* Register parent at child element */
+        targetElement->addParent(m_tmpElement);
+
+        /* Check if connection to parent already exist */
+
+
+
+        m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
+ #endif
+
+
+
     }
 }
 

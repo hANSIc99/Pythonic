@@ -3,6 +3,8 @@ from pathlib import Path
 from PySide2.QtCore import QThread, Signal
 from screen import reset_screen
 
+#from PySide2.QtCore import QCoreApplication
+
 class stdinReader(QThread):
 
     print_procs = Signal()
@@ -31,6 +33,9 @@ class stdinReader(QThread):
 
         while not self.b_exit:
 
+            #QThread.sleep(0.1)
+            #QCoreApplication.processEvents()
+            
             rd_fs, wrt_fs, err_fs =  select.select([sys.stdin], [], [], self.interval)
 
             if rd_fs and os.isatty(sys.stdin.fileno()):
@@ -61,7 +66,7 @@ class stdinReader(QThread):
             else:
                 if os.isatty(sys.stdin.fileno()):
                     self.callback()
-
+            
 
 
     def callback(self):

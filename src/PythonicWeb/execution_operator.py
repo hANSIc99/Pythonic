@@ -25,7 +25,7 @@ class ProcessHandler(QThread):
     def __init__(self, element, inputdata, identifier):
         super().__init__()
         self.filename   = 'elements.' + element['Filename']
-        self.id         = element['ID']
+        self.id         = element['Id']
         self.config     = element['Config']
         self.mp         = element['Multiprocessing']
         self.inputData  = inputdata
@@ -84,7 +84,7 @@ class Operator(QThread):
         # https://stackoverflow.com/questions/34609935/passing-a-function-with-two-arguments-to-filter-in-python
 
         # return first element which matches the ID
-        startElement = [x for x in config if x['ID'] == id][0]
+        startElement = [x for x in config if x['Id'] == id][0]
         
         # register elements für den fall das alles gestoppt werden muss
         inputData = None

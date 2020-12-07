@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
                                                     "Websocket.info=true\n"
                                                     /* GUI Elements */
 
-                                                    "MainWindow.debug=false\n"
-                                                    "MainWindow.info=false\n"
+                                                    "MainWindow.debug=true\n"
+                                                    "MainWindow.info=true\n"
 
                                                     "WorkingArea.debug=true\n"
                                                     "WorkingArea.info=true\n"

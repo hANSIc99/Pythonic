@@ -72,9 +72,15 @@ private slots:
 
 
         m_pixMap.loadFromData(m_DownloadedData);
-        m_pixMap = m_pixMap.scaled(m_size);
 
-        setPixmap(m_pixMap);
+
+        if(m_pixMap.isNull()){
+            qCWarning(logC, "could not be loaded: %s", pReply->url().toString().toStdString().c_str());
+        }else{
+           m_pixMap = m_pixMap.scaled(m_size);
+           setPixmap(m_pixMap);
+        }
+
     };
 
 
