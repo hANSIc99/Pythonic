@@ -103,6 +103,10 @@ public:
     void registerElement(const ElementMaster *new_element);
 
     int                         m_gridNo;
+
+    /* Connections */
+    QVector<Connection>         m_connections;
+
 signals:
 
     void stopHighlightAllElements();
@@ -171,9 +175,6 @@ private:
     //QVector<ElementMaster*>     m_vectorElements;
     //QVector<QLine>              m_connections;
     QLine                       m_previewConnection;
-
-    /* Connections */
-    QVector<Connection>         m_connections;
 
     QPen                        m_pen;
 

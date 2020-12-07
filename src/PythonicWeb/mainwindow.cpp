@@ -329,7 +329,9 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
         //m_arr_workingArea
         //foo <QString> f(type);
 
-    }
+    } // for(const auto& element : elements)
+
+
 
     /*
      * Re-establish connections
@@ -341,14 +343,14 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
         int nWrkArea = jsonElement["GridNo"].toInt();
 
         QJsonArray childs  = jsonElement["Childs"].toArray();
-        QJsonArray parents = jsonElement["Parents"].toArray();
 
-        if(childs.isEmpty() && parents.isEmpty()){
+
+        if(childs.isEmpty()){
             continue;
         }
 
         quint32 currentId = jsonElement["Id"].toInt();
-        ElementMaster* currentElement = NULL;
+        ElementMaster* parentPtr = NULL;
 
         /* Iterate over geristered childs of each element */
         for(const QJsonValue &childObj : childs){
@@ -360,50 +362,31 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
             foreach (ElementMaster* listElement, mylist) {
                 /* Assign current- and child-pointer */
                 if(listElement->m_id == currentId){
-                    currentElement = listElement;
+                    parentPtr = listElement;
                 } else if(listElement->m_id == childId){
                     childPtr = listElement;
                 }
                 //ElementMaster* currentElement = qobject_cast<ElementMaster*>(current);
-
             }
 
             /* Now both pointers are available to register the connection */
 
-            qCDebug(logC, "BAUSTELLE");
+            if(parentPtr && childPtr){
+                /* Register child at parent element */
+                parentPtr->addChild(childPtr);
+
+                /* Register parent at child element */
+                childPtr->addParent(parentPtr);
+
+            }
+
+            /* Add connection to vector */
+            m_arr_workingArea[nWrkArea]->m_connections.append(Connection{parentPtr, childPtr, QLine()});
+
         }
 
-
-        /*
-        for (int i = 0; i < m_arr_workingArea[nWrkArea]->layout()->count(); i++){
-            QWidget *widgetElement =  m_arr_workingArea[nWrkArea]->layout()->itemAt(0)->widget();
-
-
-
-        }
-        */
-        //QLayoutItem *item;
-        //while((item = m_layout.layout()->takeAt(0)) != NULL){
-        //    delete item->widget();
-        //    delete item;
-        // }
-#if 0
-        /* Register child at parent element */
-        m_tmpElement->addChild(targetElement);
-
-        /* Register parent at child element */
-        targetElement->addParent(m_tmpElement);
-
-        /* Check if connection to parent already exist */
-
-
-
-        m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
- #endif
-
-
-
-    }
+        m_arr_workingArea[nWrkArea]->update();
+    } // for(const auto& element : elements)
 }
 
 void MainWindow::loadToolbox(const QJsonObject toolbox)
