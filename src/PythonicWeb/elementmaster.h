@@ -34,6 +34,7 @@
 #include <QMoveEvent>
 #include <QSet>
 #include "baselabel.h"
+#include "elementeditor.h"
 
 #define LABEL_SIZE QSize(140, 47)
 #define PLUG_SOCKET_SIZE QSize(47, 47)
@@ -68,7 +69,6 @@ public:
 public slots:
 
     void connected(bool connectionState);
-
 
 protected:
     void enterEvent(QEvent *event) override;
@@ -202,12 +202,14 @@ public:
 
     void                    addParent(ElementMaster *parent);
     void                    addChild(ElementMaster *child);
+    void                    openEditor();
 
 public slots:
 
     void                    stopHighlight();
     void                    startHighlight();
     void                    checkConnectionState();
+
 
 signals:
 
@@ -219,7 +221,6 @@ signals:
 private slots:
 
     void deleteSelf();
-    //void playBtnClicked // on release
 
 private:
 
@@ -253,6 +254,8 @@ private:
     QLabel                  m_labelText{"labe text"};
     //! Backend-configuration of the element
     QJsonObject             m_config;
+    //! Editor windows
+    Elementeditor           m_editor;
 
     QSizePolicy             m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
 

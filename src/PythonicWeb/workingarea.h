@@ -107,6 +107,8 @@ public:
     /* Connections */
     QVector<Connection>         m_connections;
 
+    void                        updateSize();
+
 signals:
 
     void stopHighlightAllElements();
@@ -115,7 +117,6 @@ signals:
 
 public slots:
 
-    void updateSize();
     void deleteElement(ElementMaster *element);
 
 private slots:
@@ -123,8 +124,6 @@ private slots:
     void disconnectHover(QAction *action);
     void disconnectTrigger(QAction *action);
     void disconnectHide();
-
-
 
 protected:
 

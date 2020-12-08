@@ -212,6 +212,10 @@ void ElementMaster::deleteSelf()
     emit remove(this);
 }
 
+void ElementMaster::openEditor()
+{
+    qCInfo(logC, "called %s", objectName().toStdString().c_str());
+}
 
 /*****************************************************
  *                                                   *
@@ -277,6 +281,8 @@ void ElementSocket::connected(bool connectionState)
     }
 
 }
+
+
 
 void ElementSocket::enterEvent(QEvent *event)
 {

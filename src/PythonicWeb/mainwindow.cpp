@@ -325,6 +325,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
 
         newElement->show();
         m_arr_workingArea[nWrkArea]->registerElement(newElement);
+        m_arr_workingArea[nWrkArea]->updateSize();
         //WorkingArea::registerElement
         //m_arr_workingArea
         //foo <QString> f(type);

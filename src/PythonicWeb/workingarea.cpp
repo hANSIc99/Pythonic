@@ -62,6 +62,45 @@ WorkingArea::WorkingArea(int gridNo, QWidget *parent)
 void WorkingArea::updateSize()
 {
     qCInfo(logC, "called");
+
+    /* Resize the workingarea if the element was
+     * moved out of the rightmost/bottommost initial size*/
+
+    int max_x = 0;
+    int max_y = 0;
+    int new_x = MINIMUM_SIZE.width();
+    int new_y = MINIMUM_SIZE.height();
+
+    /* Get the left- and botmost element position */
+    for(auto const &qobj : children()){
+
+        ElementMaster* e = dynamic_cast<ElementMaster*>(qobj);
+
+        max_x = e->pos().x() > max_x ? e->pos().x() : max_x;
+        max_y = e->pos().y() > max_y ? e->pos().y() : max_y;
+
+    }
+
+    max_x += (m_tmpElement->width() / 2);
+    max_y += (m_tmpElement->height() / 2);
+
+
+    if( max_x < (width() + m_tmpElement->width()) &&
+        max_x > MINIMUM_SIZE.width()){
+
+        new_x = max_x + m_tmpElement->width();
+
+    }
+
+    if( max_y < (height() + m_tmpElement->height()) &&
+        max_y > MINIMUM_SIZE.height()){
+
+        new_y = max_y + m_tmpElement->height();
+    }
+
+    setMinimumSize(new_x, new_y);
+    qCDebug(logC, "MaxX: %d MaxY: %d", max_x, max_y);
+    qCDebug(logC, "Resize to X: %d Y: %d", width(), height());
 }
 
 void WorkingArea::deleteElement(ElementMaster *element)
@@ -148,10 +187,11 @@ void WorkingArea::registerElement(const ElementMaster *new_element)
     connect(new_element, &ElementMaster::remove,
             this, &WorkingArea::deleteElement);
 
-    /* Workingarea --> Element */
+    /* Workingarea --> Element: highlight  */
 
     connect(this, &WorkingArea::stopHighlightAllElements,
             new_element, &ElementMaster::stopHighlight);
+
 }
 
 void WorkingArea::mousePressEvent(QMouseEvent *event)
@@ -359,46 +399,10 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         if(m_tmpElement->pos().x() < 0) m_tmpElement->move(0, m_tmpElement->y());
         if(m_tmpElement->pos().y() < 0) m_tmpElement->move(m_tmpElement->x(), 0);
 
-        /* Resize the workingarea if the element was
-         * moved out of the rightmost/bottommost initial size*/
-
-        int max_x = 0;
-        int max_y = 0;
-        int new_x = MINIMUM_SIZE.width();
-        int new_y = MINIMUM_SIZE.height();
-
-        /* Get the left- and botmost element position */
-        for(auto const &qobj : children()){
-
-            ElementMaster* e = dynamic_cast<ElementMaster*>(qobj);
-
-            max_x = e->pos().x() > max_x ? e->pos().x() : max_x;
-            max_y = e->pos().y() > max_y ? e->pos().y() : max_y;
-
-        }
-
-        max_x += (m_tmpElement->width() / 2);
-        max_y += (m_tmpElement->height() / 2);
-
-
-        if( max_x < (width() + m_tmpElement->width()) &&
-            max_x > MINIMUM_SIZE.width()){
-
-            new_x = max_x + m_tmpElement->width();
-
-        }
-
-        if( max_y < (height() + m_tmpElement->height()) &&
-            max_y > MINIMUM_SIZE.height()){
-
-            new_y = max_y + m_tmpElement->height();
-        }
-
-        setMinimumSize(new_x, new_y);
-        qCDebug(logC, "MaxX: %d MaxY: %d", max_x, max_y);
-        qCDebug(logC, "Resize to X: %d Y: %d", width(), height());
+        updateSize();
 
         m_dragging = false;
+
     } else if (m_openConfig ){
 
         QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
@@ -429,8 +433,10 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
         }
 
         if(helper::mouseOverElement(qobject_cast<QWidget*>(&(targetElement->m_symbol)), event->globalPos())){
-            // BAUSTELLE
+
+            targetElement->openEditor();
             qCDebug(logC, "Element Rightclick!");
+
         }
 
     } else if (m_startBtnPressed){
