@@ -32,7 +32,8 @@
 #include "workingarea.h"
 
 #define TOOL_SIZE QSize(140, 47)
-
+#define CENTER_OFFSET_X 145
+#define CENTER_OFFSET_Y 60
 
 /*! @brief ToolMaster3 - Main purpose: register new elements on workingareas
  *

@@ -100,11 +100,11 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
                         m_workingAreaWidget);
 
 
-        element->move(wrkAreaGlobalPos.x() - 170,
-                      wrkAreaGlobalPos.y() - 100);
+        element->move(wrkAreaGlobalPos.x() - CENTER_OFFSET_X,
+                      wrkAreaGlobalPos.y() - CENTER_OFFSET_Y);
 
         element->show();
-
+        m_workingAreaWidget->updateSize();
         m_workingAreaWidget->registerElement(element);
 
     }else{
@@ -114,12 +114,13 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
 
 void ToolMaster3::mouseMoveEvent(QMouseEvent *event)
 {
-    QWidget* wrkAreaScrollArea  = qobject_cast<QWidget*>(m_workingAreaWidget->parent());
+    QWidget* wrkArea  = qobject_cast<QWidget*>(m_workingAreaWidget);
 
-    if(helper::mouseOverElement(wrkAreaScrollArea, event->globalPos())){
-        //qCDebug(logC, "WorkingArea under cursor");
+    if(helper::mouseOverElement(wrkArea, event->globalPos())){
+
         /* Center position */
-        QPoint previewPos = wrkAreaScrollArea->mapFromGlobal(event->globalPos());
+        QPoint previewPos = wrkArea->mapFromGlobal(event->globalPos());
+
         previewPos -= QPoint((m_preview->width() / 2), (m_preview->height()/2));
         m_preview->move(previewPos);
     }
