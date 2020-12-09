@@ -68,8 +68,6 @@ void WorkingArea::updateSize()
 
     int max_x = 0;
     int max_y = 0;
-    int new_x = MINIMUM_SIZE.width();
-    int new_y = MINIMUM_SIZE.height();
 
     /* Get the left- and botmost element position */
     for(auto const &qobj : children()){
@@ -81,24 +79,8 @@ void WorkingArea::updateSize()
 
     }
 
-    max_x += (m_tmpElement->width() / 2);
-    max_y += (m_tmpElement->height() / 2);
 
-
-    if( max_x < (width() + m_tmpElement->width()) &&
-        max_x > MINIMUM_SIZE.width()){
-
-        new_x = max_x + m_tmpElement->width();
-
-    }
-
-    if( max_y < (height() + m_tmpElement->height()) &&
-        max_y > MINIMUM_SIZE.height()){
-
-        new_y = max_y + m_tmpElement->height();
-    }
-
-    setMinimumSize(new_x, new_y);
+    setMinimumSize(max_x + SIZE_INCREMENT_X, max_y + SIZE_INCREMENT_Y);
     qCDebug(logC, "MaxX: %d MaxY: %d", max_x, max_y);
     qCDebug(logC, "Resize to X: %d Y: %d", width(), height());
 }

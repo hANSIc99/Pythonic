@@ -47,6 +47,9 @@
 #define BACKGROUND_COLOR_B QColor(192, 192, 192)
 #define BACKGROUND_COLOR_C QColor(255, 198, 52)
 
+#define SIZE_INCREMENT_X 300
+#define SIZE_INCREMENT_Y 150
+
 struct Connection {
     ElementMaster* parent;
     ElementMaster* child;

@@ -215,6 +215,7 @@ void ElementMaster::deleteSelf()
 void ElementMaster::openEditor()
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
+    m_editor.open();
 }
 
 /*****************************************************
