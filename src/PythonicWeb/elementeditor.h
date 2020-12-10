@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QRadioButton>
 #include <QLineEdit>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include "baselabel.h"
 
 
@@ -14,16 +16,31 @@ class Elementeditor : public QDialog
 public:
     explicit Elementeditor(QWidget *parent = nullptr);
 
+public slots:
+
+    void open() override;
+
 private:
 
-    QRadioButton    m_toggleLogging;
-    QRadioButton    m_toggleMP;
-    QRadioButton    m_toggleDebug;
+    QHBoxLayout     m_mainLayout;
 
-    BaseButton      m_deleteElement;
+    QWidget         m_generalConfig;
+    QWidget         m_specificConfig;
+
+    QVBoxLayout     m_generalCfgLayout;
+    QVBoxLayout     m_specificCfgLayout;
 
     QLineEdit       m_objectName;
 
+    QRadioButton    m_toggleLogging;
+    QRadioButton    m_toggleDebug;
+    QRadioButton    m_toggleMP;
+
+    QPushButton     m_saveButton;
+
+
+    //BaseButton      m_deleteElement;
+    QLoggingCategory        logC{"Elementeditor"};
 
 };
 

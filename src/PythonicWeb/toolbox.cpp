@@ -35,7 +35,7 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
     setLayout(&m_masterLayout);
 
     m_mainWidget.setLayout(&m_layout);
-    m_mainWidget.setMinimumHeight(1200); // can be deleted
+    //m_mainWidget.setMinimumHeight(1200); // can be deleted
 
     //m_mappedTypes["Scheduler"] = &createInstance<Scheduler>;
     //(RegElement &registeredTypes, ToolData toolData, QWidget *parent = 0)

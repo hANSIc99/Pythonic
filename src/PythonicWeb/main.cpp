@@ -116,6 +116,10 @@ int main(int argc, char *argv[])
                                                     "DeleteElementBtn.debug=false\n"
                                                     "DeleteElementBtn.info=false\n"
 
+                                                    /* Element Editor */
+
+                                                    "Elementeditor.debug=true\n"
+                                                    "Elementeditor.info=true\n"
                                                     /* Element Connector Buttons  */
 
                                                     "ElementSocket.debug=false\n"

@@ -121,6 +121,7 @@ signals:
 public slots:
 
     void deleteElement(ElementMaster *element);
+    void resizeEvent(QResizeEvent *event) override;
 
 private slots:
 

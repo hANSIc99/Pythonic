@@ -255,7 +255,7 @@ private:
     //! Backend-configuration of the element
     QJsonObject             m_config;
     //! Editor windows
-    Elementeditor           m_editor;
+    Elementeditor           m_editor{this};
 
     QSizePolicy             m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
 

@@ -107,6 +107,14 @@ void WorkingArea::deleteElement(ElementMaster *element)
     update();
 }
 
+void WorkingArea::resizeEvent(QResizeEvent *event)
+{
+    // BAUSTELLE
+    qCDebug(logC, "called");
+
+    QFrame::resizeEvent(event);
+}
+
 void WorkingArea::disconnectHover(QAction *action)
 {
     //qCInfo(logC, "called");
