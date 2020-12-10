@@ -3,6 +3,10 @@
 
 #include <QDialog>
 #include <QWidget>
+#include <QRadioButton>
+#include <QLineEdit>
+#include "baselabel.h"
+
 
 class Elementeditor : public QDialog
 {
@@ -10,7 +14,16 @@ class Elementeditor : public QDialog
 public:
     explicit Elementeditor(QWidget *parent = nullptr);
 
-signals:
+private:
+
+    QRadioButton    m_toggleLogging;
+    QRadioButton    m_toggleMP;
+    QRadioButton    m_toggleDebug;
+
+    BaseButton      m_deleteElement;
+
+    QLineEdit       m_objectName;
+
 
 };
 
