@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QJsonObject>
 #include "baselabel.h"
 
 
@@ -19,8 +20,11 @@ public:
 public slots:
 
     void open() override;
+    void accept() override;
 
 private:
+
+    void            genConfig();
 
     QHBoxLayout     m_mainLayout;
 

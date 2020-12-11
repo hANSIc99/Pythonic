@@ -43,6 +43,11 @@ Elementeditor::Elementeditor(QWidget *parent) : QDialog(parent)
     m_mainLayout.addWidget(&m_generalConfig);
     m_mainLayout.addWidget(&m_specificConfig);
 
+    /* Signals and Slots */
+
+    connect(&m_saveButton, &QPushButton::clicked,
+            this, &QDialog::accept);
+
 }
 
 void Elementeditor::open()
@@ -54,5 +59,27 @@ void Elementeditor::open()
     m_objectName.setText(parent()->objectName());
 
     QDialog::open();
+}
+
+void Elementeditor::accept()
+{
+    genConfig();
+    QDialog::accept();
+    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+}
+
+void Elementeditor::genConfig()
+{
+    // ElementMaster m_config
+
+    QJsonObject globalConfig = {
+        {"ObjectName" , m_objectName.g() },
+        {"Logging" , m_toggleLogging.isChecked() },
+        {"Debug", m_toggleDebug.isChecked() },
+        {"MP", m_toggleMP.isChecked()}
+    };
+
+
 }
 
