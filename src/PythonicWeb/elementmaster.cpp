@@ -231,9 +231,33 @@ void ElementMaster::updateConfig(const QJsonObject config)
     m_labelText.setText(this->objectName());
 }
 
+void ElementMaster::fwrdWsCtrl(const QJsonObject cmd)
+{
+    qCInfo(logC, "called %s", objectName().toStdString().c_str());
+    QJsonObject newCmd = cmd;
+
+    QJsonObject address = {
+        { "id", (qint64)m_id }
+    };
+    newCmd["address"] = address;
+
+
+    emit wsCtrl(newCmd);
+}
+
 void ElementMaster::openEditor()
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
+
+
+
+    QJsonObject jsonQuery {
+        {"cmd", "QueryEditorToolbox"},
+        {"data", m_typeName}
+    };
+    /* Qury element specific config */
+    fwrdWsCtrl(jsonQuery);
+
     m_editor->openEditor(m_config);
 }
 

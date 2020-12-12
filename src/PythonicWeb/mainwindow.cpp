@@ -48,6 +48,9 @@ MainWindow::MainWindow(QWidget *parent)
 
         connect(new_workingArea, &WorkingArea::stopExec,
                 this, &MainWindow::stopExec);
+
+        connect(new_workingArea, &WorkingArea::wsCtrl,
+                this, &MainWindow::wsCtrl);
     }
 
     /* Setup Bottom Area */
@@ -306,7 +309,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
                         jsonElement["Socket"].toBool(),
                         jsonElement["Plug"].toBool(),
                         jsonElement["Iconname"].toString(),
-                        jsonElement["Typename"].toString(),
+                        jsonElement["Type"].toString(),
                         jsonElement["Filename"].toString(),
                         elementVersion,
                         pythonicVersion,
@@ -436,11 +439,11 @@ void MainWindow::queryConfig()
 void MainWindow::queryToolbox(){
 
     qCDebug(logC, "Debug Message");
+
     /* Query Config from Daemon */
 
     QJsonObject queryCfg {
         {"cmd", "QueryToolbox"}
-        //{"cmd", "QueryConfig"}// Das funktioniert
     };
     wsCtrl(queryCfg);
 }

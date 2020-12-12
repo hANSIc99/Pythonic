@@ -21,6 +21,7 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QLoggingCategory>
+#include <QJsonObject>
 #include <QVector>
 #include <QPoint>
 #include <QLine>
@@ -117,11 +118,14 @@ signals:
     void stopHighlightAllElements();
     void startExec(quint32 id);
     void stopExec(quint32 id);
+    void wsCtrl(const QJsonObject cmd);
 
 public slots:
 
     void deleteElement(ElementMaster *element);
     void resizeEvent(QResizeEvent *event) override;
+    /* Forward to backend and append grid number */
+    void fwrdWsCtrl(const QJsonObject cmd);
 
 private slots:
 

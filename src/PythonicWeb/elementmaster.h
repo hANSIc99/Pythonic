@@ -216,13 +216,15 @@ signals:
     void remove(ElementMaster *element);
     void plugConnectionHighlight(bool state);
     void socketConnectionHighlight(bool state);
+    /* Signals is emitted when rightcliking an element to open the editor */
+    void wsCtrl(const QJsonObject cmd);
 
 
 private slots:
 
     void deleteSelf();
     void updateConfig(const QJsonObject config);
-
+    void fwrdWsCtrl(const QJsonObject cmd);
 private:
 
     QLoggingCategory        logC{"ElementMaster"};

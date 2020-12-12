@@ -73,11 +73,14 @@ public:
 signals:
     void updateCurrentWorkingArea(WorkingArea* currentWokringArea);
 
+public slots:
+    void wsCtrl(const QJsonObject cmd);
+
 private slots:
     //! Send log-message to daemon
     void logMessage(const QString msg, const LogLvl lvl);
     //! Send control command to daemon
-    void wsCtrl(const QJsonObject cmd);
+
     //! Receives commands from the daemon
     void wsRcv(const QString &message);
     //! Reconnect to daemon

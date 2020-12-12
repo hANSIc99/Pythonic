@@ -115,6 +115,21 @@ void WorkingArea::resizeEvent(QResizeEvent *event)
     QFrame::resizeEvent(event);
 }
 
+void WorkingArea::fwrdWsCtrl(const QJsonObject cmd)
+{
+    qCInfo(logC, "called - Area No.: %u", m_gridNo);
+    QJsonObject newCmd = cmd;
+
+    QJsonObject address = cmd["address"].toObject();
+    /* Extend Address part with area number */
+    address["area"] = m_gridNo;
+
+
+    newCmd["address"] = address;
+
+    emit wsCtrl(newCmd);
+}
+
 void WorkingArea::disconnectHover(QAction *action)
 {
     //qCInfo(logC, "called");
@@ -176,6 +191,9 @@ void WorkingArea::registerElement(const ElementMaster *new_element)
     /* Element --> Workingarea */
     connect(new_element, &ElementMaster::remove,
             this, &WorkingArea::deleteElement);
+
+    connect(new_element, &ElementMaster::wsCtrl,
+            this, &WorkingArea::fwrdWsCtrl);
 
     /* Workingarea --> Element: highlight  */
 

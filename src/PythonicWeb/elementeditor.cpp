@@ -70,6 +70,8 @@ void Elementeditor::openEditor(const QJsonObject config)
     /* Setup line edit */
     m_objectName.setText(parent()->objectName());
 
+
+
     QDialog::open();
 }
 

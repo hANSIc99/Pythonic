@@ -10,7 +10,7 @@ from enum import Enum
 from execution_operator import Operator
 from stdin_reader import stdinReader
 from screen import reset_screen
-from configio import ToolboxLoader, ConfigLoader
+from configio import ToolboxLoader, ConfigLoader, EditorLoader
 import operator
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
@@ -100,6 +100,13 @@ def ctrl(ws):
             elif msg['cmd'] == 'QueryToolbox':
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
                 ws.environ['mainWorker'].loadTools()
+            elif msg['cmd'] == 'QueryEditorToolbox' :
+                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
+                addr        = msg['address']
+                typeName    = msg['data']
+                ws.environ['mainWorker'].loadEditorConfig(addr, typeName)
+
+                #data  = msg['']
 
 
 @websocket.WebSocketWSGI
@@ -262,6 +269,12 @@ class MainWorker(QObject):
         self.toolbox_loader = ToolboxLoader()
         self.toolbox_loader.tooldataLoaded.connect(self.forwardCmd)
 
+        # Instantiate EditorLoader
+
+        self.editor_loader = EditorLoader()
+        self.editor_loader.editorLoaded.connect(self.forwardCmd)
+
+
         # Instantiate ConfigLoader
         self.config_loader = ConfigLoader()
         self.config_loader.tooldataLoaded.connect(self.forwardCmd);
@@ -374,14 +387,15 @@ class MainWorker(QObject):
         logging.debug('MainWorker::loadTools() called')
         self.toolbox_loader.start()
 
+    def loadEditorConfig(self, address, typeName):
+        
+        logging.debug('MainWorker::loadEditorConfig() called')
+        self.editor_loader.startLoad(address, typeName)
 
     def forwardCmd(self, cmd):
 
         logging.debug('MainWorker::forwardCmd() called')
         self.frontendCtrl.emit(cmd)
-
-
-        
 
     def loadConfig(self):
 

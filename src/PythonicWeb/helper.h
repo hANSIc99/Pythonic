@@ -30,6 +30,7 @@ namespace Pythonic {
         Heartbeat,
         CurrentConfig,
         Toolbox,
+        ElementEditorConfig,
         Test,
         NoCmd
     };
@@ -57,6 +58,7 @@ public:
         if(inString == "Heartbeat") return Pythonic::Heartbeat;
         if(inString == "CurrentConfig") return Pythonic::CurrentConfig;
         if(inString == "Toolbox") return Pythonic::Toolbox;
+        if(inString == "ElementEditorConfig") return Pythonic::ElementEditorConfig;
         if(inString == "Test") return Pythonic::Test;
         return Pythonic::NoCmd;
     };
