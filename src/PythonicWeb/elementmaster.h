@@ -221,6 +221,7 @@ signals:
 private slots:
 
     void deleteSelf();
+    void updateConfig(const QJsonObject config);
 
 private:
 
@@ -255,7 +256,7 @@ private:
     //! Backend-configuration of the element
     QJsonObject             m_config;
     //! Editor windows
-    Elementeditor           m_editor{this};
+    Elementeditor           *m_editor;
 
     QSizePolicy             m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
 

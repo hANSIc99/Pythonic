@@ -3,23 +3,30 @@
 
 #include <QDialog>
 #include <QWidget>
-#include <QRadioButton>
+#include <QCheckBox>
 #include <QLineEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QJsonObject>
+#include <QLabel>
+#include <QFont>
 #include "baselabel.h"
 
+#define ID_FONTSIZE 12
 
 class Elementeditor : public QDialog
 {
     Q_OBJECT
 public:
-    explicit Elementeditor(QWidget *parent = nullptr);
+    explicit Elementeditor(quint32 id, QWidget *parent = nullptr);
+
+signals:
+
+    void updateConfig(const QJsonObject config);
 
 public slots:
 
-    void open() override;
+    void openEditor(const QJsonObject config);
     void accept() override;
 
 private:
@@ -34,11 +41,13 @@ private:
     QVBoxLayout     m_generalCfgLayout;
     QVBoxLayout     m_specificCfgLayout;
 
+    QLabel          m_id;
+
     QLineEdit       m_objectName;
 
-    QRadioButton    m_toggleLogging;
-    QRadioButton    m_toggleDebug;
-    QRadioButton    m_toggleMP;
+    QCheckBox       m_toggleLogging;
+    QCheckBox       m_toggleDebug;
+    QCheckBox       m_toggleMP;
 
     QPushButton     m_saveButton;
 

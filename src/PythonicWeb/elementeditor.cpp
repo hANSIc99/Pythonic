@@ -1,6 +1,6 @@
 #include "elementeditor.h"
 
-Elementeditor::Elementeditor(QWidget *parent) : QDialog(parent)
+Elementeditor::Elementeditor(quint32 id, QWidget *parent) : QDialog(parent)
 {
 
 
@@ -12,7 +12,12 @@ Elementeditor::Elementeditor(QWidget *parent) : QDialog(parent)
     setWindowModality(Qt::WindowModal);
     //setAttribute(Qt::WA_DeleteOnClose);
 
+    /* Setup element id */
 
+    QFont font("Arial", ID_FONTSIZE, QFont::Bold);
+    m_id.setFont(font);
+    m_id.setText(QString("Id: %1").arg(id, 8, 16, QChar('0')));
+    //parent()
 
     /* Setup general switches */
 
@@ -28,6 +33,7 @@ Elementeditor::Elementeditor(QWidget *parent) : QDialog(parent)
     m_generalConfig.setLayout(&m_generalCfgLayout);
     m_generalConfig.setContentsMargins(5, 10, 5, 10);
     m_generalCfgLayout.setSizeConstraint(QLayout::SetMaximumSize);
+    m_generalCfgLayout.addWidget(&m_id);
     m_generalCfgLayout.addWidget(&m_objectName);
     m_generalCfgLayout.addWidget(&m_toggleLogging);
     m_generalCfgLayout.addWidget(&m_toggleDebug);
@@ -50,10 +56,16 @@ Elementeditor::Elementeditor(QWidget *parent) : QDialog(parent)
 
 }
 
-void Elementeditor::open()
+void Elementeditor::openEditor(const QJsonObject config)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
+    if(!config.isEmpty()){
+        QJsonObject generalConfig = config["GeneralConfig"].toObject();
+        m_toggleLogging.setChecked(generalConfig["Logging"].toBool());
+        m_toggleDebug.setChecked(generalConfig["Debug"].toBool());
+        m_toggleMP.setChecked(generalConfig["MP"].toBool());
+    }
 
     /* Setup line edit */
     m_objectName.setText(parent()->objectName());
@@ -73,13 +85,17 @@ void Elementeditor::genConfig()
 {
     // ElementMaster m_config
 
-    QJsonObject globalConfig = {
-        {"ObjectName" , m_objectName.g() },
+    QJsonObject generalConfig = {
+        {"ObjectName" , m_objectName.text() },
         {"Logging" , m_toggleLogging.isChecked() },
         {"Debug", m_toggleDebug.isChecked() },
         {"MP", m_toggleMP.isChecked()}
     };
 
+    QJsonObject config = {
+        {"GeneralConfig", generalConfig }
+    };
 
+    emit updateConfig(config);
 }
 

@@ -46,6 +46,8 @@ ElementMaster::ElementMaster(bool socket,
 {
 
     setAttribute(Qt::WA_DeleteOnClose);
+    m_layout.setContentsMargins(10, 0, 30, 0);
+    m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
 
     /* Generate random element name */
 
@@ -60,11 +62,13 @@ ElementMaster::ElementMaster(bool socket,
     } else {
         setObjectName(objectName);
     }
-    //qCDebug(logC, "called - %s added", widgetName.toStdString().c_str());
+
+    /* Create Elementeditor */
+
+    m_editor = new Elementeditor(m_id, this);
 
 
-    m_layout.setContentsMargins(10, 0, 30, 0);
-    m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
+
 
     /* Enable / disable socket/plug */
 
@@ -90,6 +94,7 @@ ElementMaster::ElementMaster(bool socket,
 
     /* Defualt name = object name */
 
+    m_labelText.setWordWrap(true);
     m_labelText.setText(this->objectName());
 
 
@@ -116,6 +121,9 @@ ElementMaster::ElementMaster(bool socket,
 
     connect(this, &ElementMaster::plugConnectionHighlight,
             &m_plug, &ElementPlug::connected);
+
+    connect(m_editor, &Elementeditor::updateConfig,
+            this, &ElementMaster::updateConfig);
 
 }
 
@@ -212,10 +220,21 @@ void ElementMaster::deleteSelf()
     emit remove(this);
 }
 
+void ElementMaster::updateConfig(const QJsonObject config)
+{
+    qCInfo(logC, "called %s", objectName().toStdString().c_str());
+    m_config = config;
+
+    /* Update object name */
+    QJsonObject generalConfig = config["GeneralConfig"].toObject();
+    setObjectName(generalConfig["ObjectName"].toString());
+    m_labelText.setText(this->objectName());
+}
+
 void ElementMaster::openEditor()
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
-    m_editor.open();
+    m_editor->openEditor(m_config);
 }
 
 /*****************************************************
