@@ -1,0 +1,43 @@
+[
+    {
+	      "Type"  : "Dropdown",
+              "Name"  : "Mode",
+	      "Title" : "Choose the scheduler mode",
+	      "Items" : [ "None",
+			  "Interval",
+			  "Interval between times",
+			  "At specific time",
+			  "On every full interval",
+			  "Full interval between times"
+			]
+    },
+    {
+              "Type"	  : "Lineedit",
+	      "Name"      : "Intervalinput",
+              "Title"     : "Every",                             
+	      "Dependency" : {
+			         "Mode" : [
+					       "Interval",
+					       "Interval between times",
+					       "On every full interval",
+					       "Full interval between times"
+                                          ]
+                            },
+               "RegExp" : "[1-9]" 
+    },
+    {
+              "Type"       : "Dropdown",
+              "Name"       : "Timebase",
+              "Title"      : "Timebase",
+              "Items"      : [
+                             "Seconds",
+                             "Minutes",
+                             "Hours"
+                             ],
+              "Dependency" : {
+                                  "Lineedit" : [
+                                                    "m_visible"
+                                               ]
+                             }
+    }
+]

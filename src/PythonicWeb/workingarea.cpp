@@ -130,6 +130,24 @@ void WorkingArea::fwrdWsCtrl(const QJsonObject cmd)
     emit wsCtrl(newCmd);
 }
 
+void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
+{
+    qCInfo(logC, "called - Area No.: %u", m_gridNo);
+
+    QJsonObject address = cmd["address"].toObject();
+
+    quint32 id = address["id"].toInt();
+
+   QList<ElementMaster*> elementList = findChildren<ElementMaster*>();
+
+   for(ElementMaster* element : elementList){
+        if(element->m_id == id){
+            element->fwrdWsRcv(cmd);
+            break;
+        }
+   }
+}
+
 void WorkingArea::disconnectHover(QAction *action)
 {
     //qCInfo(logC, "called");

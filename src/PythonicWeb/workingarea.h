@@ -126,6 +126,8 @@ public slots:
     void resizeEvent(QResizeEvent *event) override;
     /* Forward to backend and append grid number */
     void fwrdWsCtrl(const QJsonObject cmd);
+    /* Forward received messages to element */
+    void fwrdWsRcv(const QJsonObject cmd);
 
 private slots:
 

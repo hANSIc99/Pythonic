@@ -35,9 +35,12 @@ class EditorLoader(QThread):
 
                 
                     cmd = { 'cmd' : 'ElementEditorConfig',
-                            'data' : config }
+                            'address'   : self.address,
+                            'data'      : config }
+                    
                     logging.debug('EditorLoader::run() config loaded')
                     self.editorLoaded.emit(cmd)
+
                 except Exception as e:
                     logging.warning('EditorLoader::run() - error opening file: {}'.format(e))
                 
@@ -78,9 +81,11 @@ class ToolboxLoader(QThread):
             elementsJSON.append(element)
             #logging.debug('MainWorker::loadTools() called')
 
-        
-        cmd = { 'cmd' : 'Toolbox',
-                'data' : elementsJSON }
+        address = { 'target' : 'MainWindow'}
+
+        cmd = { 'cmd'       : 'Toolbox',
+                'address'   : address,
+                'data'      : elementsJSON }
         
         self.tooldataLoaded.emit(cmd)
 
@@ -101,9 +106,11 @@ class ConfigLoader(QThread):
             with open('PythonicWeb/config/current_config.json', 'r') as file:
                 config = json.load(file)
 
-        
-            cmd = { 'cmd' : 'CurrentConfig',
-                    'data' : config }
+            address = { 'target' : 'MainWindow'}
+            
+            cmd = { 'cmd'       : 'CurrentConfig',
+                    'address'   : address,
+                    'data'      : config }
 
             self.tooldataLoaded.emit(cmd)
         except Exception as e:

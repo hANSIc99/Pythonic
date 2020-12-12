@@ -176,15 +176,39 @@ void MainWindow::wsRcv(const QString &message)
 {
     // https://stackoverflow.com/questions/19822211/qt-parsing-json-using-qjsondocument-qjsonobject-qjsonarray
     QJsonDocument cmd(QJsonDocument::fromJson(message.toUtf8()));
-    QJsonObject cmdObj(cmd.object());
+    QJsonObject jsonMsg(cmd.object());
 
-    QJsonValue jsCmd = cmdObj.value("cmd");
+
+
+    QJsonValue address = jsonMsg.value("address");
+
+    if(!address.isObject()){
+        qCWarning(logC, "Address in wrong format");
+        return;
+    }
+
+    QJsonValue target = address.toObject().value("target");
+
+    if(!target.isString()){
+        qCWarning(logC, "Address in wrong format");
+        return;
+    }
+
+    /* Forward all packaged with a target other than 'MainWindow' */
+
+    if(target.toString() != "MainWindow"){
+        fwrdWsRcv(jsonMsg);
+        return;
+    }
+
+
+    QJsonValue jsCmd = jsonMsg.value("cmd");
+
 
     if(!jsCmd.isString()){
         qCWarning(logC, "Command in wrong format");
         return;
     }
-
 
     switch (helper::hashCmd(jsCmd.toString())) {
         case Pythonic::Command::Heartbeat:
@@ -193,16 +217,25 @@ void MainWindow::wsRcv(const QString &message)
         break;
     case Pythonic::Command::CurrentConfig:
         qCDebug(logC, "CurrentConfig received");
-        loadSavedConfig(cmdObj);
+        loadSavedConfig(jsonMsg);
         break;
     case Pythonic::Command::Toolbox:
         qCDebug(logC, "Toolbox received");
-        loadToolbox(cmdObj);
+        loadToolbox(jsonMsg);
         break;
     default:
         qCDebug(logC, "Unknown command: %s", jsCmd.toString().toStdString().c_str());
         break;
     }
+}
+
+void MainWindow::fwrdWsRcv(const QJsonObject cmd)
+{
+    QJsonObject address = cmd["address"].toObject();
+
+    int area = address["area"].toInt();
+
+    m_arr_workingArea[area]->fwrdWsRcv(cmd);
 }
 
 void MainWindow::reconnect()
@@ -268,13 +301,6 @@ void MainWindow::testSlot(bool checked)
     logMessage("test123", LogLvl::CRITICAL);
 }
 
-
-/*
-template <typename T>
-struct foo {
-   foo( T t ) {}
-};
-*/
 
 
 
@@ -363,6 +389,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
             ElementMaster* childPtr = NULL;
 
             QList<ElementMaster*> mylist = m_arr_workingArea[nWrkArea]->findChildren<ElementMaster*>();
+
             foreach (ElementMaster* listElement, mylist) {
                 /* Assign current- and child-pointer */
                 if(listElement->m_id == currentId){
@@ -421,7 +448,6 @@ void MainWindow::loadToolbox(const QJsonObject toolbox)
 
     m_toolBox.addStretch();
 }
-
 
 
 void MainWindow::queryConfig()

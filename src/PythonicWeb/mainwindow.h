@@ -83,6 +83,8 @@ private slots:
 
     //! Receives commands from the daemon
     void wsRcv(const QString &message);
+    //! Forward message to working area
+    void fwrdWsRcv(const QJsonObject cmd);
     //! Reconnect to daemon
     void reconnect();
     /* Sets the current WorkingArea */

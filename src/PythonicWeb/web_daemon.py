@@ -41,7 +41,9 @@ def rcv(ws):
         greenthread.sleep(0.2)
         QCoreApplication.processEvents()
         try:
-            ws.send( json.dumps({"cmd": "Heartbeat"}))
+            jsonHeartBeat = {   "cmd": "Heartbeat",
+                                "address" : {"target" : "MainWindow"}}
+            ws.send(json.dumps(jsonHeartBeat))
         except Exception as e:
             logging.info('PythonicWeb - RCV Socket connection lost: {}'.format(e))
             ws.environ['mainWorker'].frontendCtrl.disconnect(send)

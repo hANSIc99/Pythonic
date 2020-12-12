@@ -209,7 +209,7 @@ public slots:
     void                    stopHighlight();
     void                    startHighlight();
     void                    checkConnectionState();
-
+    void                    fwrdWsRcv(const QJsonObject cmd);
 
 signals:
 
@@ -225,6 +225,9 @@ private slots:
     void deleteSelf();
     void updateConfig(const QJsonObject config);
     void fwrdWsCtrl(const QJsonObject cmd);
+
+
+
 private:
 
     QLoggingCategory        logC{"ElementMaster"};

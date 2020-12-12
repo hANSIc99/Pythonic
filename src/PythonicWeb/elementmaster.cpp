@@ -237,12 +237,19 @@ void ElementMaster::fwrdWsCtrl(const QJsonObject cmd)
     QJsonObject newCmd = cmd;
 
     QJsonObject address = {
-        { "id", (qint64)m_id }
+        { "target", "Element"},
+        { "id",     (qint64)m_id }
     };
     newCmd["address"] = address;
 
 
     emit wsCtrl(newCmd);
+}
+
+void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
+{
+    qCInfo(logC, "called %s", objectName().toStdString().c_str());
+    // BAUSTELLE
 }
 
 void ElementMaster::openEditor()
