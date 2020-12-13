@@ -136,16 +136,25 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 
     QJsonObject address = cmd["address"].toObject();
 
-    quint32 id = address["id"].toInt();
 
-   QList<ElementMaster*> elementList = findChildren<ElementMaster*>();
+    /* Forward message to target element */
+    if(address["target"].toString() != "WorkingArea"){
 
-   for(ElementMaster* element : elementList){
-        if(element->m_id == id){
-            element->fwrdWsRcv(cmd);
-            break;
-        }
-   }
+       quint32 id = address["id"].toInt();
+
+       QList<ElementMaster*> elementList = findChildren<ElementMaster*>();
+
+       for(ElementMaster* element : elementList){
+            if(element->m_id == id){
+                element->fwrdWsRcv(cmd);
+                break;
+            }
+       }
+
+
+       return;
+    }
+    /* Process own messages here */
 }
 
 void WorkingArea::disconnectHover(QAction *action)

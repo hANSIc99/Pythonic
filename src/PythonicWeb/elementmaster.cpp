@@ -246,10 +246,32 @@ void ElementMaster::fwrdWsCtrl(const QJsonObject cmd)
     emit wsCtrl(newCmd);
 }
 
+ElementMasterCmd::Command ElementMaster::hashCmd(const QString &inString)
+{
+    if(inString == "ElementEditorConfig") return ElementMasterCmd::ElementEditorConfig;
+    if(inString == "Test") return ElementMasterCmd::Test;
+    return ElementMasterCmd::NoCmd;
+}
+
 void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
-    // BAUSTELLE
+
+    QJsonObject address = cmd["address"].toObject();
+
+
+    switch (hashCmd(cmd["cmd"].toString())) {
+        case ElementMasterCmd::Command::ElementEditorConfig:
+            qCInfo(logC, "command: %s - %s",
+                   cmd["cmd"].toString().toStdString().c_str(),
+                   objectName().toStdString().c_str());
+            m_editor->loadEditorConfig(cmd["data"].toArray());
+        break;
+    default:
+        qCDebug(logC, "Unknown command: %s", cmd["cmd"].toString().toStdString().c_str());
+        break;
+    }
+
 }
 
 void ElementMaster::openEditor()

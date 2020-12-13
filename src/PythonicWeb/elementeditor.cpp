@@ -75,12 +75,29 @@ void Elementeditor::openEditor(const QJsonObject config)
     QDialog::open();
 }
 
+void Elementeditor::loadEditorConfig(const QJsonArray config)
+{
+    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+    for(const QJsonValue &unitJSONVal : config){
+        QJsonObject unit = unitJSONVal.toObject();
+        qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+    }
+}
+
 void Elementeditor::accept()
 {
     genConfig();
     QDialog::accept();
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
+}
+
+ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
+{
+    if(inString == "Dropedown") return ElementEditorTypes::Dropedown;
+    if(inString == "Lineedit") return ElementEditorTypes::Lineedit;
+    return ElementEditorTypes::NoCmd;
 }
 
 void Elementeditor::genConfig()

@@ -8,11 +8,23 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QLabel>
 #include <QFont>
 #include "baselabel.h"
 
 #define ID_FONTSIZE 12
+
+
+namespace ElementEditorTypes {
+
+    enum Type {
+        Dropedown,
+        Lineedit,
+        NoCmd
+    };
+}
+
 
 class Elementeditor : public QDialog
 {
@@ -27,9 +39,12 @@ signals:
 public slots:
 
     void openEditor(const QJsonObject config);
+    void loadEditorConfig(const QJsonArray config);
     void accept() override;
 
 private:
+
+    static ElementEditorTypes::Type hashType(QString const &inString);
 
     void            genConfig();
 

@@ -35,6 +35,7 @@
 #include <QSet>
 #include "baselabel.h"
 #include "elementeditor.h"
+#include "helper.h"
 
 #define LABEL_SIZE QSize(140, 47)
 #define PLUG_SOCKET_SIZE QSize(47, 47)
@@ -135,6 +136,17 @@ struct Version {
 };
 
 
+namespace ElementMasterCmd {
+
+    enum Command {
+        ElementEditorConfig,
+        Test,
+        NoCmd
+    };
+}
+
+
+
 class ElementMaster : public QWidget
 {
     Q_OBJECT
@@ -229,6 +241,8 @@ private slots:
 
 
 private:
+
+    static ElementMasterCmd::Command hashCmd(QString const &inString);
 
     QLoggingCategory        logC{"ElementMaster"};
 
