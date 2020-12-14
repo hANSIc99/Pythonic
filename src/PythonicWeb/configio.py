@@ -2,6 +2,26 @@ import os, logging, json
 from PySide2.QtCore import QThread, Signal
 
 
+
+class ConfigWriter(QThread):
+
+    config = None
+
+    def __init__(self,):
+        super().__init__()
+
+    def saveConfig(self, config):
+
+        self.config = config
+        self.start()
+    
+    def run(self):
+
+        logging.debug('ConfigWriter::saveConfig() called')
+        with open('PythonicWeb/config/current_config.json', 'w') as file:
+            json.dump(self.config, file)
+
+
 class EditorLoader(QThread):
 
     editorLoaded        = Signal(object)

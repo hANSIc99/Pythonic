@@ -21,15 +21,7 @@ const QLoggingCategory Elementeditor::logC{"Elementeditor"};
 
 Elementeditor::Elementeditor(quint32 id, QWidget *parent) : QDialog(parent)
 {
-
-
-    setMinimumSize(300, 300);
-
-    //setMinimumWidth()
-    //setMaximumSize(400, 500);
-    //setWindowFlags(Qt::Window);
     setWindowModality(Qt::WindowModal);
-    //setAttribute(Qt::WA_DeleteOnClose);
 
     /* Setup element id */
 
@@ -66,6 +58,7 @@ Elementeditor::Elementeditor(quint32 id, QWidget *parent) : QDialog(parent)
     setLayout(&m_mainLayout);
     //m_mainLayout.setSizeConstraint(QLayout::SetMaximumSize);
     m_mainLayout.addWidget(&m_generalConfig);
+    m_mainLayout.addStretch(1);
     m_mainLayout.addWidget(&m_specificConfig);
 
     /* Signals and Slots */
@@ -130,6 +123,7 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
 void Elementeditor::accept()
 {
     genConfig();
+
     QDialog::accept();
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -170,6 +164,14 @@ void Elementeditor::addDropdown(QJsonObject &dropDownJSON)
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
     QJsonArray listItems = dropDownJSON["Items"].toArray();
+
+    /* Adding title */
+    QString title = dropDownJSON["Title"].toString();
+    if(!title.isEmpty()){
+        QLabel *label = new QLabel(title, &m_specificConfig);
+        m_specificCfgLayout.addWidget(label);
+        //qCInfo(logC, "called %s", title.toStdString().c_str());
+    }
 
     QComboBox *dropdown = new QComboBox(&m_specificConfig);
     m_specificCfgLayout.addWidget(dropdown);

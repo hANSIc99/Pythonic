@@ -10,7 +10,7 @@ from enum import Enum
 from execution_operator import Operator
 from stdin_reader import stdinReader
 from screen import reset_screen
-from configio import ToolboxLoader, ConfigLoader, EditorLoader
+from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter
 import operator
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
@@ -89,7 +89,10 @@ def ctrl(ws):
 
             elif msg['cmd'] == 'writeConfig':
                 logging.debug('Config loaded')
+                # Save config to to memory
                 ws.environ['mainWorker'].gridConfig = msg['data']
+                # Save config to file
+                ws.environ['mainWorker'].saveConfig.emit(msg['data'])
             elif msg['cmd'] == 'StartExec':
                 elementId = msg['data']        
                 ws.environ['mainWorker'].startExec.emit(elementId, ws.environ['mainWorker'].gridConfig)
@@ -247,6 +250,7 @@ class MainWorker(QObject):
 
 
     startExec       = Signal(object, object)
+    saveConfig      = Signal(object)
     frontendCtrl    = Signal(object)
 
     def __init__(self, app):
@@ -276,10 +280,13 @@ class MainWorker(QObject):
         self.editor_loader = EditorLoader()
         self.editor_loader.editorLoaded.connect(self.forwardCmd)
 
+        # Instantiate ConfigWriter
+        self.config_writer = ConfigWriter()
+        self.saveConfig.connect(self.config_writer.saveConfig)
 
         # Instantiate ConfigLoader
         self.config_loader = ConfigLoader()
-        self.config_loader.tooldataLoaded.connect(self.forwardCmd);
+        self.config_loader.tooldataLoaded.connect(self.forwardCmd)
 
         self.update_logdate.connect(self.stdinReader.updateLogDate)
         self.grd_ops_arr    = []
@@ -377,12 +384,6 @@ class MainWorker(QObject):
 
         self.stdinReader.run()
     
-    def saveConfig(self, id, config):
-
-        logging.debug('MainWorker::saveConfig() called')
-        with open('PythonicWeb/config/current_config.json', 'w') as file:
-            json.dump(config, file)
-
 
     def loadTools(self):
         

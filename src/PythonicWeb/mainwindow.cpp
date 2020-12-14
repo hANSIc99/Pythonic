@@ -51,6 +51,9 @@ MainWindow::MainWindow(QWidget *parent)
 
         connect(new_workingArea, &WorkingArea::wsCtrl,
                 this, &MainWindow::wsCtrl);
+
+        connect(new_workingArea, &WorkingArea::saveConfig,
+                this, &MainWindow::saveConfig);
     }
 
     /* Setup Bottom Area */
@@ -123,7 +126,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateCurrentWorkingArea,
             &m_toolBox, &Toolbox::setCurrentWorkingArea);
 
-    // BAUSTELLE: Websocket schließt direkt nachdem QueryToolbox aufgerufen wird
     connect(&m_wsCtrl, &QWebSocket::connected,
             this, &MainWindow::connectionEstablished);
 
@@ -132,8 +134,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* Set current working area on initialization */
     setCurrentWorkingArea(m_workingTabs.currentIndex());
-
-
 }
 
 void MainWindow::logMessage(const QString msg, const LogLvl lvl)
@@ -170,6 +170,28 @@ void MainWindow::wsCtrl(const QJsonObject cmd)
 {
     qCInfo(logC, "called");
     m_wsCtrl.send(cmd);
+}
+
+void MainWindow::saveConfig()
+{
+    qCInfo(logC, "called");
+
+    QJsonArray elementConfigrations;
+
+    for(auto const &grid : m_arr_workingArea){
+        for(auto const &elementObj : grid->children()){
+            ElementMaster* element = qobject_cast<ElementMaster*>(elementObj);
+            elementConfigrations.append(element->genConfig());
+            qCInfo(logC, "found");
+        }
+    }
+
+    QJsonObject currentConfig {
+        {"cmd", "writeConfig"},
+        {"data", elementConfigrations}
+    };
+
+    wsCtrl(currentConfig);
 }
 
 void MainWindow::wsRcv(const QString &message)
@@ -257,22 +279,7 @@ void MainWindow::startExec(const quint32 id)
     qCInfo(logC, "called");
 
     /* Step 1: Download configuration to daemon */
-    QJsonArray elementConfigrations;
-
-    for(auto const &grid : m_arr_workingArea){
-        for(auto const &elementObj : grid->children()){
-            ElementMaster* element = qobject_cast<ElementMaster*>(elementObj);
-            elementConfigrations.append(element->genConfig());
-            qCInfo(logC, "found");
-        }
-    }
-
-    QJsonObject currentConfig {
-        {"cmd", "writeConfig"},
-        {"data", elementConfigrations}
-    };
-
-    wsCtrl(currentConfig);
+    saveConfig();
 
     /* Step 2: Emit start command */
     QJsonObject startCmd {

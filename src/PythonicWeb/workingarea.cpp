@@ -156,6 +156,11 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
     /* Process own messages here */
 }
 
+void WorkingArea::saveConfigFwrd()
+{
+    emit saveConfig();
+}
+
 void WorkingArea::disconnectHover(QAction *action)
 {
     //qCInfo(logC, "called");
@@ -220,6 +225,9 @@ void WorkingArea::registerElement(const ElementMaster *new_element)
 
     connect(new_element, &ElementMaster::wsCtrl,
             this, &WorkingArea::fwrdWsCtrl);
+
+    connect(new_element, &ElementMaster::saveConfig,
+            this, &WorkingArea::saveConfigFwrd);
 
     /* Workingarea --> Element: highlight  */
 

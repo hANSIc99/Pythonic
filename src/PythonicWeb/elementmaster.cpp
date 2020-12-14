@@ -130,7 +130,7 @@ ElementMaster::ElementMaster(bool socket,
 
 QJsonObject ElementMaster::genConfig() const
 {
-    qCDebug(logC, "called");
+    qCDebug(logC, "called %s", objectName().toStdString().c_str());
 
     QJsonObject pos = {
         {"x" , x()},
@@ -226,10 +226,12 @@ void ElementMaster::updateConfig(const QJsonObject config)
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
     m_config = config;
 
-    /* Update object name */
+    /* Update visible object name */
     QJsonObject generalConfig = config["GeneralConfig"].toObject();
     setObjectName(generalConfig["ObjectName"].toString());
     m_labelText.setText(this->objectName());
+
+    emit saveConfig();
 }
 
 void ElementMaster::fwrdWsCtrl(const QJsonObject cmd)

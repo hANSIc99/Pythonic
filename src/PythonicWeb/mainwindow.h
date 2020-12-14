@@ -74,7 +74,12 @@ signals:
     void updateCurrentWorkingArea(WorkingArea* currentWokringArea);
 
 public slots:
+
     void wsCtrl(const QJsonObject cmd);
+
+    //! Slot is called when starting execution and
+    //! after editing an element (by clicking on the Save button)
+    void saveConfig();
 
 private slots:
     //! Send log-message to daemon

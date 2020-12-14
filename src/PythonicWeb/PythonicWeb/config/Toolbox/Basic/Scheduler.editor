@@ -28,7 +28,7 @@
     {
               "Type"       : "Dropdown",
               "Name"       : "Timebase",
-              "Title"      : "Timebase",
+              "Title"      : "Choose timebase",
               "Items"      : [
                              "Seconds",
                              "Minutes",

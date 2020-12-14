@@ -230,15 +230,15 @@ signals:
     void socketConnectionHighlight(bool state);
     /* Signals is emitted when rightcliking an element to open the editor */
     void wsCtrl(const QJsonObject cmd);
-
+    /* Signal is emitted when the editor is closed by clicking on Save */
+    void saveConfig();
 
 private slots:
 
     void deleteSelf();
+    //! Slot is called after closing the elementeditor by click on Save
     void updateConfig(const QJsonObject config);
     void fwrdWsCtrl(const QJsonObject cmd);
-
-
 
 private:
 

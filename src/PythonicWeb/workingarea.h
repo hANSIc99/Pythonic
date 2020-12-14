@@ -119,6 +119,8 @@ signals:
     void startExec(quint32 id);
     void stopExec(quint32 id);
     void wsCtrl(const QJsonObject cmd);
+    //! Signal is emitted after an element was edited
+    void saveConfig();
 
 public slots:
 
@@ -128,6 +130,8 @@ public slots:
     void fwrdWsCtrl(const QJsonObject cmd);
     /* Forward received messages to element */
     void fwrdWsRcv(const QJsonObject cmd);
+    //! Forward saveCOnfig signal from ElementMaster to MainWindow
+    void saveConfigFwrd();
 
 private slots:
 
