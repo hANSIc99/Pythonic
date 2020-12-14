@@ -17,6 +17,7 @@
 
 #include "elementmaster.h"
 
+const QLoggingCategory ElementMaster::logC{"ElementMaster"};
 
 ElementMaster::ElementMaster(bool socket,
                              bool plug,

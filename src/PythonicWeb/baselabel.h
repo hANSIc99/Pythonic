@@ -88,13 +88,13 @@ private slots:
 
 private:
 
-    QLoggingCategory    logC{"BaseLabel"};
+
     QNetworkAccessManager   m_WebCtrl;
 
     QByteArray              m_DownloadedData;
     QSize                   m_size;
 
-
+    const static QLoggingCategory logC;
 };
 
 class BaseButton : public QPushButton
@@ -140,13 +140,13 @@ private slots:
 
 
 private:
-    QLoggingCategory    logC{"BaseButton"};
+
     QNetworkAccessManager   m_WebCtrl;
     QPixmap                 m_pixMap;
     QByteArray              m_DownloadedData;
     QSize                   m_size;
 
-
+    const static QLoggingCategory logC;
 };
 
 

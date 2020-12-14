@@ -10,7 +10,8 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    elementiconbar.cpp \
+    baselabel.cpp \
+    elementeditor.cpp \
     elementmaster.cpp \
     helper.cpp \
     mainwindow.cpp \
@@ -22,16 +23,15 @@ SOURCES += \
 
 HEADERS += \
     baselabel.h \
-    elementiconbar.h \
+    elementeditor.h \
     elementmaster.h \
-    elements/basicelements.h \
     filedownloader.h \
     helper.h \
-    logger.h \
     mainwindow.h \
     menubar.h \
     toolbox.h \
     toolmaster.h \
+    websocket.h \
     workingarea.h
 
 # Default rules for deployment.

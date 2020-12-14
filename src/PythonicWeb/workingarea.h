@@ -195,11 +195,13 @@ private:
 
     QPainter                    m_painter;
 
-    QLoggingCategory            logC;
+
 
     QMenu                       m_contextDisconnect;
 
     QList<ConnectionPair*>      m_discMenuConnections;
+
+    const static QLoggingCategory      logC;
 
 };
 

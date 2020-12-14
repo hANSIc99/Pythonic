@@ -244,7 +244,7 @@ private:
 
     static ElementMasterCmd::Command hashCmd(QString const &inString);
 
-    QLoggingCategory        logC{"ElementMaster"};
+    const static QLoggingCategory  logC;
 
     //! Layout for IconBar and ElementPicture
     QVBoxLayout             m_layout;
@@ -281,6 +281,7 @@ private:
 
 
 };
+
 
 // https://stackoverflow.com/questions/2562176/storing-a-type-in-c
 

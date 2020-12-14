@@ -17,12 +17,11 @@
 
 #include "workingarea.h"
 
-
+const QLoggingCategory WorkingArea::logC{"WorkingArea"};
 
 WorkingArea::WorkingArea(int gridNo, QWidget *parent)
     : QFrame(parent)
     , m_gridNo(gridNo)
-    , logC("WorkingArea")
 {
     setAcceptDrops(true);
     setMouseTracking(true);
