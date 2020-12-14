@@ -90,7 +90,7 @@ void Elementeditor::openEditor(const QJsonObject config)
     m_objectName.setText(parent()->objectName());
 
 
-
+    checkRules();
     QDialog::open();
 }
 
@@ -106,27 +106,25 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
         switch (hashType(type)) {
 
         case ElementEditorTypes::Dropdown: {
-            qCInfo(logC, "%s - %s found", parent()->objectName().toStdString().c_str(), "Dropdown");
-
-            QComboBox *dropdown = new QComboBox(&m_specificConfig);
-            m_specificCfgLayout.addWidget(dropdown);
+            addDropdown(unit);
             break;
         }
-
 
         case ElementEditorTypes::Lineedit: {
-            qCInfo(logC, "%s - %s found", parent()->objectName().toStdString().c_str(), "Lineedit");
+            addLineedit(unit);
             break;
         }
+
         default: {
             break;
         }
         }
 
-
-
-        //m_specificCfgLayout
     }
+
+    m_specificCfgLayout.addStretch(1);
+    m_editorSetup = true;
+    checkRules();
 }
 
 void Elementeditor::accept()
@@ -160,5 +158,25 @@ void Elementeditor::genConfig()
     };
 
     emit updateConfig(config);
+}
+
+void Elementeditor::checkRules()
+{
+    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+}
+
+void Elementeditor::addDropdown(QJsonObject &dropDownJSON)
+{
+    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+    QJsonArray listItems = dropDownJSON["Items"].toArray();
+
+    QComboBox *dropdown = new QComboBox(&m_specificConfig);
+    m_specificCfgLayout.addWidget(dropdown);
+}
+
+void Elementeditor::addLineedit(QJsonObject &lineeditJSON)
+{
+    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 }
 

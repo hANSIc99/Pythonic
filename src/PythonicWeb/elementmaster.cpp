@@ -266,7 +266,9 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
             qCInfo(logC, "command: %s - %s",
                    cmd["cmd"].toString().toStdString().c_str(),
                    objectName().toStdString().c_str());
-            m_editor->loadEditorConfig(cmd["data"].toArray());
+
+            if(!m_editor->m_editorSetup)
+                m_editor->loadEditorConfig(cmd["data"].toArray());
         break;
     default:
         qCDebug(logC, "Unknown command: %s", cmd["cmd"].toString().toStdString().c_str());

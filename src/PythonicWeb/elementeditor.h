@@ -50,6 +50,9 @@ class Elementeditor : public QDialog
 public:
     explicit Elementeditor(quint32 id, QWidget *parent = nullptr);
 
+    //! Indicates if the element specific input elements are already loaded
+    bool     m_editorSetup{false};
+
 signals:
 
     void updateConfig(const QJsonObject config);
@@ -65,6 +68,12 @@ private:
     static ElementEditorTypes::Type hashType(QString const &inString);
 
     void            genConfig();
+
+    void            checkRules();
+
+    void            addDropdown(QJsonObject &dropDownJSON);
+
+    void            addLineedit(QJsonObject &lineeditJSON);
 
     QHBoxLayout     m_mainLayout;
 
