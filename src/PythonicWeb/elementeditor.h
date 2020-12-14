@@ -28,6 +28,7 @@
 #include <QJsonArray>
 #include <QLabel>
 #include <QFont>
+#include <QComboBox>
 #include "baselabel.h"
 
 #define ID_FONTSIZE 12
@@ -36,7 +37,7 @@
 namespace ElementEditorTypes {
 
     enum Type {
-        Dropedown,
+        Dropdown,
         Lineedit,
         NoCmd
     };

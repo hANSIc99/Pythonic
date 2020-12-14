@@ -17,6 +17,7 @@
 
 #include "toolbox.h"
 
+const QLoggingCategory ToolMaster3::logC{"ToolMaster3"};
 
 ToolMaster3::ToolMaster3(QJsonObject &toolData, QWidget *parent)
     : BaseLabel(QUrl("http://localhost:7000/" + toolData["Iconname"].toString() + ".png"), TOOL_SIZE, parent)

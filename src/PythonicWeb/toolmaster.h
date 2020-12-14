@@ -70,7 +70,7 @@ private:
 
     QJsonObject             m_toolData;
 
-    QLoggingCategory        logC{"ToolMaster3"};
+    const static QLoggingCategory logC;
 };
 
 #endif // TOOLMASTER_H

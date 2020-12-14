@@ -24,6 +24,7 @@ class EditorLoader(QThread):
 
         logging.debug('EditorLoader::run() called')
         config = None
+        bFound = False
 
         for dirpath, dirnames, filenames in os.walk('PythonicWeb/config/Toolbox/'):
             if self.typeName in filenames:
@@ -39,6 +40,7 @@ class EditorLoader(QThread):
                             'data'      : config }
                     
                     logging.debug('EditorLoader::run() config loaded')
+                    bFound = True
                     self.editorLoaded.emit(cmd)
 
                 except Exception as e:
@@ -46,7 +48,11 @@ class EditorLoader(QThread):
                 
                 
                 break
+            
+                
 
+        if not bFound:
+            logging.warning('EditorLoader::run() - editor config file {} not found'.format(self.typeName))
 
         
         

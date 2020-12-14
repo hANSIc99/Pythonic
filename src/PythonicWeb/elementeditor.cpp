@@ -100,7 +100,31 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
 
     for(const QJsonValue &unitJSONVal : config){
         QJsonObject unit = unitJSONVal.toObject();
-        qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+        QString type = unit["Type"].toString();
+
+        switch (hashType(type)) {
+
+        case ElementEditorTypes::Dropdown: {
+            qCInfo(logC, "%s - %s found", parent()->objectName().toStdString().c_str(), "Dropdown");
+
+            QComboBox *dropdown = new QComboBox(&m_specificConfig);
+            m_specificCfgLayout.addWidget(dropdown);
+            break;
+        }
+
+
+        case ElementEditorTypes::Lineedit: {
+            qCInfo(logC, "%s - %s found", parent()->objectName().toStdString().c_str(), "Lineedit");
+            break;
+        }
+        default: {
+            break;
+        }
+        }
+
+
+
         //m_specificCfgLayout
     }
 }
@@ -115,7 +139,7 @@ void Elementeditor::accept()
 
 ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
 {
-    if(inString == "Dropedown") return ElementEditorTypes::Dropedown;
+    if(inString == "Dropdown") return ElementEditorTypes::Dropdown;
     if(inString == "Lineedit") return ElementEditorTypes::Lineedit;
     return ElementEditorTypes::NoCmd;
 }
