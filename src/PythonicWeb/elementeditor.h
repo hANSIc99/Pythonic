@@ -42,8 +42,9 @@
 namespace ElementEditorTypes {
 
     struct Rule {
-        QString         dependence;
-        QList<QString>  dependentValues;
+        QWidget               *affectedElement;
+        QString               dependence;
+        QList<QString>        dependentValues;
     };
 
     enum Type {
@@ -82,7 +83,7 @@ private:
 
     void            checkRules();
 
-    void            addRules(const QJsonArray rules);
+    void            addRules(const QJsonArray rules, QWidget *affectedElement);
 
     void            addComboBox(QJsonObject &dropDownJSON);
 

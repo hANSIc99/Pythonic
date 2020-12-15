@@ -177,7 +177,7 @@ void Elementeditor::checkRules()
 
         QString sType = dependence->metaObject()->className();
 
-        QString currentValue;
+        bool bConditionFulfilled = false;
 
 
         switch (hashType(sType)) {
@@ -186,7 +186,7 @@ void Elementeditor::checkRules()
                 QComboBox *t = qobject_cast<QComboBox*>(dependence);
 
                 if(rule.dependentValues.contains(t->currentData().toString())){
-
+                    bConditionFulfilled = true;
                 }
 
                 break;
@@ -202,6 +202,8 @@ void Elementeditor::checkRules()
             }
         }
 
+        /* Apply rule to affected element */
+        rule.affectedElement->setVisible(bConditionFulfilled);
     }
 
         //rule.dependentValues.contains()
@@ -219,7 +221,7 @@ void Elementeditor::checkRules()
     */
 }
 
-void Elementeditor::addRules(const QJsonArray rules)
+void Elementeditor::addRules(const QJsonArray rules, QWidget *affectedElement)
 {
     for(const QJsonValue &rule : rules){
         QJsonObject ruleObj = rule.toObject();
@@ -234,7 +236,7 @@ void Elementeditor::addRules(const QJsonArray rules)
             s_dependentValues.append(dependency.toString());
         }
 
-        m_rules.append({dependentObj, s_dependentValues});
+        m_rules.append({affectedElement, dependentObj, s_dependentValues});
 
     }
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
@@ -326,7 +328,7 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
     QJsonArray dependencies = lineeditJSON["Dependency"].toArray();
     if(!dependencies.isEmpty()){
-        addRules(dependencies);
+        addRules(dependencies, qobject_cast<QWidget*>(lineedit));
     }
 }
 
