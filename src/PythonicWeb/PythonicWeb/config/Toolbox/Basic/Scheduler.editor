@@ -1,6 +1,6 @@
 [
     {
-	      "Type"  : "Dropdown",
+	      "Type"  : "QComboBox",
               "Name"  : "Mode",
 	      "Title" : "Choose the scheduler mode",
 	      "Items" : [ "None",
@@ -12,7 +12,7 @@
 			]
     },
     {
-              "Type"	    : "Lineedit",
+              "Type"	    : "QLineEdit",
 	      "Name"        : "Intervalinput",
               "Title"       : "Every",
 	      "Defaulttext" : "5",                      
@@ -31,7 +31,7 @@
                "RegExp"     : "^[1-9]\\d*$" 
     },
     {
-              "Type"       : "Dropdown",
+              "Type"       : "QComboBox",
               "Name"       : "Timebase",
               "Title"      : "Choose timebase",
               "Items"      : [

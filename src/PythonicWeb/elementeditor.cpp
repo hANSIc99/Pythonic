@@ -98,13 +98,13 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
 
         switch (hashType(type)) {
 
-        case ElementEditorTypes::Dropdown: {
-            addDropdown(unit);
+        case ElementEditorTypes::QComboBox: {
+            addComboBox(unit);
             break;
         }
 
-        case ElementEditorTypes::Lineedit: {
-            addLineedit(unit);
+        case ElementEditorTypes::QLineEdit: {
+            addLineEdit(unit);
             break;
         }
 
@@ -131,10 +131,12 @@ void Elementeditor::accept()
 
 ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
 {
-    if(inString == "Dropdown") return ElementEditorTypes::Dropdown;
-    if(inString == "Lineedit") return ElementEditorTypes::Lineedit;
-    return ElementEditorTypes::NoCmd;
+    if(inString == "QComboBox") return ElementEditorTypes::QComboBox;
+    if(inString == "QLineEdit") return ElementEditorTypes::QLineEdit;
+    return ElementEditorTypes::NoType;
 }
+
+
 
 void Elementeditor::genConfig()
 {
@@ -157,6 +159,53 @@ void Elementeditor::genConfig()
 void Elementeditor::checkRules()
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+
+    //m_rules
+    for(const ElementEditorTypes::Rule &rule : m_rules){
+
+        QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
+
+        if(!dependence){
+            qCInfo(logC, "%s - Object %s not found",
+                   parent()->objectName().toStdString().c_str(),
+                   rule.dependence.toStdString().c_str());
+            continue;
+        }
+
+        /* Proceed with checking the condition */
+
+        QString sType = dependence->metaObject()->className();
+
+        QString currentValue;
+
+
+        switch (hashType(sType)) {
+
+            case ElementEditorTypes::QComboBox: {
+                QComboBox *t = qobject_cast<QComboBox*>(dependence);
+
+                if(rule.dependentValues.contains(t->currentData().toString())){
+
+                }
+
+                break;
+            }
+
+            case ElementEditorTypes::QLineEdit: {
+
+                break;
+            }
+
+            default: {
+                break;
+            }
+        }
+
+    }
+
+        //rule.dependentValues.contains()
+
 
     /*
     QList<QWidget*> elementList = m_specificConfig.findChildren<ElementMaster*>();
@@ -191,13 +240,14 @@ void Elementeditor::addRules(const QJsonArray rules)
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 }
 
-void Elementeditor::addDropdown(QJsonObject &dropDownJSON)
+void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
 
 
     /* Adding title (if one is given) */
+
     QString title = dropDownJSON["Title"].toString();
     if(!title.isEmpty()){
         QLabel *label = new QLabel(title, &m_specificConfig);
@@ -215,16 +265,15 @@ void Elementeditor::addDropdown(QJsonObject &dropDownJSON)
     }
 
     QComboBox *dropdown = new QComboBox(&m_specificConfig);
+    dropdown->setObjectName(dropDownJSON["Name"].toString());
+    m_specificCfgLayout.addWidget(dropdown);
 
     for(const QJsonValue &item : listItems){
         dropdown->addItem(item.toString(), QVariant(item.toString()));
     }
-
-
-    m_specificCfgLayout.addWidget(dropdown);
 }
 
-void Elementeditor::addLineedit(QJsonObject &lineeditJSON)
+void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -236,6 +285,7 @@ void Elementeditor::addLineedit(QJsonObject &lineeditJSON)
     }
 
     QLineEdit *lineedit = new QLineEdit(&m_specificConfig);
+    lineedit->setObjectName(lineeditJSON["Name"].toString());
     m_specificCfgLayout.addWidget(lineedit);
 
     /* Adding default text (if given) */
@@ -278,7 +328,5 @@ void Elementeditor::addLineedit(QJsonObject &lineeditJSON)
     if(!dependencies.isEmpty()){
         addRules(dependencies);
     }
-
-
 }
 

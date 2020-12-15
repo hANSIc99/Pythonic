@@ -47,10 +47,11 @@ namespace ElementEditorTypes {
     };
 
     enum Type {
-        Dropdown,
-        Lineedit,
-        NoCmd
+        QComboBox,
+        QLineEdit,
+        NoType
     };
+
 }
 
 
@@ -83,9 +84,9 @@ private:
 
     void            addRules(const QJsonArray rules);
 
-    void            addDropdown(QJsonObject &dropDownJSON);
+    void            addComboBox(QJsonObject &dropDownJSON);
 
-    void            addLineedit(QJsonObject &lineeditJSON);
+    void            addLineEdit(QJsonObject &lineeditJSON);
 
     QHBoxLayout     m_mainLayout;
 
@@ -106,7 +107,7 @@ private:
     QPushButton     m_saveButton;
 
     QList<ElementEditorTypes::Rule> m_rules;
-    //BaseButton      m_deleteElement;
+
     const static QLoggingCategory logC;
 
 };
