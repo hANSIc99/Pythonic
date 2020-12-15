@@ -125,7 +125,6 @@ ElementMaster::ElementMaster(bool socket,
 
     connect(m_editor, &Elementeditor::updateConfig,
             this, &ElementMaster::updateConfig);
-
 }
 
 QJsonObject ElementMaster::genConfig() const
@@ -285,11 +284,12 @@ void ElementMaster::openEditor()
 
 
 
+    /* Qury element specific config */
     QJsonObject jsonQuery {
         {"cmd", "QueryEditorToolbox"},
         {"data", m_typeName}
     };
-    /* Qury element specific config */
+
     fwrdWsCtrl(jsonQuery);
 
     m_editor->openEditor(m_config);

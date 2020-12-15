@@ -157,15 +157,26 @@ void Elementeditor::genConfig()
 void Elementeditor::checkRules()
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+    /*
+    QList<QWidget*> elementList = m_specificConfig.findChildren<ElementMaster*>();
+
+    for(ElementMaster* element : elementList){
+         if(element->m_id == id){
+             element->fwrdWsRcv(cmd);
+             break;
+         }
+    }
+    */
 }
 
 void Elementeditor::addDropdown(QJsonObject &dropDownJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
-    QJsonArray listItems = dropDownJSON["Items"].toArray();
 
-    /* Adding title */
+
+    /* Adding title (if one is given) */
     QString title = dropDownJSON["Title"].toString();
     if(!title.isEmpty()){
         QLabel *label = new QLabel(title, &m_specificConfig);
@@ -173,12 +184,70 @@ void Elementeditor::addDropdown(QJsonObject &dropDownJSON)
         //qCInfo(logC, "called %s", title.toStdString().c_str());
     }
 
+    /* Adding items to the dropdown (at least if one is given) */
+
+    QJsonArray listItems = dropDownJSON["Items"].toArray();
+
+    if(listItems.isEmpty()){
+        qCWarning(logC, "No list tems found for %s", parent()->objectName().toStdString().c_str());
+        return;
+    }
+
     QComboBox *dropdown = new QComboBox(&m_specificConfig);
+
+    for(const QJsonValue &item : listItems){
+        dropdown->addItem(item.toString(), QVariant(item.toString()));
+    }
+
+
     m_specificCfgLayout.addWidget(dropdown);
 }
 
 void Elementeditor::addLineedit(QJsonObject &lineeditJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+    /* Adding title (if one is given) */
+    QString title = lineeditJSON["Title"].toString();
+    if(!title.isEmpty()){
+        QLabel *label = new QLabel(title, &m_specificConfig);
+        m_specificCfgLayout.addWidget(label);
+    }
+
+    QLineEdit *lineedit = new QLineEdit(&m_specificConfig);
+    m_specificCfgLayout.addWidget(lineedit);
+
+    /* Adding default text (if given) */
+    QString defaultText = lineeditJSON["Defaulttext"].toString();
+    if(!defaultText.isEmpty()){
+        lineedit->setText(defaultText);
+    }
+
+    /* Adding RegExp (if given) */
+
+    QString regExpString = lineeditJSON["RegExp"].toString();
+
+    if(!regExpString.isEmpty()){
+        QRegExp regExp(regExpString);
+        QRegExpValidator *regExpValidator = new QRegExpValidator(regExp, &m_specificConfig);
+        lineedit->setValidator(regExpValidator);
+
+        QLabel *regExpIndicator = new QLabel("", &m_specificConfig);
+        m_specificCfgLayout.addWidget(regExpIndicator);
+
+        regExpIndicator->setStyleSheet("QLabel { color : red; }");
+
+        connect(
+            lineedit, &QLineEdit::textChanged,
+            [=]() {
+            if(lineedit->hasAcceptableInput()){
+                regExpIndicator->setText("");
+
+            } else {
+                regExpIndicator->setText("Please provide acceptable input");
+            }
+        }
+        );
+    }
 }
 

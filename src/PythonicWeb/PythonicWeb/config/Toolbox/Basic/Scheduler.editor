@@ -12,18 +12,19 @@
 			]
     },
     {
-              "Type"	  : "Lineedit",
-	      "Name"      : "Intervalinput",
-              "Title"     : "Every",                             
-	      "Dependency" : {
+              "Type"	    : "Lineedit",
+	      "Name"        : "Intervalinput",
+              "Title"       : "Every",
+	      "Defaulttext" : "5",                      
+	      "Dependency"  : {
 			         "Mode" : [
 					       "Interval",
 					       "Interval between times",
 					       "On every full interval",
 					       "Full interval between times"
                                           ]
-                            },
-               "RegExp" : "[1-9]" 
+                              },
+               "RegExp"     : "^[1-9]\\d*$" 
     },
     {
               "Type"       : "Dropdown",

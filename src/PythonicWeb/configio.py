@@ -19,7 +19,7 @@ class ConfigWriter(QThread):
 
         logging.debug('ConfigWriter::saveConfig() called')
         with open('PythonicWeb/config/current_config.json', 'w') as file:
-            json.dump(self.config, file)
+            json.dump(self.config, file, indent=4)
 
 
 class EditorLoader(QThread):

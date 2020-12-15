@@ -29,6 +29,9 @@
 #include <QLabel>
 #include <QFont>
 #include <QComboBox>
+#include <QVariant>
+#include <QRegExp>
+#include <QRegExpValidator>
 #include "baselabel.h"
 
 #define ID_FONTSIZE 12
