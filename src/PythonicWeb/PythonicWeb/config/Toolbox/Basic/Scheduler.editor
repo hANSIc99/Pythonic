@@ -16,14 +16,18 @@
 	      "Name"        : "Intervalinput",
               "Title"       : "Every",
 	      "Defaulttext" : "5",                      
-	      "Dependency"  : {
-			         "Mode" : [
-					       "Interval",
-					       "Interval between times",
-					       "On every full interval",
-					       "Full interval between times"
+	      "Dependency"  : [
+			          { 
+                                       "Dependence" : "Mode",
+ 			               "DependentValue" : [
+					                       "Interval",
+					       	       "Interval between times",
+						               "On every full interval",
+                   					       "Full interval between times"
                                           ]
-                              },
+                                  }
+			      ],
+
                "RegExp"     : "^[1-9]\\d*$" 
     },
     {

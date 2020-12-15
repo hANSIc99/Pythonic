@@ -170,6 +170,27 @@ void Elementeditor::checkRules()
     */
 }
 
+void Elementeditor::addRules(const QJsonArray rules)
+{
+    for(const QJsonValue &rule : rules){
+        QJsonObject ruleObj = rule.toObject();
+
+        QString dependentObj = ruleObj["Dependence"].toString();
+
+        QJsonArray dependentValues = ruleObj["DependentValue"].toArray();
+
+        QStringList  s_dependentValues;
+
+        for(const QJsonValue &dependency : dependentValues){
+            s_dependentValues.append(dependency.toString());
+        }
+
+        m_rules.append({dependentObj, s_dependentValues});
+
+    }
+    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+}
+
 void Elementeditor::addDropdown(QJsonObject &dropDownJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
@@ -249,5 +270,15 @@ void Elementeditor::addLineedit(QJsonObject &lineeditJSON)
         }
         );
     }
+
+
+    /* Adding condition (if given) */
+
+    QJsonArray dependencies = lineeditJSON["Dependency"].toArray();
+    if(!dependencies.isEmpty()){
+        addRules(dependencies);
+    }
+
+
 }
 

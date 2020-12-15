@@ -32,12 +32,19 @@
 #include <QVariant>
 #include <QRegExp>
 #include <QRegExpValidator>
+#include <QList>
 #include "baselabel.h"
 
 #define ID_FONTSIZE 12
 
 
+
 namespace ElementEditorTypes {
+
+    struct Rule {
+        QString         dependence;
+        QList<QString>  dependentValues;
+    };
 
     enum Type {
         Dropdown,
@@ -74,6 +81,8 @@ private:
 
     void            checkRules();
 
+    void            addRules(const QJsonArray rules);
+
     void            addDropdown(QJsonObject &dropDownJSON);
 
     void            addLineedit(QJsonObject &lineeditJSON);
@@ -96,7 +105,7 @@ private:
 
     QPushButton     m_saveButton;
 
-
+    QList<ElementEditorTypes::Rule> m_rules;
     //BaseButton      m_deleteElement;
     const static QLoggingCategory logC;
 
