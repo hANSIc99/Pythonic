@@ -48,12 +48,83 @@ namespace ElementEditorTypes {
     };
 
     enum Type {
-        QComboBox,
-        QLineEdit,
+        ComboBox,
+        LineEdit,
         NoType
     };
 
+
 }
+
+
+class ComboBox : public QWidget{
+    Q_OBJECT
+public:
+    explicit ComboBox(QWidget *parent = 0)
+        : QWidget(parent){
+        setLayout(&m_layout);
+        m_layout.addWidget(&m_title);
+        m_layout.addWidget(&m_combobox);
+    };
+
+    QVBoxLayout m_layout;
+    QLabel      m_title;
+    QComboBox   m_combobox;
+
+
+public slots:
+
+    void hideEvent(QHideEvent *) override
+    {
+        //emit visibilityChanged(false);
+        m_title.setVisible(false);
+        m_combobox.setVisible(false);
+    }
+
+    void showEvent(QShowEvent *) override{
+        m_title.setVisible(true);
+        m_title.setVisible(true);
+    }
+
+};
+
+
+class LineEdit : public QWidget{
+    Q_OBJECT
+public:
+    explicit LineEdit(QWidget *parent = 0)
+        : QWidget(parent){
+        setLayout(&m_layout);
+        m_layout.addWidget(&m_title);
+        m_layout.addWidget(&m_lineedit);
+        m_layout.addWidget(&m_regExpIndicator);
+        m_regExpIndicator.setStyleSheet("QLabel { color : red; }");
+        m_lineedit.setValidator(&m_regExp);
+    };
+
+    QVBoxLayout         m_layout;
+    QLabel              m_title;
+    QLineEdit           m_lineedit;
+    QLabel              m_regExpIndicator;
+    QRegExpValidator    m_regExp{this};
+
+public slots:
+
+    void hideEvent(QHideEvent *) override
+    {
+        //emit visibilityChanged(false);
+        m_title.setVisible(false);
+        m_lineedit.setVisible(false);
+        m_regExpIndicator.setVisible(false);
+    }
+
+    void showEvent(QShowEvent *) override{
+        m_title.setVisible(true);
+        m_lineedit.setVisible(true);
+        m_regExpIndicator.setVisible(true);
+    }
+
+};
 
 
 class Elementeditor : public QDialog
@@ -74,14 +145,13 @@ public slots:
     void openEditor(const QJsonObject config);
     void loadEditorConfig(const QJsonArray config);
     void accept() override;
+    void checkRules();
 
 private:
 
     static ElementEditorTypes::Type hashType(QString const &inString);
 
     void            genConfig();
-
-    void            checkRules();
 
     void            addRules(const QJsonArray rules, QWidget *affectedElement);
 

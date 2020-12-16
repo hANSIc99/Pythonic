@@ -98,12 +98,12 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
 
         switch (hashType(type)) {
 
-        case ElementEditorTypes::QComboBox: {
+        case ElementEditorTypes::ComboBox: {
             addComboBox(unit);
             break;
         }
 
-        case ElementEditorTypes::QLineEdit: {
+        case ElementEditorTypes::LineEdit: {
             addLineEdit(unit);
             break;
         }
@@ -131,8 +131,8 @@ void Elementeditor::accept()
 
 ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
 {
-    if(inString == "QComboBox") return ElementEditorTypes::QComboBox;
-    if(inString == "QLineEdit") return ElementEditorTypes::QLineEdit;
+    if(inString == "ComboBox") return ElementEditorTypes::ComboBox;
+    if(inString == "LineEdit") return ElementEditorTypes::LineEdit;
     return ElementEditorTypes::NoType;
 }
 
@@ -182,17 +182,18 @@ void Elementeditor::checkRules()
 
         switch (hashType(sType)) {
 
-            case ElementEditorTypes::QComboBox: {
-                QComboBox *t = qobject_cast<QComboBox*>(dependence);
+            case ElementEditorTypes::ComboBox: {
 
-                if(rule.dependentValues.contains(t->currentData().toString())){
+                ComboBox *t = qobject_cast<ComboBox*>(dependence);
+
+                if(rule.dependentValues.contains(t->m_combobox.currentData().toString())){
                     bConditionFulfilled = true;
                 }
 
                 break;
             }
 
-            case ElementEditorTypes::QLineEdit: {
+            case ElementEditorTypes::LineEdit: {
 
                 break;
             }
@@ -206,19 +207,7 @@ void Elementeditor::checkRules()
         rule.affectedElement->setVisible(bConditionFulfilled);
     }
 
-        //rule.dependentValues.contains()
 
-
-    /*
-    QList<QWidget*> elementList = m_specificConfig.findChildren<ElementMaster*>();
-
-    for(ElementMaster* element : elementList){
-         if(element->m_id == id){
-             element->fwrdWsRcv(cmd);
-             break;
-         }
-    }
-    */
 }
 
 void Elementeditor::addRules(const QJsonArray rules, QWidget *affectedElement)
@@ -248,14 +237,7 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
 
 
 
-    /* Adding title (if one is given) */
 
-    QString title = dropDownJSON["Title"].toString();
-    if(!title.isEmpty()){
-        QLabel *label = new QLabel(title, &m_specificConfig);
-        m_specificCfgLayout.addWidget(label);
-        //qCInfo(logC, "called %s", title.toStdString().c_str());
-    }
 
     /* Adding items to the dropdown (at least if one is given) */
 
@@ -266,34 +248,52 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
         return;
     }
 
-    QComboBox *dropdown = new QComboBox(&m_specificConfig);
+    ComboBox *dropdown = new ComboBox(&m_specificConfig);
     dropdown->setObjectName(dropDownJSON["Name"].toString());
     m_specificCfgLayout.addWidget(dropdown);
 
     for(const QJsonValue &item : listItems){
-        dropdown->addItem(item.toString(), QVariant(item.toString()));
+        dropdown->m_combobox.addItem(item.toString(), QVariant(item.toString()));
     }
+
+    /* Adding title (if one is given) */
+
+    QString title = dropDownJSON["Title"].toString();
+    if(!title.isEmpty()){
+        //QLabel *label = new QLabel(title, &m_specificConfig);
+        //m_specificCfgLayout.addWidget(label);
+        dropdown->m_title.setText(title);
+        //qCInfo(logC, "called %s", title.toStdString().c_str());
+    }
+
+    /* Signals & Slots */
+
+    connect(&dropdown->m_combobox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &Elementeditor::checkRules);
 }
 
 void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
+
+
+    LineEdit *lineedit = new LineEdit(&m_specificConfig);
+    lineedit->setObjectName(lineeditJSON["Name"].toString());
+    m_specificCfgLayout.addWidget(lineedit);
+
     /* Adding title (if one is given) */
     QString title = lineeditJSON["Title"].toString();
     if(!title.isEmpty()){
-        QLabel *label = new QLabel(title, &m_specificConfig);
-        m_specificCfgLayout.addWidget(label);
+        //QLabel *label = new QLabel(title, &m_specificConfig);
+        //m_specificCfgLayout.addWidget(label);
+        lineedit->m_title.setText(title);
     }
-
-    QLineEdit *lineedit = new QLineEdit(&m_specificConfig);
-    lineedit->setObjectName(lineeditJSON["Name"].toString());
-    m_specificCfgLayout.addWidget(lineedit);
 
     /* Adding default text (if given) */
     QString defaultText = lineeditJSON["Defaulttext"].toString();
     if(!defaultText.isEmpty()){
-        lineedit->setText(defaultText);
+        lineedit->m_lineedit.setText(defaultText);
     }
 
     /* Adding RegExp (if given) */
@@ -302,22 +302,24 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
     if(!regExpString.isEmpty()){
         QRegExp regExp(regExpString);
-        QRegExpValidator *regExpValidator = new QRegExpValidator(regExp, &m_specificConfig);
-        lineedit->setValidator(regExpValidator);
 
-        QLabel *regExpIndicator = new QLabel("", &m_specificConfig);
-        m_specificCfgLayout.addWidget(regExpIndicator);
+        lineedit->m_regExp.setRegExp(regExp);
+        //QRegExpValidator *regExpValidator = new QRegExpValidator(regExp, &m_specificConfig);
+        //lineedit->m_lineedit.setValidator(regExpValidator);
 
-        regExpIndicator->setStyleSheet("QLabel { color : red; }");
+        //QLabel *regExpIndicator = new QLabel("", &m_specificConfig);
+        //m_specificCfgLayout.addWidget(regExpIndicator);
+
+        //regExpIndicator->setStyleSheet("QLabel { color : red; }");
 
         connect(
-            lineedit, &QLineEdit::textChanged,
+            &lineedit->m_lineedit, &QLineEdit::textChanged,
             [=]() {
-            if(lineedit->hasAcceptableInput()){
-                regExpIndicator->setText("");
+            if(lineedit->m_lineedit.hasAcceptableInput()){
+               lineedit->m_regExpIndicator.setText("");
 
             } else {
-                regExpIndicator->setText("Please provide acceptable input");
+               lineedit->m_regExpIndicator.setText("Please provide acceptable input");
             }
         }
         );
