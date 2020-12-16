@@ -179,6 +179,7 @@ void Elementeditor::checkRules()
 
         bool bConditionFulfilled = false;
 
+        /* Value or property check */
 
         switch (hashType(sType)) {
 
@@ -195,6 +196,8 @@ void Elementeditor::checkRules()
 
             case ElementEditorTypes::LineEdit: {
 
+                LineEdit *t = qobject_cast<LineEdit*>(dependence);
+
                 break;
             }
 
@@ -210,34 +213,44 @@ void Elementeditor::checkRules()
 
 }
 
-void Elementeditor::addRules(const QJsonArray rules, QWidget *affectedElement)
+void Elementeditor::addRule(const QJsonValue rule, QWidget *affectedElement)
 {
-    for(const QJsonValue &rule : rules){
-        QJsonObject ruleObj = rule.toObject();
 
-        QString dependentObj = ruleObj["Dependence"].toString();
+    if(rule.isArray()){ // Depending on value
+        QJsonArray rules = rule.toArray();
 
-        QJsonArray dependentValues = ruleObj["DependentValue"].toArray();
+        for(const QJsonValue &rule : rules){
+            QJsonObject ruleObj = rule.toObject();
 
-        QStringList  s_dependentValues;
+            QString dependentObj = ruleObj["Dependence"].toString();
 
-        for(const QJsonValue &dependency : dependentValues){
-            s_dependentValues.append(dependency.toString());
+            QJsonArray dependentValues = ruleObj["DependentValue"].toArray();
+
+            QStringList  s_dependentValues;
+
+            for(const QJsonValue &dependency : dependentValues){
+                s_dependentValues.append(dependency.toString());
+            }
+
+            m_rules.append({affectedElement, dependentObj, s_dependentValues});
+
         }
+    } else if(rule.isObject()) { // Depending on property
+        QJsonObject propRule = rule.toObject();
+        // BAUSTELLE
 
-        m_rules.append({affectedElement, dependentObj, s_dependentValues});
-
+    } else {
+        qCInfo(logC, "Unable to read dependency %s", parent()->objectName().toStdString().c_str());
     }
+
+
+
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 }
 
 void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
-
-
-
-
 
     /* Adding items to the dropdown (at least if one is given) */
 
@@ -328,9 +341,9 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
     /* Adding condition (if given) */
 
-    QJsonArray dependencies = lineeditJSON["Dependency"].toArray();
-    if(!dependencies.isEmpty()){
-        addRules(dependencies, qobject_cast<QWidget*>(lineedit));
+    QJsonValue dependency = lineeditJSON.value("Dependency");
+    if(!dependency.isUndefined()){
+        addRule(dependency, qobject_cast<QWidget*>(lineedit));
     }
 }
 

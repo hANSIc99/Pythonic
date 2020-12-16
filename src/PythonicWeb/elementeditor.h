@@ -108,6 +108,7 @@ public:
     QLabel              m_regExpIndicator;
     QRegExpValidator    m_regExp{this};
 
+
 public slots:
 
     void hideEvent(QHideEvent *) override
@@ -153,7 +154,7 @@ private:
 
     void            genConfig();
 
-    void            addRules(const QJsonArray rules, QWidget *affectedElement);
+    void            addRule(const QJsonValue rule, QWidget *affectedElement);
 
     void            addComboBox(QJsonObject &dropDownJSON);
 
