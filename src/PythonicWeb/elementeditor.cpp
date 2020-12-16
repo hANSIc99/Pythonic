@@ -146,7 +146,36 @@ ElementEditorTypes::Property Elementeditor::hashProperty(const QString &inString
 
 void Elementeditor::genConfig()
 {
-    // ElementMaster m_config
+
+    /* Generate general config */
+    QJsonArray specificConfig;
+
+    /* Check all ComboBoxes */
+    QList<ComboBox*> comboboxes = m_specificConfig.findChildren<ComboBox*>();
+    for(const ComboBox* combobox : comboboxes){
+
+        QJsonObject comboboxJSON = {
+            { "Name",  combobox->objectName()},
+            { "Data",  combobox->m_combobox.currentData().toString()},
+            { "Index", combobox->m_combobox.currentIndex()}
+        };
+
+        specificConfig.append(comboboxJSON);
+    }
+
+    /* Check all LineEdits */
+    QList<LineEdit*> lineedits = m_specificConfig.findChildren<LineEdit*>();
+    for(const LineEdit* lineedit : lineedits){
+
+        QJsonObject lineeditJSON = {
+            { "Name",  lineedit->objectName()},
+            { "Data",  lineedit->m_lineedit.text()}
+
+        };
+
+        specificConfig.append(lineeditJSON);
+
+    }
 
     QJsonObject generalConfig = {
         {"ObjectName" , m_objectName.text() },
@@ -155,8 +184,12 @@ void Elementeditor::genConfig()
         {"MP", m_toggleMP.isChecked()}
     };
 
+    /* Generate specific config */
+
+
     QJsonObject config = {
-        {"GeneralConfig", generalConfig }
+        {"GeneralConfig", generalConfig },
+        {"SpecificConfig", specificConfig}
     };
 
     emit updateConfig(config);
