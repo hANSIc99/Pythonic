@@ -70,6 +70,7 @@ Elementeditor::Elementeditor(quint32 id, QWidget *parent) : QDialog(parent)
 
 void Elementeditor::openEditor(const QJsonObject config)
 {
+    /* Method is called from ElementMaster */
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
     if(!config.isEmpty()){
@@ -77,6 +78,38 @@ void Elementeditor::openEditor(const QJsonObject config)
         m_toggleLogging.setChecked(generalConfig["Logging"].toBool());
         m_toggleDebug.setChecked(generalConfig["Debug"].toBool());
         m_toggleMP.setChecked(generalConfig["MP"].toBool());
+
+        QJsonArray specificConfig = config["GeneralConfig"].toArray();
+
+        if(!specificConfig.isEmpty()){
+            for(const QJsonValue &value : specificConfig){
+
+                QJsonObject elementConfig = value.toObject();
+
+                QString type = elementConfig["Type"].toString();
+                QString name = elementConfig["Name"].toString();
+
+                switch (hashType(type)) {
+                // BAUSTELLE
+                case ElementEditorTypes::ComboBox: {
+
+                    break;
+                }
+
+                case ElementEditorTypes::LineEdit: {
+
+                    break;
+                }
+
+                default: {
+                    break;
+                }
+                }
+
+
+            }
+        }
+
     }
 
     /* Setup line edit */
@@ -89,6 +122,7 @@ void Elementeditor::openEditor(const QJsonObject config)
 
 void Elementeditor::loadEditorConfig(const QJsonArray config)
 {
+    /* Loading the layout configuration */
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
     for(const QJsonValue &unitJSONVal : config){
@@ -142,10 +176,9 @@ ElementEditorTypes::Property Elementeditor::hashProperty(const QString &inString
     return ElementEditorTypes::NoProperty;
 }
 
-
-
 void Elementeditor::genConfig()
 {
+    /* This slot is called by accept() */
 
     /* Generate general config */
     QJsonArray specificConfig;
@@ -155,7 +188,8 @@ void Elementeditor::genConfig()
     for(const ComboBox* combobox : comboboxes){
 
         QJsonObject comboboxJSON = {
-            { "Name",  combobox->objectName()},
+            { "Type",  "ComboBox"},
+            { "Name",  combobox->objectName()},        
             { "Data",  combobox->m_combobox.currentData().toString()},
             { "Index", combobox->m_combobox.currentIndex()}
         };
@@ -168,6 +202,7 @@ void Elementeditor::genConfig()
     for(const LineEdit* lineedit : lineedits){
 
         QJsonObject lineeditJSON = {
+            { "Type",  "LineEdit"},
             { "Name",  lineedit->objectName()},
             { "Data",  lineedit->m_lineedit.text()}
 
@@ -272,6 +307,11 @@ void Elementeditor::checkRules()
         /* Apply rule to affected element */
         rule.affectedElement->setVisible(bConditionFulfilled);
     } // rule for-loop
+}
+
+void Elementeditor::restoreSavedValues()
+{
+
 }
 
 void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)

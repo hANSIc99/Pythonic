@@ -262,6 +262,8 @@ public:
     QString                 m_iconName;
     //! Symbol of element
     BaseLabel               m_symbol;
+    //! Backend-configuration of the element
+    QJsonObject             m_config;
     //! Connector icon
     ElementSocket           m_socket;
     //! Plug icon
@@ -272,8 +274,7 @@ public:
 private:
     //! Label of the element
     QLabel                  m_labelText{"labe text"};
-    //! Backend-configuration of the element
-    QJsonObject             m_config;
+
     //! Editor windows
     Elementeditor           *m_editor;
 

@@ -153,6 +153,7 @@ public slots:
     void loadEditorConfig(const QJsonArray config);
     void accept() override;
     void checkRules();
+    void restoreSavedValues();
 
 private:
 

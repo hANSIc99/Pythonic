@@ -353,7 +353,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
                         jsonElement["Id"].toInt(),
                         jsonElement["ObjectName"].toString());
 
-
+        newElement->m_config = jsonElement["Config"].toObject();
         newElement->move(xPos, yPos);
 
 
