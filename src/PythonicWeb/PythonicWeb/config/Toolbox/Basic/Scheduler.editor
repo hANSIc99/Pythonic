@@ -39,10 +39,11 @@
                              "Minutes",
                              "Hours"
                              ],
-              "Dependency" : {
-                                  "Lineedit" : [
-                                                    "m_visible"
-                                               ]
-                             }
+              "Dependency" : [
+				 {
+				      "Dependence"         : "Intervalinput",
+				      "DependentProperty"  : "Visibility"
+			         }
+			     ]
     }
 ]

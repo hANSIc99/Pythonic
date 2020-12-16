@@ -136,6 +136,12 @@ ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
     return ElementEditorTypes::NoType;
 }
 
+ElementEditorTypes::Property Elementeditor::hashProperty(const QString &inString)
+{
+    if(inString == "Visibility") return ElementEditorTypes::Visibility;
+    return ElementEditorTypes::NoProperty;
+}
+
 
 
 void Elementeditor::genConfig()
@@ -161,9 +167,9 @@ void Elementeditor::checkRules()
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
 
-    //m_rules
     for(const ElementEditorTypes::Rule &rule : m_rules){
 
+        /* Find dependent element */
         QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
 
         if(!dependence){
@@ -173,56 +179,88 @@ void Elementeditor::checkRules()
             continue;
         }
 
-        /* Proceed with checking the condition */
-
-        QString sType = dependence->metaObject()->className();
 
         bool bConditionFulfilled = false;
 
-        /* Value or property check */
+        /* Check if rule is property based */
+        if(rule.propertyRelated){
+            /* Get first element of list = name of property */
+            QString property = rule.dependentValues.first();
 
-        switch (hashType(sType)) {
 
-            case ElementEditorTypes::ComboBox: {
+            switch (hashProperty(property)) {
 
-                ComboBox *t = qobject_cast<ComboBox*>(dependence);
-
-                if(rule.dependentValues.contains(t->m_combobox.currentData().toString())){
-                    bConditionFulfilled = true;
-                }
-
+            case ElementEditorTypes::Visibility: {
+                bConditionFulfilled = dependence->isVisible();
                 break;
             }
-
-            case ElementEditorTypes::LineEdit: {
-
-                LineEdit *t = qobject_cast<LineEdit*>(dependence);
-
-                break;
-            }
-
             default: {
                 break;
             }
+            }
+            /* Apply rule to affected element */
+            rule.affectedElement->setVisible(bConditionFulfilled);
+            /* Loop can be continued when it was a property related rule */
+            continue;
+        }
+
+        /* Value based rule */
+
+        /* Get type name of dependent element */
+        QString sType = dependence->metaObject()->className();
+
+        /* Perform type dependent value query */
+        switch (hashType(sType)) {
+
+
+        case ElementEditorTypes::ComboBox: {
+
+            ComboBox *t = qobject_cast<ComboBox*>(dependence);
+
+            if(rule.dependentValues.contains(t->m_combobox.currentData().toString())){
+                bConditionFulfilled = true;
+            }
+
+            break;
+        }
+
+        case ElementEditorTypes::LineEdit: {
+            /* TBD */
+            LineEdit *t = qobject_cast<LineEdit*>(dependence);
+
+            break;
+        }
+
+        default: {
+            break;
+        }
         }
 
         /* Apply rule to affected element */
         rule.affectedElement->setVisible(bConditionFulfilled);
-    }
-
-
+    } // rule for-loop
 }
 
-void Elementeditor::addRule(const QJsonValue rule, QWidget *affectedElement)
-{
+void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
+{  
 
-    if(rule.isArray()){ // Depending on value
-        QJsonArray rules = rule.toArray();
+    if(rules.isUndefined() || !rules.isArray()){
+        qCInfo(logC, "%s - Rules not provided or in wrong format", parent()->objectName().toStdString().c_str());
+        return;
+    }
 
-        for(const QJsonValue &rule : rules){
-            QJsonObject ruleObj = rule.toObject();
+    QJsonArray rulesArray = rules.toArray();
 
-            QString dependentObj = ruleObj["Dependence"].toString();
+    for(const QJsonValue &rule : rulesArray){
+
+        QJsonObject ruleObj = rule.toObject();
+
+        QJsonValue dependentProp = ruleObj.value("DependentProperty");
+        QJsonValue dependentVal  = ruleObj.value("DependentValue");
+        QString dependentObjName = ruleObj["Dependence"].toString();
+
+        /* Add value dependent rule */
+        if(!dependentVal.isUndefined()){
 
             QJsonArray dependentValues = ruleObj["DependentValue"].toArray();
 
@@ -232,20 +270,22 @@ void Elementeditor::addRule(const QJsonValue rule, QWidget *affectedElement)
                 s_dependentValues.append(dependency.toString());
             }
 
-            m_rules.append({affectedElement, dependentObj, s_dependentValues});
-
+            m_rules.append({affectedElement, dependentObjName, false, s_dependentValues});
         }
-    } else if(rule.isObject()) { // Depending on property
-        QJsonObject propRule = rule.toObject();
-        // BAUSTELLE
 
-    } else {
-        qCInfo(logC, "Unable to read dependency %s", parent()->objectName().toStdString().c_str());
+
+        /* Add property dependent rule */
+        if(!dependentProp.isUndefined()){
+            QString sProperty = dependentProp.toString();
+
+            QStringList  s_dependentValues;
+            s_dependentValues.append(sProperty);
+
+            m_rules.append({affectedElement, dependentObjName, true, s_dependentValues});
+        }
+
     }
 
-
-
-    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 }
 
 void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
@@ -283,6 +323,9 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
 
     connect(&dropdown->m_combobox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &Elementeditor::checkRules);
+
+    /* Adding condition (if given) */
+   addRules(dropDownJSON.value("Dependency"), qobject_cast<QWidget*>(dropdown));
 }
 
 void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
@@ -340,10 +383,6 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
 
     /* Adding condition (if given) */
-
-    QJsonValue dependency = lineeditJSON.value("Dependency");
-    if(!dependency.isUndefined()){
-        addRule(dependency, qobject_cast<QWidget*>(lineedit));
-    }
+   addRules(lineeditJSON.value("Dependency"), qobject_cast<QWidget*>(lineedit));
 }
 

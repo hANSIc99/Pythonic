@@ -44,6 +44,7 @@ namespace ElementEditorTypes {
     struct Rule {
         QWidget               *affectedElement;
         QString               dependence;
+        bool                  propertyRelated;
         QList<QString>        dependentValues;
     };
 
@@ -51,6 +52,11 @@ namespace ElementEditorTypes {
         ComboBox,
         LineEdit,
         NoType
+    };
+
+    enum Property {
+        Visibility,
+        NoProperty
     };
 
 
@@ -83,7 +89,7 @@ public slots:
 
     void showEvent(QShowEvent *) override{
         m_title.setVisible(true);
-        m_title.setVisible(true);
+        m_combobox.setVisible(true);
     }
 
 };
@@ -150,11 +156,11 @@ public slots:
 
 private:
 
-    static ElementEditorTypes::Type hashType(QString const &inString);
-
+    static ElementEditorTypes::Type hashType(const QString  &inString);
+    static ElementEditorTypes::Property hashProperty(const QString &inString);
     void            genConfig();
 
-    void            addRule(const QJsonValue rule, QWidget *affectedElement);
+    void            addRules(const QJsonValue rules, QWidget *affectedElement);
 
     void            addComboBox(QJsonObject &dropDownJSON);
 
