@@ -105,6 +105,8 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
                       wrkAreaGlobalPos.y() - CENTER_OFFSET_Y);
 
         element->show();
+
+
         m_workingAreaWidget->updateSize();
         m_workingAreaWidget->registerElement(element);
 

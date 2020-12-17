@@ -283,16 +283,6 @@ void ElementMaster::openEditor()
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
 
-
-
-    /* Qury element specific config */
-    QJsonObject jsonQuery {
-        {"cmd", "QueryEditorToolbox"},
-        {"data", m_typeName}
-    };
-
-    fwrdWsCtrl(jsonQuery);
-
     m_editor->openEditor(m_config);
 }
 

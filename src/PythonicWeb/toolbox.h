@@ -84,12 +84,6 @@ private:
 
 
     WorkingArea             *m_workingAreaWidget;
-    /* Programming Elements */
-
-    //ToolTemplate<Scheduler>         m_scheduler{"Scheduler"};
-    //RegElement &registeredTypes, ToolData toolData, QWidget *parent = 0
-    //ToolMaster2                     *m_scheduler;
-    //ToolTemplate<GenericPython>     m_genericPython{"BaseElement"};
 };
 
 #endif // TOOLBOX_H

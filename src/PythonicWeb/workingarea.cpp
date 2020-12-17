@@ -234,6 +234,23 @@ void WorkingArea::registerElement(const ElementMaster *new_element)
     connect(this, &WorkingArea::stopHighlightAllElements,
             new_element, &ElementMaster::stopHighlight);
 
+
+    /* Qury element specific config in background */
+
+    QJsonObject address = {
+        { "target", "Element"},
+        { "id",     (qint64)new_element->m_id }
+    };
+
+
+    QJsonObject jsonQuery {
+        {"cmd", "QueryEditorToolbox"},
+        {"address", address },
+        {"data", new_element->m_typeName}
+    };
+
+    fwrdWsCtrl(jsonQuery);
+
 }
 
 void WorkingArea::mousePressEvent(QMouseEvent *event)

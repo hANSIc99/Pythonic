@@ -275,7 +275,7 @@ class MainWorker(QObject):
         self.toolbox_loader = ToolboxLoader()
         self.toolbox_loader.tooldataLoaded.connect(self.forwardCmd)
 
-        # Instantiate EditorLoader
+        # Instantiate (Element)-EditorLoader
 
         self.editor_loader = EditorLoader()
         self.editor_loader.editorLoaded.connect(self.forwardCmd)

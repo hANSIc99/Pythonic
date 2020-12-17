@@ -79,7 +79,7 @@ void Elementeditor::openEditor(const QJsonObject config)
         m_toggleDebug.setChecked(generalConfig["Debug"].toBool());
         m_toggleMP.setChecked(generalConfig["MP"].toBool());
 
-        QJsonArray specificConfig = config["GeneralConfig"].toArray();
+        QJsonArray specificConfig = config["SpecificConfig"].toArray();
 
         if(!specificConfig.isEmpty()){
             for(const QJsonValue &value : specificConfig){
@@ -90,14 +90,16 @@ void Elementeditor::openEditor(const QJsonObject config)
                 QString name = elementConfig["Name"].toString();
 
                 switch (hashType(type)) {
-                // BAUSTELLE
-                case ElementEditorTypes::ComboBox: {
 
+                case ElementEditorTypes::ComboBox: {
+                    ComboBox *box = m_specificConfig.findChild<ComboBox*>(name);
+                    if(box) box->m_combobox.setCurrentIndex(elementConfig["Index"].toInt());
                     break;
                 }
 
                 case ElementEditorTypes::LineEdit: {
-
+                    LineEdit *edit = m_specificConfig.findChild<LineEdit*>(name);
+                    if(edit) edit->m_lineedit.setText(elementConfig["Data"].toString());
                     break;
                 }
 
@@ -115,9 +117,8 @@ void Elementeditor::openEditor(const QJsonObject config)
     /* Setup line edit */
     m_objectName.setText(parent()->objectName());
 
-
-    checkRules();
     QDialog::open();
+    checkRules();    
 }
 
 void Elementeditor::loadEditorConfig(const QJsonArray config)
@@ -251,6 +252,7 @@ void Elementeditor::checkRules()
         bool bConditionFulfilled = false;
 
         /* Check if rule is property based */
+
         if(rule.propertyRelated){
             /* Get first element of list = name of property */
             QString property = rule.dependentValues.first();
@@ -293,9 +295,8 @@ void Elementeditor::checkRules()
         }
 
         case ElementEditorTypes::LineEdit: {
-            /* TBD */
+            /* BAUSTELLE*/
             LineEdit *t = qobject_cast<LineEdit*>(dependence);
-
             break;
         }
 
@@ -309,10 +310,6 @@ void Elementeditor::checkRules()
     } // rule for-loop
 }
 
-void Elementeditor::restoreSavedValues()
-{
-
-}
 
 void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
 {  

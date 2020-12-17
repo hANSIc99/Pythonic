@@ -1,5 +1,5 @@
 import os, logging, json
-from PySide2.QtCore import QThread, Signal
+from PySide2.QtCore import QThread, QObject, Signal
 
 
 
@@ -22,23 +22,16 @@ class ConfigWriter(QThread):
             json.dump(self.config, file, indent=4)
 
 
-class EditorLoader(QThread):
+class EditorLoaderThread(QThread):
 
     editorLoaded        = Signal(object)
 
-    typeName    = None
-    address     = None
-
-    def __init__(self,):
+    def __init__(self, address, typeName):
         super().__init__()
 
+        self.address    = address
+        self.typeName   = typeName + '.editor'
 
-    def startLoad(self, address, typeName):
-
-        logging.debug('EditorLoader::startLoad() - called')
-        self.address  = address
-        self.typeName = typeName + '.editor'
-        self.start()
 
     def run(self):
 
@@ -73,6 +66,45 @@ class EditorLoader(QThread):
 
         if not bFound:
             logging.warning('EditorLoader::run() - editor config file {} not found'.format(self.typeName))
+
+    
+
+class EditorLoader(QObject):
+
+    editorLoaded        = Signal(object)
+
+    typeName    = None
+    address     = None
+
+    threadList = []
+
+    def __init__(self,):
+        super().__init__()
+
+
+    def startLoad(self, address, typeName):
+
+        logging.debug('EditorLoader::startLoad() - called')
+
+        newThread   = EditorLoaderThread(address, typeName)
+        newThread.editorLoaded.connect(self.fwrdCmd)
+        newThread.finished.connect(self.cleanupThreadList)
+
+
+        self.threadList.append(newThread)
+
+        newThread.start()
+
+    def fwrdCmd(self, cmd):
+        self.editorLoaded.emit(cmd)
+
+    def cleanupThreadList(self):
+        # Remove finished threads from memory
+        i = 5
+        #self.threadList[:] = [thread for thread in self.threadList if not thread.isRunning() ]
+
+
+
 
         
         

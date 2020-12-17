@@ -76,7 +76,7 @@ public:
     QVBoxLayout m_layout;
     QLabel      m_title;
     QComboBox   m_combobox;
-
+    bool        m_isVisible{true};
 
 public slots:
 
@@ -85,11 +85,13 @@ public slots:
         //emit visibilityChanged(false);
         m_title.setVisible(false);
         m_combobox.setVisible(false);
+        m_isVisible = false;
     }
 
     void showEvent(QShowEvent *) override{
         m_title.setVisible(true);
         m_combobox.setVisible(true);
+        m_isVisible = true;
     }
 
 };
@@ -113,7 +115,7 @@ public:
     QLineEdit           m_lineedit;
     QLabel              m_regExpIndicator;
     QRegExpValidator    m_regExp{this};
-
+    bool        m_isVisible{true};
 
 public slots:
 
@@ -123,12 +125,14 @@ public slots:
         m_title.setVisible(false);
         m_lineedit.setVisible(false);
         m_regExpIndicator.setVisible(false);
+        m_isVisible = false;
     }
 
     void showEvent(QShowEvent *) override{
         m_title.setVisible(true);
         m_lineedit.setVisible(true);
         m_regExpIndicator.setVisible(true);
+        m_isVisible = true;
     }
 
 };
@@ -153,7 +157,6 @@ public slots:
     void loadEditorConfig(const QJsonArray config);
     void accept() override;
     void checkRules();
-    void restoreSavedValues();
 
 private:
 
