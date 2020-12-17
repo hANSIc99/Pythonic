@@ -31,6 +31,8 @@ class EditorLoaderThread(QThread):
 
         self.address    = address
         self.typeName   = typeName + '.editor'
+        #self.setAttribute(Qt.WA_DeleteOnClose)
+
 
 
     def run(self):
@@ -55,6 +57,7 @@ class EditorLoaderThread(QThread):
                     logging.debug('EditorLoader::run() config loaded')
                     bFound = True
                     self.editorLoaded.emit(cmd)
+                    #sleep(1)
 
                 except Exception as e:
                     logging.warning('EditorLoader::run() - error opening file: {}'.format(e))
@@ -100,8 +103,18 @@ class EditorLoader(QObject):
 
     def cleanupThreadList(self):
         # Remove finished threads from memory
-        i = 5
+        #i = 5
+
+        # BAUSTELLE
+        # If the threads are not removed from the list it will cause a memory leak
+        # If the threads are removed from list it will cause a QThread Exception:
+        # QThread: Destroyed while thread is still running
         #self.threadList[:] = [thread for thread in self.threadList if not thread.isRunning() ]
+        for thread in self.threadList:
+            x = thread
+            if not thread.isRunning():
+                self.threadList.remove(thread)
+                x.deleteLater()
 
 
 

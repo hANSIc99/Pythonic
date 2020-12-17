@@ -123,7 +123,10 @@ void Elementeditor::openEditor(const QJsonObject config)
 
 void Elementeditor::loadEditorConfig(const QJsonArray config)
 {
-    /* Loading the layout configuration */
+    /*
+     *  Loading the layout configuration,
+     *  This slot is called during element registration
+     */
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
     for(const QJsonValue &unitJSONVal : config){

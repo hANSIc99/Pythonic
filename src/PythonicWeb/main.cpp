@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
                                                     "FileDownloader.debug=false\n"
                                                     "FileDownloader.info=false\n"
 
-                                                    "Websocket.debug=true\n"
-                                                    "Websocket.info=true\n"
+                                                    "Websocket.debug=false\n"
+                                                    "Websocket.info=false\n"
                                                     /* GUI Elements */
 
                                                     "MainWindow.debug=false\n"
@@ -50,8 +50,8 @@ int main(int argc, char *argv[])
                                                     "WorkingArea.debug=false\n"
                                                     "WorkingArea.info=false\n"
 
-                                                    "MenuBar.debug=true\n"
-                                                    "MenuBar.info=true\n"
+                                                    "MenuBar.debug=false\n"
+                                                    "MenuBar.info=false\n"
 
                                                     /* Toolbox elements */
 
@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
 
                                                     /* GUI Buttons */
 
-                                                    "MenuBar.NewFileBtn.debug=true\n"
-                                                    "MenuBar.NewFileBtn.info=true\n"
+                                                    "MenuBar.NewFileBtn.debug=false\n"
+                                                    "MenuBar.NewFileBtn.info=false\n"
 
                                                     "MenuBar.OpenFileBtn.debug=false\n"
                                                     "MenuBar.OpenFileBtn.info=false\n"
@@ -87,11 +87,11 @@ int main(int argc, char *argv[])
 
                                                     /* Master Classes */
 
-                                                    "BaseLabel.debug=true\n"
-                                                    "BaseLabel.info=true\n"
+                                                    "BaseLabel.debug=false\n"
+                                                    "BaseLabel.info=false\n"
 
-                                                    "BasePixMap.debug=true\n"
-                                                    "BasePixMap.info=true\n"
+                                                    "BasePixMap.debug=false\n"
+                                                    "BasePixMap.info=false\n"
 
                                                     "BaseButton.debug=false\n"
                                                     "BaseButton.info=false\n"
@@ -99,11 +99,11 @@ int main(int argc, char *argv[])
                                                     "ElementIconBar.debug=false\n"
                                                     "ElementIconBar.info=false\n"
 
-                                                    "ToolMaster3.debug=true\n"
-                                                    "ToolMaster3.info=true\n"
+                                                    "ToolMaster3.debug=false\n"
+                                                    "ToolMaster3.info=false\n"
 
-                                                    "ElementMaster.debug=true\n"
-                                                    "ElementMaster.info=true\n"
+                                                    "ElementMaster.debug=false\n"
+                                                    "ElementMaster.info=false\n"
 
                                                     /* Element Buttons  */
 

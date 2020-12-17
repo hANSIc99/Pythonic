@@ -260,7 +260,7 @@ class MainWorker(QObject):
 
         # Instantiate WSGI Server
         self.wsgi_server = WSGI_Server(self)
-
+        
         # Instantiate Standard Input Reader
         self.stdinReader = stdinReader()
         self.stdinReader.print_procs.connect(self.printProcessList)
@@ -270,16 +270,16 @@ class MainWorker(QObject):
         self.operator = Operator()
         self.startExec.connect(self.operator.startExec)
         self.startExec.connect(self.saveConfig)
-
+        
         # Instantiate ToolboxLoader
         self.toolbox_loader = ToolboxLoader()
         self.toolbox_loader.tooldataLoaded.connect(self.forwardCmd)
-
+        
         # Instantiate (Element)-EditorLoader
 
         self.editor_loader = EditorLoader()
         self.editor_loader.editorLoaded.connect(self.forwardCmd)
-
+        
         # Instantiate ConfigWriter
         self.config_writer = ConfigWriter()
         self.saveConfig.connect(self.config_writer.saveConfig)
@@ -287,7 +287,7 @@ class MainWorker(QObject):
         # Instantiate ConfigLoader
         self.config_loader = ConfigLoader()
         self.config_loader.tooldataLoaded.connect(self.forwardCmd)
-
+        
         self.update_logdate.connect(self.stdinReader.updateLogDate)
         self.grd_ops_arr    = []
         self.fd = sys.stdin.fileno()
@@ -375,7 +375,7 @@ class MainWorker(QObject):
 
         #self.loadGrid(grid_file)
 
-        self.stdinReader.start() # call run() method in separate thread
+        #self.stdinReader.start() # call run() method in separate thread
         self.wsgi_server.start()
         self.operator.start()
 
