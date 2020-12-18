@@ -45,5 +45,36 @@
 				      "DependentProperty"  : "Visibility"
 			         }
 			     ]
+    },
+    {
+              "Type"	    : "LineEdit",
+	      "Name"        : "StartTime",
+              "Title"       : "Start at:",
+	      "Defaulttext" : "10:00",                      
+	      "Dependency"  : [
+			          { 
+                                       "Dependence" : "Mode",
+ 			               "DependentValue" : [
+					       	       "Interval between times",
+                   					       "Full interval between times"
+                                          ]
+                                  }
+			      ],
+
+               "RegExp"     : "^[1-9]\\d*$" 
+    },
+    {
+              "Type"	    : "LineEdit",
+	      "Name"        : "EndTime",
+              "Title"       : "End at:",
+	      "Defaulttext" : "13:00",                      
+	      "Dependency"  : [
+			          { 
+                                       "Dependence" : "StartTime",
+ 			               "DependentProperty"  : "Visibility"
+                                  }
+			      ],
+
+               "RegExp"     : "^[1-9]\\d*$" 
     }
 ]
