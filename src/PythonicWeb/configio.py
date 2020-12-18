@@ -114,6 +114,8 @@ class EditorLoader(QObject):
             x = thread
             if not thread.isRunning():
                 self.threadList.remove(thread)
+                x.editorLoaded.disconnect(self.fwrdCmd)
+                x.finished.disconnect(self.cleanupThreadList)
                 x.deleteLater()
 
 

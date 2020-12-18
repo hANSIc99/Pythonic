@@ -24,7 +24,7 @@ class LogLvl(Enum):
     FATAL       = 4
 
 
-execTimer = False
+
 
 
 @websocket.WebSocketWSGI
@@ -114,25 +114,6 @@ def ctrl(ws):
                 #data  = msg['']
 
 
-@websocket.WebSocketWSGI
-def processMessage(ws): # wird das noch benötigt?
-    m = ws.wait()
-    logging.debug('Message received: {}'.format(m))
-    n_grid = ws.environ['mainWorker'].max_grid_size
-    logging.debug('Max grid size: {}'.format(n_grid))
-
-       
-@websocket.WebSocketWSGI
-def saveData(ws):
-    filename = ws.wait()
-    print('Filename: {}'.format(filename))
-    data = ws.wait()
-    data_size = float(len(data)) / 1000 #kb
-    print('Sizeof data: {:.1f} kb'.format(data_size))
-    new_file = os.path.join(os.path.expanduser('~'), filename)
-    print('Upload saved to: {}'.format(new_file))
-    with open(new_file, 'wb') as file:
-        file.write(data)
 
 
 def dispatch(environ, start_response):
@@ -144,22 +125,16 @@ def dispatch(environ, start_response):
     root_url        = 'PythonicWeb/'
     root_static      = 'PythonicWeb/static/'
 
-    global execTimer
+
     png_req4 = environ['PATH_INFO'][-4:] # last 4 characters '.png'
     png_req3 = environ['PATH_INFO'][-3:] # last 4 characters '.js'
 
-    if environ['PATH_INFO'] == '/data':
-        logging.debug('PATH_INFO == \'/data\'')     
-        return saveData(environ, start_response)
-    elif environ['PATH_INFO'] == '/ctrl':
+    if environ['PATH_INFO'] == '/ctrl':
         logging.debug('PythonicDaemon - Open CTRL WebSocket')     
         return ctrl(environ, start_response)
     elif environ['PATH_INFO'] == '/rcv':
         logging.debug('PythonicDaemon - Open RCV WebSocket')     
         return rcv(environ, start_response)
-    elif environ['PATH_INFO'] == '/message':
-        logging.debug('PATH_INFO == \'/message\'')
-        return processMessage(environ, start_response)
 
 
         """
@@ -178,8 +153,12 @@ def dispatch(environ, start_response):
 
     elif environ['PATH_INFO'] == '/qtlogo.svg':
         #logging.debug('PATH_INFO == \'/qtlogo.svg\'')
-        img_data = open(os.path.join(os.path.dirname(__file__),
-            root_url + 'static/qtlogo.svg'), 'rb').read() 
+
+        open_path = os.path.join(os.path.dirname(__file__),root_url + 'static/qtlogo.svg')
+
+        with open(open_path,'rb') as f:
+            img_data = f.read()
+
         start_response('200 OK', [('content-type', 'image/svg+xml'),
                                 ('content-length', str(len(img_data)))])
 
@@ -189,8 +168,10 @@ def dispatch(environ, start_response):
     elif png_req4 == '.png':
         #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
         
-        img_data = open(os.path.join(os.path.dirname(__file__),
-            root_static + environ['PATH_INFO']), 'rb').read() 
+        open_path = os.path.join(os.path.dirname(__file__), root_static + environ['PATH_INFO'])
+
+        with open(open_path,'rb') as f:
+            img_data = f.read()
         
         start_response('200 OK', [('content-type', 'image/png'),
                                 ('content-length', str(len(img_data)))])
@@ -201,9 +182,10 @@ def dispatch(environ, start_response):
 
     elif png_req3 == '.js':
         #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
-        
-        img_data = open(os.path.join(os.path.dirname(__file__),
-            root_static + environ['PATH_INFO']), 'rb').read() 
+        open_path = os.path.join(os.path.dirname(__file__), root_static + environ['PATH_INFO'])
+        with open(open_path,'rb') as f:
+            img_data = f.read()
+
         
         start_response('200 OK', [('content-type', 'application/javascript')])
         
@@ -211,8 +193,12 @@ def dispatch(environ, start_response):
 
     elif environ['PATH_INFO'] == '/PythonicWeb.wasm':
         #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
-        bin_data = open(os.path.join(os.path.dirname(__file__),
-            root_url + 'static/PythonicWeb.wasm'), 'rb').read() 
+
+        open_path = os.path.join(os.path.dirname(__file__), root_url + 'static/PythonicWeb.wasm')
+
+        with open(open_path,'rb') as f:
+            bin_data = f.read()
+
         start_response('200 OK', [('content-type', 'application/wasm')])
         return [bin_data]		
 
@@ -243,7 +229,6 @@ class MainWorker(QObject):
     log_level       = logging.DEBUG
     formatter       = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
-    #wsgi_pool       = eventlet.GreenPool()
     max_grid_size   = 50
     max_grid_cnt    = 5
     gridConfig      = None
@@ -289,7 +274,7 @@ class MainWorker(QObject):
         self.config_loader.tooldataLoaded.connect(self.forwardCmd)
         
         self.update_logdate.connect(self.stdinReader.updateLogDate)
-        self.grd_ops_arr    = []
+        
         self.fd = sys.stdin.fileno()
         if os.isatty(sys.stdin.fileno()):
             self.orig_tty_settings = termios.tcgetattr(self.fd) 
@@ -330,21 +315,17 @@ class MainWorker(QObject):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
+    
     def printProcessList(self):
         b_proc_found = False
         termios.tcsetattr(self.fd, termios.TCSADRAIN, self.orig_tty_settings)
         reset_screen()
-        for i in range(self.max_grid_cnt):
-            if self.grd_ops_arr[i].pid_register:
-                for pid in self.grd_ops_arr[i].pid_register:
-                    b_proc_found = True
-                    print('# Grid {} - PID: {}'.format(str(i+1), str(pid)))
-        if not b_proc_found:
-            print('# Currently no processes running')
+
+        print('# BAUSTELLE')
 
         print('\n')
         tty.setraw(sys.stdin.fileno()) 
-
+    
     def update_logfile(self):
 
         now = datetime.datetime.now().date()
@@ -373,9 +354,8 @@ class MainWorker(QObject):
         logging.debug('MainWorker::start() called')
         #logging.debug('MainWorker::start() Open the following file: {}'.format(grid_file))
 
-        #self.loadGrid(grid_file)
 
-        #self.stdinReader.start() # call run() method in separate thread
+        self.stdinReader.start() # call run() method in separate thread
         self.wsgi_server.start()
         self.operator.start()
 
@@ -405,18 +385,6 @@ class MainWorker(QObject):
         logging.debug('MainWorker::loadConfig() called')
         self.config_loader.start()
            
-        
-    def receiveTarget(self, prg_return):
-
-        grid, *pos = prg_return.target_0
-        logging.debug('MainWorker::receiveTarget() called from pos: {} goto grid: {}'.format(pos, grid))
-        # go to goNext() in the target grid
-        # set fastpath variable
-
-        # remove grid from target_0 
-        prg_return.target_0 = pos
-        self.grd_ops_arr[grid].goNext(prg_return)
-
 
     def checkArgs(self, args):
 

@@ -5,10 +5,6 @@ from PySide2.QtCore import QCoreApplication, QTimer
 
 if __name__ == '__main__':
 
-    log_level = logging.DEBUG
-    formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s',
-            datefmt='%H:%M:%S')
-    logger = logging.getLogger()
 
     timer = QTimer()
     timer.start(500)
