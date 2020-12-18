@@ -19,16 +19,21 @@
 
 const QLoggingCategory Elementeditor::logC{"Elementeditor"};
 
-Elementeditor::Elementeditor(quint32 id, QWidget *parent) : QDialog(parent)
+Elementeditor::Elementeditor(quint32 id, QWidget *parent)
+    : QDialog(parent)
+    , m_delButton(QUrl("http://localhost:7000/del.png"), DEL_BTN_SIZE, parent)
 {
     setWindowModality(Qt::WindowModal);
+
+    //setMinimumSize(300, 300);
+    //setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 
     /* Setup element id */
 
     QFont font("Arial", ID_FONTSIZE, QFont::Bold);
     m_id.setFont(font);
     m_id.setText(QString("Id: %1").arg(id, 8, 16, QChar('0')));
-    //parent()
+
 
     /* Setup general switches */
 
@@ -41,6 +46,8 @@ Elementeditor::Elementeditor(quint32 id, QWidget *parent) : QDialog(parent)
 
     m_saveButton.setText("Save");
 
+    m_delButton.setText("Delete element");
+
     m_generalConfig.setLayout(&m_generalCfgLayout);
     m_generalConfig.setContentsMargins(5, 10, 5, 10);
     m_generalCfgLayout.setSizeConstraint(QLayout::SetMaximumSize);
@@ -49,6 +56,7 @@ Elementeditor::Elementeditor(quint32 id, QWidget *parent) : QDialog(parent)
     m_generalCfgLayout.addWidget(&m_toggleLogging);
     m_generalCfgLayout.addWidget(&m_toggleDebug);
     m_generalCfgLayout.addWidget(&m_toggleMP);
+    m_generalCfgLayout.addWidget(&m_delButton);
     m_generalCfgLayout.addStretch(1);
     m_generalCfgLayout.addWidget(&m_saveButton);
 
@@ -116,9 +124,10 @@ void Elementeditor::openEditor(const QJsonObject config)
 
     /* Setup line edit */
     m_objectName.setText(parent()->objectName());
-
     QDialog::open();
-    checkRules();    
+    adjustSize();
+    checkRules();
+
 }
 
 void Elementeditor::loadEditorConfig(const QJsonArray config)
@@ -299,7 +308,7 @@ void Elementeditor::checkRules()
 
         case ElementEditorTypes::LineEdit: {
             /* BAUSTELLE*/
-            LineEdit *t = qobject_cast<LineEdit*>(dependence);
+            //LineEdit *t = qobject_cast<LineEdit*>(dependence);
             break;
         }
 

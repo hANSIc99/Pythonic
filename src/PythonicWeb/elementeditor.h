@@ -37,7 +37,7 @@
 
 #define ID_FONTSIZE 12
 
-
+#define DEL_BTN_SIZE QSize(28, 28)
 
 namespace ElementEditorTypes {
 
@@ -73,7 +73,7 @@ public:
         m_layout.addWidget(&m_combobox);
     };
 
-    QVBoxLayout m_layout;
+    QHBoxLayout m_layout;
     QLabel      m_title;
     QComboBox   m_combobox;
     bool        m_isVisible{true};
@@ -102,15 +102,22 @@ class LineEdit : public QWidget{
 public:
     explicit LineEdit(QWidget *parent = 0)
         : QWidget(parent){
-        setLayout(&m_layout);
-        m_layout.addWidget(&m_title);
-        m_layout.addWidget(&m_lineedit);
-        m_layout.addWidget(&m_regExpIndicator);
+
+        setLayout(&m_outerLayout);
+        m_innerWidget.setLayout(&m_innerLayout);
+
+        m_innerLayout.addWidget(&m_title);
+        m_innerLayout.addWidget(&m_lineedit);
+
+        m_outerLayout.addWidget(&m_innerWidget);
+        m_outerLayout.addWidget(&m_regExpIndicator);
         m_regExpIndicator.setStyleSheet("QLabel { color : red; }");
         m_lineedit.setValidator(&m_regExp);
     };
 
-    QVBoxLayout         m_layout;
+    QWidget             m_innerWidget;
+    QVBoxLayout         m_outerLayout;
+    QHBoxLayout         m_innerLayout;
     QLabel              m_title;
     QLineEdit           m_lineedit;
     QLabel              m_regExpIndicator;
@@ -186,6 +193,7 @@ private:
     QCheckBox       m_toggleDebug;
     QCheckBox       m_toggleMP;
 
+    BaseButton      m_delButton;
     QPushButton     m_saveButton;
 
     QList<ElementEditorTypes::Rule> m_rules;
