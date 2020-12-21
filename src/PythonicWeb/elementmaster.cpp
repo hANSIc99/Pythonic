@@ -125,6 +125,10 @@ ElementMaster::ElementMaster(bool socket,
 
     connect(m_editor, &Elementeditor::updateConfig,
             this, &ElementMaster::updateConfig);
+
+
+    connect(m_editor, &Elementeditor::deleteSelf,
+            this, &ElementMaster::deleteSelf);   
 }
 
 QJsonObject ElementMaster::genConfig() const

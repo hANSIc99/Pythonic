@@ -74,6 +74,12 @@ Elementeditor::Elementeditor(quint32 id, QWidget *parent)
     connect(&m_saveButton, &QPushButton::clicked,
             this, &QDialog::accept);
 
+    connect(&m_delButton, &QPushButton::clicked,
+            [=]() {
+        QDialog::reject();
+        emit deleteSelf();
+    });
+
 }
 
 void Elementeditor::openEditor(const QJsonObject config)
@@ -327,7 +333,9 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
 {  
 
     if(rules.isUndefined() || !rules.isArray()){
-        qCInfo(logC, "%s - Rules not provided or in wrong format", parent()->objectName().toStdString().c_str());
+        qCInfo(logC, "%s - %s - Rule not provided or in wrong format",
+               parent()->objectName().toStdString().c_str(),
+               affectedElement->objectName().toStdString().c_str());
         return;
     }
 

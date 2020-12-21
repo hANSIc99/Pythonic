@@ -185,8 +185,7 @@ private:
     QPoint                      m_drawEndPos;
     bool                        m_draw{false};
     bool                        m_mouseOverSocket{false};
-    //QVector<ElementMaster*>     m_vectorElements;
-    //QVector<QLine>              m_connections;
+
     QLine                       m_previewConnection;
 
     QPen                        m_pen;
@@ -198,8 +197,6 @@ private:
     /* Painter */
 
     QPainter                    m_painter;
-
-
 
     QMenu                       m_contextDisconnect;
 

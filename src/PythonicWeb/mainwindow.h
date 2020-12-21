@@ -80,6 +80,8 @@ public slots:
     //! Slot is called when starting execution and
     //! after editing an element (by clicking on the Save button)
     void saveConfig();
+    //! Set the text on the bottom of the Windows
+    void setInfoText();
 
 private slots:
     //! Send log-message to daemon

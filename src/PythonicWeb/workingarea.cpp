@@ -87,7 +87,6 @@ void WorkingArea::updateSize()
 void WorkingArea::deleteElement(ElementMaster *element)
 {
     qCInfo(logC, "called");
-    delete element;
 
     /* Delete unnecessary connections */
 
@@ -95,13 +94,31 @@ void WorkingArea::deleteElement(ElementMaster *element)
     while (it != m_connections.end()){
 
         if (    it->child    == element ||
-                it->parent      == element){
-            it = m_connections.erase(it++);
+                it->parent   == element){
+            it = m_connections.erase(it);
+        } else {
+            it++;
         }
     }
 
+    qCInfo(logC, "connections deleted");
+
+    /* Remove all parent references of this element */
+
+    for(ElementMaster* child : element->m_childs){
+        child->m_parents.remove(element);
+        child->checkConnectionState();
+    }
+
+    /* Remove all child references of this element */
+
+    for(ElementMaster* parent : element->m_parents){
+        parent->m_childs.remove(element);
+        parent->checkConnectionState();
+    }
 
 
+    delete element;
     /* Re-paint screen */
     update();
 }
@@ -180,7 +197,6 @@ void WorkingArea::disconnectTrigger(QAction *action)
 
     /* Parent: Get iterator to child element and delete it from m_childs */
     pair->parent->m_childs.remove(pair->child);
-    //QSet<ElementMaster*>::const_iterator it = pair->parent->m_childs.find(pair->child);
 
     /* Child: Get iterator to parent element and delete it from m_parents */
 
@@ -194,7 +210,7 @@ void WorkingArea::disconnectTrigger(QAction *action)
 
         if (    it->parent  == pair->parent &&
                 it->child   == pair->child){
-            //it = m_connections.erase(it++);
+
             m_connections.erase(it);
             break;
         }

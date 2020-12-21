@@ -113,6 +113,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_menuBar.m_openFileBtn, &QPushButton::clicked,
             this, &MainWindow::reconnect);
 
+    connect(&m_menuBar.m_saveBtn, &QPushButton::clicked,
+            this, &MainWindow::saveConfig);
+
 
     /* Receive-Websocket connection */
 
@@ -192,6 +195,11 @@ void MainWindow::saveConfig()
     };
 
     wsCtrl(currentConfig);
+}
+
+void MainWindow::setInfoText()
+{
+    qCInfo(logC, "called");
 }
 
 void MainWindow::wsRcv(const QString &message)

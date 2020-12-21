@@ -225,12 +225,13 @@ public slots:
 
 signals:
 
+    //! Signal connected to WorkingArea::deleteElement
     void remove(ElementMaster *element);
     void plugConnectionHighlight(bool state);
     void socketConnectionHighlight(bool state);
-    /* Signals is emitted when rightcliking an element to open the editor */
+    //! Signals is emitted when rightcliking an element to open the editor */
     void wsCtrl(const QJsonObject cmd);
-    /* Signal is emitted when the editor is closed by clicking on Save */
+    //! Signal is emitted when the editor is closed by clicking on Save */
     void saveConfig();
 
 private slots:

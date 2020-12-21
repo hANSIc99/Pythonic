@@ -157,6 +157,7 @@ public:
 signals:
 
     void updateConfig(const QJsonObject config);
+    void deleteSelf();
 
 public slots:
 
