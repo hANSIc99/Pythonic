@@ -38,7 +38,7 @@ def rcv(ws):
     ws.environ['mainWorker'].frontendCtrl.connect(send)
     bConnected = True
     while bConnected:
-        greenthread.sleep(0.2)
+        greenthread.sleep(0.3)
         QCoreApplication.processEvents()
         try:
             jsonHeartBeat = {   "cmd": "Heartbeat",

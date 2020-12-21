@@ -32,7 +32,7 @@
 #include <QLabel>
 #include <QSet>
 #include <QMap>
-#include <QDateTime>
+#include <QLatin1Char>
 
 #include "helper.h"
 #include "websocket.h"
@@ -161,8 +161,12 @@ private:
     QWidget                 m_bottomBorder;
     QHBoxLayout             m_bottomBorderLayout;
 
-    QLabel                  m_infoText;
 
+    QLabel                  m_infoText;
+    QLabel                  m_heartBeatText;
+
+    const QVector<char>     m_spinner{'-', '\\', '|', '/' };
+    QVector<char>::const_iterator it_spinner;
 
     QLoggingCategory        logC{"MainWindow"};
 };

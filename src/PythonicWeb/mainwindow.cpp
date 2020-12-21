@@ -19,6 +19,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , it_spinner(m_spinner.begin())
 {
 
     // BAUSTELLE: Beim Laden des MainWindows Config hochladen laden
@@ -71,10 +72,12 @@ MainWindow::MainWindow(QWidget *parent)
     /* Setup Bottom Border */
 
     m_infoText.setText("Info Test Label");
+    m_heartBeatText.setText("hearetbeat");
     m_bottomBorder.setLayout(&m_bottomBorderLayout);
     m_bottomBorderLayout.setSpacing(0);
     m_bottomBorderLayout.addWidget(&m_infoText);
-
+    m_bottomBorderLayout.addStretch(1);
+    m_bottomBorderLayout.addWidget(&m_heartBeatText);
 
     /* Setup Main Widget */
 
@@ -134,6 +137,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&m_wsRcv, &QWebSocket::connected,
             this, &MainWindow::connectionEstablished);
+
+    connect(&m_wsRcv, &QWebSocket::disconnected,
+            [=] {
+        m_heartBeatText.setText("No connection to daemon!");
+    });
+
 
     /* Set current working area on initialization */
     setCurrentWorkingArea(m_workingTabs.currentIndex());
@@ -242,25 +251,39 @@ void MainWindow::wsRcv(const QString &message)
     }
 
     switch (helper::hashCmd(jsCmd.toString())) {
-        case Pythonic::Command::Heartbeat:
-        //qCDebug(logC, "Heartbeat received");
+    case Pythonic::Command::Heartbeat: {
 
-        break;
-    case Pythonic::Command::CurrentConfig:
+    if(++it_spinner == m_spinner.end()){
+        it_spinner = m_spinner.begin();
+    }
+
+    m_heartBeatText.setText(QString("PythonicDaemon %1 ").arg(*it_spinner));
+
+    break;
+    }
+
+    case Pythonic::Command::CurrentConfig: {
         qCDebug(logC, "CurrentConfig received");
         loadSavedConfig(jsonMsg);
         break;
-    case Pythonic::Command::Toolbox:
+    }
+    case Pythonic::Command::Toolbox: {
         qCDebug(logC, "Toolbox received");
         loadToolbox(jsonMsg);
         break;
-    case Pythonic::Command::SetInfoText:
+    }
+
+    case Pythonic::Command::SetInfoText: {
         qCDebug(logC, "InfoText received");
         setInfoText(jsonMsg["data"].toString());
         break;
-    default:
+    }
+
+    default:{
         qCDebug(logC, "Unknown command: %s", jsCmd.toString().toStdString().c_str());
         break;
+    }
+
     }
 }
 
