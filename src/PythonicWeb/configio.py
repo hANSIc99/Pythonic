@@ -1,4 +1,5 @@
 import os, logging, json
+from datetime import datetime
 from PySide2.QtCore import QThread, QObject, Signal
 
 
@@ -6,6 +7,7 @@ from PySide2.QtCore import QThread, QObject, Signal
 class ConfigWriter(QThread):
 
     config = None
+    configSaved = Signal(object)
 
     def __init__(self,):
         super().__init__()
@@ -20,6 +22,14 @@ class ConfigWriter(QThread):
         logging.debug('ConfigWriter::saveConfig() called')
         with open('PythonicWeb/config/current_config.json', 'w') as file:
             json.dump(self.config, file, indent=4)
+        
+        last_saved = "Config last saved: " + datetime.now().strftime('%H:%M:%S')
+
+        cmd = {  'cmd'       : 'SetInfoText',
+                 'data'      : last_saved,
+                 'address'   : {"target" : "MainWindow"}}
+
+        self.configSaved.emit(cmd)
 
 
 class EditorLoaderThread(QThread):

@@ -31,6 +31,7 @@ namespace Pythonic {
         CurrentConfig,
         Toolbox,
         ElementEditorConfig,
+        SetInfoText,
         Test,
         NoCmd
     };
@@ -59,6 +60,7 @@ public:
         if(inString == "CurrentConfig") return Pythonic::CurrentConfig;
         if(inString == "Toolbox") return Pythonic::Toolbox;
         if(inString == "ElementEditorConfig") return Pythonic::ElementEditorConfig;
+        if(inString == "SetInfoText") return Pythonic::SetInfoText;
         if(inString == "Test") return Pythonic::Test;
         return Pythonic::NoCmd;
     };

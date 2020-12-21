@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
                                                     "Websocket.info=false\n"
                                                     /* GUI Elements */
 
-                                                    "MainWindow.debug=false\n"
-                                                    "MainWindow.info=false\n"
+                                                    "MainWindow.debug=true\n"
+                                                    "MainWindow.info=true\n"
 
                                                     "WorkingArea.debug=true\n"
                                                     "WorkingArea.info=true\n"
@@ -118,8 +118,9 @@ int main(int argc, char *argv[])
 
                                                     /* Element Editor */
 
-                                                    "Elementeditor.debug=true\n"
-                                                    "Elementeditor.info=true\n"
+                                                    "Elementeditor.debug=false\n"
+                                                    "Elementeditor.info=false\n"
+
                                                     /* Element Connector Buttons  */
 
                                                     "ElementSocket.debug=false\n"

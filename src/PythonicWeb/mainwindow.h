@@ -32,6 +32,7 @@
 #include <QLabel>
 #include <QSet>
 #include <QMap>
+#include <QDateTime>
 
 #include "helper.h"
 #include "websocket.h"
@@ -81,7 +82,7 @@ public slots:
     //! after editing an element (by clicking on the Save button)
     void saveConfig();
     //! Set the text on the bottom of the Windows
-    void setInfoText();
+    void setInfoText(QString text);
 
 private slots:
     //! Send log-message to daemon

@@ -43,6 +43,7 @@ def rcv(ws):
         try:
             jsonHeartBeat = {   "cmd": "Heartbeat",
                                 "address" : {"target" : "MainWindow"}}
+            #next(self.spinner)
             ws.send(json.dumps(jsonHeartBeat))
         except Exception as e:
             logging.info('PythonicWeb - RCV Socket connection lost: {}'.format(e))
@@ -267,6 +268,7 @@ class MainWorker(QObject):
         
         # Instantiate ConfigWriter
         self.config_writer = ConfigWriter()
+        self.config_writer.configSaved.connect(self.forwardCmd)
         self.saveConfig.connect(self.config_writer.saveConfig)
 
         # Instantiate ConfigLoader

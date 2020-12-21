@@ -197,9 +197,10 @@ void MainWindow::saveConfig()
     wsCtrl(currentConfig);
 }
 
-void MainWindow::setInfoText()
+void MainWindow::setInfoText(QString text)
 {
     qCInfo(logC, "called");
+    m_infoText.setText(text);
 }
 
 void MainWindow::wsRcv(const QString &message)
@@ -252,6 +253,10 @@ void MainWindow::wsRcv(const QString &message)
     case Pythonic::Command::Toolbox:
         qCDebug(logC, "Toolbox received");
         loadToolbox(jsonMsg);
+        break;
+    case Pythonic::Command::SetInfoText:
+        qCDebug(logC, "InfoText received");
+        setInfoText(jsonMsg["data"].toString());
         break;
     default:
         qCDebug(logC, "Unknown command: %s", jsCmd.toString().toStdString().c_str());
