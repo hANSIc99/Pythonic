@@ -1,0 +1,82 @@
+#This configuration item index document lists the configuration items for the following baseline:
+#
+#ProjectName:       Pythonic
+#Description:       Pythonic (GUI) + PythonicDaemon (Backend)
+#
+#                   General purpose graphic programming tool.
+#                   Graphical Python programming from within the browser,
+#                   Python based backend running as container. 
+#                   Full multi-processing and multi-threading capable.
+#
+#
+#CreationDate:      24.12.2020
+#Creator:           Stephan Avenwedde
+#
+#
+#
+#Type  CIName                         ID        Version         License                  StorageLocation
+#SC    data_hub                      0010295    Rev195                                   817271_energy_analytics/SWI-0010597-data_hub/trunk/
+#          INCLUDED PACKAGES
+#           IMG     Ubuntu                      18.04           GPL                      SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           BIN     PostgreSQL                  10.0            PostgreSQL License       SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           BIN     Supervisor                  3.2.0           Custom license           SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           BIN     PgAdmin4                    3.3             PostgreSQL License       SWI-0010597-data_hub/trunk/Docker/pgadmin4-3.3-py2.py3-none-any.whl
+#           BIN     Node.js                     8.9.4           MIT License              SWI-0010597-data_hub/trunk/Docker/nodesource_setup.sh
+#           LIB     Node.js/NodeN-RED           0.19.4          Apache License 2.0       SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/Dashboard  2.9.8           Apache License 2.0       SWI-0010597-data_hub/trunk/Docker/node-red-dashboard-master
+#           LIB     Node.js/Node-RED/Postgres   0.6.1           Apache License 2.0       SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/Modbus     3.4.0           BSD-3 Clause             SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/MSSQL      0.0.7           MIT License              SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/MySQL      0.0.16          Apache License 2.0       SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/CAN        1.0.1           Apache License 2.0       SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/IIoT       2.7.1           BSD-3 Clause             SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/S7         1.5.1           Apache License 2.0       SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/PCCC       0.1.1           Apache License 2.0       SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/EIP        0.2.0           Apache License 2.0       SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/ADS        1.1.6           MIT License              SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Node-RED/Auth       0.1.7           MIT License              SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Postgres            7.4.1           MIT License              SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Modbus-Serial       7.2.2           ISC-License              SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#           LIB     Node.js/Async               2.6.0           MIT License              SWI-0010597-data_hub/trunk/Docker/Dockerfile
+#
+#BIN    data_hub                    0010295     1.7             bbs/BRANDLABELS/SWI-0010597-data_hub/Qualify/data_hub_1.8.zip
+#
+#DOC    Test Reports / Results      n.a.        n.a.
+#DOC    SyTR_817271                 12646239    1.0             S4:manage
+#
+#
+#Type    CIName                      Name               Version                   Commentary            StorageLocation
+#
+#TC      Container Image creation    Docker             17.06.1 CE                                      /build_control/srvde349/toolchains/release/Docker/docker-17.06.1-ce.tar
+#TC      1. Test System (Windows)    Docker             18.03.1-ce-win65 (17513)                        /build_control/srvde349/toolchains/release/Docker/Docker for Windows Installer.exe
+#TC      2. Test System (Linux)      Docker             1.13.1                                          /build_control/srvde349/toolchains/release/Docker/docker-engine-1.13.1.cs8-1.el7.centos.x86_64.rpm
+#
+#
+###################################################################################
+#    Type:                                                                        #
+#       DOC     Document                                                          #
+#       SC      Source Code                                                       #
+#       BIN     Binary Code                                                       #
+#       LIB     Library                                                           #
+#       TC      Tool Chain (development/test)                                     #
+###################################################################################
+#
+#
+#
+#
+#
+#
+###################################################################################
+#                                                                                 #
+#                            BEGIN OF THE  DOCKERFILE                             #
+#                                                                                 #
+###################################################################################
+
+FROM fedora:33
+ENV TERM=dumb
+
+
+#VOLUME /var/log /home/weidmueller
+
+WORKDIR /var/log
+
