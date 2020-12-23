@@ -274,6 +274,9 @@ class MainWorker(QObject):
         # Instantiate ConfigLoader
         self.config_loader = ConfigLoader()
         self.config_loader.tooldataLoaded.connect(self.forwardCmd)
+
+        # Write launch.json
+        # BAUSTELLE
         
         self.update_logdate.connect(self.stdinReader.updateLogDate)
         

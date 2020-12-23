@@ -82,7 +82,8 @@ COPY config.yaml /root/.config/code-server/
 
 RUN rpm -i /code-server-3.7.1-amd64.rpm
 RUN code-server --install-extension /ms-python-release.vsix
-
+# TODO https://github.com/cdr/code-server/issues/2341
+# code-server --install-extension ms-toolsai.jupyter-2020.12.414227025.vsix || true \
 #VOLUME /var/log /home/weidmueller
 ENTRYPOINT ["/usr/bin/code-server"]
 #ENTRYPOINT ["/usr/bin/supervisord"]
