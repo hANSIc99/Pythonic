@@ -6,5 +6,18 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_ho
 
 podman pull fedora:33
 
+podman image rm 
+
+podman ps: show running containers
+podman run -dt <name> : run container
+
+podman exec -it CONTAINER_ID /bin/bash
+
 podman build -t=pythonic .
+
+                 host:container
+podman run -dt -p 8081:8080/tcp pythonic
+
+
+http://127.0.0.1:8081/?file=/root/.bashrc
 
