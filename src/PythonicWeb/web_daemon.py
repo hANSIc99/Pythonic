@@ -83,7 +83,7 @@ def ctrl(ws):
                 elif logObj['logLvL'] == LogLvl.CRITICAL.value:
                     logging.error('PythonicWeb    - {}'.format(logObj['msg']))
                 elif logObj['logLvL'] == LogLvl.FATAL.value:
-                    logging.critical('PythonicWeb    - {}'.format(logObj['msg']))
+                    logging.critical('PythonicWeb    - {}q'.format(logObj['msg']))
 
             elif msg['cmd'] == 'start':
                 logging.debug('PythonicWeb    - {}'.format("START"))

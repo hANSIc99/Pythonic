@@ -127,11 +127,7 @@ class EditorLoader(QObject):
                 x.editorLoaded.disconnect(self.fwrdCmd)
                 x.finished.disconnect(self.cleanupThreadList)
                 x.deleteLater()
-
-
-
-
-        
+     
         
 
 class ToolboxLoader(QThread):

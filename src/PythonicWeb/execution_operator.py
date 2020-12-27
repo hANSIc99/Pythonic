@@ -38,7 +38,7 @@ class ProcessHandler(QThread):
     def run(self):
         
         elementCls = getattr(__import__(self.filename, fromlist=['Element']), 'Element')
-        element = elementCls("input", "config", self.feed_pipe)
+        element = elementCls(self.config, self.inputData, self.feed_pipe)
         result = None
 
         if self.mp: ## attach Debugger if flag is set
