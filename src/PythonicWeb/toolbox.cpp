@@ -18,7 +18,7 @@
 #include "toolbox.h"
 
 
-template<typename T> ElementMaster *createInstance(int gridNo, QWidget *parent) { return new T(gridNo); }
+//template<typename T> ElementMaster *createInstance(int gridNo, QWidget *parent) { return new T(gridNo); }
 // Alternativ QMap
 // (*)() Pointer auf FUnktion ohne argumente
 

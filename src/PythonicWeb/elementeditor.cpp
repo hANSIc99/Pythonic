@@ -116,7 +116,11 @@ void Elementeditor::openEditor(const QJsonObject config)
                     if(edit) edit->m_lineedit.setText(elementConfig["Data"].toString());
                     break;
                 }
-
+                case ElementEditorTypes::CheckBox: {
+                    CheckBox *checkbox = m_specificConfig.findChild<CheckBox*>(name);
+                    if(checkbox) checkbox->setChecked(elementConfig["Data"].toBool());
+                    break;
+                }
                 default: {
                     break;
                 }
@@ -161,6 +165,10 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
             break;
         }
 
+        case ElementEditorTypes::CheckBox: {
+            addCheckBox(unit);
+            break;
+        }
         default: {
             break;
         }
@@ -186,6 +194,7 @@ ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
 {
     if(inString == "ComboBox") return ElementEditorTypes::ComboBox;
     if(inString == "LineEdit") return ElementEditorTypes::LineEdit;
+    if(inString == "CheckBox") return ElementEditorTypes::CheckBox;
     return ElementEditorTypes::NoType;
 }
 
@@ -203,7 +212,7 @@ void Elementeditor::genConfig()
     QJsonArray specificConfig;
 
     /* Check all ComboBoxes */
-    QList<ComboBox*> comboboxes = m_specificConfig.findChildren<ComboBox*>();
+    const QList<ComboBox*> comboboxes = m_specificConfig.findChildren<ComboBox*>();
     for(const ComboBox* combobox : comboboxes){
 
         QJsonObject comboboxJSON = {
@@ -217,7 +226,7 @@ void Elementeditor::genConfig()
     }
 
     /* Check all LineEdits */
-    QList<LineEdit*> lineedits = m_specificConfig.findChildren<LineEdit*>();
+    const QList<LineEdit*> lineedits = m_specificConfig.findChildren<LineEdit*>();
     for(const LineEdit* lineedit : lineedits){
 
         QJsonObject lineeditJSON = {
@@ -228,6 +237,21 @@ void Elementeditor::genConfig()
         };
 
         specificConfig.append(lineeditJSON);
+
+    }
+
+    /* Check all CheckBoxes */
+    const QList<CheckBox*> checkboxes = m_specificConfig.findChildren<CheckBox*>();
+    for(const CheckBox* checkbox : checkboxes){
+
+        QJsonObject checkboxJSON = {
+            { "Type",  "CheckBox"},
+            { "Name",  checkbox->objectName()},
+            { "Data",  checkbox->isChecked()}
+
+        };
+
+        specificConfig.append(checkboxJSON);
 
     }
 
@@ -253,8 +277,8 @@ void Elementeditor::checkRules()
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
-
-    for(const ElementEditorTypes::Rule &rule : m_rules){
+    // https://doc.qt.io/qt-5/qtglobal.html#qAsConst
+    for(const ElementEditorTypes::Rule &rule : qAsConst(m_rules)){
 
         /* Find dependent element */
         QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
@@ -273,6 +297,7 @@ void Elementeditor::checkRules()
 
         if(rule.propertyRelated){
             /* Get first element of list = name of property */
+            /* (dependentValues of property based rules contain always only one value) */
             QString property = rule.dependentValues.first();
 
 
@@ -473,6 +498,17 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
 
     /* Adding condition (if given) */
-   addRules(lineeditJSON.value("Dependency"), qobject_cast<QWidget*>(lineedit));
+    addRules(lineeditJSON.value("Dependency"), qobject_cast<QWidget*>(lineedit));
+}
+
+void Elementeditor::addCheckBox(QJsonObject &checkboxJSON)
+{
+    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+    CheckBox *checkbox = new CheckBox(checkboxJSON["Title"].toString(), &m_specificConfig);
+    checkbox->setObjectName(checkboxJSON["Name"].toString());
+    m_specificCfgLayout.addWidget(checkbox);
+
+    addRules(checkboxJSON.value("Dependency"), qobject_cast<QWidget*>(checkbox));
 }
 

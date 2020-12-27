@@ -48,15 +48,19 @@ class ProcessHandler(QThread):
             t_0 = mt.Thread(target=element.execute)
             t_0.start()
 
-        # hier while loop wegen output
+
         result = Record(False, None, None)
         
+        
+        
+        # Check if it is an intemediate result
+                
         while not result.bComplete:
             result = self.return_pipe.recv()
+            # BAUSTELLE: Forward result
             logging.debug('ProcessHandler::run() - intemerdiate result - execution done - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
 
 
-        
         logging.debug('ProcessHandler::run() - execution done - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
 
     def done(self):

@@ -148,6 +148,12 @@ MainWindow::MainWindow(QWidget *parent)
     setCurrentWorkingArea(m_workingTabs.currentIndex());
 }
 
+MainWindow::~MainWindow()
+{
+    m_wsRcv.disconnect();
+    m_wsCtrl.disconnect();
+}
+
 void MainWindow::logMessage(const QString msg, const LogLvl lvl)
 {
     //qInfo() << "MainWindow::wsSendMsg() called";

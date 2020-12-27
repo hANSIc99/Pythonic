@@ -51,6 +51,7 @@ namespace ElementEditorTypes {
     enum Type {
         ComboBox,
         LineEdit,
+        CheckBox,
         NoType
     };
 
@@ -145,6 +146,28 @@ public slots:
 };
 
 
+class CheckBox : public QCheckBox{
+    Q_OBJECT
+public:
+    explicit CheckBox(const QString &text, QWidget *parent = 0)
+        : QCheckBox(text, parent){};
+
+    bool        m_isVisible{true};
+
+public slots:
+
+    void hideEvent(QHideEvent *) override
+    {
+        m_isVisible = false;
+    }
+
+    void showEvent(QShowEvent *) override{
+        m_isVisible = true;
+    }
+
+};
+
+
 class Elementeditor : public QDialog
 {
     Q_OBJECT
@@ -170,6 +193,7 @@ private:
 
     static ElementEditorTypes::Type hashType(const QString  &inString);
     static ElementEditorTypes::Property hashProperty(const QString &inString);
+
     void            genConfig();
 
     void            addRules(const QJsonValue rules, QWidget *affectedElement);
@@ -177,6 +201,8 @@ private:
     void            addComboBox(QJsonObject &dropDownJSON);
 
     void            addLineEdit(QJsonObject &lineeditJSON);
+
+    void            addCheckBox(QJsonObject &checkboxJSON);
 
     QHBoxLayout     m_mainLayout;
 

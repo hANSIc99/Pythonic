@@ -68,6 +68,8 @@ public:
       *
       * Used to log at websocket /log of PythonicWebDaemon
       */
+    ~ MainWindow();
+
     Websocket   m_wsCtrl{"ws://localhost:7000/ctrl", this};
     Websocket   m_wsRcv{"ws://localhost:7000/rcv", this};
 
