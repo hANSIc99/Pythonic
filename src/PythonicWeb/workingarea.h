@@ -130,8 +130,10 @@ public slots:
     void fwrdWsCtrl(const QJsonObject cmd);
     /* Forward received messages to element */
     void fwrdWsRcv(const QJsonObject cmd);
-    //! Forward saveCOnfig signal from ElementMaster to MainWindow
+    //! Forward saveConfig signal from ElementMaster to MainWindow
     void saveConfigFwrd();
+    //! Slot is called in case of a reconnect
+    void clearAllElements();
 
 private slots:
 

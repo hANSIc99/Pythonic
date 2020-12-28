@@ -13,7 +13,10 @@ class Element(Function):
         #interval_str, interval_index, offset, log_state = self.config
         x = self.config
 
+        mode = ""
         dayOfWeek = {}
+        recordDone = Record(True, None, None)
+
 
         for attrs in self.config['SpecificConfig']:
             if attrs['Name'] == 'Mode':
@@ -43,7 +46,20 @@ class Element(Function):
             elif attrs['Name'] == 'Sunday':
                 dayOfWeek['Sunday'] = attrs['Data']
 
-
+        
+        if mode == "None":
+            recordDone = Record(True, "Data", "LogMessage")
+        elif mode == "Interval":
+            recordDone = Record(True, "Data", "LogMessage")
+        elif mode == "Interval between times":
+            recordDone = Record(True, "Data", "LogMessage")
+        elif mode == "At specific time":
+            recordDone = Record(True, "Data", "LogMessage")
+        elif mode == "On every full interval":
+            recordDone = Record(True, "Data", "LogMessage")
+        elif mode == "Full interval between times":
+            recordDone = Record(True, "Data", "LogMessage")
+        """
         n_cnt = 5
         while n_cnt > 0:
             time.sleep(1)
@@ -52,7 +68,9 @@ class Element(Function):
             
             self.returnPipe.send(intemediateRecord)
             logging.debug("Scheduler Called - {}".format(n_cnt))
+        """
 
-
+        
+        
         recordDone = Record(True, "Data", "LogMessage")
         self.returnPipe.send(recordDone)

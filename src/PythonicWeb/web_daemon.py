@@ -33,7 +33,12 @@ def rcv(ws):
 
     def send(command):
         #logging.debug('testfunc called')
-        ws.send(json.dumps(command))
+        try:
+            ws.send(json.dumps(command))
+        except Exception as e:
+            logging.info('PythonicWeb - RCV Socket connection lost: {}'.format(e))
+            ws.environ['mainWorker'].frontendCtrl.disconnect(send)
+            bConnected = False
     
     ws.environ['mainWorker'].frontendCtrl.connect(send)
     bConnected = True
@@ -92,6 +97,8 @@ def ctrl(ws):
                 logging.debug('Config loaded')
                 # Save config to to memory
                 ws.environ['mainWorker'].gridConfig = msg['data']
+                if not isinstance(msg['data'],list):
+                    x = 1 # BREAKPOINT HERE
                 # Save config to file
                 ws.environ['mainWorker'].saveConfig.emit(msg['data'])
             elif msg['cmd'] == 'StartExec':

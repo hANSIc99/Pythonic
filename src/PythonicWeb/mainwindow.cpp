@@ -196,7 +196,7 @@ void MainWindow::saveConfig()
 
     QJsonArray elementConfigrations;
 
-    for(auto const &grid : m_arr_workingArea){
+    for(auto const &grid : qAsConst(m_arr_workingArea)){
         for(auto const &elementObj : grid->children()){
             ElementMaster* element = qobject_cast<ElementMaster*>(elementObj);
             elementConfigrations.append(element->genConfig());
@@ -305,7 +305,6 @@ void MainWindow::fwrdWsRcv(const QJsonObject cmd)
 void MainWindow::reconnect()
 {
     qCInfo(logC, "called");
-
     m_wsCtrl.open(QUrl("ws://localhost:7000/ctrl"));
     m_wsRcv.open(QUrl("ws://localhost:7000/rcv"));
 }
@@ -349,8 +348,6 @@ void MainWindow::testSlot(bool checked)
     qCInfo(logC, "called");
     logMessage("test123", LogLvl::CRITICAL);
 }
-
-
 
 
 void MainWindow::loadSavedConfig(const QJsonObject config)
@@ -416,7 +413,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
      * Re-establish connections
      */
 
-    for(const auto& element : elements){
+    for(const auto& element : qAsConst(elements)){
 
         QJsonObject jsonElement(element.toObject());
         int nWrkArea = jsonElement["GridNo"].toInt();
@@ -432,7 +429,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
         ElementMaster* parentPtr = NULL;
 
         /* Iterate over geristered childs of each element */
-        for(const QJsonValue &childObj : childs){
+        for(const QJsonValue &childObj : qAsConst(childs)){
 
             quint32 childId = childObj.toInt();
             ElementMaster* childPtr = NULL;
@@ -498,7 +495,6 @@ void MainWindow::loadToolbox(const QJsonObject toolbox)
     m_toolBox.addStretch();
 }
 
-
 void MainWindow::queryConfig()
 {
     qCDebug(logC, "Debug Message");
@@ -529,6 +525,9 @@ void MainWindow::connectionEstablished()
     QAbstractSocket::SocketState rcvState  = m_wsRcv.state();
     if(ctrlState == QAbstractSocket::SocketState::ConnectedState &&
        rcvState == QAbstractSocket::SocketState::ConnectedState){
+        for(auto const &wrkArea : qAsConst(m_arr_workingArea)){
+            wrkArea->clearAllElements();
+        }
         queryToolbox();
         queryConfig();
     }

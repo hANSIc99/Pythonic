@@ -20,7 +20,8 @@ def target_0(instance, record, feed_pipe):
 
 class ProcessHandler(QThread):
 
-    execComplete  = Signal(object, object, object)
+    execComplete  = Signal(object, object, object) # id, data, thread-identifier
+    removeSelf    = Signal(object, object) # id, thread-identifier
 
     def __init__(self, element, inputdata, identifier):
         super().__init__()
@@ -57,15 +58,16 @@ class ProcessHandler(QThread):
                 
         while not result.bComplete:
             result = self.return_pipe.recv()
-            # BAUSTELLE: Forward result
-            logging.debug('ProcessHandler::run() - intemerdiate result - execution done - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
+            self.execComplete.emit(self.id, result, self.identifier)
+            logging.debug('ProcessHandler::run() - result received - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
 
 
-        logging.debug('ProcessHandler::run() - execution done - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
+        logging.debug('ProcessHandler::run() - execution complete - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
 
     def done(self):
-        logging.debug('ProcessHandler::done() - execution done - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
-        self.execComplete.emit(self.id, "test2", self.identifier)
+        logging.debug('ProcessHandler::done() - id: 0x{:08x}, ident: {:04d}'.format(self.id, self.identifier))
+        self.removeSelf.emit(self.id, self.identifier)
+    
 
 
 class Operator(QThread):
@@ -96,19 +98,27 @@ class Operator(QThread):
         # creating a random identifier
         identifier = random.randint(0, 9999)
         runElement = ProcessHandler(startElement,inputData, identifier)
-        runElement.execComplete.connect(self.execComplete)
-        #runElement.finished.connect
+        runElement.execComplete.connect(self.operationDone)
+
         runElement.start()
         self.processHandles[identifier] = runElement
         
 
         logging.debug('Operator::startExec() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
 
-    def execComplete(self, id, data, identifier):
+    def operationDone(self, id, result, identifier):
 
         logging.debug('Operator::execComplete() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-        # remove processHandle from dict
+
+    def removeOperatorThread(self, id, identifier):
+
+        logging.debug('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
         qobject = self.processHandles[identifier]
         qobject.deleteLater()
         del self.processHandles[identifier]
+
+
+
+
+
 

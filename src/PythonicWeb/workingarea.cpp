@@ -105,14 +105,14 @@ void WorkingArea::deleteElement(ElementMaster *element)
 
     /* Remove all parent references of this element */
 
-    for(ElementMaster* child : element->m_childs){
+    for(ElementMaster* child : qAsConst(element->m_childs)){
         child->m_parents.remove(element);
         child->checkConnectionState();
     }
 
     /* Remove all child references of this element */
 
-    for(ElementMaster* parent : element->m_parents){
+    for(ElementMaster* parent : qAsConst(element->m_parents)){
         parent->m_childs.remove(element);
         parent->checkConnectionState();
     }
@@ -160,7 +160,7 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 
        QList<ElementMaster*> elementList = findChildren<ElementMaster*>();
 
-       for(ElementMaster* element : elementList){
+       for(ElementMaster* element : qAsConst(elementList)){
             if(element->m_id == id){
                 element->fwrdWsRcv(cmd);
                 break;
@@ -176,6 +176,16 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 void WorkingArea::saveConfigFwrd()
 {
     emit saveConfig();
+}
+
+void WorkingArea::clearAllElements()
+{
+    QList<ElementMaster*> elementList = findChildren<ElementMaster*>();
+
+    for(ElementMaster* element : qAsConst(elementList)){
+        delete element;
+    }
+    m_connections.clear();
 }
 
 void WorkingArea::disconnectHover(QAction *action)
@@ -678,7 +688,7 @@ void WorkingArea::drawPreviewConnection(QPainter *p)
 void WorkingArea::drawConnections(QPainter *p)
 {
 
-    for(const auto &pair : m_connections){
+    for(const auto &pair : qAsConst(m_connections)){
 
         p->drawLine(pair.connLine);
     }
