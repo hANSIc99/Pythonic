@@ -305,9 +305,20 @@ void MainWindow::fwrdWsRcv(const QJsonObject cmd)
 void MainWindow::reconnect()
 {
     qCInfo(logC, "called");
-    m_wsCtrl.open(QUrl("ws://localhost:7000/ctrl"));
-    m_wsRcv.open(QUrl("ws://localhost:7000/rcv"));
+
+    QAbstractSocket::SocketState ctrlState = m_wsCtrl.state();
+    QAbstractSocket::SocketState rcvState  = m_wsRcv.state();
+
+    if(ctrlState != QAbstractSocket::SocketState::ConnectedState){
+        m_wsCtrl.open(QUrl("ws://localhost:7000/ctrl"));
+    }
+
+    if(rcvState != QAbstractSocket::SocketState::ConnectedState){
+        m_wsRcv.open(QUrl("ws://localhost:7000/rcv"));
+
+    }
 }
+
 
 void MainWindow::setCurrentWorkingArea(const int tabIndex)
 {
