@@ -13,7 +13,9 @@ class Element(Function):
         #interval_str, interval_index, offset, log_state = self.config
         x = self.config
 
-        mode = ""
+        mode = ''
+        interval = 0
+        timebase = ''
         dayOfWeek = {}
         recordDone = Record(True, None, None)
 
@@ -46,11 +48,36 @@ class Element(Function):
             elif attrs['Name'] == 'Sunday':
                 dayOfWeek['Sunday'] = attrs['Data']
 
-        
+        # Setup interval
+
+        if timebase == 'Seconds':
+            interval = int(interval)
+        elif timebase == 'Minutes':
+            interval = int(interval) * 60
+        elif timebase == 'Hours':
+            interval == int(interval) * 3600
+
+        # Switch modes
+
         if mode == "None":
             recordDone = Record(True, "Data", "LogMessage")
         elif mode == "Interval":
-            recordDone = Record(True, "Data", "LogMessage")
+            cnt = 0
+            while True:
+                time.sleep(interval)
+
+
+                if self.bStop:
+                    recordDone = Record(False, cnt, None, True) # Exit message
+                    # Necessary to end the ProcessHandler     
+                    self.returnPipe.send(recordDone)
+                    break      
+
+
+                recordDone = Record(False, cnt, None)     
+                self.returnPipe.send(recordDone)
+                cnt += 1
+
         elif mode == "Interval between times":
             recordDone = Record(True, "Data", "LogMessage")
         elif mode == "At specific time":
@@ -72,5 +99,5 @@ class Element(Function):
 
         
         
-        recordDone = Record(True, "Data", "LogMessage")
-        self.returnPipe.send(recordDone)
+        #recordDone = Record(True, "Data", "LogMessage")
+        #self.returnPipe.send(recordDone)

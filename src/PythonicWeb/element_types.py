@@ -8,6 +8,7 @@ class Function():
         self.inputData  = inputData
         self.returnPipe = returnPipe
         self.logger     = logging.getLogger() # mt only
+        self.bStop      = False
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called Function')
@@ -36,15 +37,20 @@ class Function():
 
 class Record():
 
-    def __init__(self, bComplete, data, message):
+    def __init__(self, bComplete, data, message, exit=False):
         self.bComplete  = bComplete
-        self.data      = data
-        self.message    = message
+        self.data       = data
+        self.message    = message # Log message string
+        
+        # Becomes true if the record should not be passed to any child
+        # Necessary to leave the ProcessHandler 
+        self.exit       = exit 
+
 
     def __setstate__(self, state):
         #logging.debug('__setstate__() called Record')
-        self.bComplete, self.data, self.message = state
+        self.bComplete, self.data, self.message, self.exit = state
 
     def __getstate__(self):
         #logging.debug('__getstate__() called Record')
-        return(self.bComplete, self.data, self.message)
+        return(self.bComplete, self.data, self.message, self.exit)

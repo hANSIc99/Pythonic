@@ -96,16 +96,15 @@ def ctrl(ws):
             elif msg['cmd'] == 'writeConfig':
                 logging.debug('Config loaded')
                 # Save config to to memory
-                ws.environ['mainWorker'].gridConfig = msg['data']
-                if not isinstance(msg['data'],list):
-                    x = 1 # BREAKPOINT HERE
+                ws.environ['mainWorker'].config = msg['data']
                 # Save config to file
                 ws.environ['mainWorker'].saveConfig.emit(msg['data'])
             elif msg['cmd'] == 'StartExec':
                 elementId = msg['data']        
-                ws.environ['mainWorker'].startExec.emit(elementId, ws.environ['mainWorker'].gridConfig)
+                ws.environ['mainWorker'].startExec.emit(elementId, ws.environ['mainWorker'].config)
             elif msg['cmd'] == 'StopExec':
                 elementId = msg['data']
+                ws.environ['mainWorker'].stopExec.emit(elementId)
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
             elif msg['cmd'] == 'QueryConfig':
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
@@ -239,11 +238,12 @@ class MainWorker(QObject):
 
     max_grid_size   = 50
     max_grid_cnt    = 5
-    gridConfig      = None
+    config          = None # element configuration
 
 
-    startExec       = Signal(object, object)
-    saveConfig      = Signal(object)
+    startExec       = Signal(object, object) # element-Id, configuration
+    stopExec        = Signal(object) # element-Id
+    saveConfig      = Signal(object) # configuration
     frontendCtrl    = Signal(object)
 
     def __init__(self, app):
@@ -262,7 +262,8 @@ class MainWorker(QObject):
         # Instantiate Execution Operator
         self.operator = Operator()
         self.startExec.connect(self.operator.startExec)
-        self.startExec.connect(self.saveConfig)
+        self.startExec.connect(self.emitSaveConfig)
+        self.stopExec.connect(self.operator.stopExec)
         
         # Instantiate ToolboxLoader
         self.toolbox_loader = ToolboxLoader()
@@ -318,6 +319,9 @@ class MainWorker(QObject):
         time.sleep(3) # wait for 1 seconds to kill all processes
         self.app.quit()
         os.kill(self.app.applicationPid(), signal.SIGTERM) # kill all related threads
+
+    def emitSaveConfig(self, elementId, config):
+        self.saveConfig.emit(config)
 
 
     def ensure_file_path(self, file_path):
