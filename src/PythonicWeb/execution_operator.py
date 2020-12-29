@@ -53,6 +53,7 @@ class ProcessHandler(QThread):
             t_0.start()
 
 
+
         result = Record(False, None, None)
         
         
@@ -85,6 +86,7 @@ class Operator(QThread):
 
     currentConfig = None
     processHandles = {}
+    updateElementStatus = Signal(object) # command
 
     def __init__(self,):
         super().__init__()
@@ -112,7 +114,12 @@ class Operator(QThread):
         runElement.execComplete.connect(self.operationDone)
         runElement.removeSelf.connect(self.removeOperatorThread)
 
+        self.updateStatus(startElement, True)
+
         runElement.start()
+
+
+
         self.processHandles[identifier] = runElement
         
 
@@ -123,6 +130,28 @@ class Operator(QThread):
         for threadIdentifier, processHandle in self.processHandles.items():
             if processHandle.id == id:
                 processHandle.stop()
+
+    
+    def updateStatus(self, element, status):
+        #start highlight
+        # area
+        # id
+        # target = "Element"
+        # cmd = UpdateElementStatus
+        
+        address = {
+            'target'    : 'Element',
+            'area'      : element['GridNo'],
+            'id'        : element['Id']              
+        }
+        
+        cmd = { 
+            'cmd'       : 'UpdateElementStatus',
+            'address'   : address,
+            'data'      : status
+            }
+
+        self.updateElementStatus.emit(cmd)
 
 
     def operationDone(self, id, record, identifier):

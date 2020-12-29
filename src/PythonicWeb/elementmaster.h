@@ -140,6 +140,7 @@ namespace ElementMasterCmd {
 
     enum Command {
         ElementEditorConfig,
+        UpdateElementStatus,
         Test,
         NoCmd
     };

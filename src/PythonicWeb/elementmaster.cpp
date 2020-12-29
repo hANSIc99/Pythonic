@@ -256,6 +256,7 @@ void ElementMaster::fwrdWsCtrl(const QJsonObject cmd)
 ElementMasterCmd::Command ElementMaster::hashCmd(const QString &inString)
 {
     if(inString == "ElementEditorConfig") return ElementMasterCmd::ElementEditorConfig;
+    if(inString == "UpdateElementStatus") return ElementMasterCmd::UpdateElementStatus;
     if(inString == "Test") return ElementMasterCmd::Test;
     return ElementMasterCmd::NoCmd;
 }
@@ -268,14 +269,25 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
 
 
     switch (hashCmd(cmd["cmd"].toString())) {
-        case ElementMasterCmd::Command::ElementEditorConfig:
-            qCInfo(logC, "command: %s - %s",
-                   cmd["cmd"].toString().toStdString().c_str(),
-                   objectName().toStdString().c_str());
 
-            if(!m_editor->m_editorSetup)
-                m_editor->loadEditorConfig(cmd["data"].toArray());
+    case ElementMasterCmd::Command::ElementEditorConfig: {
+
+        qCInfo(logC, "command: %s - %s",
+               cmd["cmd"].toString().toStdString().c_str(),
+               objectName().toStdString().c_str());
+
+        if(!m_editor->m_editorSetup)
+            m_editor->loadEditorConfig(cmd["data"].toArray());
         break;
+    }
+    case ElementMasterCmd::Command::UpdateElementStatus: {
+        qCInfo(logC, "command: %s - %s",
+               cmd["cmd"].toString().toStdString().c_str(),
+               objectName().toStdString().c_str());
+
+        bool bRunning = cmd["data"].toBool();
+        break;
+    }
     default:
         qCDebug(logC, "Unknown command: %s", cmd["cmd"].toString().toStdString().c_str());
         break;
