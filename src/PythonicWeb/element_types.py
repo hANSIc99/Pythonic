@@ -12,11 +12,11 @@ class Function():
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called Function')
-        self.config, self.inputData, self.returnPipe, self.logger, = state
+        self.config, self.inputData, self.returnPipe, self.logger, self.bStop = state
 
     def __getstate__(self):
         logging.debug('__getstate__() called Function')
-        return (self.config, self.inputData, self.returnPipe, self.logger)
+        return (self.config, self.inputData, self.returnPipe, self.logger, self.bStop)
 
     def execute(self, input):
         logging.debug('execute() called Function')

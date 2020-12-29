@@ -28,7 +28,7 @@ class ProcessHandler(QThread):
         self.element    = element
         self.inputData  = inputdata
         self.identifier = identifier
-        self.pid        = None
+        #self.pid        = None
         self.instance   = None
 
         self.return_pipe, self.feed_pipe = mp.Pipe(duplex=False)
@@ -41,10 +41,12 @@ class ProcessHandler(QThread):
         self.instance = elementCls(self.element['Config'], self.inputData, self.feed_pipe)
         result = None
 
-        if self.element['Multiprocessing']: ## attach Debugger if flag is set
-            p_0 = mp.Process(target=self.instance.execute)
-            p_0.start()
-            self.pid = p_0.pid
+        bMP = self.element['Config']['GeneralConfig']['MP']
+
+        if bMP: ## attach Debugger if flag is set
+            self.p_0 = mp.Process(target=self.instance.execute)
+            self.p_0.start()
+            #self.pid = p_0.pid
         else:
             t_0 = mt.Thread(target=self.instance.execute)
             t_0.start()
@@ -53,23 +55,43 @@ class ProcessHandler(QThread):
 
         result = Record(False, None, None)
         
-        
-        
+        ##################################################################
+        #                                                                # 
+        #                          MULTITHREADING                        #
+        #                                                                #
+        ##################################################################
+
         # Check if it is an intemediate result (result.bComplete)
         # or if the execution was stopped by the user (self.element.bStop)
                 
-        while not result.bComplete and not self.instance.bStop:
+        while not result.bComplete and not self.instance.bStop and not bMP:
             result = self.return_pipe.recv()
             self.execComplete.emit(self.element['Id'], result, self.identifier)
-            logging.debug('ProcessHandler::run() - result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+            logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
 
 
-        logging.debug('ProcessHandler::run() - execution completed - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        ##################################################################
+        #                                                                # 
+        #                         MULTIPROCESSING                        #
+        #                                                                #
+        ##################################################################
 
+        while bMP and self.p_0.is_alive():
+            if self.return_pipe.poll(0.3):
+                result = self.return_pipe.recv()
+                self.execComplete.emit(self.element['Id'], result, self.identifier)
+            
+                logging.debug('ProcessHandler::run() - Multiprocessing: execution completed - id: 0x{:08x}, ident: {:04d}, pid: {}'.format(
+                    self.element['Id'], self.identifier, self.p_0.pid))
+
+        logging.debug('ProcessHandler::run() - PROCESSING DONE - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        
     def stop(self):
         logging.debug('ProcessHandler::stop() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
-        if self.element['Multiprocessing']:
-            x = 3
+        if self.element['Config']['GeneralConfig']['MP']:
+            self.p_0.terminate()  
+            self.p_0.join()
+            x = 3     
         else:
             self.instance.bStop = True
 
@@ -162,8 +184,9 @@ class Operator(QThread):
     def removeOperatorThread(self, id, identifier):
 
         logging.debug('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-        qobject = self.processHandles[identifier]
-        qobject.deleteLater()
+        procHandle = self.processHandles[identifier]
+        self.updateStatus(procHandle.element, False)
+        procHandle.deleteLater()
         del self.processHandles[identifier]
         #BAUSTELLE
 

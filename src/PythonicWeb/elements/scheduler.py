@@ -66,7 +66,6 @@ class Element(Function):
             while True:
                 time.sleep(interval)
 
-
                 if self.bStop:
                     recordDone = Record(False, cnt, None, True) # Exit message
                     # Necessary to end the ProcessHandler     
