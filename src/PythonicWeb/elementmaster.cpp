@@ -187,20 +187,10 @@ QJsonObject ElementMaster::genConfig() const
     return data;
 }
 
-void ElementMaster::startHighlight()
-{
-    m_symbol.setStyleSheet("#element { border: 3px solid #fce96f; border-radius: 20px; }");
-}
-
 void ElementMaster::checkConnectionState()
 {
     emit socketConnectionHighlight(!m_parents.empty());
     emit plugConnectionHighlight(!m_childs.empty());
-}
-
-void ElementMaster::stopHighlight()
-{
-    m_symbol.setStyleSheet(styleSheet());
 }
 
 void ElementMaster::addParent(ElementMaster *parent)
@@ -216,7 +206,6 @@ void ElementMaster::addChild(ElementMaster *child)
     m_childs.insert(child);
     emit plugConnectionHighlight(true);
 }
-
 
 void ElementMaster::deleteSelf()
 {
@@ -281,11 +270,7 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
         break;
     }
     case ElementMasterCmd::Command::UpdateElementStatus: {
-        qCInfo(logC, "command: %s - %s",
-               cmd["cmd"].toString().toStdString().c_str(),
-               objectName().toStdString().c_str());
-
-        bool bRunning = cmd["data"].toBool();
+        switchRunState(cmd["data"].toBool());
         break;
     }
     default:
@@ -302,6 +287,27 @@ void ElementMaster::openEditor()
     m_editor->openEditor(m_config);
 }
 
+void ElementMaster::switchRunState(bool state)
+{
+    qCInfo(logC, "called %s", objectName().toStdString().c_str());
+
+    if(state){
+        m_symbol.setStyleSheet("#element { border: 3px solid #69f567; border-radius: 20px; }");
+    } else {
+        m_symbol.setStyleSheet(styleSheet());
+    }
+
+}
+
+void ElementMaster::startHighlight()
+{
+    m_symbol.setStyleSheet("#element { border: 3px solid #fce96f; border-radius: 20px; }");
+}
+
+void ElementMaster::stopHighlight()
+{
+    m_symbol.setStyleSheet(styleSheet());
+}
 /*****************************************************
  *                                                   *
  *                       PLUG                        *

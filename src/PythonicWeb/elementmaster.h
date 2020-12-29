@@ -221,6 +221,7 @@ public slots:
 
     void                    stopHighlight();
     void                    startHighlight();
+    void                    switchRunState(bool state);
     void                    checkConnectionState();
     void                    fwrdWsRcv(const QJsonObject cmd);
 
