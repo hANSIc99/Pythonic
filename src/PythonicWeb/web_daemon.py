@@ -1,4 +1,4 @@
-import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select
+import sys, logging, locale, pickle, datetime, os, signal, time, itertools, tty, termios, select
 import json
 import multiprocessing as mp
 import eventlet, json
@@ -250,6 +250,9 @@ class MainWorker(QObject):
         super(MainWorker, self).__init__()
         self.app = app
         mp.set_start_method('spawn')
+
+        # Setup date- and time-format
+        locale.setlocale(locale.LC_TIME, "en_GB")
 
         # Instantiate WSGI Server
         self.wsgi_server = WSGI_Server(self)

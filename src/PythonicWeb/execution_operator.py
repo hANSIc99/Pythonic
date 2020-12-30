@@ -188,7 +188,6 @@ class Operator(QThread):
         self.updateStatus(procHandle.element, False)
         procHandle.deleteLater()
         del self.processHandles[identifier]
-        #BAUSTELLE
 
 
 

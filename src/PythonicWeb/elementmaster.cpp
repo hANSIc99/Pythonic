@@ -295,6 +295,7 @@ void ElementMaster::switchRunState(bool state)
         m_symbol.setStyleSheet("#element { border: 3px solid #69f567; border-radius: 20px; }");
     } else {
         m_symbol.setStyleSheet(styleSheet());
+        m_startBtn.togggleRunning(false);
     }
 
 }

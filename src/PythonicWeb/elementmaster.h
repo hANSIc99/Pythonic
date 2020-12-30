@@ -125,6 +125,7 @@ protected:
 
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
+
 private:
 
     QLoggingCategory    logC{"ElementPlug"};

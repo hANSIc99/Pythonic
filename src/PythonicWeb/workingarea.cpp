@@ -558,8 +558,8 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
                 // stop execution
                 m_tmpElement->m_startBtn.togggleRunning(false);
                 emit stopExec(m_tmpElement->m_id);
-            } else {
-                //start execution
+            } else if (m_tmpElement != NULL){
+                // start execution
                 m_tmpElement->m_startBtn.togggleRunning(true);
 
                 emit startExec(m_tmpElement->m_id);
