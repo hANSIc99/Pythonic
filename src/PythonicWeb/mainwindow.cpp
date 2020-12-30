@@ -215,6 +215,8 @@ void MainWindow::saveConfig()
 void MainWindow::setInfoText(QString text)
 {
     qCInfo(logC, "called");
+    // BAUSTELLE TIMER STARTEN UND UHRZEIT ANZEIGEN
+    // UHRZEIT IM HEARTBEAT UEBERMITTELN
     m_infoText.setText(text);
 }
 

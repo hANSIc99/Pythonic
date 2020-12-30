@@ -31,6 +31,7 @@ class ProcessHandler(QThread):
         #self.pid        = None
         self.instance   = None
 
+        # BAUSTELLE: AUSTAUSCHEN GENEN QUEE
         self.return_pipe, self.feed_pipe = mp.Pipe(duplex=False)
 
         self.finished.connect(self.done)
@@ -65,6 +66,7 @@ class ProcessHandler(QThread):
         # or if the execution was stopped by the user (self.element.bStop)
                 
         while not result.bComplete and not self.instance.bStop and not bMP:
+            logging.debug("TEST")
             result = self.return_pipe.recv()
             self.execComplete.emit(self.element['Id'], result, self.identifier)
             logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))

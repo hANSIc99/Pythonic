@@ -15,6 +15,7 @@ class Element(Function):
 
         mode        = ''
         interval    = 0
+        countdown   = 0
         timebase    = ''
         startTime   = ''
         endTime     = ''
@@ -62,8 +63,8 @@ class Element(Function):
 
         # Setup start- and endtime
 
-        startTime = datetime.datetime.strptime(startTime, '%H:%M')
-        endTime   = datetime.datetime.strptime(endTime, '%H:%M')
+        startTime = datetime.datetime.strptime(startTime, '%H:%M').time()
+        stopTime  = datetime.datetime.strptime(endTime, '%H:%M').time()
 
         # Switch modes
 
@@ -103,32 +104,50 @@ class Element(Function):
             
             nState = 0
 
-            #while True:
+            while True:
 
-            # Termination condition multithreading
+                # Termination condition multithreading
 
-            if self.bStop:
-                recordDone = Record(False, None, None, True) # Exit message
-                # Necessary to end the ProcessHandler     
-                self.returnPipe.send(recordDone)
-                #break      
+                if self.bStop:
+                    recordDone = Record(False, None, None, True) # Exit message
+                    # Necessary to end the ProcessHandler     
+                    self.returnPipe.send(recordDone)
+                    #break      
 
+                # Get date and time
+                locale.setlocale(locale.LC_TIME, "en_GB")
+                currentDate    = datetime.date.today()
+                currentTime    = datetime.datetime.now().time()              
+                stoday         = currentDate.strftime('%A')
+            
+                
+                if nState == 0:     # Wait for the start day
+                    
+                    if (dayOfWeek[stoday]):
+                        nState = 1
 
-            date    = datetime.date.today()
-            locale.setlocale(locale.LC_TIME, "en_GB")
-            stoday  = date.strftime('%A')
-        
-            if (dayOfWeek[stoday]):
-                x = 1
-            else:
-                x = 2
-            # State 1
-            #if nState == 0:
+                elif nState == 1:   # Wait for the start time
+                    
+                    if(currentTime >= startTime):
+                        nState = 2
 
+                elif nState == 2:   # Schedule and wait for the stop time
+                    
+                    if(currentTime > stopTime):
+                        nState == 0                 
+                    elif countdown == 0:
+                        recordDone = Record(False, None, None)     
+                        self.returnPipe.send(recordDone)
+                        countdown = interval -1 
+                    else:
+                        countdown -= 1
+                        
+
+                time.sleep(1)
 
             recordDone = Record(True, "Data", "LogMessage")
             self.returnPipe.send(recordDone)
-            
+
         elif mode == "At specific time":
             recordDone = Record(True, "Data", "LogMessage")
         elif mode == "On every full interval":
