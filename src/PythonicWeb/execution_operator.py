@@ -1,4 +1,4 @@
-import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select
+import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select, queue
 import json
 import random
 import multiprocessing as mp
@@ -31,18 +31,26 @@ class ProcessHandler(QThread):
         #self.pid        = None
         self.instance   = None
 
-        # BAUSTELLE: AUSTAUSCHEN GENEN QUEE
-        self.return_pipe, self.feed_pipe = mp.Pipe(duplex=False)
+
+        self.queue      = None 
+
 
         self.finished.connect(self.done)
 
     def run(self):
-        
-        elementCls = getattr(__import__('elements.' + self.element['Filename'], fromlist=['Element']), 'Element')
-        self.instance = elementCls(self.element['Config'], self.inputData, self.feed_pipe)
-        result = None
 
         bMP = self.element['Config']['GeneralConfig']['MP']
+
+        if bMP:
+            self.queue = mp.Queue()
+        else:
+            self.queue = queue.Queue()
+
+        elementCls = getattr(__import__('elements.' + self.element['Filename'], fromlist=['Element']), 'Element')
+        self.instance = elementCls(self.element['Config'], self.inputData, self.queue)
+        result = None
+
+        
 
         if bMP: ## attach Debugger if flag is set
             self.p_0 = mp.Process(target=self.instance.execute)
@@ -67,7 +75,7 @@ class ProcessHandler(QThread):
                 
         while not result.bComplete and not self.instance.bStop and not bMP:
             logging.debug("TEST")
-            result = self.return_pipe.recv()
+            result = self.queue.get()
             self.execComplete.emit(self.element['Id'], result, self.identifier)
             logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
 
@@ -79,12 +87,17 @@ class ProcessHandler(QThread):
         ##################################################################
 
         while bMP and self.p_0.is_alive():
-            if self.return_pipe.poll(0.3):
-                result = self.return_pipe.recv()
+            try:
+                result = self.queue.get(block=True, timeout=0.2)
                 self.execComplete.emit(self.element['Id'], result, self.identifier)
-            
                 logging.debug('ProcessHandler::run() - Multiprocessing: execution completed - id: 0x{:08x}, ident: {:04d}, pid: {}'.format(
                     self.element['Id'], self.identifier, self.p_0.pid))
+            except queue.Empty:
+                logging.debug('queue empty')
+                pass
+            
+            
+
 
         logging.debug('ProcessHandler::run() - PROCESSING DONE - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         

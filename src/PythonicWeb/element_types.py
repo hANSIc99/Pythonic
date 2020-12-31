@@ -2,21 +2,21 @@ import logging
 
 class Function():
 
-    def __init__(self, config, inputData, returnPipe):
+    def __init__(self, config, inputData, queue):
         logging.debug('Function.__init__()')
         self.config     = config
         self.inputData  = inputData
-        self.returnPipe = returnPipe
+        self.queue = queue
         self.logger     = logging.getLogger() # mt only
         self.bStop      = False
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called Function')
-        self.config, self.inputData, self.returnPipe, self.logger, self.bStop = state
+        self.config, self.inputData, self.queue, self.logger, self.bStop = state
 
     def __getstate__(self):
         logging.debug('__getstate__() called Function')
-        return (self.config, self.inputData, self.returnPipe, self.logger, self.bStop)
+        return (self.config, self.inputData, self.queue, self.logger, self.bStop)
 
     def execute(self, input):
         logging.debug('execute() called Function')

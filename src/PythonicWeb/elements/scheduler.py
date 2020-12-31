@@ -4,8 +4,8 @@ from element_types import Record, Function
     
 class Element(Function):
 
-    def __init__(self, config, inputData, returnPipe):
-        super().__init__(config, inputData, returnPipe)
+    def __init__(self, config, inputData, queue):
+        super().__init__(config, inputData, queue)
 
 
     def execute(self):
@@ -68,30 +68,44 @@ class Element(Function):
 
         # Switch modes
 
+
+
         if mode == "None":
-            recordDone = Record(True, "Data", "LogMessage")
+
+            ############################
+            #           None           #
+            ############################
+
+            recordDone = Record(True, None, None)
+            self.queue.put(recordDone)
+
         elif mode == "Interval":
+
+            ############################
+            #         Interval         #
+            ############################
+
             cnt = 0
-            while cnt < 5 :
+            while True :
                 time.sleep(interval)
 
                 if self.bStop:
                     recordDone = Record(False, cnt, None, True) # Exit message
                     # Necessary to end the ProcessHandler     
-                    self.returnPipe.send(recordDone)
+                    self.queue.put(recordDone)
                     break      
 
 
                 recordDone = Record(False, cnt, None)     
-                self.returnPipe.send(recordDone)
+                self.queue.put(recordDone)
                 cnt += 1
 
 
-            time.sleep(interval)
-            recordDone = Record(True, cnt, None)     
-            self.returnPipe.send(recordDone)
-
         elif mode == "Interval between times":
+
+            ############################
+            #  Interval between times  #
+            ############################
 
 
             # Check if at least one day is selected
@@ -99,7 +113,7 @@ class Element(Function):
             activeDays = [value for days, value in dayOfWeek.items() if value]
             if not activeDays:
                 recordDone = Record(True, None, "No days selected")     
-                self.returnPipe.send(recordDone)
+                self.queue.put(recordDone)
 
             
             nState = 0
@@ -111,8 +125,8 @@ class Element(Function):
                 if self.bStop:
                     recordDone = Record(False, None, None, True) # Exit message
                     # Necessary to end the ProcessHandler     
-                    self.returnPipe.send(recordDone)
-                    #break      
+                    self.queue.put(recordDone)
+                    break      
 
                 # Get date and time
                 locale.setlocale(locale.LC_TIME, "en_GB")
@@ -135,37 +149,35 @@ class Element(Function):
                     
                     if(currentTime > stopTime):
                         nState == 0                 
-                    elif countdown == 0:
+                    elif countdown <= 0:
                         recordDone = Record(False, None, None)     
-                        self.returnPipe.send(recordDone)
-                        countdown = interval -1 
-                    else:
-                        countdown -= 1
+                        self.queue.put(recordDone)
+                        countdown = interval
+                    
+                    countdown -= 1
                         
 
                 time.sleep(1)
 
-            recordDone = Record(True, "Data", "LogMessage")
-            self.returnPipe.send(recordDone)
 
         elif mode == "At specific time":
+
+            ############################
+            #     At specific time     #
+            ############################
+
             recordDone = Record(True, "Data", "LogMessage")
         elif mode == "On every full interval":
+
+            ############################
+            #  On every full interval  #
+            ############################
+
             recordDone = Record(True, "Data", "LogMessage")
         elif mode == "Full interval between times":
-            recordDone = Record(True, "Data", "LogMessage")
-        """
-        n_cnt = 5
-        while n_cnt > 0:
-            time.sleep(1)
-            n_cnt -= 1
-            intemediateRecord = Record(False, "DataIntermediate", "Log")
-            
-            self.returnPipe.send(intemediateRecord)
-            logging.debug("Scheduler Called - {}".format(n_cnt))
-        """
 
-        
-        
-        #recordDone = Record(True, "Data", "LogMessage")
-        #self.returnPipe.send(recordDone)
+            #################################
+            #  Full interval between times  #
+            #################################
+
+            recordDone = Record(True, "Data", "LogMessage")
