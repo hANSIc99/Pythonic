@@ -118,8 +118,8 @@ int main(int argc, char *argv[])
 
                                                     /* Element Editor */
 
-                                                    "Elementeditor.debug=false\n"
-                                                    "Elementeditor.info=false\n"
+                                                    "Elementeditor.debug=true\n"
+                                                    "Elementeditor.info=true\n"
 
                                                     /* Element Connector Buttons  */
 

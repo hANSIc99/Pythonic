@@ -52,6 +52,7 @@ namespace ElementEditorTypes {
         ComboBox,
         LineEdit,
         CheckBox,
+        Text,
         NoType
     };
 
@@ -123,7 +124,6 @@ public:
     QLineEdit           m_lineedit;
     QLabel              m_regExpIndicator;
     QRegExpValidator    m_regExp{this};
-    bool        m_isVisible{true};
 
 public slots:
 
@@ -133,14 +133,12 @@ public slots:
         m_title.setVisible(false);
         m_lineedit.setVisible(false);
         m_regExpIndicator.setVisible(false);
-        m_isVisible = false;
     }
 
     void showEvent(QShowEvent *) override{
         m_title.setVisible(true);
         m_lineedit.setVisible(true);
         m_regExpIndicator.setVisible(true);
-        m_isVisible = true;
     }
 
 };
@@ -151,20 +149,14 @@ class CheckBox : public QCheckBox{
 public:
     explicit CheckBox(const QString &text, QWidget *parent = 0)
         : QCheckBox(text, parent){};
+};
 
-    bool        m_isVisible{true};
 
-public slots:
-
-    void hideEvent(QHideEvent *) override
-    {
-        m_isVisible = false;
-    }
-
-    void showEvent(QShowEvent *) override{
-        m_isVisible = true;
-    }
-
+class Text : public QLabel{
+    Q_OBJECT
+public:
+    explicit Text(const QString &text, QWidget *parent = 0)
+        : QLabel(text, parent){};
 };
 
 
@@ -203,6 +195,8 @@ private:
     void            addLineEdit(QJsonObject &lineeditJSON);
 
     void            addCheckBox(QJsonObject &checkboxJSON);
+
+    void            addText(QJsonObject &textJSON);
 
     QHBoxLayout     m_mainLayout;
 

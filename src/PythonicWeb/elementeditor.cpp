@@ -75,6 +75,7 @@ Elementeditor::Elementeditor(quint32 id, QWidget *parent)
             this, &QDialog::accept);
 
     connect(&m_delButton, &QPushButton::clicked,
+            this,
             [=]() {
         QDialog::reject();
         emit deleteSelf();
@@ -96,7 +97,7 @@ void Elementeditor::openEditor(const QJsonObject config)
         QJsonArray specificConfig = config["SpecificConfig"].toArray();
 
         if(!specificConfig.isEmpty()){
-            for(const QJsonValue &value : specificConfig){
+            for(const QJsonValue &value : qAsConst(specificConfig)){
 
                 QJsonObject elementConfig = value.toObject();
 
@@ -169,6 +170,11 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
             addCheckBox(unit);
             break;
         }
+
+        case ElementEditorTypes::Text: {
+            addText(unit);
+            break;
+        }
         default: {
             break;
         }
@@ -195,6 +201,7 @@ ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
     if(inString == "ComboBox") return ElementEditorTypes::ComboBox;
     if(inString == "LineEdit") return ElementEditorTypes::LineEdit;
     if(inString == "CheckBox") return ElementEditorTypes::CheckBox;
+    if(inString == "Text")     return ElementEditorTypes::Text;
     return ElementEditorTypes::NoType;
 }
 
@@ -366,7 +373,7 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
 
     QJsonArray rulesArray = rules.toArray();
 
-    for(const QJsonValue &rule : rulesArray){
+    for(const QJsonValue &rule : qAsConst(rulesArray)){
 
         QJsonObject ruleObj = rule.toObject();
 
@@ -381,7 +388,7 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
 
             QStringList  s_dependentValues;
 
-            for(const QJsonValue &dependency : dependentValues){
+            for(const QJsonValue &dependency : qAsConst(dependentValues)){
                 s_dependentValues.append(dependency.toString());
             }
 
@@ -420,7 +427,7 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
     dropdown->setObjectName(dropDownJSON["Name"].toString());
     m_specificCfgLayout.addWidget(dropdown);
 
-    for(const QJsonValue &item : listItems){
+    for(const QJsonValue &item : qAsConst(listItems)){
         dropdown->m_combobox.addItem(item.toString(), QVariant(item.toString()));
     }
 
@@ -485,6 +492,7 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
         connect(
             &lineedit->m_lineedit, &QLineEdit::textChanged,
+            lineedit,
             [=]() {
             if(lineedit->m_lineedit.hasAcceptableInput()){
                lineedit->m_regExpIndicator.setText("");
@@ -503,12 +511,23 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
 void Elementeditor::addCheckBox(QJsonObject &checkboxJSON)
 {
-    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+    qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
 
     CheckBox *checkbox = new CheckBox(checkboxJSON["Title"].toString(), &m_specificConfig);
     checkbox->setObjectName(checkboxJSON["Name"].toString());
     m_specificCfgLayout.addWidget(checkbox);
 
     addRules(checkboxJSON.value("Dependency"), qobject_cast<QWidget*>(checkbox));
+}
+
+void Elementeditor::addText(QJsonObject &textJSON)
+{
+    qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+    Text *text = new Text(textJSON["Text"].toString(), &m_specificConfig);
+    text->setObjectName(textJSON["Name"].toString());
+    m_specificCfgLayout.addWidget(text);
+
+    addRules(textJSON.value("Dependency"), qobject_cast<QWidget*>(text));
 }
 

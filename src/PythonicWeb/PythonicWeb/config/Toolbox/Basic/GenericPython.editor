@@ -1,0 +1,7 @@
+[
+    {
+    	"Type"  : "Text",
+        "Name"  : "EditorLink",
+	    "Text"  : "Click here to open the editor"
+    }
+]

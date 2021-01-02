@@ -64,9 +64,10 @@ public:
         sendTextMessage(QJsonDocument(data).toJson(QJsonDocument::Compact));
     }
 
-signals:
-    void disconnected();
-    void connected();
+
+//signals:
+//    void disconnected();
+//    void connected();
 
     /*
     void send(QJsonObject data){

@@ -139,6 +139,7 @@ MainWindow::MainWindow(QWidget *parent)
             this, &MainWindow::connectionEstablished);
 
     connect(&m_wsRcv, &QWebSocket::disconnected,
+            &m_heartBeatText,
             [=] {
         m_heartBeatText.setText("No connection to daemon!");
     });
@@ -372,7 +373,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
      * Add elements to the workingarea
      */
 
-    for(const auto& element : elements){
+    for(const auto& element : qAsConst(elements)){
 
         QJsonObject jsonElement(element.toObject());
 
@@ -486,7 +487,7 @@ void MainWindow::loadToolbox(const QJsonObject toolbox)
 
     QJsonArray elements = toolbox["data"].toArray();
     QString currentAssignment;
-    for(const auto& element : elements){
+    for(const auto& element : qAsConst(elements)){
 
         QJsonObject elementHeader(element.toObject());
         QString assignment = elementHeader["assignment"].toString();
