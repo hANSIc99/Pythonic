@@ -71,10 +71,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* Setup Bottom Border */
 
-    m_infoText.setText("Info Test Label");
-    m_heartBeatText.setText("hearetbeat");
     m_bottomBorder.setLayout(&m_bottomBorderLayout);
     m_bottomBorderLayout.setSpacing(0);
+    m_bottomBorderLayout.addWidget(&m_datetimeText);
+    m_bottomBorderLayout.insertSpacing(1, 5);
     m_bottomBorderLayout.addWidget(&m_infoText);
     m_bottomBorderLayout.addStretch(1);
     m_bottomBorderLayout.addWidget(&m_heartBeatText);
@@ -267,6 +267,10 @@ void MainWindow::wsRcv(const QString &message)
     }
 
     m_heartBeatText.setText(QString("PythonicDaemon %1 ").arg(*it_spinner));
+
+    QJsonValue datetime = jsonMsg.value("data");
+
+    m_datetimeText.setText(datetime.toString());
 
     break;
     }

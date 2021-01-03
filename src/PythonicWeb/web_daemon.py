@@ -46,8 +46,11 @@ def rcv(ws):
         greenthread.sleep(0.3)
         QCoreApplication.processEvents()
         try:
-            jsonHeartBeat = {   "cmd": "Heartbeat",
-                                "address" : {"target" : "MainWindow"}}
+
+            date = datetime.datetime.now() #.strftime("%d-%b-%Y")
+            jsonHeartBeat = {   'cmd'       : 'Heartbeat',
+                                'address'   : { 'target' : 'MainWindow'} ,
+                                'data' : date.strftime("%d-%b-%Y %H:%M") }
             #next(self.spinner)
             ws.send(json.dumps(jsonHeartBeat))
         except Exception as e:

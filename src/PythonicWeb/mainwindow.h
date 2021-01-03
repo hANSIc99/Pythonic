@@ -163,7 +163,7 @@ private:
     QWidget                 m_bottomBorder;
     QHBoxLayout             m_bottomBorderLayout;
 
-
+    QLabel                  m_datetimeText;
     QLabel                  m_infoText;
     QLabel                  m_heartBeatText;
 

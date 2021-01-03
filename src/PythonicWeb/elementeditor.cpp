@@ -525,6 +525,7 @@ void Elementeditor::addText(QJsonObject &textJSON)
     qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
 
     Text *text = new Text(textJSON["Text"].toString(), &m_specificConfig);
+    text->setOpenExternalLinks(true);
     text->setObjectName(textJSON["Name"].toString());
     m_specificCfgLayout.addWidget(text);
 
