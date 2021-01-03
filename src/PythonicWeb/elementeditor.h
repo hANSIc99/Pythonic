@@ -30,7 +30,7 @@
 #include <QFont>
 #include <QComboBox>
 #include <QVariant>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QRegExpValidator>
 #include <QList>
 #include "baselabel.h"
@@ -114,7 +114,7 @@ public:
         m_outerLayout.addWidget(&m_innerWidget);
         m_outerLayout.addWidget(&m_regExpIndicator);
         m_regExpIndicator.setStyleSheet("QLabel { color : red; }");
-        m_lineedit.setValidator(&m_regExp);
+        //m_lineedit.setValidator(&m_regExp);
     };
 
     QWidget             m_innerWidget;
@@ -123,7 +123,7 @@ public:
     QLabel              m_title;
     QLineEdit           m_lineedit;
     QLabel              m_regExpIndicator;
-    QRegExpValidator    m_regExp{this};
+    QRegularExpression  m_regExp;
 
 public slots:
 
@@ -139,6 +139,15 @@ public slots:
         m_title.setVisible(true);
         m_lineedit.setVisible(true);
         m_regExpIndicator.setVisible(true);
+    }
+
+    void validateInput(const QString &text){
+        QRegularExpressionMatch match = m_regExp.match(text);
+        if(match.hasMatch()){
+            m_regExpIndicator.setText("");
+        } else {
+            m_regExpIndicator.setText("Please provide acceptable input");
+        }
     }
 
 };
@@ -216,6 +225,9 @@ private:
 
     BaseButton      m_delButton;
     QPushButton     m_saveButton;
+
+    QRegularExpression  m_regExpGeneralConfig{"GENERALCONFIG[\\w]*"};
+    QRegularExpression  m_regExpSpecificConfig{"SPECIFICCONFIG[\\w]*"};
 
     QList<ElementEditorTypes::Rule> m_rules;
 

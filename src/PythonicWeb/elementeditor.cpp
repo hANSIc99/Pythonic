@@ -479,29 +479,12 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
     QString regExpString = lineeditJSON["RegExp"].toString();
 
     if(!regExpString.isEmpty()){
-        QRegExp regExp(regExpString);
 
-        lineedit->m_regExp.setRegExp(regExp);
-        //QRegExpValidator *regExpValidator = new QRegExpValidator(regExp, &m_specificConfig);
-        //lineedit->m_lineedit.setValidator(regExpValidator);
-
-        //QLabel *regExpIndicator = new QLabel("", &m_specificConfig);
-        //m_specificCfgLayout.addWidget(regExpIndicator);
-
-        //regExpIndicator->setStyleSheet("QLabel { color : red; }");
+        lineedit->m_regExp.setPattern(regExpString);
 
         connect(
             &lineedit->m_lineedit, &QLineEdit::textChanged,
-            lineedit,
-            [=]() {
-            if(lineedit->m_lineedit.hasAcceptableInput()){
-               lineedit->m_regExpIndicator.setText("");
-
-            } else {
-               lineedit->m_regExpIndicator.setText("Please provide acceptable input");
-            }
-        }
-        );
+            lineedit, &LineEdit::validateInput);
     }
 
 
@@ -524,7 +507,17 @@ void Elementeditor::addText(QJsonObject &textJSON)
 {
     qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
 
+    QString rawString = textJSON["Text"].toString();
+
+
+    QRegularExpressionMatch generalMatch =  m_regExpGeneralConfig.match(rawString);
+    bool hasMatch = generalMatch.hasMatch();
+    if (hasMatch) {
+        QString matched = generalMatch.captured(0); // matched == "23 def"
+        int x = 3;
+    }
     Text *text = new Text(textJSON["Text"].toString(), &m_specificConfig);
+    text->setTextInteractionFlags(Qt::TextBrowserInteraction);
     text->setOpenExternalLinks(true);
     text->setObjectName(textJSON["Name"].toString());
     m_specificCfgLayout.addWidget(text);
