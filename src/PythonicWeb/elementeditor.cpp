@@ -228,27 +228,86 @@ ElementEditorTypes::Property Elementeditor::hashEditorProperty(const QString &in
 
 ElementProperties::Properties Elementeditor::hashElementProperty(const QString &inString)
 {
-    if(inString == "Author") return ElementProperties::Author;
-
+    if(inString == "Author")            return ElementProperties::Author;
+    if(inString == "Filename")          return ElementProperties::Filename;
+    if(inString == "AreaNo")            return ElementProperties::AreaNo;
+    if(inString == "Iconname")          return ElementProperties::Iconname;
+    if(inString == "Id")                return ElementProperties::Id;
+    if(inString == "License")           return ElementProperties::License;
+    if(inString == "ObjectName")        return ElementProperties::ObjectName;
+    if(inString == "Type")              return ElementProperties::Type;
+    if(inString == "Version")           return ElementProperties::Version;
+    if(inString == "PythonicVersion")   return ElementProperties::PythonicVersion;
     return ElementProperties::NoProperty;
-#if 0
-    Author,
-    Filename,
-    GridNo,
-    Iconname,
-    Id,
-    License,
-    ObjectName,
-    Type,
-    Version,
-    PythonicVersion
-        #endif
 }
 
-QString Elementeditor::jsonValToString(QJsonValue val)
+QString Elementeditor::jsonValToStringBasicData(const QString key, const QJsonObject &json)
 {
     qCDebug(logC, "called");
 
+    switch (hashElementProperty(key)) {
+
+    case ElementProperties::AreaNo: {
+        return QString::number(json.value(key).toInt());
+    break;
+    }
+
+    case ElementProperties::Author: {
+        return json.value(key).toString();
+        break;
+    }
+
+    case ElementProperties::Filename: {
+        return QString("%1.py").arg(json.value(key).toString());
+        break;
+    }
+
+    case ElementProperties::Iconname: {
+        return QString("%1.png").arg(json.value(key).toString());
+        break;
+    }
+
+    case ElementProperties::Id: {
+        return QString::number(json.value(key).toInt());
+        break;
+    }
+
+    case ElementProperties::License:{
+        return json.value(key).toString();
+        break;
+    }
+
+    case ElementProperties::ObjectName: {
+        return json.value(key).toString();
+        break;
+    }
+
+    case ElementProperties::PythonicVersion: {
+        QJsonObject v = json.value(key).toObject();
+        return QString("%1.%2").arg(v.value("Major").toInt()).arg(v.value("Minor").toInt());
+        break;
+    }
+
+    case ElementProperties::Type: {
+        return json.value(key).toString();
+        break;
+    }
+
+    case ElementProperties::Version: {
+        QJsonObject v = json.value(key).toObject();
+        return QString("%1.%2").arg(v.value("Major").toInt()).arg(v.value("Minor").toInt());
+        break;
+    }
+
+    default: {
+        return QString("BasicValue didn't found");
+        break;
+    }
+    }
+}
+
+QString Elementeditor::jsonValToStringConfigData(const QJsonValue &val)
+{
     switch (val.type()) {
     case QJsonValue::Bool: {
         if(val.toBool()){
@@ -436,49 +495,24 @@ void Elementeditor::checkRulesAndRegExp()
 
     /* Iterate through text elements */
 
-    for(Text* text : specificCfgTxts){
+    for(Text* text : qAsConst(specificCfgTxts)){
 
         /*
          * Match Basic Element Data
          */
 
-        applyRegExp(text->text(), m_basicData, m_regExpSBasicData);
-#if 0
-        QRegularExpressionMatchIterator i = m_regExpSBasicData.globalMatch(text->text());
-        while (i.hasNext()) {
-            QRegularExpressionMatch match = i.next();
-            QString word = match.captured(0);
-            QRegularExpressionMatch innerMatch = m_innerRegExp.match(word);
-            if(innerMatch.hasMatch()){
-                QString sProperty = innerMatch.captured(0);
-                sProperty.remove(0, 1); // Remove the leading underscore
-
-                /* Check if property is present */
-
-                QJsonValue val = m_basicData.value(sProperty);
-
-                if(val.isNull()) continue;
-                //QJsonValue::Type type = val.type();
-                QString s = jsonValToString(val);
-                int start = match.capturedStart();
-                int lenght = match.capturedLength();
-
-                /* Replace the Keywords */
-                text->setText(text->text().replace(match.capturedStart(),match.capturedLength(), s));
-                int x = 3;
-            }
-
-        }
-#endif
+        text->setText(applyRegExp(text->m_originalText, m_basicData, m_regExpSBasicData));
+        int x =3 ;
 
 
     }
 }
 
-QString Elementeditor::applyRegExp(QString in, const QJsonObject &json, const QRegularExpression &regExp)
+QString Elementeditor::applyRegExp(const QString in, const QJsonObject &json, const QRegularExpression &regExp)
 {
     qCDebug(logC, "called");
 
+    QString newString(in);
     QRegularExpressionMatchIterator i = regExp.globalMatch(in);
 
     while (i.hasNext()) {
@@ -486,26 +520,25 @@ QString Elementeditor::applyRegExp(QString in, const QJsonObject &json, const QR
         QString word = match.captured(0);
         QRegularExpressionMatch innerMatch = m_innerRegExp.match(word);
         if(innerMatch.hasMatch()){
-            QString sProperty = innerMatch.captured(0);
-            sProperty.remove(0, 1); // Remove the leading underscore
+            QString key = innerMatch.captured(0);
+            key.remove(0, 1); // Remove the leading underscore
 
             /* Check if property is present */
 
-            QJsonValue val = json.value(sProperty);
+            //QJsonValue val = json.value(key);
 
-            if(val.isNull()) continue;
-            //QJsonValue::Type type = val.type();
-            QString s = jsonValToString(val);
-            int start = match.capturedStart();
-            int lenght = match.capturedLength();
-
+            //if(val.isNull()) continue;
+            //QString s = jsonValToString(key);
+            QString s = jsonValToStringBasicData(key, json);
             /* Replace the Keywords */
-            QString newString(in.replace(match.capturedStart(),match.capturedLength(), s));
+
+            newString.replace(match.capturedStart(),match.capturedLength(), s);
 
             int x = 3;
         }
 
     }
+    return newString;
 }
 
 

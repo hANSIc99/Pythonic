@@ -69,7 +69,7 @@ namespace ElementProperties {
     enum Properties {
         Author,
         Filename,
-        GridNo,
+        AreaNo,
         Iconname,
         Id,
         License,
@@ -182,7 +182,10 @@ class Text : public QLabel{
     Q_OBJECT
 public:
     explicit Text(const QString &text, QWidget *parent = 0)
-        : QLabel(text, parent){};
+        : QLabel(text, parent)
+        , m_originalText(text) {};
+
+    const QString m_originalText;
 };
 
 
@@ -213,8 +216,9 @@ private:
     static ElementEditorTypes::Type hashType(const QString  &inString);
     static ElementEditorTypes::Property hashEditorProperty(const QString &inString);
     static ElementProperties::Properties hashElementProperty(const QString &inString);
-    static QString jsonValToString(QJsonValue val);
-    static QString applyRegExp(QString in, const QJsonObject &json, const QRegularExpression &regExp);
+    static QString jsonValToStringBasicData(const QString key, const QJsonObject &json);
+    static QString jsonValToStringConfigData(const QJsonValue &val);
+    static QString applyRegExp(const QString in, const QJsonObject &json, const QRegularExpression &regExp);
     QJsonObject     m_currentConfig;
     QJsonObject     m_basicData;
 

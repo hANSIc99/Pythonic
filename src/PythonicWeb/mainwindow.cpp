@@ -381,7 +381,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
 
         QJsonObject jsonElement(element.toObject());
 
-        int nWrkArea = jsonElement["GridNo"].toInt();
+        int nWrkArea = jsonElement["AreaNo"].toInt();
 
         /* Extracting position */
         QJsonObject position = jsonElement["Position"].toObject();
@@ -405,7 +405,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
                         pythonicVersion,
                         jsonElement["Author"].toString(),
                         jsonElement["License"].toString(),
-                        m_arr_workingArea[nWrkArea]->m_gridNo,
+                        m_arr_workingArea[nWrkArea]->m_AreaNo,
                         m_arr_workingArea[nWrkArea],
                         jsonElement["Id"].toInt(),
                         jsonElement["ObjectName"].toString());
@@ -434,7 +434,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
     for(const auto& element : qAsConst(elements)){
 
         QJsonObject jsonElement(element.toObject());
-        int nWrkArea = jsonElement["GridNo"].toInt();
+        int nWrkArea = jsonElement["AreaNo"].toInt();
 
         QJsonArray childs  = jsonElement["Childs"].toArray();
 

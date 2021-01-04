@@ -19,14 +19,14 @@
 
 const QLoggingCategory WorkingArea::logC{"WorkingArea"};
 
-WorkingArea::WorkingArea(int gridNo, QWidget *parent)
+WorkingArea::WorkingArea(int areaNo, QWidget *parent)
     : QFrame(parent)
-    , m_gridNo(gridNo)
+    , m_AreaNo(areaNo)
 {
     setAcceptDrops(true);
     setMouseTracking(true);
     //setObjectName("workBackground");
-    QString objectName = QString("workingArea_%1").arg(gridNo);
+    QString objectName = QString("workingArea_%1").arg(areaNo);
 
     setObjectName(objectName);
 
@@ -133,12 +133,12 @@ void WorkingArea::resizeEvent(QResizeEvent *event)
 
 void WorkingArea::fwrdWsCtrl(const QJsonObject cmd)
 {
-    qCInfo(logC, "called - Area No.: %u", m_gridNo);
+    qCInfo(logC, "called - Area No.: %u", m_AreaNo);
     QJsonObject newCmd = cmd;
 
     QJsonObject address = cmd["address"].toObject();
     /* Extend Address part with area number */
-    address["area"] = m_gridNo;
+    address["area"] = m_AreaNo;
 
 
     newCmd["address"] = address;
@@ -148,7 +148,7 @@ void WorkingArea::fwrdWsCtrl(const QJsonObject cmd)
 
 void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 {
-    qCInfo(logC, "called - Area No.: %u", m_gridNo);
+    qCInfo(logC, "called - Area No.: %u", m_AreaNo);
 
     QJsonObject address = cmd["address"].toObject();
 

@@ -192,7 +192,7 @@ public:
     //! License of the element (CONFIG)
     QString                 m_license;
     //! Number of the grid which holds the element
-    int                     m_gridNo;
+    int                     m_areaNo;
 
 
     /* Internal Configuration */

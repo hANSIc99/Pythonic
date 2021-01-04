@@ -102,11 +102,11 @@ class WorkingArea : public QFrame
 {
     Q_OBJECT
 public:
-    explicit WorkingArea(int gridNo, QWidget *parent = nullptr);
+    explicit WorkingArea(int areaNo, QWidget *parent = nullptr);
 
     void registerElement(const ElementMaster *new_element);
 
-    int                         m_gridNo;
+    int                         m_AreaNo;
 
     /* Connections */
     QVector<Connection>         m_connections;

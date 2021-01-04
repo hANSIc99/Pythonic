@@ -97,7 +97,7 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
                         pythonicVersion,
                         m_toolData["Author"].toString(),
                         m_toolData["License"].toString(),
-                        m_workingAreaWidget->m_gridNo,
+                        m_workingAreaWidget->m_AreaNo,
                         m_workingAreaWidget);
 
 
