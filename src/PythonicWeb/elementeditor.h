@@ -65,6 +65,22 @@ namespace ElementEditorTypes {
 
 }
 
+namespace ElementProperties {
+    enum Properties {
+        Author,
+        Filename,
+        GridNo,
+        Iconname,
+        Id,
+        License,
+        ObjectName,
+        Type,
+        Version,
+        PythonicVersion,
+        NoProperty
+    };
+}
+
 
 class ComboBox : public QWidget{
     Q_OBJECT
@@ -174,7 +190,7 @@ class Elementeditor : public QDialog
 {
     Q_OBJECT
 public:
-    explicit Elementeditor(quint32 id, QWidget *parent = nullptr);
+    explicit Elementeditor(QJsonObject basicData, QWidget *parent = nullptr);
 
     //! Indicates if the element specific input elements are already loaded
     bool     m_editorSetup{false};
@@ -190,14 +206,17 @@ public slots:
     void loadEditorConfig(const QJsonArray config);
     void accept() override;
     void checkRulesAndRegExp();
-    void regExpText(const QJsonArray config);
+
 
 private:
 
     static ElementEditorTypes::Type hashType(const QString  &inString);
-    static ElementEditorTypes::Property hashProperty(const QString &inString);
-
+    static ElementEditorTypes::Property hashEditorProperty(const QString &inString);
+    static ElementProperties::Properties hashElementProperty(const QString &inString);
+    static QString jsonValToString(QJsonValue val);
+    static QString applyRegExp(QString in, const QJsonObject &json, const QRegularExpression &regExp);
     QJsonObject     m_currentConfig;
+    QJsonObject     m_basicData;
 
     QJsonObject     genConfig();
 
@@ -234,10 +253,10 @@ private:
     BaseButton      m_delButton;
     QPushButton     m_saveButton;
 
-    QRegularExpression  m_regExpGeneralConfig{"GENERALCONFIG[\\w]*"};
-    QRegularExpression  m_regExpSpecificConfig{"SPECIFICCONFIG[\\w]*"};
-    QRegularExpression  m_regExpSBasicData{"BASICDATA[\\w]*"};
-    QRegularExpression  m_innerRegExp{"_\\w*"};
+    const static QRegularExpression  m_regExpGeneralConfig;
+    const static QRegularExpression  m_regExpSpecificConfig;
+    const static QRegularExpression  m_regExpSBasicData;
+    const static QRegularExpression  m_innerRegExp;
 
     QList<ElementEditorTypes::Rule> m_rules;
 

@@ -18,9 +18,15 @@
 #include "elementeditor.h"
 
 const QLoggingCategory Elementeditor::logC{"Elementeditor"};
+const QRegularExpression Elementeditor::m_regExpGeneralConfig{"GENERALCONFIG[\\w]*"};
+const QRegularExpression Elementeditor::m_regExpSpecificConfig{"SPECIFICCONFIG[\\w]*"};
+const QRegularExpression Elementeditor::m_regExpSBasicData{"BASICDATA[\\w]*"};
+const QRegularExpression Elementeditor::m_innerRegExp{"_\\w*"};
 
-Elementeditor::Elementeditor(quint32 id, QWidget *parent)
+
+Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
     : QDialog(parent)
+    , m_basicData(basicData)
     , m_delButton(QUrl("http://localhost:7000/del.png"), DEL_BTN_SIZE, parent)
 {
     setWindowModality(Qt::WindowModal);
@@ -29,6 +35,8 @@ Elementeditor::Elementeditor(quint32 id, QWidget *parent)
     //setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 
     /* Setup element id */
+
+    int id = basicData.value("Id").toInt();
 
     QFont font("Arial", ID_FONTSIZE, QFont::Bold);
     m_id.setFont(font);
@@ -136,6 +144,7 @@ void Elementeditor::openEditor(const QJsonObject config)
 
     /* Setup line edit */
     m_objectName.setText(parent()->objectName());
+    m_currentConfig = genConfig();
     QDialog::open();
     adjustSize();
     checkRulesAndRegExp();
@@ -211,10 +220,57 @@ ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
     return ElementEditorTypes::NoType;
 }
 
-ElementEditorTypes::Property Elementeditor::hashProperty(const QString &inString)
+ElementEditorTypes::Property Elementeditor::hashEditorProperty(const QString &inString)
 {
     if(inString == "Visibility") return ElementEditorTypes::Visibility;
     return ElementEditorTypes::NoProperty;
+}
+
+ElementProperties::Properties Elementeditor::hashElementProperty(const QString &inString)
+{
+    if(inString == "Author") return ElementProperties::Author;
+
+    return ElementProperties::NoProperty;
+#if 0
+    Author,
+    Filename,
+    GridNo,
+    Iconname,
+    Id,
+    License,
+    ObjectName,
+    Type,
+    Version,
+    PythonicVersion
+        #endif
+}
+
+QString Elementeditor::jsonValToString(QJsonValue val)
+{
+    qCDebug(logC, "called");
+
+    switch (val.type()) {
+    case QJsonValue::Bool: {
+        if(val.toBool()){
+            return QString("True");
+        }else {
+            return QString("False");
+        }
+        break;
+    }
+    case QJsonValue::Double: {
+        return QString::number(val.toInt());
+        break;
+    }
+    case QJsonValue::String: {
+        return val.toString();
+        break;
+    }
+    default: {
+        return QString("Cannot convert QJsonValue type");
+        break;
+    }
+    }
 }
 
 QJsonObject Elementeditor::genConfig()
@@ -315,7 +371,7 @@ void Elementeditor::checkRulesAndRegExp()
             QString property = rule.dependentValues.first();
 
 
-            switch (hashProperty(property)) {
+            switch (hashEditorProperty(property)) {
 
             case ElementEditorTypes::Visibility: {
                 bConditionFulfilled = dependence->isVisible();
@@ -366,14 +422,65 @@ void Elementeditor::checkRulesAndRegExp()
         rule.affectedElement->setVisible(bConditionFulfilled);
     } // rule for-loop
 
+    /****************************************************
+     *                                                  *
+     *                 Regular Expressions              *
+     *                                                  *
+     ****************************************************/
 
-    //QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
+    /* Create a list of Text elements */
+    QList<Text*> specificCfgTxts = m_specificConfig.findChildren<Text*>();
+    const QList<Text*> helpTexts = m_helpText.findChildren<Text*>();
+
+    specificCfgTxts.append(helpTexts);
+
+    /* Iterate through text elements */
+
+    for(Text* text : specificCfgTxts){
+
+        /*
+         * Match Basic Element Data
+         */
+
+        applyRegExp(text->text(), m_basicData, m_regExpSBasicData);
+#if 0
+        QRegularExpressionMatchIterator i = m_regExpSBasicData.globalMatch(text->text());
+        while (i.hasNext()) {
+            QRegularExpressionMatch match = i.next();
+            QString word = match.captured(0);
+            QRegularExpressionMatch innerMatch = m_innerRegExp.match(word);
+            if(innerMatch.hasMatch()){
+                QString sProperty = innerMatch.captured(0);
+                sProperty.remove(0, 1); // Remove the leading underscore
+
+                /* Check if property is present */
+
+                QJsonValue val = m_basicData.value(sProperty);
+
+                if(val.isNull()) continue;
+                //QJsonValue::Type type = val.type();
+                QString s = jsonValToString(val);
+                int start = match.capturedStart();
+                int lenght = match.capturedLength();
+
+                /* Replace the Keywords */
+                text->setText(text->text().replace(match.capturedStart(),match.capturedLength(), s));
+                int x = 3;
+            }
+
+        }
+#endif
+
+
+    }
 }
 
-void Elementeditor::regExpText(const QJsonArray config)
+QString Elementeditor::applyRegExp(QString in, const QJsonObject &json, const QRegularExpression &regExp)
 {
-#if 0
-    QRegularExpressionMatchIterator i = m_regExpSBasicData.globalMatch(rawString);
+    qCDebug(logC, "called");
+
+    QRegularExpressionMatchIterator i = regExp.globalMatch(in);
+
     while (i.hasNext()) {
         QRegularExpressionMatch match = i.next();
         QString word = match.captured(0);
@@ -381,13 +488,24 @@ void Elementeditor::regExpText(const QJsonArray config)
         if(innerMatch.hasMatch()){
             QString sProperty = innerMatch.captured(0);
             sProperty.remove(0, 1); // Remove the leading underscore
+
             /* Check if property is present */
+
+            QJsonValue val = json.value(sProperty);
+
+            if(val.isNull()) continue;
+            //QJsonValue::Type type = val.type();
+            QString s = jsonValToString(val);
+            int start = match.capturedStart();
+            int lenght = match.capturedLength();
+
+            /* Replace the Keywords */
+            QString newString(in.replace(match.capturedStart(),match.capturedLength(), s));
 
             int x = 3;
         }
 
     }
-#endif
 }
 
 

@@ -2,11 +2,11 @@
     {
     	"Type"  : "Text",
         "Name"  : "EditorLink",
-	    "Text"  : "Click <a href=\"https://www.google.de/\">here</a> here to open BASICDATA_ID the GENERALCONFIG_BLU editor"
+	    "Text"  : "Click <a href=\"https://www.google.de/\">here</a> here to open BASICDATA_Id the GENERALCONFIG_ObjectName editor"
     },
     {
         "Type"  : "HelpText",
-        "Name"  : "EditorLink",
-	    "Text"  : "Click <a href=\"https://www.google.de/\">here</a> here to open BASICDATA_ID the GENERALCONFIG_BLU editor"
+        "Name"  : "HelpText1",
+	    "Text"  : "Click <a href=\"https://www.google.de/\">here</a> here to open BASICDATA_Id the GENERALCONFIG_License editor"
     }
 ]

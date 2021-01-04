@@ -64,9 +64,11 @@ ElementMaster::ElementMaster(bool socket,
         setObjectName(objectName);
     }
 
+    /* Create the basic data */
+
     /* Create Elementeditor */
 
-    m_editor = new Elementeditor(m_id, this);
+    m_editor = new Elementeditor(genConfig(), this);
 
 
 
@@ -280,7 +282,7 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
 void ElementMaster::openEditor()
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
-
+    /* m_config contains nothing when the this is called the first time */
     m_editor->openEditor(m_config);
 }
 
