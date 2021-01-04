@@ -170,7 +170,8 @@ public:
             QString objectName = QString() // Only if when loaded from file
             );
 
-    /* Element Configuration */
+    /* Baisc Element Data
+ */
 
     //! Unique 32 bit id of each element, automatic set (CONFIG)
     quint32                 m_id;
@@ -192,13 +193,6 @@ public:
     QString                 m_license;
     //! Number of the grid which holds the element
     int                     m_gridNo;
-
-    //! Debugging is only available in MP mode (CONFIG)
-    bool                    m_bDebug{false};
-    //! Multiprocessing - if no, the element uses multithreading (CONFIG)
-    bool                    m_bMP{false};
-    //! Indicates if element should print the output when done (CONFIG)
-    bool                    m_showOutput{false};
 
 
     /* Internal Configuration */

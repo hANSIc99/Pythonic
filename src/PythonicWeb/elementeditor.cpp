@@ -61,13 +61,14 @@ Elementeditor::Elementeditor(quint32 id, QWidget *parent)
     m_generalCfgLayout.addWidget(&m_saveButton);
 
     m_specificConfig.setLayout(&m_specificCfgLayout);
-
+    m_helpText.setLayout(&m_helpTextLayout);
 
     setLayout(&m_mainLayout);
     //m_mainLayout.setSizeConstraint(QLayout::SetMaximumSize);
     m_mainLayout.addWidget(&m_generalConfig);
     m_mainLayout.addStretch(1);
     m_mainLayout.addWidget(&m_specificConfig);
+    m_mainLayout.addWidget(&m_helpText);
 
     /* Signals and Slots */
 
@@ -137,8 +138,7 @@ void Elementeditor::openEditor(const QJsonObject config)
     m_objectName.setText(parent()->objectName());
     QDialog::open();
     adjustSize();
-    checkRules();
-
+    checkRulesAndRegExp();
 }
 
 void Elementeditor::loadEditorConfig(const QJsonArray config)
@@ -175,6 +175,10 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
             addText(unit);
             break;
         }
+        case ElementEditorTypes::HelpText: {
+            addHelpText(unit);
+            break;
+        }
         default: {
             break;
         }
@@ -183,14 +187,15 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
     }
 
     m_specificCfgLayout.addStretch(1);
+    m_helpTextLayout.addStretch(1);
     m_editorSetup = true;
-    checkRules();
+    checkRulesAndRegExp();
 }
 
 void Elementeditor::accept()
 {
-    genConfig();
-
+    m_currentConfig = genConfig();
+    emit updateConfig(m_currentConfig);
     QDialog::accept();
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -202,6 +207,7 @@ ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
     if(inString == "LineEdit") return ElementEditorTypes::LineEdit;
     if(inString == "CheckBox") return ElementEditorTypes::CheckBox;
     if(inString == "Text")     return ElementEditorTypes::Text;
+    if(inString == "HelpText")     return ElementEditorTypes::HelpText;
     return ElementEditorTypes::NoType;
 }
 
@@ -211,7 +217,7 @@ ElementEditorTypes::Property Elementeditor::hashProperty(const QString &inString
     return ElementEditorTypes::NoProperty;
 }
 
-void Elementeditor::genConfig()
+QJsonObject Elementeditor::genConfig()
 {
     /* This slot is called by accept() */
 
@@ -277,10 +283,11 @@ void Elementeditor::genConfig()
         {"SpecificConfig", specificConfig}
     };
 
-    emit updateConfig(config);
+
+    return config;
 }
 
-void Elementeditor::checkRules()
+void Elementeditor::checkRulesAndRegExp()
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -358,6 +365,29 @@ void Elementeditor::checkRules()
         /* Apply rule to affected element */
         rule.affectedElement->setVisible(bConditionFulfilled);
     } // rule for-loop
+
+
+    //QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
+}
+
+void Elementeditor::regExpText(const QJsonArray config)
+{
+#if 0
+    QRegularExpressionMatchIterator i = m_regExpSBasicData.globalMatch(rawString);
+    while (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        QString word = match.captured(0);
+        QRegularExpressionMatch innerMatch = m_innerRegExp.match(word);
+        if(innerMatch.hasMatch()){
+            QString sProperty = innerMatch.captured(0);
+            sProperty.remove(0, 1); // Remove the leading underscore
+            /* Check if property is present */
+
+            int x = 3;
+        }
+
+    }
+#endif
 }
 
 
@@ -444,7 +474,7 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
     /* Signals & Slots */
 
     connect(&dropdown->m_combobox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &Elementeditor::checkRules);
+            this, &Elementeditor::checkRulesAndRegExp);
 
     /* Adding condition (if given) */
    addRules(dropDownJSON.value("Dependency"), qobject_cast<QWidget*>(dropdown));
@@ -507,20 +537,28 @@ void Elementeditor::addText(QJsonObject &textJSON)
 {
     qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
 
-    QString rawString = textJSON["Text"].toString();
+    //QString rawString = textJSON["Text"].toString();
 
 
-    QRegularExpressionMatch generalMatch =  m_regExpGeneralConfig.match(rawString);
-    bool hasMatch = generalMatch.hasMatch();
-    if (hasMatch) {
-        QString matched = generalMatch.captured(0); // matched == "23 def"
-        int x = 3;
-    }
     Text *text = new Text(textJSON["Text"].toString(), &m_specificConfig);
     text->setTextInteractionFlags(Qt::TextBrowserInteraction);
     text->setOpenExternalLinks(true);
     text->setObjectName(textJSON["Name"].toString());
     m_specificCfgLayout.addWidget(text);
+
+    addRules(textJSON.value("Dependency"), qobject_cast<QWidget*>(text));
+}
+
+void Elementeditor::addHelpText(QJsonObject &textJSON)
+{
+    qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+
+    Text *text = new Text(textJSON["Text"].toString(), &m_specificConfig);
+    text->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    text->setOpenExternalLinks(true);
+    text->setObjectName(textJSON["Name"].toString());
+    m_helpTextLayout.addWidget(text);
 
     addRules(textJSON.value("Dependency"), qobject_cast<QWidget*>(text));
 }

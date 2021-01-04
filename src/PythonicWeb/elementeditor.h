@@ -53,6 +53,7 @@ namespace ElementEditorTypes {
         LineEdit,
         CheckBox,
         Text,
+        HelpText,
         NoType
     };
 
@@ -188,14 +189,17 @@ public slots:
     void openEditor(const QJsonObject config);
     void loadEditorConfig(const QJsonArray config);
     void accept() override;
-    void checkRules();
+    void checkRulesAndRegExp();
+    void regExpText(const QJsonArray config);
 
 private:
 
     static ElementEditorTypes::Type hashType(const QString  &inString);
     static ElementEditorTypes::Property hashProperty(const QString &inString);
 
-    void            genConfig();
+    QJsonObject     m_currentConfig;
+
+    QJsonObject     genConfig();
 
     void            addRules(const QJsonValue rules, QWidget *affectedElement);
 
@@ -207,13 +211,17 @@ private:
 
     void            addText(QJsonObject &textJSON);
 
+    void            addHelpText(QJsonObject &textJSON);
+
     QHBoxLayout     m_mainLayout;
 
     QWidget         m_generalConfig;
     QWidget         m_specificConfig;
+    QWidget         m_helpText;
 
     QVBoxLayout     m_generalCfgLayout;
     QVBoxLayout     m_specificCfgLayout;
+    QVBoxLayout     m_helpTextLayout;
 
     QLabel          m_id;
 
@@ -228,6 +236,8 @@ private:
 
     QRegularExpression  m_regExpGeneralConfig{"GENERALCONFIG[\\w]*"};
     QRegularExpression  m_regExpSpecificConfig{"SPECIFICCONFIG[\\w]*"};
+    QRegularExpression  m_regExpSBasicData{"BASICDATA[\\w]*"};
+    QRegularExpression  m_innerRegExp{"_\\w*"};
 
     QList<ElementEditorTypes::Rule> m_rules;
 
