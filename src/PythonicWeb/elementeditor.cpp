@@ -512,13 +512,17 @@ QString Elementeditor::applyRegExp(const QString in, const QJsonObject &json, co
 {
     qCDebug(logC, "called");
 
+    /* Copy the string */
     QString newString(in);
-    QRegularExpressionMatchIterator i = regExp.globalMatch(in);
 
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        QString word = match.captured(0);
-        QRegularExpressionMatch innerMatch = m_innerRegExp.match(word);
+    QRegularExpressionMatch match(regExp.match(newString));
+
+
+    while (match.hasMatch()) {
+
+        QString keyword = match.captured(0);
+        QRegularExpressionMatch innerMatch = m_innerRegExp.match(keyword);
+
         if(innerMatch.hasMatch()){
             QString key = innerMatch.captured(0);
             key.remove(0, 1); // Remove the leading underscore
@@ -534,10 +538,47 @@ QString Elementeditor::applyRegExp(const QString in, const QJsonObject &json, co
 
             newString.replace(match.capturedStart(),match.capturedLength(), s);
 
+        } else {
+            newString.replace(match.capturedStart(),match.capturedLength(), "Keyword cannot be converted");
+        }
+
+
+        /* The text has now changes and the offset position don't match anymore */
+        /* Check for subsequent matches */
+
+        QRegularExpressionMatch newMatch(regExp.match(newString));
+        match.swap(newMatch);
+    }
+
+
+#if 0
+    while (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        QString word = match.captured(0);
+        QRegularExpressionMatch innerMatch = m_innerRegExp.match(word);
+
+        if(innerMatch.hasMatch()){
+            QString key = innerMatch.captured(0);
+            key.remove(0, 1); // Remove the leading underscore
+
+            /* Check if property is present */
+
+            //QJsonValue val = json.value(key);
+
+            //if(val.isNull()) continue;
+            //QString s = jsonValToString(key);
+            QString s = jsonValToStringBasicData(key, json);
+            /* Replace the Keywords */
+
+            newString.replace(match.capturedStart(),match.capturedLength(), s);
+            /* The text has now changes and the offset position dn't match anymore */
+            /* Check for new matches */
+            QRegularExpressionMatchIterator i = regExp.globalMatch(newString);
             int x = 3;
         }
 
     }
+#endif
     return newString;
 }
 
