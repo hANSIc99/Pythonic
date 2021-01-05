@@ -50,12 +50,13 @@
 FROM fedora:33
 ENV TERM=dumb
 
-
+RUN dnf -y install pip 
 ###################################
 #                                 #
 #           Supervisor            #
 #                                 #
 ###################################
+
 
 RUN /usr/bin/python3 -m pip install supervisor==4.2.1
 
