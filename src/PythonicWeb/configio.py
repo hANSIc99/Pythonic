@@ -9,8 +9,9 @@ class ConfigWriter(QThread):
     config = None
     configSaved = Signal(object)
 
-    def __init__(self,):
+    def __init__(self, www_config):
         super().__init__()
+        self.www_config = www_config
 
     def saveConfig(self, config):
 
@@ -20,7 +21,7 @@ class ConfigWriter(QThread):
     def run(self):
 
         logging.debug('ConfigWriter::saveConfig() called')
-        with open('PythonicWeb/config/current_config.json', 'w') as file:
+        with open(os.path.join(self.www_config + 'current_config.json'), 'w') as file:
             json.dump(self.config, file, indent=4)
         
         last_saved = "Config last saved: " + datetime.now().strftime('%H:%M:%S')
@@ -36,11 +37,12 @@ class EditorLoaderThread(QThread):
 
     editorLoaded        = Signal(object)
 
-    def __init__(self, address, typeName):
+    def __init__(self, address, typeName, www_config):
         super().__init__()
 
         self.address    = address
         self.typeName   = typeName + '.editor'
+        self.www_config = www_config
         #self.setAttribute(Qt.WA_DeleteOnClose)
 
 
@@ -51,7 +53,7 @@ class EditorLoaderThread(QThread):
         config = None
         bFound = False
 
-        for dirpath, dirnames, filenames in os.walk('PythonicWeb/config/Toolbox/'):
+        for dirpath, dirnames, filenames in os.walk(os.path.join(self.www_config + 'Toolbox/')):
             if self.typeName in filenames:
 
                 try:
@@ -91,15 +93,15 @@ class EditorLoader(QObject):
 
     threadList = []
 
-    def __init__(self,):
+    def __init__(self, www_config):
         super().__init__()
-
+        self.www_config = www_config
 
     def startLoad(self, address, typeName):
 
         logging.debug('EditorLoader::startLoad() - called')
 
-        newThread   = EditorLoaderThread(address, typeName)
+        newThread   = EditorLoaderThread(address, typeName, self.www_config)
         newThread.editorLoaded.connect(self.fwrdCmd)
         newThread.finished.connect(self.cleanupThreadList)
 
@@ -134,16 +136,16 @@ class ToolboxLoader(QThread):
 
     tooldataLoaded      = Signal(object)
 
-    def __init__(self):
+    def __init__(self, www_config):
         super().__init__()
-
+        self.www_config = www_config
 
     def run(self):
 
         #toolDirs = glob('PythonicWeb/config/Toolbox/*/')
         #toolDirs = glob(os.path.join('PythonicWeb/config/Toolbox/',"*", ""))
         logging.debug('ToolboxLoader::run() called')
-        toolDirs = [ f for f in os.scandir('PythonicWeb/config/Toolbox/') if f.is_dir() ]
+        toolDirs = [ f for f in os.scandir(os.path.join(self.www_config + 'Toolbox/')) if f.is_dir() ]
         elements = [(d, f) for d in toolDirs for f in os.listdir(d.path) if f.endswith('.json')]
         elementsJSON = []
         
@@ -173,16 +175,16 @@ class ConfigLoader(QThread):
 
     tooldataLoaded      = Signal(object)
 
-    def __init__(self):
+    def __init__(self, www_config):
         super().__init__()
-    
+        self.www_config = www_config
     
     def run(self):
 
 
         config = None
         try:
-            with open('PythonicWeb/config/current_config.json', 'r') as file:
+            with open(os.path.join(self.www_config + 'current_config.json'), 'r') as file:
                 config = json.load(file)
 
             address = { 'target' : 'MainWindow'}

@@ -1,0 +1,74 @@
+#This configuration item index document lists the configuration items for the following baseline:
+#
+#ProjectName:       Pythonic
+#Description:       Pythonic (GUI) + PythonicDaemon (Backend)
+#
+#                   General purpose graphic programming tool.
+#                   Graphical Python programming from within the browser,
+#                   Python based backend running as container. 
+#                   Full multi-processing and multi-threading capable.
+#
+#
+#CreationDate:      24.12.2020
+#Creator:           Stephan Avenwedde
+#
+#
+#
+#Type  CIName                           Version         License                 
+#      Pythonic
+#          INCLUDED PACKAGES
+#           IMG     Fedora              33              GPL                           
+#           BIN     Supervisor          3.2.0           Custom license          
+#
+#
+#Type    CIName                      Name               Version                   Commentary            
+#
+#TC      Container Image creation    Docker             17.06.1 CE                                    
+#TC      1. Test System (Windows)    Docker             18.03.1-ce-win65 (17513)                        
+#TC      2. Test System (Linux)      Docker             1.13.1                      
+#
+#
+###################################################################################
+#    Type:                                                                        #
+#       DOC     Document                                                          #
+#       SC      Source Code                                                       #
+#       BIN     Binary Code                                                       #
+#       LIB     Library                                                           #
+#       TC      Tool Chain (development/test)                                     #
+###################################################################################
+#
+#
+#
+#
+#
+#
+###################################################################################
+#                                                                                 #
+#                            BEGIN OF THE  DOCKERFILE                             #
+#                                                                                 #
+###################################################################################
+
+FROM fedora:33
+ENV TERM=dumb
+
+
+COPY 
+
+COPY code-server-3.8.0-amd64.rpm /
+COPY ms-python-release.vsix /
+COPY ms-python.vscode-pylance-2020.12.2.vsix /
+COPY config.yaml /root/.config/code-server/
+	
+
+RUN rpm -i /code-server-3.8.0-amd64.rpm
+RUN code-server --install-extension /ms-python-release.vsix
+RUN code-server --install-extension /ms-python.vscode-pylance-2020.12.2.vsix 
+# TODO: Pylance installieren
+# TODO https://github.com/cdr/code-server/issues/2341
+# Hier 2020.10 installieren
+# code-server --install-extension ms-toolsai.jupyter-2020.12.414227025.vsix || true \
+#VOLUME /var/log /home/weidmueller
+ENTRYPOINT ["/usr/bin/code-server"]
+#ENTRYPOINT ["/usr/bin/supervisord"]
+WORKDIR /
+

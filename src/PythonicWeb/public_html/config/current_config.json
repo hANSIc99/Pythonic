@@ -1,0 +1,241 @@
+[
+    {
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [
+            1273088439
+        ],
+        "Config": {
+            "GeneralConfig": {
+                "Debug": true,
+                "Logging": true,
+                "MP": true,
+                "ObjectName": "Scheduler - 0x6b20e2df"
+            },
+            "SpecificConfig": [
+                {
+                    "Data": "Interval between times",
+                    "Index": 2,
+                    "Name": "Mode",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "Seconds",
+                    "Index": 0,
+                    "Name": "Timebase",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "2",
+                    "Name": "Intervalinput",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "10:00",
+                    "Name": "StartTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "EndTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "SpecificTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": false,
+                    "Name": "Monday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Tuesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Wednesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Thursday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": true,
+                    "Name": "Friday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Saturday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Sunday",
+                    "Type": "CheckBox"
+                }
+            ]
+        },
+        "Filename": "scheduler",
+        "Iconname": "Scheduler",
+        "Id": 1797317343,
+        "License": "GPLv3",
+        "ObjectName": "Scheduler - 0x6b20e2df",
+        "Parents": [],
+        "Plug": true,
+        "Position": {
+            "x": 73,
+            "y": 84
+        },
+        "PythonicVersion": {
+            "Major": 0,
+            "Minor": 1
+        },
+        "Socket": false,
+        "Type": "Scheduler",
+        "Version": {
+            "Major": 0,
+            "Minor": 1
+        }
+    },
+    {
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [],
+        "Config": {
+            "GeneralConfig": {
+                "Debug": false,
+                "Logging": false,
+                "MP": true,
+                "ObjectName": "GenericPython - 0x64e849eb"
+            },
+            "SpecificConfig": []
+        },
+        "Filename": "generic_python",
+        "Iconname": "BaseElement",
+        "Id": 1692944875,
+        "License": "GPLv3",
+        "ObjectName": "GenericPython - 0x64e849eb",
+        "Parents": [],
+        "Plug": true,
+        "Position": {
+            "x": 108,
+            "y": 254
+        },
+        "PythonicVersion": {
+            "Major": 7,
+            "Minor": 8
+        },
+        "Socket": true,
+        "Type": "GenericPython",
+        "Version": {
+            "Major": 5,
+            "Minor": 6
+        }
+    },
+    {
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [],
+        "Config": {
+            "GeneralConfig": {
+                "Debug": false,
+                "Logging": false,
+                "MP": true,
+                "ObjectName": "GenericPython - 0x4be1c9b7"
+            },
+            "SpecificConfig": []
+        },
+        "Filename": "generic_python",
+        "Iconname": "BaseElement",
+        "Id": 1273088439,
+        "License": "GPLv3",
+        "ObjectName": "GenericPython - 0x4be1c9b7",
+        "Parents": [
+            1797317343
+        ],
+        "Plug": true,
+        "Position": {
+            "x": 550,
+            "y": 98
+        },
+        "PythonicVersion": {
+            "Major": 7,
+            "Minor": 8
+        },
+        "Socket": true,
+        "Type": "GenericPython",
+        "Version": {
+            "Major": 5,
+            "Minor": 6
+        }
+    },
+    {
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [],
+        "Config": {},
+        "Filename": "generic_python",
+        "Iconname": "BaseElement",
+        "Id": 1641963505,
+        "License": "GPLv3",
+        "ObjectName": "GenericPython - 0x61de5ff1",
+        "Parents": [],
+        "Plug": true,
+        "Position": {
+            "x": 518,
+            "y": 239
+        },
+        "PythonicVersion": {
+            "Major": 7,
+            "Minor": 8
+        },
+        "Socket": true,
+        "Type": "GenericPython",
+        "Version": {
+            "Major": 5,
+            "Minor": 6
+        }
+    },
+    {
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [],
+        "Config": {
+            "GeneralConfig": {
+                "Debug": false,
+                "Logging": false,
+                "MP": true,
+                "ObjectName": "GenericPython - 0x51183498"
+            },
+            "SpecificConfig": []
+        },
+        "Filename": "generic_python",
+        "Iconname": "BaseElement",
+        "Id": 1360540824,
+        "License": "GPLv3",
+        "ObjectName": "GenericPython - 0x51183498",
+        "Parents": [],
+        "Plug": true,
+        "Position": {
+            "x": 381,
+            "y": 468
+        },
+        "PythonicVersion": {
+            "Major": 7,
+            "Minor": 8
+        },
+        "Socket": true,
+        "Type": "GenericPython",
+        "Version": {
+            "Major": 5,
+            "Minor": 6
+        }
+    }
+]

@@ -16,6 +16,17 @@ from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
 
 
+##############################################
+#                                            #
+#                GLOBAL PATHS                #
+#                                            #
+##############################################
+
+www_root    = 'public_html/'
+www_static  = 'public_html/static/'
+www_config  = 'public_html/config/'
+
+
 class LogLvl(Enum):
     DEBUG       = 0
     INFO        = 1
@@ -38,9 +49,9 @@ def rcv(ws):
         except Exception as e:
             logging.info('PythonicWeb - RCV Socket connection lost: {}'.format(e))
             ws.environ['mainWorker'].frontendCtrl.disconnect(send)
-            bConnected = False
-    
+ 
     ws.environ['mainWorker'].frontendCtrl.connect(send)
+    
     bConnected = True
     while bConnected:
         greenthread.sleep(0.3)
@@ -132,8 +143,7 @@ def dispatch(environ, start_response):
         WEBSOCKETS
     """
 
-    root_url        = 'PythonicWeb/'
-    root_static      = 'PythonicWeb/static/'
+
 
 
     png_req4 = environ['PATH_INFO'][-4:] # last 4 characters '.png'
@@ -158,13 +168,13 @@ def dispatch(environ, start_response):
                                     ('Cross-Origin-Opener-Policy', 'same-origin'),
                                     ('Cross-Origin-Embedder-Policy', 'require-corp')])
         return [open(os.path.join(os.path.dirname(__file__),
-            root_url + 'templates/PythonicWeb.html')).read()]
+            www_root + 'templates/PythonicWeb.html')).read()]
 
 
     elif environ['PATH_INFO'] == '/qtlogo.svg':
         #logging.debug('PATH_INFO == \'/qtlogo.svg\'')
 
-        open_path = os.path.join(os.path.dirname(__file__),root_url + 'static/qtlogo.svg')
+        open_path = os.path.join(os.path.dirname(__file__), www_static + 'qtlogo.svg')
 
         with open(open_path,'rb') as f:
             img_data = f.read()
@@ -178,7 +188,7 @@ def dispatch(environ, start_response):
     elif png_req4 == '.png':
         #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
         
-        open_path = os.path.join(os.path.dirname(__file__), root_static + environ['PATH_INFO'])
+        open_path = os.path.join(os.path.dirname(__file__), www_static + environ['PATH_INFO'])
 
         with open(open_path,'rb') as f:
             img_data = f.read()
@@ -192,7 +202,7 @@ def dispatch(environ, start_response):
 
     elif png_req3 == '.js':
         #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
-        open_path = os.path.join(os.path.dirname(__file__), root_static + environ['PATH_INFO'])
+        open_path = os.path.join(os.path.dirname(__file__), www_static + environ['PATH_INFO'])
         with open(open_path,'rb') as f:
             img_data = f.read()
 
@@ -204,7 +214,7 @@ def dispatch(environ, start_response):
     elif environ['PATH_INFO'] == '/PythonicWeb.wasm':
         #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
 
-        open_path = os.path.join(os.path.dirname(__file__), root_url + 'static/PythonicWeb.wasm')
+        open_path = os.path.join(os.path.dirname(__file__), www_root + 'static/PythonicWeb.wasm')
 
         with open(open_path,'rb') as f:
             bin_data = f.read()
@@ -275,21 +285,21 @@ class MainWorker(QObject):
 
         
         # Instantiate ToolboxLoader
-        self.toolbox_loader = ToolboxLoader()
+        self.toolbox_loader = ToolboxLoader(www_config)
         self.toolbox_loader.tooldataLoaded.connect(self.forwardCmd)
         
         # Instantiate (Element)-EditorLoader
 
-        self.editor_loader = EditorLoader()
+        self.editor_loader = EditorLoader(www_config)
         self.editor_loader.editorLoaded.connect(self.forwardCmd)
         
         # Instantiate ConfigWriter
-        self.config_writer = ConfigWriter()
+        self.config_writer = ConfigWriter(www_config)
         self.config_writer.configSaved.connect(self.forwardCmd)
         self.saveConfig.connect(self.config_writer.saveConfig)
 
         # Instantiate ConfigLoader
-        self.config_loader = ConfigLoader()
+        self.config_loader = ConfigLoader(www_config)
         self.config_loader.tooldataLoaded.connect(self.forwardCmd)
 
         # Write launch.json

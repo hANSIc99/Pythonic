@@ -1,0 +1,12 @@
+[
+    {
+    	"Type"  : "Text",
+        "Name"  : "EditorLink",
+	    "Text"  : "Click <a href=\"http://BASICDATA_Id.py\">http://BASICDATA_Id.py</a><br> to to edit the file."
+    },
+    {
+        "Type"  : "HelpText",
+        "Name"  : "HelpText1",
+	    "Text"  : "The file is only created after <br> the element has been triggered once."
+    }
+]

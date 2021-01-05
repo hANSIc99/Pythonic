@@ -306,32 +306,6 @@ QString Elementeditor::jsonValToStringBasicData(const QString key, const QJsonOb
     }
 }
 
-QString Elementeditor::jsonValToStringConfigData(const QJsonValue &val)
-{
-    switch (val.type()) {
-    case QJsonValue::Bool: {
-        if(val.toBool()){
-            return QString("True");
-        }else {
-            return QString("False");
-        }
-        break;
-    }
-    case QJsonValue::Double: {
-        return QString::number(val.toInt());
-        break;
-    }
-    case QJsonValue::String: {
-        return val.toString();
-        break;
-    }
-    default: {
-        return QString("Cannot convert QJsonValue type");
-        break;
-    }
-    }
-}
-
 QJsonObject Elementeditor::genConfig()
 {
     /* This slot is called by accept() */
@@ -501,14 +475,20 @@ void Elementeditor::checkRulesAndRegExp()
          * Match Basic Element Data
          */
 
-        text->setText(applyRegExp(text->m_originalText, m_basicData, m_regExpSBasicData));
-        int x =3 ;
+        text->setText(applyRegExp(text->m_originalText,
+                                  m_basicData,
+                                  m_regExpSBasicData,
+                                  jsonValToStringBasicData));
 
+        /* Could be extended in future to match config data as well */
 
     }
 }
 
-QString Elementeditor::applyRegExp(const QString in, const QJsonObject &json, const QRegularExpression &regExp)
+QString Elementeditor::applyRegExp(const QString in,
+                                   const QJsonObject &json,
+                                   const QRegularExpression &regExp,
+                                   QString (*retrieve)(const QString key, const QJsonObject &json))
 {
     qCDebug(logC, "called");
 
@@ -527,13 +507,8 @@ QString Elementeditor::applyRegExp(const QString in, const QJsonObject &json, co
             QString key = innerMatch.captured(0);
             key.remove(0, 1); // Remove the leading underscore
 
-            /* Check if property is present */
+            QString s = retrieve(key, json);
 
-            //QJsonValue val = json.value(key);
-
-            //if(val.isNull()) continue;
-            //QString s = jsonValToString(key);
-            QString s = jsonValToStringBasicData(key, json);
             /* Replace the Keywords */
 
             newString.replace(match.capturedStart(),match.capturedLength(), s);
@@ -550,35 +525,6 @@ QString Elementeditor::applyRegExp(const QString in, const QJsonObject &json, co
         match.swap(newMatch);
     }
 
-
-#if 0
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        QString word = match.captured(0);
-        QRegularExpressionMatch innerMatch = m_innerRegExp.match(word);
-
-        if(innerMatch.hasMatch()){
-            QString key = innerMatch.captured(0);
-            key.remove(0, 1); // Remove the leading underscore
-
-            /* Check if property is present */
-
-            //QJsonValue val = json.value(key);
-
-            //if(val.isNull()) continue;
-            //QString s = jsonValToString(key);
-            QString s = jsonValToStringBasicData(key, json);
-            /* Replace the Keywords */
-
-            newString.replace(match.capturedStart(),match.capturedLength(), s);
-            /* The text has now changes and the offset position dn't match anymore */
-            /* Check for new matches */
-            QRegularExpressionMatchIterator i = regExp.globalMatch(newString);
-            int x = 3;
-        }
-
-    }
-#endif
     return newString;
 }
 

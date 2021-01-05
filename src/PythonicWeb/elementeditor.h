@@ -217,8 +217,11 @@ private:
     static ElementEditorTypes::Property hashEditorProperty(const QString &inString);
     static ElementProperties::Properties hashElementProperty(const QString &inString);
     static QString jsonValToStringBasicData(const QString key, const QJsonObject &json);
-    static QString jsonValToStringConfigData(const QJsonValue &val);
-    static QString applyRegExp(const QString in, const QJsonObject &json, const QRegularExpression &regExp);
+    static QString applyRegExp(const QString in,
+                               const QJsonObject &json,
+                               const QRegularExpression &regExp,
+                               QString (*retrieve)(const QString key, const QJsonObject &json));
+
     QJsonObject     m_currentConfig;
     QJsonObject     m_basicData;
 

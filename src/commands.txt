@@ -1,0 +1,16 @@
+
+# Image bauen
+podman build -t Pythonic:0.1 .
+
+# Image entfernen
+
+podman image rm 
+
+# Images auflisten
+podman images
+
+# Container starten - hostPort:guestPort
+podman run -d --name Pythonic -p 7001:7000
+
+
+docker ps
