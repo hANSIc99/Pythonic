@@ -23,9 +23,8 @@
 #
 #Type    CIName                      Name               Version                   Commentary            
 #
-#TC      Container Image creation    Docker             17.06.1 CE                                    
-#TC      1. Test System (Windows)    Docker             18.03.1-ce-win65 (17513)                        
-#TC      2. Test System (Linux)      Docker             1.13.1                      
+#TC      Container Image creation    Podman             2.2.1                              
+#TC      1. Test System (Linux)      Podman             2.2.1                                   
 #
 #
 ###################################################################################
@@ -52,18 +51,30 @@ FROM fedora:33
 ENV TERM=dumb
 
 
-COPY 
+###################################
+#                                 #
+#           Supervisor            #
+#                                 #
+###################################
 
-COPY code-server-3.8.0-amd64.rpm /
-COPY ms-python-release.vsix /
-COPY ms-python.vscode-pylance-2020.12.2.vsix /
-COPY config.yaml /root/.config/code-server/
+RUN /usr/bin/python3 -m pip install supervisor==4.2.1
+
 	
+###################################
+#                                 #
+#           Code-Server           #
+#                                 #
+###################################
+
+COPY code-server/code-server-3.8.0-amd64.rpm /
+COPY code-server/ms-python-release.vsix /
+COPY code-server/ms-python.vscode-pylance-2020.12.2.vsix /
+COPY code-server/config.yaml /root/.config/code-server/
 
 RUN rpm -i /code-server-3.8.0-amd64.rpm
 RUN code-server --install-extension /ms-python-release.vsix
 RUN code-server --install-extension /ms-python.vscode-pylance-2020.12.2.vsix 
-# TODO: Pylance installieren
+
 # TODO https://github.com/cdr/code-server/issues/2341
 # Hier 2020.10 installieren
 # code-server --install-extension ms-toolsai.jupyter-2020.12.414227025.vsix || true \
