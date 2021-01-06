@@ -214,7 +214,7 @@ def dispatch(environ, start_response):
     elif environ['PATH_INFO'] == '/PythonicWeb.wasm':
         #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
 
-        open_path = os.path.join(os.path.dirname(__file__), www_root + 'static/PythonicWeb.wasm')
+        open_path = os.path.join(os.path.dirname(__file__), www_static + 'PythonicWeb.wasm')
 
         with open(open_path,'rb') as f:
             bin_data = f.read()
@@ -265,7 +265,7 @@ class MainWorker(QObject):
         mp.set_start_method('spawn')
 
         # Setup date- and time-format
-        locale.setlocale(locale.LC_TIME, "en_GB")
+        locale.setlocale(locale.LC_TIME, "C.utf8")
 
         # Instantiate WSGI Server
         self.wsgi_server = WSGI_Server(self)

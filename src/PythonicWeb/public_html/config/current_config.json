@@ -9,13 +9,13 @@
             "GeneralConfig": {
                 "Debug": true,
                 "Logging": true,
-                "MP": true,
+                "MP": false,
                 "ObjectName": "Scheduler - 0x6b20e2df"
             },
             "SpecificConfig": [
                 {
-                    "Data": "Interval between times",
-                    "Index": 2,
+                    "Data": "Interval",
+                    "Index": 1,
                     "Name": "Mode",
                     "Type": "ComboBox"
                 },

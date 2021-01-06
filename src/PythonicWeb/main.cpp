@@ -87,14 +87,14 @@ int main(int argc, char *argv[])
 
                                                     /* Master Classes */
 
-                                                    "BaseLabel.debug=false\n"
-                                                    "BaseLabel.info=false\n"
+                                                    "BaseLabel.debug=true\n"
+                                                    "BaseLabel.info=true\n"
 
                                                     "BasePixMap.debug=false\n"
                                                     "BasePixMap.info=false\n"
 
-                                                    "BaseButton.debug=false\n"
-                                                    "BaseButton.info=false\n"
+                                                    "BaseButton.debug=true\n"
+                                                    "BaseButton.info=true\n"
 
                                                     "ElementIconBar.debug=false\n"
                                                     "ElementIconBar.info=false\n"
