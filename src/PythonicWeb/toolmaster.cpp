@@ -82,21 +82,13 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
         qCDebug(logC, "mouse cursor inside working area");
 
 
-        QJsonObject elementVersionjson  = m_toolData["Version"].toObject();
-        QJsonObject pythonicVersionjson = m_toolData["PythonicVersion"].toObject();
-        Version elementVersion{elementVersionjson["Major"].toInt(), elementVersionjson["Minor"].toInt()};
-        Version pythonicVersion{pythonicVersionjson["Major"].toInt(), pythonicVersionjson["Minor"].toInt()};
+        //QJsonObject elementVersionjson  = m_toolData["Version"].toObject();
+        //QJsonObject pythonicVersionjson = m_toolData["PythonicVersion"].toObject();
+        //Version elementVersion{elementVersionjson["Major"].toInt(), elementVersionjson["Minor"].toInt()};
+        //Version pythonicVersion{pythonicVersionjson["Major"].toInt(), pythonicVersionjson["Minor"].toInt()};
 
         ElementMaster *element = new ElementMaster(
-                        m_toolData["Socket"].toBool(),
-                        m_toolData["Plug"].toBool(),
-                        m_toolData["Iconname"].toString(),
-                        m_toolData["Typename"].toString(),
-                        m_toolData["Filename"].toString(),
-                        elementVersion,
-                        pythonicVersion,
-                        m_toolData["Author"].toString(),
-                        m_toolData["License"].toString(),
+                        m_toolData,
                         m_workingAreaWidget->m_AreaNo,
                         m_workingAreaWidget);
 

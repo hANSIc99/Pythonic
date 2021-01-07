@@ -30,10 +30,9 @@
 #include <QFont>
 #include <QComboBox>
 #include <QVariant>
-#include <QRegularExpression>
-#include <QRegExpValidator>
 #include <QList>
 #include "baselabel.h"
+#include "helper.h"
 
 #define ID_FONTSIZE 12
 
@@ -63,22 +62,6 @@ namespace ElementEditorTypes {
     };
 
 
-}
-
-namespace ElementProperties {
-    enum Properties {
-        Author,
-        Filename,
-        AreaNo,
-        Iconname,
-        Id,
-        License,
-        ObjectName,
-        Type,
-        Version,
-        PythonicVersion,
-        NoProperty
-    };
 }
 
 
@@ -216,11 +199,7 @@ private:
     static ElementEditorTypes::Type hashType(const QString  &inString);
     static ElementEditorTypes::Property hashEditorProperty(const QString &inString);
     static ElementProperties::Properties hashElementProperty(const QString &inString);
-    static QString jsonValToStringBasicData(const QString key, const QJsonObject &json);
-    static QString applyRegExp(const QString in,
-                               const QJsonObject &json,
-                               const QRegularExpression &regExp,
-                               QString (*retrieve)(const QString key, const QJsonObject &json));
+
 
     QJsonObject     m_currentConfig;
     QJsonObject     m_basicData;
@@ -260,10 +239,6 @@ private:
     BaseButton      m_delButton;
     QPushButton     m_saveButton;
 
-    const static QRegularExpression  m_regExpGeneralConfig;
-    const static QRegularExpression  m_regExpSpecificConfig;
-    const static QRegularExpression  m_regExpSBasicData;
-    const static QRegularExpression  m_innerRegExp;
 
     QList<ElementEditorTypes::Rule> m_rules;
 

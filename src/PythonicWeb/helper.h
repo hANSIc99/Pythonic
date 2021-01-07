@@ -21,6 +21,10 @@
 #include <QString>
 #include <QWidget>
 #include <QPoint>
+#include <QLoggingCategory>
+#include <QRegularExpression>
+#include <QRegExpValidator>
+#include <QJsonObject>
 
 //https://stackoverflow.com/questions/34281682/how-to-convert-enum-to-qstring
 
@@ -43,30 +47,59 @@ namespace Pythonic {
     };
 }
 
-
-
-
-
-
-
+namespace ElementProperties {
+    enum Properties {
+        Author,
+        Filename,
+        AreaNo,
+        Iconname,
+        Id,
+        License,
+        ObjectName,
+        Type,
+        Version,
+        PythonicVersion,
+        NoProperty
+    };
+}
 
 class helper {
 
 public:
     static bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
-    static Pythonic::Command hashCmd(QString const &inString){
-        if(inString == "Heartbeat") return Pythonic::Heartbeat;
-        if(inString == "CurrentConfig") return Pythonic::CurrentConfig;
-        if(inString == "Toolbox") return Pythonic::Toolbox;
-        if(inString == "ElementEditorConfig") return Pythonic::ElementEditorConfig;
-        if(inString == "SetInfoText") return Pythonic::SetInfoText;
-        if(inString == "Test") return Pythonic::Test;
-        return Pythonic::NoCmd;
-    };
+    static Pythonic::Command hashCmd(QString const &inString);
 
+
+    static QString applyRegExp(const QString in,
+                                       const QJsonObject &json,
+                                       const QRegularExpression &regExp,
+                                       QString (*retrieve)(const QString key, const QJsonObject &json));
+
+    static ElementProperties::Properties hashElementProperty(const QString &inString)
+    {
+        if(inString == "Author")            return ElementProperties::Author;
+        if(inString == "Filename")          return ElementProperties::Filename;
+        if(inString == "AreaNo")            return ElementProperties::AreaNo;
+        if(inString == "Iconname")          return ElementProperties::Iconname;
+        if(inString == "Id")                return ElementProperties::Id;
+        if(inString == "License")           return ElementProperties::License;
+        if(inString == "ObjectName")        return ElementProperties::ObjectName;
+        if(inString == "Type")              return ElementProperties::Type;
+        if(inString == "Version")           return ElementProperties::Version;
+        if(inString == "PythonicVersion")   return ElementProperties::PythonicVersion;
+        return ElementProperties::NoProperty;
+    }
+
+    static QString jsonValToStringBasicData(const QString key, const QJsonObject &json);
+
+
+    const static QLoggingCategory    logC;
+    const static QRegularExpression  m_regExpGeneralConfig;
+    const static QRegularExpression  m_regExpSpecificConfig;
+    const static QRegularExpression  m_regExpSBasicData;
+    const static QRegularExpression  m_innerRegExp;
 };
-
 
 
 

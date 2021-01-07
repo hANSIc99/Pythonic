@@ -3,7 +3,7 @@
     "Plug"             : true,
     "Typename"         : "GenericPython",
     "Iconname"         : "BaseElement",
-    "Filename"         : "generic_python",
+    "Filename"         : "generic_python_BASICDATA_Id",
     "Version"          : {
                              "Major" : 5,
                              "Minor" : 6
@@ -13,6 +13,8 @@
                              "Minor" : 8
                          },
     "Author"          : "Stephan Avenwedde",
-    "License"         : "GPLv3"
+    "License"         : "GPLv3",
+    "ConstructorCMD"  : "cp executeables/generic_python.py executeables/generic_python_BASICDATA_Id.py",
+    "DestructorCMD"   : "executeables/generic_python_BASICDATA_Id.py"
 }
 

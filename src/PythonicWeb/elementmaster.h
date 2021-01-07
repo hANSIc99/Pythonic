@@ -131,11 +131,12 @@ private:
     QLoggingCategory    logC{"ElementPlug"};
 };
 
+/*
 struct Version {
     int     major;
     int     minor;
 };
-
+*/
 
 namespace ElementMasterCmd {
 
@@ -155,42 +156,34 @@ class ElementMaster : public QWidget
 public:
 
     explicit ElementMaster(
-            bool socket,
-            bool plug,
-            QString iconName,
-            QString typeName,
-            QString fileName,
-            Version version,
-            Version pythonicVersion,
-            QString author,
-            QString license,
+            QJsonObject configuration,
             int gridNo,
-            QWidget *parent,
-            int id = 0, // Only if when loaded from file
-            QString objectName = QString() // Only if when loaded from file
+            QWidget *parent
             );
 
     /* Baisc Element Data
  */
 
+    const QJsonObject             m_config;
     //! Unique 32 bit id of each element, automatic set (CONFIG)
     quint32                 m_id;
     //! Indicates if elements accept parent connections
     bool                    m_hasSocket;
+
     //! Indicates if the element can be connected to childs
-    bool                    m_hasPlug;
+    //bool                    m_hasPlug;
     //! Typename is the class (CONFIG)
-    QString                 m_typeName;
+    //QString                 m_typeName;
     //! Filename for the related Python file (CONFIG)
-    QString                 m_fileName;
+    //QString                 m_fileName;
     //! Version of the element: Major:Minor (CONFIG)
-    Version                 m_version;
+    //Version                 m_version;
     //! Related version of Pythonic: Major:Minor (CONFIG)
-    Version                 m_pythonicVersion;
+    //Version                 m_pythonicVersion;
     //! Author of the element (CONFIG)
-    QString                 m_author;
+    //QString                 m_author;
     //! License of the element (CONFIG)
-    QString                 m_license;
+    //QString                 m_license;
     //! Number of the grid which holds the element
     int                     m_areaNo;
 
@@ -235,7 +228,7 @@ private slots:
 
     void deleteSelf();
     //! Slot is called after closing the elementeditor by click on Save
-    void updateConfig(const QJsonObject config);
+    void updateConfig(const QJsonObject customConfig);
     void fwrdWsCtrl(const QJsonObject cmd);
 
 private:
@@ -261,7 +254,7 @@ public:
     //! Symbol of element
     BaseLabel               m_symbol;
     //! Backend-configuration of the element
-    QJsonObject             m_config;
+    QJsonObject             m_customConfig;
     //! Connector icon
     ElementSocket           m_socket;
     //! Plug icon

@@ -18,10 +18,7 @@
 #include "elementeditor.h"
 
 const QLoggingCategory Elementeditor::logC{"Elementeditor"};
-const QRegularExpression Elementeditor::m_regExpGeneralConfig{"GENERALCONFIG[\\w]*"};
-const QRegularExpression Elementeditor::m_regExpSpecificConfig{"SPECIFICCONFIG[\\w]*"};
-const QRegularExpression Elementeditor::m_regExpSBasicData{"BASICDATA[\\w]*"};
-const QRegularExpression Elementeditor::m_innerRegExp{"_\\w*"};
+
 
 
 Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
@@ -226,85 +223,6 @@ ElementEditorTypes::Property Elementeditor::hashEditorProperty(const QString &in
     return ElementEditorTypes::NoProperty;
 }
 
-ElementProperties::Properties Elementeditor::hashElementProperty(const QString &inString)
-{
-    if(inString == "Author")            return ElementProperties::Author;
-    if(inString == "Filename")          return ElementProperties::Filename;
-    if(inString == "AreaNo")            return ElementProperties::AreaNo;
-    if(inString == "Iconname")          return ElementProperties::Iconname;
-    if(inString == "Id")                return ElementProperties::Id;
-    if(inString == "License")           return ElementProperties::License;
-    if(inString == "ObjectName")        return ElementProperties::ObjectName;
-    if(inString == "Type")              return ElementProperties::Type;
-    if(inString == "Version")           return ElementProperties::Version;
-    if(inString == "PythonicVersion")   return ElementProperties::PythonicVersion;
-    return ElementProperties::NoProperty;
-}
-
-QString Elementeditor::jsonValToStringBasicData(const QString key, const QJsonObject &json)
-{
-    qCDebug(logC, "called");
-
-    switch (hashElementProperty(key)) {
-
-    case ElementProperties::AreaNo: {
-        return QString::number(json.value(key).toInt());
-    break;
-    }
-
-    case ElementProperties::Author: {
-        return json.value(key).toString();
-        break;
-    }
-
-    case ElementProperties::Filename: {
-        return QString("%1.py").arg(json.value(key).toString());
-        break;
-    }
-
-    case ElementProperties::Iconname: {
-        return QString("%1.png").arg(json.value(key).toString());
-        break;
-    }
-
-    case ElementProperties::Id: {
-        return QString::number(json.value(key).toInt());
-        break;
-    }
-
-    case ElementProperties::License:{
-        return json.value(key).toString();
-        break;
-    }
-
-    case ElementProperties::ObjectName: {
-        return json.value(key).toString();
-        break;
-    }
-
-    case ElementProperties::PythonicVersion: {
-        QJsonObject v = json.value(key).toObject();
-        return QString("%1.%2").arg(v.value("Major").toInt()).arg(v.value("Minor").toInt());
-        break;
-    }
-
-    case ElementProperties::Type: {
-        return json.value(key).toString();
-        break;
-    }
-
-    case ElementProperties::Version: {
-        QJsonObject v = json.value(key).toObject();
-        return QString("%1.%2").arg(v.value("Major").toInt()).arg(v.value("Minor").toInt());
-        break;
-    }
-
-    default: {
-        return QString("BasicValue didn't found");
-        break;
-    }
-    }
-}
 
 QJsonObject Elementeditor::genConfig()
 {
@@ -475,57 +393,14 @@ void Elementeditor::checkRulesAndRegExp()
          * Match Basic Element Data
          */
 
-        text->setText(applyRegExp(text->m_originalText,
-                                  m_basicData,
-                                  m_regExpSBasicData,
-                                  jsonValToStringBasicData));
+        text->setText(helper::applyRegExp(text->m_originalText,
+                      m_basicData,
+                      helper::m_regExpSBasicData,
+                      helper::jsonValToStringBasicData));
 
         /* Could be extended in future to match config data as well */
 
     }
-}
-
-QString Elementeditor::applyRegExp(const QString in,
-                                   const QJsonObject &json,
-                                   const QRegularExpression &regExp,
-                                   QString (*retrieve)(const QString key, const QJsonObject &json))
-{
-    qCDebug(logC, "called");
-
-    /* Copy the string */
-    QString newString(in);
-
-    QRegularExpressionMatch match(regExp.match(newString));
-
-
-    while (match.hasMatch()) {
-
-        QString keyword = match.captured(0);
-        QRegularExpressionMatch innerMatch = m_innerRegExp.match(keyword);
-
-        if(innerMatch.hasMatch()){
-            QString key = innerMatch.captured(0);
-            key.remove(0, 1); // Remove the leading underscore
-
-            QString s = retrieve(key, json);
-
-            /* Replace the Keywords */
-
-            newString.replace(match.capturedStart(),match.capturedLength(), s);
-
-        } else {
-            newString.replace(match.capturedStart(),match.capturedLength(), "Keyword cannot be converted");
-        }
-
-
-        /* The text has now changes and the offset position don't match anymore */
-        /* Check for subsequent matches */
-
-        QRegularExpressionMatch newMatch(regExp.match(newString));
-        match.swap(newMatch);
-    }
-
-    return newString;
 }
 
 

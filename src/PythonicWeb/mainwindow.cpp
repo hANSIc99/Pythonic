@@ -216,8 +216,6 @@ void MainWindow::saveConfig()
 void MainWindow::setInfoText(QString text)
 {
     qCInfo(logC, "called");
-    // BAUSTELLE TIMER STARTEN UND UHRZEIT ANZEIGEN
-    // UHRZEIT IM HEARTBEAT UEBERMITTELN
     m_infoText.setText(text);
 }
 
@@ -388,29 +386,13 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
         int xPos = position["x"].toInt();
         int yPos = position["y"].toInt();
 
-        /* Extracting versions */
-        QJsonObject elementVersionjson  = jsonElement["Version"].toObject();
-        QJsonObject pythonicVersionjson = jsonElement["PythonicVersion"].toObject();
-        Version elementVersion{elementVersionjson["Major"].toInt(), elementVersionjson["Minor"].toInt()};
-        Version pythonicVersion{pythonicVersionjson["Major"].toInt(), pythonicVersionjson["Minor"].toInt()};
-
 
         ElementMaster *newElement = new ElementMaster(
-                        jsonElement["Socket"].toBool(),
-                        jsonElement["Plug"].toBool(),
-                        jsonElement["Iconname"].toString(),
-                        jsonElement["Type"].toString(),
-                        jsonElement["Filename"].toString(),
-                        elementVersion,
-                        pythonicVersion,
-                        jsonElement["Author"].toString(),
-                        jsonElement["License"].toString(),
+                        jsonElement,
                         m_arr_workingArea[nWrkArea]->m_AreaNo,
-                        m_arr_workingArea[nWrkArea],
-                        jsonElement["Id"].toInt(),
-                        jsonElement["ObjectName"].toString());
+                        m_arr_workingArea[nWrkArea]);
 
-        newElement->m_config = jsonElement["Config"].toObject();
+        newElement->m_customConfig = jsonElement["Config"].toObject();
         newElement->move(xPos, yPos);
 
 

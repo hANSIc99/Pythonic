@@ -272,7 +272,7 @@ void WorkingArea::registerElement(const ElementMaster *new_element)
     QJsonObject jsonQuery {
         {"cmd", "QueryEditorToolbox"},
         {"address", address },
-        {"data", new_element->m_typeName}
+        {"data", new_element->m_config["Typename"].toString()}
     };
 
     fwrdWsCtrl(jsonQuery);
