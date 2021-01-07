@@ -33,18 +33,7 @@ ElementMaster::ElementMaster(QJsonObject configuration,
     m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
 
 
-
-    /* Id and Object name only exist when loaded from saved config */
-
-    QJsonValue id = m_config.value("Id");
-
-    /* Generate random element name */
-
-    if(id.isUndefined()){
-        m_id = QRandomGenerator::global()->bounded(quint32(INT_LEAST32_MAX));
-    }else {
-        m_id = id.toInt();
-    }
+    /* Check if a pbject name is already present */
 
     QJsonValue objectName = m_config.value("ObjectName");
 
@@ -58,7 +47,7 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     m_hasSocket = m_config["Socket"].toBool();
 
-    /* Create default general config */
+    /* Create default general config if not defined */
 
     QJsonValue generalConfig = m_config.value("Config");
 
@@ -78,7 +67,6 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     m_editor = new Elementeditor(genConfig(), this);
 
-
     /* Enable / disable socket/plug */
 
     m_socket.setVisible(m_config["Socket"].toBool());
@@ -91,7 +79,7 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     /* Setup symbol-widget (socket, symbol and plug) */
     m_symbolWidget.setLayout(&m_symbolWidgetLayout);
-    //m_symbolWidgetLayout.setContentsMargins(-10, 0, -50, 0);
+
     if(m_config["Socket"].toBool()){
         m_symbolWidgetLayout.addWidget(&m_socket);
     } else {
@@ -195,6 +183,27 @@ void ElementMaster::addChild(ElementMaster *child)
 void ElementMaster::deleteSelf()
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
+
+    /* Execute Destructor Command (if defined) */
+
+    QJsonValue constrCMD = m_config.value("DestructorCMD");
+    if(!constrCMD.isUndefined()){
+
+        QString sCMD = helper::applyRegExp(
+                    constrCMD.toString(),
+                    m_config,
+                    helper::m_regExpSBasicData,
+                    helper::jsonValToStringBasicData
+                    );
+
+        QJsonObject cmd {
+            {"cmd", "SysCMD"},
+            {"data", sCMD }
+        };
+        fwrdWsCtrl(cmd);
+    }
+
+
     emit remove(this);
 }
 

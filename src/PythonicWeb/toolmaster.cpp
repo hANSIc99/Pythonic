@@ -81,11 +81,9 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
 
         qCDebug(logC, "mouse cursor inside working area");
 
-
-        //QJsonObject elementVersionjson  = m_toolData["Version"].toObject();
-        //QJsonObject pythonicVersionjson = m_toolData["PythonicVersion"].toObject();
-        //Version elementVersion{elementVersionjson["Major"].toInt(), elementVersionjson["Minor"].toInt()};
-        //Version pythonicVersion{pythonicVersionjson["Major"].toInt(), pythonicVersionjson["Minor"].toInt()};
+        /* Create unique element id */
+        quint32 m_id = QRandomGenerator::global()->bounded(quint32(INT_LEAST32_MAX));
+        m_toolData["Id"] = QJsonValue((qint64)m_id);
 
         ElementMaster *element = new ElementMaster(
                         m_toolData,
@@ -97,6 +95,28 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
                       wrkAreaGlobalPos.y() - CENTER_OFFSET_Y);
 
         element->show();
+
+        /* Execute ConstructorCMD (if defined) */
+
+        QJsonValue constrCMD = m_toolData.value("ConstructorCMD");
+        if(!constrCMD.isUndefined()){
+
+            QString sCMD = helper::applyRegExp(
+                        constrCMD.toString(),
+                        element->m_config,
+                        helper::m_regExpSBasicData,
+                        helper::jsonValToStringBasicData
+                        );
+
+            QJsonObject cmd {
+                {"cmd", "SysCMD"},
+                {"data", sCMD }
+            };
+            m_workingAreaWidget->fwrdWsCtrl(cmd);
+        }
+
+
+
 
 
         m_workingAreaWidget->updateSize();
