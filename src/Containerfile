@@ -101,7 +101,7 @@ RUN mkdir /root/public_html/config
 RUN mkdir /root/public_html/static
 RUN mkdir /root/public_html/templates
 RUN mkdir /root/public_html/config/Toolbox
-RUN mkdir /root/executeables
+RUN mkdir /root/executables
 
 COPY PythonicWeb/public_html/static/BaseElement.png /root/public_html/static/
 COPY PythonicWeb/public_html/static/del.png /root/public_html/static/
@@ -154,10 +154,11 @@ RUN mkdir /root/public_html/config/Toolbox/Basic
 # GenericPython
 COPY PythonicWeb/public_html/config/Toolbox/Basic/GenericPython.json /root/public_html/config/Toolbox/Basic/
 COPY PythonicWeb/public_html/config/Toolbox/Basic/GenericPython.editor /root/public_html/config/Toolbox/Basic/
+COPY PythonicWeb/executables/generic_python.py /root/executables/
 # Scheduler
 COPY PythonicWeb/public_html/config/Toolbox/Basic/Scheduler.json /root/public_html/config/Toolbox/Basic/
 COPY PythonicWeb/public_html/config/Toolbox/Basic/Scheduler.editor /root/public_html/config/Toolbox/Basic/
-COPY PythonicWeb/executeables/scheduler.py /root/executeables/
+COPY PythonicWeb/executables/scheduler.py /root/executables/
 
 
 ### Connectivity Elements

@@ -2,6 +2,21 @@ import os, logging, json
 from datetime import datetime
 from PySide2.QtCore import QThread, QObject, Signal
 
+class ExecSysCMD(QThread):
+
+    cmd = None
+
+    def __init__(self):
+        super().__init__()
+
+    def execCommand(self, cmd):
+        self.cmd = cmd
+        self.start()
+
+    def run(self):
+
+        logging.debug('ExecSysCMD::run() called')
+        os.system(self.cmd)
 
 
 class ConfigWriter(QThread):

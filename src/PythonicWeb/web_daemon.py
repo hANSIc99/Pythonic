@@ -10,7 +10,7 @@ from enum import Enum
 from execution_operator import Operator
 from stdin_reader import stdinReader
 from screen import reset_screen
-from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter
+from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 import operator
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
@@ -25,6 +25,7 @@ from PySide2.QtCore import Signal
 www_root    = 'public_html/'
 www_static  = 'public_html/static/'
 www_config  = 'public_html/config/'
+executables = 'executables'
 
 
 class LogLvl(Enum):
@@ -131,8 +132,10 @@ def ctrl(ws):
                 addr        = msg['address']
                 typeName    = msg['data']
                 ws.environ['mainWorker'].loadEditorConfig(addr, typeName)
-
-                #data  = msg['']
+            elif msg['cmd'] == 'SysCMD' :
+                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
+                ws.environ['mainWorker'].sysCommand.emit(msg['data'])
+                
 
 
 
@@ -257,6 +260,7 @@ class MainWorker(QObject):
     startExec       = Signal(object, object) # element-Id, configuration
     stopExec        = Signal(object) # element-Id
     saveConfig      = Signal(object) # configuration
+    sysCommand      = Signal(object) # Optional: Element Constructor / Destructor
     frontendCtrl    = Signal(object)
 
     def __init__(self, app):
@@ -301,6 +305,10 @@ class MainWorker(QObject):
         # Instantiate ConfigLoader
         self.config_loader = ConfigLoader(www_config)
         self.config_loader.tooldataLoaded.connect(self.forwardCmd)
+
+        # Instantiate System Command Executor
+        self.exec_sys_cmd = ExecSysCMD()
+        self.sysCommand.connect(self.exec_sys_cmd.execCommand)
 
         # Write launch.json
         # BAUSTELLE

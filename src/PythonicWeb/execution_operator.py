@@ -47,7 +47,7 @@ class ProcessHandler(QThread):
             self.queue = queue.Queue()
 
         try:
-            elementCls = getattr(__import__('executeables.' + self.element['Filename'], fromlist=['Element']), 'Element')
+            elementCls = getattr(__import__('executables.' + self.element['Filename'], fromlist=['Element']), 'Element')
         except Exception as e:
             logging.debug('ProcessHandler::run() - Error loading file - id: 0x{:08x}, ident: {:04d} - {} Error: {}'.format(
                 self.element['Id'], self.identifier, self.element['Filename'], e))
