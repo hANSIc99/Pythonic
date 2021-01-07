@@ -94,50 +94,50 @@ void Elementeditor::openEditor(const QJsonObject config)
     /* Method is called from ElementMaster */
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
-    if(!config.isEmpty()){
-        QJsonObject generalConfig = config["GeneralConfig"].toObject();
-        m_toggleLogging.setChecked(generalConfig["Logging"].toBool());
-        m_toggleDebug.setChecked(generalConfig["Debug"].toBool());
-        m_toggleMP.setChecked(generalConfig["MP"].toBool());
 
-        QJsonArray specificConfig = config["SpecificConfig"].toArray();
+    QJsonObject generalConfig = config["GeneralConfig"].toObject();
+    m_toggleLogging.setChecked(generalConfig["Logging"].toBool());
+    m_toggleDebug.setChecked(generalConfig["Debug"].toBool());
+    m_toggleMP.setChecked(generalConfig["MP"].toBool());
 
-        if(!specificConfig.isEmpty()){
-            for(const QJsonValue &value : qAsConst(specificConfig)){
+    QJsonArray specificConfig = config["SpecificConfig"].toArray();
 
-                QJsonObject elementConfig = value.toObject();
+    if(!specificConfig.isEmpty()){
+        for(const QJsonValue &value : qAsConst(specificConfig)){
 
-                QString type = elementConfig["Type"].toString();
-                QString name = elementConfig["Name"].toString();
+            QJsonObject elementConfig = value.toObject();
 
-                switch (hashType(type)) {
+            QString type = elementConfig["Type"].toString();
+            QString name = elementConfig["Name"].toString();
 
-                case ElementEditorTypes::ComboBox: {
-                    ComboBox *box = m_specificConfig.findChild<ComboBox*>(name);
-                    if(box) box->m_combobox.setCurrentIndex(elementConfig["Index"].toInt());
-                    break;
-                }
+            switch (hashType(type)) {
 
-                case ElementEditorTypes::LineEdit: {
-                    LineEdit *edit = m_specificConfig.findChild<LineEdit*>(name);
-                    if(edit) edit->m_lineedit.setText(elementConfig["Data"].toString());
-                    break;
-                }
-                case ElementEditorTypes::CheckBox: {
-                    CheckBox *checkbox = m_specificConfig.findChild<CheckBox*>(name);
-                    if(checkbox) checkbox->setChecked(elementConfig["Data"].toBool());
-                    break;
-                }
-                default: {
-                    break;
-                }
-                }
-
-
+            case ElementEditorTypes::ComboBox: {
+                ComboBox *box = m_specificConfig.findChild<ComboBox*>(name);
+                if(box) box->m_combobox.setCurrentIndex(elementConfig["Index"].toInt());
+                break;
             }
-        }
 
+            case ElementEditorTypes::LineEdit: {
+                LineEdit *edit = m_specificConfig.findChild<LineEdit*>(name);
+                if(edit) edit->m_lineedit.setText(elementConfig["Data"].toString());
+                break;
+            }
+            case ElementEditorTypes::CheckBox: {
+                CheckBox *checkbox = m_specificConfig.findChild<CheckBox*>(name);
+                if(checkbox) checkbox->setChecked(elementConfig["Data"].toBool());
+                break;
+            }
+            default: {
+                break;
+            }
+            }
+
+
+        }
     }
+
+
 
     /* Setup line edit */
     m_objectName.setText(parent()->objectName());

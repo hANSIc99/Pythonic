@@ -170,20 +170,6 @@ public:
     //! Indicates if elements accept parent connections
     bool                    m_hasSocket;
 
-    //! Indicates if the element can be connected to childs
-    //bool                    m_hasPlug;
-    //! Typename is the class (CONFIG)
-    //QString                 m_typeName;
-    //! Filename for the related Python file (CONFIG)
-    //QString                 m_fileName;
-    //! Version of the element: Major:Minor (CONFIG)
-    //Version                 m_version;
-    //! Related version of Pythonic: Major:Minor (CONFIG)
-    //Version                 m_pythonicVersion;
-    //! Author of the element (CONFIG)
-    //QString                 m_author;
-    //! License of the element (CONFIG)
-    //QString                 m_license;
     //! Number of the grid which holds the element
     int                     m_areaNo;
 

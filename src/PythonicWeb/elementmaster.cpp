@@ -58,11 +58,25 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     m_hasSocket = m_config["Socket"].toBool();
 
+    /* Create default general config */
+
+    QJsonValue generalConfig = m_config.value("Config");
+
+    if(generalConfig.isUndefined()){
+        QJsonObject generalConfig = {
+            {"Logging", true },
+            {"Debug", false },
+            {"MP", true }
+        };
+
+        m_customConfig["GeneralConfig"] = generalConfig;
+    } else {
+        m_customConfig = generalConfig.toObject();
+    }
+
     /* Create Elementeditor */
 
     m_editor = new Elementeditor(genConfig(), this);
-
-
 
 
     /* Enable / disable socket/plug */
@@ -146,15 +160,9 @@ QJsonObject ElementMaster::genConfig() const
         childs.append((qint64)child->m_id);
     }
 
-    /* Check if m_config already contains an object name */
 
-    QJsonValue cfgObjName   = data.value("ObjectName");
-    QJsonValue cfgId        = data.value("Id");
-
-
-    if (cfgObjName.isUndefined()) data["ObjectName"] = objectName();
-    if (cfgId.isUndefined()) data["Id"] = (qint64)m_id;
-
+    data["Id"]          = (qint64)m_id;
+    data["ObjectName"]  = objectName();
     data["Position"]    = pos;
     data["AreaNo"]      = m_areaNo;
     data["Parents"]     = parents;
@@ -276,7 +284,7 @@ void ElementMaster::openEditor()
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
     /* m_config contains nothing when this is called the first time */
-    m_editor->openEditor(m_config["Config"].toObject());
+    m_editor->openEditor(m_customConfig);
 }
 
 void ElementMaster::switchRunState(bool state)
