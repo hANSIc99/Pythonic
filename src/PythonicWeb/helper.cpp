@@ -100,7 +100,8 @@ QString helper::jsonValToStringBasicData(const QString key, const QJsonObject &j
     }
 
     case ElementProperties::Id: {
-        return QString::number(json.value(key).toInt());
+        quint32 id = json.value(key).toInt();
+        return QString("%1").arg(id, 8, 16, QChar('0'));
         break;
     }
 

@@ -24,6 +24,7 @@ ElementMaster::ElementMaster(QJsonObject configuration,
                              QWidget *parent) // only when loaded from config
     : QWidget(parent)
     , m_config(configuration)
+    , m_id(configuration["Id"].toInt())
     , m_areaNo(areaNo)
     , m_symbol(QUrl("http://localhost:7000/" + configuration["Iconname"].toString() + ".png"), LABEL_SIZE, this)
 {
@@ -33,12 +34,13 @@ ElementMaster::ElementMaster(QJsonObject configuration,
     m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
 
 
+
     /* Check if a pbject name is already present */
 
     QJsonValue objectName = m_config.value("ObjectName");
 
     if(objectName.isUndefined()){
-        setObjectName(QStringLiteral("%1 - 0x%2").arg(m_config["Typename"].toString()).arg(m_id, 8, 16, QChar('0')));
+        setObjectName(QString("%1 - 0x%2").arg(m_config["Typename"].toString()).arg(m_id, 8, 16, QChar('0')));
     } else {
         setObjectName(objectName.toString());
     }

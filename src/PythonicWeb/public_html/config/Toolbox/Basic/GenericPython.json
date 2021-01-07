@@ -14,7 +14,7 @@
                          },
     "Author"          : "Stephan Avenwedde",
     "License"         : "GPLv3",
-    "ConstructorCMD"  : "cp executeables/generic_python.py executeables/generic_python_BASICDATA_Id.py",
-    "DestructorCMD"   : "executeables/generic_python_BASICDATA_Id.py"
+    "ConstructorCMD"  : "cp executables/generic_python.py executables/generic_python_BASICDATA_Id.py",
+    "DestructorCMD"   : "rm executables/generic_python_BASICDATA_Id.py"
 }
 
