@@ -1,18 +1,18 @@
-import sys, logging, pickle, locale, datetime, os, signal, time, itertools, tty, termios, select
-from element_types import Record, Function
+import sys, logging, pickle, locale, datetime, os, signal, time, itertools, tty, termios, select, queue
+from element_types import Record, Function, ProcCMD
 
     
 class Element(Function):
 
-    def __init__(self, config, inputData, queue):
-        super().__init__(config, inputData, queue)
+    def __init__(self, config, inputData, return_queue, cmd_queue):
+        super().__init__(config, inputData, return_queue, cmd_queue)
 
 
     def execute(self):
 
         #interval_str, interval_index, offset, log_state = self.config
-        x = self.config
-
+        
+        cmd         = None
         mode        = ''
         interval    = 0
         countdown   = 0
@@ -20,7 +20,8 @@ class Element(Function):
         startTime   = ''
         endTime     = ''
         dayOfWeek   = {}
-        recordDone  = Record(True, None, None)
+
+        recordDone  = Record(None, None)
 
 
         for attrs in self.config['SpecificConfig']:
@@ -76,8 +77,8 @@ class Element(Function):
             #           None           #
             ############################
 
-            recordDone = Record(True, None, None)
-            self.queue.put(recordDone)
+            recordDone = Record(None, None)
+            self.return_queue.put(recordDone)
 
         elif mode == "Interval":
 
@@ -85,20 +86,21 @@ class Element(Function):
             #         Interval         #
             ############################
 
-            cnt = 0
             while True :
-                time.sleep(interval)
 
-                if self.bStop:
-                    recordDone = Record(False, cnt, None, True) # Exit message
-                    # Necessary to end the ProcessHandler     
-                    self.queue.put(recordDone)
-                    break      
+                try:
+                    cmd = self.cmd_queue.get(block=True, timeout=interval)
+                except queue.Empty:
+                    #logging.debug('Command Queue empty')
+                    pass
+
+                if isinstance(cmd, ProcCMD) and cmd.bStop:
+                    # Exit here is stop command received
+                    return
 
 
-                recordDone = Record(False, cnt, None)     
-                self.queue.put(recordDone)
-                cnt += 1
+                recordDone = Record(data=None, message=None)     
+                self.return_queue.put(recordDone)
 
 
         elif mode == "Interval between times":
@@ -112,8 +114,8 @@ class Element(Function):
 
             activeDays = [value for days, value in dayOfWeek.items() if value]
             if not activeDays:
-                recordDone = Record(True, None, "No days selected")     
-                self.queue.put(recordDone)
+                recordDone = Record(None, "No days selected")     
+                self.return_queue.put(recordDone)
 
             
             nState = 0
@@ -123,9 +125,9 @@ class Element(Function):
                 # Termination condition multithreading
 
                 if self.bStop:
-                    recordDone = Record(False, None, None, True) # Exit message
+                    recordDone = Record(None, None) # Exit message
                     # Necessary to end the ProcessHandler     
-                    self.queue.put(recordDone)
+                    self.return_queue.put(recordDone)
                     break      
 
                 # Get date and time
@@ -150,7 +152,7 @@ class Element(Function):
                     if(currentTime > stopTime):
                         nState == 0                 
                     elif countdown <= 0:
-                        recordDone = Record(False, None, None)     
+                        recordDone = Record(None, None)     
                         self.queue.put(recordDone)
                         countdown = interval
                     
@@ -166,18 +168,18 @@ class Element(Function):
             #     At specific time     #
             ############################
 
-            recordDone = Record(True, "Data", "LogMessage")
+            recordDone = Record("Data", "LogMessage")
         elif mode == "On every full interval":
 
             ############################
             #  On every full interval  #
             ############################
 
-            recordDone = Record(True, "Data", "LogMessage")
+            recordDone = Record("Data", "LogMessage")
         elif mode == "Full interval between times":
 
             #################################
             #  Full interval between times  #
             #################################
 
-            recordDone = Record(True, "Data", "LogMessage")
+            recordDone = Record("Data", "LogMessage")

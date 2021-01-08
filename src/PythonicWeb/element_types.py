@@ -1,22 +1,25 @@
 import logging
 
+
+
 class Function():
 
-    def __init__(self, config, inputData, queue):
+    def __init__(self, config, inputData, return_queue, cmd_queue):
         logging.debug('Function.__init__()')
-        self.config     = config
-        self.inputData  = inputData
-        self.queue = queue
-        self.logger     = logging.getLogger() # mt only
-        self.bStop      = False
+        self.config         = config
+        self.inputData      = inputData
+        self.return_queue   = return_queue
+        self.cmd_queue      = cmd_queue
+        self.logger         = logging.getLogger() # mt only
+        self.bStop          = False
 
     def __setstate__(self, state):
         logging.debug('__setstate__() called Function')
-        self.config, self.inputData, self.queue, self.logger, self.bStop = state
+        self.config, self.inputData, self.return_queue, self.cmd_queue, self.logger, self.bStop = state
 
     def __getstate__(self):
         logging.debug('__getstate__() called Function')
-        return (self.config, self.inputData, self.queue, self.logger, self.bStop)
+        return (self.config, self.inputData, self.return_queue, self.cmd_queue, self.logger, self.bStop)
 
     def execute(self, input):
         logging.debug('execute() called Function')
@@ -37,20 +40,30 @@ class Function():
 
 class Record():
 
-    def __init__(self, bComplete, data, message, exit=False):
-        self.bComplete  = bComplete
+    def __init__(self, data, message):
+
         self.data       = data
         self.message    = message # Log message string
-        
-        # Becomes true if the record should not be passed to any child
-        # Necessary to leave the ProcessHandler 
-        self.exit       = exit 
 
 
     def __setstate__(self, state):
         #logging.debug('__setstate__() called Record')
-        self.bComplete, self.data, self.message, self.exit = state
+        self.data, self.message = state
 
     def __getstate__(self):
         #logging.debug('__getstate__() called Record')
-        return(self.bComplete, self.data, self.message, self.exit)
+        return(self.data, self.message)
+
+
+class ProcCMD:
+
+    def __init__(self, bStop):
+        self.bStop = bStop
+
+    def __setstate__(self, state):
+        #logging.debug('__setstate__() called Record')
+        self.bStop = state
+
+    def __getstate__(self):
+        #logging.debug('__getstate__() called Record')
+        return(self.bStop)

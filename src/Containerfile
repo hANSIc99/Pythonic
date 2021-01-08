@@ -14,12 +14,12 @@
 #
 #
 #
-#Type  CIName                           Version         License                 
+#Type  CIName                           Version            License                 
 #      Pythonic
 #          INCLUDED PACKAGES
-#           IMG     Fedora              33              GPL                           
-#           BIN     Supervisor          3.2.0           Custom license          
-#
+#           IMG     Fedora              33                 GPL                           
+#           BIN     Supervisor          3.2.0              Custom license          
+#           BIN     ms-python           2020.10.332292344
 #
 #Type    CIName                      Name               Version                   Commentary            
 #

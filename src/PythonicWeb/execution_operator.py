@@ -3,7 +3,7 @@ import json
 import random
 import multiprocessing as mp
 import threading as mt
-from element_types import Record
+from element_types import Record, ProcCMD
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
 
@@ -42,9 +42,11 @@ class ProcessHandler(QThread):
         bMP = self.element['Config']['GeneralConfig']['MP']
 
         if bMP:
-            self.queue = mp.Queue()
+            self.return_queue = mp.Queue()
+            self.cmd_queue    = mp.Queue()
         else:
-            self.queue = queue.Queue()
+            self.return_queue = queue.Queue()
+            self.cmd_queue    = queue.Queue()
 
         try:
             elementCls = getattr(__import__('executables.' + self.element['Filename'], fromlist=['Element']), 'Element')
@@ -53,7 +55,7 @@ class ProcessHandler(QThread):
                 self.element['Id'], self.identifier, self.element['Filename'], e))
             return
 
-        self.instance = elementCls(self.element['Config'], self.inputData, self.queue)
+        self.instance = elementCls(self.element['Config'], self.inputData, self.return_queue, self.cmd_queue)
         result = None
 
         
@@ -63,12 +65,12 @@ class ProcessHandler(QThread):
             self.p_0.start()
             #self.pid = p_0.pid
         else:
-            t_0 = mt.Thread(target=self.instance.execute)
-            t_0.start()
+            self.t_0 = mt.Thread(target=self.instance.execute)
+            self.t_0.start()
 
 
 
-        result = Record(False, None, None)
+        result = Record(None, None)
         
         ##################################################################
         #                                                                # 
@@ -78,12 +80,15 @@ class ProcessHandler(QThread):
 
         # Check if it is an intemediate result (result.bComplete)
         # or if the execution was stopped by the user (self.element.bStop)
-                
-        while not result.bComplete and not self.instance.bStop and not bMP:
-            logging.debug("TEST")
-            result = self.queue.get()
-            self.execComplete.emit(self.element['Id'], result, self.identifier)
-            logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        
+        while not bMP and self.t_0.is_alive():
+            try:
+                result = self.return_queue.get(block=True, timeout=0.2)
+                self.execComplete.emit(self.element['Id'], result, self.identifier)
+                logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+            except queue.Empty:
+                #logging.debug('return_queue empty')
+                pass
 
 
         ##################################################################
@@ -94,12 +99,12 @@ class ProcessHandler(QThread):
 
         while bMP and self.p_0.is_alive():
             try:
-                result = self.queue.get(block=True, timeout=0.2)
+                result = self.return_queue.get(block=True, timeout=0.2)
                 self.execComplete.emit(self.element['Id'], result, self.identifier)
                 logging.debug('ProcessHandler::run() - Multiprocessing: execution completed - id: 0x{:08x}, ident: {:04d}, pid: {}'.format(
                     self.element['Id'], self.identifier, self.p_0.pid))
             except queue.Empty:
-                logging.debug('queue empty')
+                #logging.debug('return_queue empty')
                 pass
             
             
@@ -109,12 +114,16 @@ class ProcessHandler(QThread):
         
     def stop(self):
         logging.debug('ProcessHandler::stop() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        self.cmd_queue.put(ProcCMD(True))
+        """
         if self.element['Config']['GeneralConfig']['MP']:
             self.p_0.terminate()  
             self.p_0.join()
             x = 3     
         else:
-            self.instance.bStop = True
+            self.cmd_queue.put(ProcCMD(True))
+            #self.instance.bStop = True
+        """
 
     def done(self):
         logging.debug('ProcessHandler::done() removing Self - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
@@ -167,9 +176,11 @@ class Operator(QThread):
 
     def stopExec(self, id):
         logging.debug('Operator::stopExec() called - id: 0x{:08x}'.format(id))
+        
         for threadIdentifier, processHandle in self.processHandles.items():
             if processHandle.element['Id'] == id:
                 processHandle.stop()
+        
 
     
     def updateStatus(self, element, status):
@@ -197,10 +208,10 @@ class Operator(QThread):
     def operationDone(self, id, record, identifier):
 
         #logging.debug('Operator::operationDone() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-        if record.exit:
-            logging.debug('Operator::operationDone() exit Message received - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-        else:
-            logging.debug('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d} data: {}'.format(id, identifier, record.data))
+        #if record.exit:
+        #    logging.debug('Operator::operationDone() exit Message received - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+        #else:
+        logging.debug('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d} data: {}'.format(id, identifier, record.data))
 
     def removeOperatorThread(self, id, identifier):
 
