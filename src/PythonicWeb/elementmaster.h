@@ -61,7 +61,7 @@ class ElementSocket : public BaseLabel
     Q_OBJECT
 public:
     explicit ElementSocket(QWidget *parent = nullptr)
-        : BaseLabel(QUrl("http://localhost:7000/PlugSocket.png"), PLUG_SOCKET_SIZE, parent)
+        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")), PLUG_SOCKET_SIZE, parent)
         , m_connected(false)
     {
         qCDebug(logC, "called");
@@ -85,7 +85,7 @@ class ElementPlug : public BaseLabel
     Q_OBJECT
 public:
     explicit ElementPlug(QWidget *parent = nullptr)
-        : BaseLabel(QUrl("http://localhost:7000/PlugSocket.png"), PLUG_SOCKET_SIZE, parent)
+        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")), PLUG_SOCKET_SIZE, parent)
         , m_connected(false)
     {
         qCDebug(logC, "called");
@@ -111,7 +111,7 @@ class ElementStart : public BaseLabel
     Q_OBJECT
 public:
     explicit ElementStart(QWidget *parent = nullptr)
-        : BaseLabel(QUrl("http://localhost:7000/PlayDefault.png"), PLUG_SOCKET_SIZE, parent)
+        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlayDefault.png")), PLUG_SOCKET_SIZE, parent)
         , m_running(false)
     {
         qCDebug(logC, "called");
@@ -219,7 +219,7 @@ private slots:
 
 private:
 
-    static ElementMasterCmd::Command hashCmd(QString const &inString);
+    static ElementMasterCmd::Command hashCmd(QLatin1String const &inString);
 
     const static QLoggingCategory  logC;
 

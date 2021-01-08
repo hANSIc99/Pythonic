@@ -24,9 +24,9 @@ ElementMaster::ElementMaster(QJsonObject configuration,
                              QWidget *parent) // only when loaded from config
     : QWidget(parent)
     , m_config(configuration)
-    , m_id(configuration["Id"].toInt())
+    , m_id(configuration[QStringLiteral("Id")].toInt())
     , m_areaNo(areaNo)
-    , m_symbol(QUrl("http://localhost:7000/" + configuration["Iconname"].toString() + ".png"), LABEL_SIZE, this)
+    , m_symbol(QUrl(QStringLiteral("http://localhost:7000/") + configuration[QStringLiteral("Iconname")].toString() + QStringLiteral(".png")), LABEL_SIZE, this)
 {
 
     setAttribute(Qt::WA_DeleteOnClose);
@@ -37,30 +37,30 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     /* Check if a pbject name is already present */
 
-    QJsonValue objectName = m_config.value("ObjectName");
+    QJsonValue objectName = m_config.value(QStringLiteral("ObjectName"));
 
     if(objectName.isUndefined()){
-        setObjectName(QString("%1 - 0x%2").arg(m_config["Typename"].toString()).arg(m_id, 8, 16, QChar('0')));
+        setObjectName(QString("%1 - 0x%2").arg(m_config[QStringLiteral("Typename")].toString()).arg(m_id, 8, 16, QChar('0')));
     } else {
         setObjectName(objectName.toString());
     }
 
     /* Create the basic data */
 
-    m_hasSocket = m_config["Socket"].toBool();
+    m_hasSocket = m_config[QStringLiteral("Socket")].toBool();
 
     /* Create default general config if not defined */
 
-    QJsonValue generalConfig = m_config.value("Config");
+    QJsonValue generalConfig = m_config.value(QStringLiteral("Config"));
 
     if(generalConfig.isUndefined()){
         QJsonObject generalConfig = {
-            {"Logging", true },
-            {"Debug", false },
-            {"MP", true }
+            { QStringLiteral("Logging"), true },
+            { QStringLiteral("Debug"), false },
+            { QStringLiteral("MP"), true }
         };
 
-        m_customConfig["GeneralConfig"] = generalConfig;
+        m_customConfig[QStringLiteral("GeneralConfig")] = generalConfig;
     } else {
         m_customConfig = generalConfig.toObject();
     }
@@ -71,18 +71,18 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     /* Enable / disable socket/plug */
 
-    m_socket.setVisible(m_config["Socket"].toBool());
-    m_startBtn.setVisible(!m_config["Socket"].toBool());
-    m_plug.setVisible(m_config["Plug"].toBool());
+    m_socket.setVisible(m_config[QStringLiteral("Socket")].toBool());
+    m_startBtn.setVisible(!m_config[QStringLiteral("Socket")].toBool());
+    m_plug.setVisible(m_config[QStringLiteral("Plug")].toBool());
 
     /* m_symbol needs object name to apply stylesheet */
 
-    m_symbol.setObjectName("element");
+    m_symbol.setObjectName(QStringLiteral("element"));
 
     /* Setup symbol-widget (socket, symbol and plug) */
     m_symbolWidget.setLayout(&m_symbolWidgetLayout);
 
-    if(m_config["Socket"].toBool()){
+    if(m_config[QStringLiteral("Socket")].toBool()){
         m_symbolWidgetLayout.addWidget(&m_socket);
     } else {
         m_symbolWidgetLayout.addWidget(&m_startBtn);
@@ -136,8 +136,8 @@ QJsonObject ElementMaster::genConfig() const
     QJsonObject data(m_config);
 
     QJsonObject pos = {
-        {"x" , x()},
-        {"y" , y()}
+        { QStringLiteral("x") , x()},
+        { QStringLiteral("y") , y()}
     };
 
     QJsonArray parents;
@@ -151,13 +151,13 @@ QJsonObject ElementMaster::genConfig() const
     }
 
 
-    data["Id"]          = (qint64)m_id;
-    data["ObjectName"]  = objectName();
-    data["Position"]    = pos;
-    data["AreaNo"]      = m_areaNo;
-    data["Parents"]     = parents;
-    data["Childs"]      = childs;
-    data["Config"]      = m_customConfig;
+    data[QStringLiteral("Id")]          = (qint64)m_id;
+    data[QStringLiteral("ObjectName")]  = objectName();
+    data[QStringLiteral("Position")]    = pos;
+    data[QStringLiteral("AreaNo")]      = m_areaNo;
+    data[QStringLiteral("Parents")]     = parents;
+    data[QStringLiteral("Childs")]      = childs;
+    data[QStringLiteral("Config")]      = m_customConfig;
 
     return data;
 }
@@ -188,7 +188,7 @@ void ElementMaster::deleteSelf()
 
     /* Execute Destructor Command (if defined) */
 
-    QJsonValue constrCMD = m_config.value("DestructorCMD");
+    QJsonValue constrCMD = m_config.value(QStringLiteral("DestructorCMD"));
     if(!constrCMD.isUndefined()){
 
         QString sCMD = helper::applyRegExp(
@@ -199,12 +199,11 @@ void ElementMaster::deleteSelf()
                     );
 
         QJsonObject cmd {
-            {"cmd", "SysCMD"},
-            {"data", sCMD }
+            { QStringLiteral("cmd"), QStringLiteral("SysCMD")},
+            { QStringLiteral("data"), sCMD }
         };
         fwrdWsCtrl(cmd);
     }
-
 
     emit remove(this);
 }
@@ -216,24 +215,18 @@ void ElementMaster::updateConfig(const QJsonObject customConfig)
 
     /* Update visible object name */
 
-    QJsonObject generalConfig =  customConfig["GeneralConfig"].toObject();
-    setObjectName(generalConfig["ObjectName"].toString());
+    QJsonObject generalConfig =  customConfig[QStringLiteral("GeneralConfig")].toObject();
+    setObjectName(generalConfig[QStringLiteral("ObjectName")].toString());
     m_labelText.setText(this->objectName());
 
-    generalConfig.remove("ObjectName");
+    /* ObjectName is already defined in over basic data */
+    generalConfig.remove(QStringLiteral("ObjectName"));
 
 
     m_customConfig = {
-        {"GeneralConfig",  generalConfig },
-        {"SpecificConfig", customConfig["SpecificConfig"].toArray()}
+        { QStringLiteral("GeneralConfig"),  generalConfig },
+        { QStringLiteral("SpecificConfig"), customConfig[QStringLiteral("SpecificConfig")].toArray()}
     };
-    //customConfig["GeneralConfig"] = generalConfig.toVariantHash();
-
-    //m_customConfig = customConfig;
-
-    /* Remove ObjectName from custom config */
-    /* It is not necessary because it is part os the overall element configuration data */
-    //m_customConfig.value("GeneralConfig").toObject().remove();
 
     emit saveConfig();
 }
@@ -244,8 +237,8 @@ void ElementMaster::fwrdWsCtrl(const QJsonObject cmd)
     QJsonObject newCmd = cmd;
 
     QJsonObject address = {
-        { "target", "Element"},
-        { "id",     (qint64)m_id }
+        { QStringLiteral("target"), QStringLiteral("Element")},
+        { QStringLiteral("id"),     (qint64)m_id }
     };
     newCmd["address"] = address;
 
@@ -253,11 +246,11 @@ void ElementMaster::fwrdWsCtrl(const QJsonObject cmd)
     emit wsCtrl(newCmd);
 }
 
-ElementMasterCmd::Command ElementMaster::hashCmd(const QString &inString)
+ElementMasterCmd::Command ElementMaster::hashCmd(const QLatin1String &inString)
 {
-    if(inString == "ElementEditorConfig") return ElementMasterCmd::ElementEditorConfig;
-    if(inString == "UpdateElementStatus") return ElementMasterCmd::UpdateElementStatus;
-    if(inString == "Test") return ElementMasterCmd::Test;
+    if(inString == QStringLiteral("ElementEditorConfig")) return ElementMasterCmd::ElementEditorConfig;
+    if(inString == QStringLiteral("UpdateElementStatus")) return ElementMasterCmd::UpdateElementStatus;
+    if(inString == QStringLiteral("Test")) return ElementMasterCmd::Test;
     return ElementMasterCmd::NoCmd;
 }
 
@@ -265,10 +258,10 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
 
-    QJsonObject address = cmd["address"].toObject();
+    QJsonObject address = cmd[QStringLiteral("address")].toObject();
+    QLatin1String strCmd(cmd[QStringLiteral("cmd")].toString().toLatin1());
 
-
-    switch (hashCmd(cmd["cmd"].toString())) {
+    switch (hashCmd(strCmd)) {
 
     case ElementMasterCmd::Command::ElementEditorConfig: {
 
@@ -277,15 +270,15 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
                objectName().toStdString().c_str());
 
         if(!m_editor->m_editorSetup)
-            m_editor->loadEditorConfig(cmd["data"].toArray());
+            m_editor->loadEditorConfig(cmd[QStringLiteral("data")].toArray());
         break;
     }
     case ElementMasterCmd::Command::UpdateElementStatus: {
-        switchRunState(cmd["data"].toBool());
+        switchRunState(cmd[QStringLiteral("data")].toBool());
         break;
     }
     default:
-        qCDebug(logC, "Unknown command: %s", cmd["cmd"].toString().toStdString().c_str());
+        qCDebug(logC, "Unknown command: %s", cmd[QStringLiteral("cmd")].toString().toStdString().c_str());
         break;
     }
 
@@ -303,7 +296,7 @@ void ElementMaster::switchRunState(bool state)
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
 
     if(state){
-        m_symbol.setStyleSheet("#element { border: 3px solid #69f567; border-radius: 20px; }");
+        m_symbol.setStyleSheet(QStringLiteral("#element { border: 3px solid #69f567; border-radius: 20px; }"));
     } else {
         m_symbol.setStyleSheet(styleSheet());
         m_startBtn.togggleRunning(false);
@@ -313,7 +306,7 @@ void ElementMaster::switchRunState(bool state)
 
 void ElementMaster::startHighlight()
 {
-    m_symbol.setStyleSheet("#element { border: 3px solid #fce96f; border-radius: 20px; }");
+    m_symbol.setStyleSheet(QStringLiteral("#element { border: 3px solid #fce96f; border-radius: 20px; }"));
 }
 
 void ElementMaster::stopHighlight()
@@ -332,9 +325,9 @@ void ElementPlug::connected(bool connectionState)
 
     m_connected = connectionState;
     if(m_connected){
-        resetImage(QUrl("http://localhost:7000/PlugSocketOrange.png"));
+        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocketOrange.png")));
     } else {
-        resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
+        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")));
     }
 
 }
@@ -346,7 +339,7 @@ void ElementPlug::enterEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_connected){
-        resetImage(QUrl("http://localhost:7000/PlugSocketOrange.png"));
+        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocketOrange.png")));
     }
 
 }
@@ -357,7 +350,7 @@ void ElementPlug::leaveEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_connected){
-      resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
+      resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")));
     }
 
 }
@@ -378,9 +371,9 @@ void ElementSocket::connected(bool connectionState)
 
     m_connected = connectionState;
     if(m_connected){
-        resetImage(QUrl("http://localhost:7000/PlugSocketGreen.png"));
+        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocketGreen.png")));
     } else {
-        resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
+        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")));
     }
 
 }
@@ -393,7 +386,7 @@ void ElementSocket::enterEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_connected){
-       resetImage(QUrl("http://localhost:7000/PlugSocketGreen.png"));
+       resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocketGreen.png")));
     }
 
 }
@@ -404,7 +397,7 @@ void ElementSocket::leaveEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_connected){
-        resetImage(QUrl("http://localhost:7000/PlugSocket.png"));
+        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")));
     }
 
 }
@@ -425,9 +418,9 @@ void ElementStart::togggleRunning(bool running)
     qCInfo(logC, "called");
     m_running = running;
     if(!m_running){
-       resetImage(QUrl("http://localhost:7000/PlayDefault.png"));
+       resetImage(QUrl(QStringLiteral("http://localhost:7000/PlayDefault.png")));
     } else {
-        resetImage(QUrl("http://localhost:7000/StopYellow.png"));
+        resetImage(QUrl(QStringLiteral("http://localhost:7000/StopYellow.png")));
     }
 }
 
@@ -437,7 +430,7 @@ void ElementStart::enterEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_running){
-       resetImage(QUrl("http://localhost:7000/PlayGreen.png"));
+       resetImage(QUrl(QStringLiteral("http://localhost:7000/PlayGreen.png")));
     }
 
 }
@@ -448,7 +441,7 @@ void ElementStart::leaveEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_running){
-        resetImage(QUrl("http://localhost:7000/PlayDefault.png"));
+        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlayDefault.png")));
     }
 
 }
