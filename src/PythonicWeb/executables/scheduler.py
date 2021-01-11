@@ -96,6 +96,7 @@ class Element(Function):
 
                 if isinstance(cmd, ProcCMD) and cmd.bStop:
                     # Exit here is stop command received
+                    x = 3
                     return
 
 

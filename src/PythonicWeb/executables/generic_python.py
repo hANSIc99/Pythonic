@@ -30,8 +30,8 @@ class Element(Function):
 
 
         """
-
-        recordDone = Record(data="Hello from GenericPython", message='Message from {:04d}'.format(self.config['Identifier']))     
+        #time.sleep(0.2)
+        recordDone = Record(data="Hello from GenericPython", message='<<<<<<<>>>>>>>>> Message from {:04d}'.format(self.config['Identifier']))     
         self.return_queue.put(recordDone)
 
 

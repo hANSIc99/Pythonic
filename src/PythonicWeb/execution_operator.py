@@ -83,15 +83,29 @@ class ProcessHandler(QThread):
         # Check if it is an intemediate result (result.bComplete)
         # or if the execution was stopped by the user (self.element.bStop)
         
-        while not bMP and self.t_0.is_alive():
+        while not bMP:
             #logging.debug('ProcessHandler::run() MULTITHREADING -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+            
+            # BAUSTELLE: Der Thread kann bereits hier abgearbeitet sein
+            # BAUSTELLE2: Wenn man man die Prüfung ob der Thread bereits abgearbeite ist wieder hinten macht
+            # wird das eventuell nie geprüft weil die QUEUE leer ist und dann befindet man sich in einer Endlosschleife
+
+            # First: Check if Thread is still alive
+
+            # Second: Check if there is somethin in the Queue
             try:
                 result = self.return_queue.get(block=True, timeout=0.2)
+                # Thirs: Forward the result
                 self.execComplete.emit(self.element['Id'], result, self.identifier)
-                #logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
             except queue.Empty:
                 #logging.debug('return_queue empty')
                 pass
+
+            if not self.t_0.is_alive():
+                break
+
+            #logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+
 
 
         ##################################################################
@@ -100,10 +114,13 @@ class ProcessHandler(QThread):
         #                                                                #
         ##################################################################
 
-        while bMP and self.p_0.is_alive():
+        while bMP:
             try:
+                if not self.p_0.is_alive():
+                    break
                 result = self.return_queue.get(block=True, timeout=0.2)
                 self.execComplete.emit(self.element['Id'], result, self.identifier)
+
                 #logging.debug('ProcessHandler::run() - Multiprocessing: execution completed - id: 0x{:08x}, ident: {:04d}, pid: {}'.format(
                 #    self.element['Id'], self.identifier, self.p_0.pid))
             except queue.Empty:
@@ -118,15 +135,6 @@ class ProcessHandler(QThread):
     def stop(self):
         logging.debug('ProcessHandler::stop() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         self.cmd_queue.put(ProcCMD(True))
-        """
-        if self.element['Config']['GeneralConfig']['MP']:
-            self.p_0.terminate()  
-            self.p_0.join()
-            x = 3     
-        else:
-            self.cmd_queue.put(ProcCMD(True))
-            #self.instance.bStop = True
-        """
 
     def done(self):
         #logging.debug('ProcessHandler::done() removing Self - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
@@ -149,7 +157,7 @@ class Operator(QThread):
             time.sleep(1)
 
     def startExec(self, id, config):
-        logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
+        #logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
         ## create processor and forward config and start filename
         self.currentConfig = config
         # https://stackoverflow.com/questions/34609935/passing-a-function-with-two-arguments-to-filter-in-python
@@ -171,12 +179,15 @@ class Operator(QThread):
         runElement.execComplete.connect(self.operationDone)
         runElement.removeSelf.connect(self.removeOperatorThread)
 
-        self.updateStatus(element, True)
+        
+        if element["HighlightState"]:
+            self.updateStatus(element, True)
+        
 
         runElement.start()
 
         self.processHandles[identifier] = runElement
-        logging.debug('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
+        #logging.debug('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
 
         
 
@@ -194,7 +205,7 @@ class Operator(QThread):
         # id
         # target = "Element"
         # cmd = UpdateElementStatus
-        
+        logging.debug('Operator::updateStatus() called - {} - id: 0x{:08x}'.format(status, element['Id']))
         address = {
             'target'    : 'Element',
             'area'      : element['AreaNo'],
@@ -231,9 +242,12 @@ class Operator(QThread):
 
     def removeOperatorThread(self, id, identifier):
 
-        logging.debug('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+        #logging.debug('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
         procHandle = self.processHandles[identifier]
-        self.updateStatus(procHandle.element, False)
+        
+        if procHandle.element["HighlightState"]:
+            self.updateStatus(procHandle.element, False)
+        
         procHandle.deleteLater()
         del self.processHandles[identifier]
 

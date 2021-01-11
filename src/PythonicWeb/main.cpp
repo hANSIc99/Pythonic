@@ -40,15 +40,15 @@ int main(int argc, char *argv[])
                                                     "FileDownloader.debug=false\n"
                                                     "FileDownloader.info=false\n"
 
-                                                    "Websocket.debug=true\n"
-                                                    "Websocket.info=true\n"
+                                                    "Websocket.debug=false\n"
+                                                    "Websocket.info=false\n"
                                                     /* GUI Elements */
 
-                                                    "MainWindow.debug=true\n"
-                                                    "MainWindow.info=true\n"
+                                                    "MainWindow.debug=false\n"
+                                                    "MainWindow.info=false\n"
 
-                                                    "WorkingArea.debug=true\n"
-                                                    "WorkingArea.info=true\n"
+                                                    "WorkingArea.debug=false\n"
+                                                    "WorkingArea.info=false\n"
 
                                                     "MenuBar.debug=false\n"
                                                     "MenuBar.info=false\n"
@@ -87,14 +87,14 @@ int main(int argc, char *argv[])
 
                                                     /* Master Classes */
 
-                                                    "BaseLabel.debug=true\n"
-                                                    "BaseLabel.info=true\n"
+                                                    "BaseLabel.debug=false\n"
+                                                    "BaseLabel.info=false\n"
 
                                                     "BasePixMap.debug=false\n"
                                                     "BasePixMap.info=false\n"
 
-                                                    "BaseButton.debug=true\n"
-                                                    "BaseButton.info=true\n"
+                                                    "BaseButton.debug=false\n"
+                                                    "BaseButton.info=false\n"
 
                                                     "ElementIconBar.debug=false\n"
                                                     "ElementIconBar.info=false\n"
@@ -118,8 +118,8 @@ int main(int argc, char *argv[])
 
                                                     /* Element Editor */
 
-                                                    "Elementeditor.debug=true\n"
-                                                    "Elementeditor.info=true\n"
+                                                    "Elementeditor.debug=false\n"
+                                                    "Elementeditor.info=false\n"
 
                                                     /* Element Connector Buttons  */
 
@@ -131,11 +131,11 @@ int main(int argc, char *argv[])
 
                                                     /* Elements */
 
-                                                    "Scheduler.debug=true\n"
-                                                    "Scheduler.info=true\n"
+                                                    "Scheduler.debug=false\n"
+                                                    "Scheduler.info=false\n"
 
-                                                    "GenericPython.debug=true\n"
-                                                    "GenericPython.info=true\n"
+                                                    "GenericPython.debug=false\n"
+                                                    "GenericPython.info=false\n"
 
                                                     ));
     QApplication a(argc, argv);
