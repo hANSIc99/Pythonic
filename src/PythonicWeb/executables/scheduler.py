@@ -99,7 +99,7 @@ class Element(Function):
                     return
 
 
-                recordDone = Record(data=None, message=None)     
+                recordDone = Record(data=None, message='Trigger')     
                 self.return_queue.put(recordDone)
 
 

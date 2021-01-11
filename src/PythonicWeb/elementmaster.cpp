@@ -69,6 +69,7 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     m_editor = new Elementeditor(genConfig(), this);
 
+
     /* Enable / disable socket/plug */
 
     m_socket.setVisible(m_config[QStringLiteral("Socket")].toBool());
@@ -80,6 +81,7 @@ ElementMaster::ElementMaster(QJsonObject configuration,
     m_symbol.setObjectName(QStringLiteral("element"));
 
     /* Setup symbol-widget (socket, symbol and plug) */
+
     m_symbolWidget.setLayout(&m_symbolWidgetLayout);
 
     if(m_config[QStringLiteral("Socket")].toBool()){

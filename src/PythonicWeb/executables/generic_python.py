@@ -4,13 +4,13 @@ from element_types import Record, Function
     
 class Element(Function):
 
-    def __init__(self, config, inputData, queue):
-        super().__init__(config, inputData, queue)
+    def __init__(self, config, inputData, return_queue, cmd_queue):
+        super().__init__(config, inputData, return_queue, cmd_queue)
 
 
     def execute(self):
 
-
+        """
         cnt = 0
         while True :
             time.sleep(1)
@@ -26,6 +26,13 @@ class Element(Function):
             recordDone = Record(False, cnt, None)     
             self.queue.put(recordDone)
             cnt += 1
+    
+
+
+        """
+
+        recordDone = Record(data="Hello from GenericPython", message='Message from {:04d}'.format(self.config['Identifier']))     
+        self.return_queue.put(recordDone)
 
 
 

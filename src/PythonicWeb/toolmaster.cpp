@@ -85,6 +85,15 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
         quint32 m_id = QRandomGenerator::global()->bounded(quint32(INT_LEAST32_MAX));
         m_toolData["Id"] = QJsonValue((qint64)m_id);
 
+        /* Apply RegExp to filename */
+
+        m_toolData["Filename"] = helper::applyRegExp(
+                    m_toolData["Filename"].toString(),
+                    m_toolData,
+                    helper::m_regExpSBasicData,
+                    helper::jsonValToStringBasicData
+                    );
+
         ElementMaster *element = new ElementMaster(
                         m_toolData,
                         m_workingAreaWidget->m_AreaNo,

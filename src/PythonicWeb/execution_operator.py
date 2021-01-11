@@ -28,9 +28,8 @@ class ProcessHandler(QThread):
         self.element    = element
         self.inputData  = inputdata
         self.identifier = identifier
-        #self.pid        = None
         self.instance   = None
-
+        self.element['Config']['Identifier'] = self.identifier
 
         self.queue      = None 
 
@@ -38,8 +37,9 @@ class ProcessHandler(QThread):
         self.finished.connect(self.done)
 
     def run(self):
-
+        #logging.debug('ProcessHandler::run() -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         bMP = self.element['Config']['GeneralConfig']['MP']
+        
 
         if bMP:
             self.return_queue = mp.Queue()
@@ -50,6 +50,8 @@ class ProcessHandler(QThread):
 
         try:
             elementCls = getattr(__import__('executables.' + self.element['Filename'], fromlist=['Element']), 'Element')
+            #logging.debug('ProcessHandler::run() - loading file - id: 0x{:08x}, ident: {:04d} - {}'.format(
+            #    self.element['Id'], self.identifier, self.element['Filename']))
         except Exception as e:
             logging.debug('ProcessHandler::run() - Error loading file - id: 0x{:08x}, ident: {:04d} - {} Error: {}'.format(
                 self.element['Id'], self.identifier, self.element['Filename'], e))
@@ -82,10 +84,11 @@ class ProcessHandler(QThread):
         # or if the execution was stopped by the user (self.element.bStop)
         
         while not bMP and self.t_0.is_alive():
+            #logging.debug('ProcessHandler::run() MULTITHREADING -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
             try:
                 result = self.return_queue.get(block=True, timeout=0.2)
                 self.execComplete.emit(self.element['Id'], result, self.identifier)
-                logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+                #logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
             except queue.Empty:
                 #logging.debug('return_queue empty')
                 pass
@@ -101,8 +104,8 @@ class ProcessHandler(QThread):
             try:
                 result = self.return_queue.get(block=True, timeout=0.2)
                 self.execComplete.emit(self.element['Id'], result, self.identifier)
-                logging.debug('ProcessHandler::run() - Multiprocessing: execution completed - id: 0x{:08x}, ident: {:04d}, pid: {}'.format(
-                    self.element['Id'], self.identifier, self.p_0.pid))
+                #logging.debug('ProcessHandler::run() - Multiprocessing: execution completed - id: 0x{:08x}, ident: {:04d}, pid: {}'.format(
+                #    self.element['Id'], self.identifier, self.p_0.pid))
             except queue.Empty:
                 #logging.debug('return_queue empty')
                 pass
@@ -110,7 +113,7 @@ class ProcessHandler(QThread):
             
 
 
-        logging.debug('ProcessHandler::run() - PROCESSING DONE - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        #logging.debug('ProcessHandler::run() - PROCESSING DONE - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         
     def stop(self):
         logging.debug('ProcessHandler::stop() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
@@ -126,7 +129,7 @@ class ProcessHandler(QThread):
         """
 
     def done(self):
-        logging.debug('ProcessHandler::done() removing Self - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        #logging.debug('ProcessHandler::done() removing Self - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         self.removeSelf.emit(self.element['Id'], self.identifier)
     
 
@@ -146,33 +149,36 @@ class Operator(QThread):
             time.sleep(1)
 
     def startExec(self, id, config):
-        logging.debug('Operator::startExec() bla')
+        logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
         ## create processor and forward config and start filename
         self.currentConfig = config
         # https://stackoverflow.com/questions/34609935/passing-a-function-with-two-arguments-to-filter-in-python
 
         # return first element which matches the ID
         startElement = [x for x in config if x['Id'] == id][0]
-        
+
+        self.createProcHandle(startElement)
+
+    def createProcHandle(self, element):    
+        #neue function
+
         # register elements für den fall das alles gestoppt werden muss
         inputData = None
 
         # creating a random identifier
         identifier = random.randint(0, 9999)
-        runElement = ProcessHandler(startElement,inputData, identifier)
+        runElement = ProcessHandler(element,inputData, identifier)
         runElement.execComplete.connect(self.operationDone)
         runElement.removeSelf.connect(self.removeOperatorThread)
 
-        self.updateStatus(startElement, True)
+        self.updateStatus(element, True)
 
         runElement.start()
 
-
-
         self.processHandles[identifier] = runElement
-        
+        logging.debug('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
 
-        logging.debug('Operator::startExec() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+        
 
     def stopExec(self, id):
         logging.debug('Operator::stopExec() called - id: 0x{:08x}'.format(id))
@@ -181,7 +187,6 @@ class Operator(QThread):
             if processHandle.element['Id'] == id:
                 processHandle.stop()
         
-
     
     def updateStatus(self, element, status):
         #start highlight
@@ -207,11 +212,22 @@ class Operator(QThread):
 
     def operationDone(self, id, record, identifier):
 
-        #logging.debug('Operator::operationDone() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-        #if record.exit:
-        #    logging.debug('Operator::operationDone() exit Message received - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-        #else:
-        logging.debug('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d} data: {}'.format(id, identifier, record.data))
+        #logging.debug('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d} data: {}'.format(id, identifier, record.data))
+
+
+
+        cfgElement = [x for x in self.currentConfig if x['Id'] == id][0]
+
+        if cfgElement['Config']['GeneralConfig']['Logging'] and record.message:
+            logging.debug('{} - {}'.format(cfgElement['ObjectName'], record.message))
+
+        # return if the element has no childs
+        if not cfgElement['Childs']:
+            return
+        
+        for childId in cfgElement['Childs']:
+            childElement = [x for x in self.currentConfig if x['Id'] == childId][0]
+            self.createProcHandle(childElement)
 
     def removeOperatorThread(self, id, identifier):
 

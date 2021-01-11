@@ -420,7 +420,7 @@ class MainWorker(QObject):
 
     def forwardCmd(self, cmd):
 
-        logging.debug('MainWorker::forwardCmd() called')
+        #logging.debug('MainWorker::forwardCmd() called')
         self.frontendCtrl.emit(cmd)
 
     def loadConfig(self):
