@@ -19,7 +19,9 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , m_refTimer(0)
     , it_spinner(m_spinner.begin())
+    , ptrTmp(nullptr)
 {
 
     // BAUSTELLE: Beim Laden des MainWindows Config hochladen laden
@@ -30,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     for (int i = 0; i < N_WORKING_GRIDS; i++){
 
         //WorkingArea *new_workingArea = new WorkingArea(&m_workingTabs);
-        WorkingArea *new_workingArea = new WorkingArea(i);
+        WorkingArea *new_workingArea = new WorkingArea(i, &m_refTimer);
         m_arr_workingArea.append(new_workingArea);
         new_workingArea->setMinimumSize(DEFAULT_WORKINGAREA_SIZE);
 
@@ -144,6 +146,10 @@ MainWindow::MainWindow(QWidget *parent)
         m_heartBeatText.setText("No connection to daemon!");
     });
 
+    /* Setup delayes initilaizations */
+
+    DelayedInitCommand<MainWindow> elementRunningStates = { &MainWindow::queryElementStates, INIT_ELEMENTSTATES_DELAY};
+    m_delayedInitializations.append(elementRunningStates);
 
     /* Set current working area on initialization */
     setCurrentWorkingArea(m_workingTabs.currentIndex());
@@ -157,11 +163,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::logMessage(const QString msg, const LogLvl lvl)
 {
-    //qInfo() << "MainWindow::wsSendMsg() called";
-    qCDebug(logC, "Debug Message");
-    qCInfo(logC, "Info Message");
-    //QUrl ws_url(QStringLiteral("ws://localhost:7000/message"));
-    //qDebug() << "Open ws URL: " << ws_url.toString();
+    // qCDebug(logC, "Debug Message");
+    //qCInfo(logC, "Info Message");
+
 
 
     QJsonObject data
@@ -270,9 +274,38 @@ void MainWindow::wsRcv(const QString &message)
 
     m_datetimeText.setText(datetime.toString());
 
-    break;
+    /* increment reference timer */
+    m_refTimer++;
+
+    /* Call heartbeat */
+    for(auto &wrkArea : m_arr_workingArea){
+        wrkArea->m_heartBeat();
     }
 
+
+    /* State Machine for delayed initialization */
+
+    QVector<DelayedInitCommand<MainWindow>>::iterator it = m_delayedInitializations.begin();
+    while (it != m_delayedInitializations.end()){
+
+        if (it->delay < m_refTimer){
+
+            // https://stackoverflow.com/questions/2898316/using-a-member-function-pointer-within-a-class
+            ptrTmp = it->init;
+            if(ptrTmp)
+                ((*this).*(ptrTmp))();
+
+            it = m_delayedInitializations.erase(it);
+
+
+        } else {
+            it++;
+        }
+    }
+
+
+    break;
+    }
     case Pythonic::Command::CurrentConfig: {
         qCDebug(logC, "CurrentConfig received");
         loadSavedConfig(jsonMsg);
@@ -322,11 +355,13 @@ void MainWindow::reconnect()
         m_wsRcv.open(QUrl("ws://localhost:7000/rcv"));
 
     }
+    queryElementStates();
 }
 
 
 void MainWindow::setCurrentWorkingArea(const int tabIndex)
 {
+    /* Update currentyl selected (visible) WorkingArea */
     qCInfo(logC, "called, current tabIndex %d", tabIndex);
     emit updateCurrentWorkingArea(m_arr_workingArea[tabIndex]);
 }
@@ -458,7 +493,11 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
             }
 
             /* Add connection to vector */
-            m_arr_workingArea[nWrkArea]->m_connections.append(Connection{parentPtr, childPtr, QLine()});
+            m_arr_workingArea[nWrkArea]->m_connections.append(
+                        Connection{parentPtr,
+                                   childPtr,
+                                   &m_arr_workingArea[nWrkArea]->m_defaultPen,
+                                   QLine()});
 
         }
 
@@ -519,6 +558,18 @@ void MainWindow::queryToolbox(){
     wsCtrl(queryCfg);
 }
 
+void MainWindow::queryElementStates()
+{
+    qCDebug(logC, "Debug Message");
+
+    /* Query Config from Daemon */
+
+    QJsonObject queryStates {
+        {"cmd", "QueryElementStates"}
+    };
+    wsCtrl(queryStates);
+}
+
 void MainWindow::connectionEstablished()
 {
     QAbstractSocket::SocketState ctrlState = m_wsCtrl.state();
@@ -530,6 +581,7 @@ void MainWindow::connectionEstablished()
         }
         queryToolbox();
         queryConfig();
+
     }
 }
 

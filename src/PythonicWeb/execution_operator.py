@@ -193,6 +193,17 @@ class Operator(QThread):
                 processHandle.stop()
         
     
+    def getElementStates(self):
+        
+        logging.debug('Operator::getElementStates() called')
+
+        for threadIdentifier, processHandle in self.processHandles.items():
+            #logging.debug('running elements: 0x{:08x}'.format(processHandle.element['Id']))
+            self.updateStatus(processHandle.element, True)
+
+        #if procHandle.element["HighlightState"]:
+        #    self.updateStatus(procHandle.element, False)
+
     def updateStatus(self, element, status):
         #start highlight
         # area

@@ -303,7 +303,6 @@ void ElementMaster::switchRunState(bool state)
         m_symbol.setStyleSheet(styleSheet());
         m_startBtn.togggleRunning(false);
     }
-
 }
 
 void ElementMaster::startHighlight()

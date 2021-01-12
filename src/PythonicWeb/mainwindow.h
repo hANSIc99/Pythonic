@@ -47,7 +47,16 @@
 #define DEFAULT_MAINWINDOW_SIZE     QSize(1200, 800)
 #define DEFAULT_WORKINGAREA_SIZE    DEFAULT_MAINWINDOW_SIZE - QSize(10, 200)
 
+#define INIT_ELEMENTSTATES_DELAY    5
+
 //https://stackoverflow.com/questions/39931734/qt-specific-difference-of-stack-vs-heap-attributes
+
+
+template<typename T>
+struct DelayedInitCommand {
+    void        (T::*init)();
+    quint32     delay;
+};
 
 /*! @brief MainWindow is the base widget for all graphical elements
 
@@ -56,6 +65,7 @@
     @date October 2020
     @copyright [GPLv3](../../../LICENSE)
     */
+
 
 
 class MainWindow : public QMainWindow
@@ -113,6 +123,8 @@ private slots:
     void queryConfig();
     //! Query Toolbox elements
     void queryToolbox();
+    //! Query running states of element (for highlighting)
+    void queryElementStates();
     //! Proceed with initialization when connection is established
     void connectionEstablished();
 
@@ -120,6 +132,13 @@ private:
 
     //bool                    m_ctrlConnected{false};
     //bool                    m_recvConnected{false};
+    //! Element state must be initialized with delay
+    //! Value indicates if element states were already initialized
+    bool                    m_initelementStatesTimeFlag{false};
+    //! Necessary for delayes initialization of the Element states
+    quint32                 m_elementStatesTimer;
+    //! Incremented by heartbeat
+    quint32                 m_refTimer;
 
     /* Die Reihenfolge hier ist entscheidend */
     QPushButton             *m_sendDebugMessage;
@@ -170,7 +189,14 @@ private:
     const QVector<char>     m_spinner{'-', '\\', '|', '/' };
     QVector<char>::const_iterator it_spinner;
 
+    QVector<DelayedInitCommand<MainWindow> >    m_delayedInitializations;
+    void                                        (MainWindow::*ptrTmp)();
+
     QLoggingCategory        logC{"MainWindow"};
 };
+
+
+
+
 #endif // MAINWINDOW_H
 

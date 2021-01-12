@@ -19,9 +19,10 @@
 
 const QLoggingCategory WorkingArea::logC{"WorkingArea"};
 
-WorkingArea::WorkingArea(int areaNo, QWidget *parent)
+WorkingArea::WorkingArea(int areaNo, quint32 *ptrTimer, QWidget *parent)
     : QFrame(parent)
     , m_AreaNo(areaNo)
+    , m_ptrRefTimer(ptrTimer)
 {
     setAcceptDrops(true);
     setMouseTracking(true);
@@ -44,6 +45,7 @@ WorkingArea::WorkingArea(int areaNo, QWidget *parent)
     m_defaultPen.setColor(CONNECTION_COLOR);
     m_defaultPen.setWidth(CONNECTION_THICKNESS);
 
+    m_highlightPen.setColor(CONNECTION_HIGHLIGHT_COLOR);
     m_highlightPen.setWidth(CONNECTION_THICKNESS);
 
 
@@ -85,6 +87,25 @@ void WorkingArea::updateSize()
     qCDebug(logC, "MaxX: %d MaxY: %d", max_x, max_y);
     qCDebug(logC, "Resize to X: %d Y: %d", width(), height());
 }
+
+void WorkingArea::m_heartBeat()
+{
+    /* Stop connection highlight after 2 increments of refTimer */
+
+    QVector<ConnectionHighlightInfo>::iterator it = m_highlightedConnections.begin();
+    while (it != m_highlightedConnections.end()){
+        quint32 timediff = (*m_ptrRefTimer) - it->startTime;
+        if (timediff > CONN_HIGHLIGHT_TIME){
+            it->connection->pen = &m_defaultPen;
+            it = m_highlightedConnections.erase(it);
+            update();
+            //it++;
+        } else {
+            it++;
+        }
+    }
+}
+
 
 void WorkingArea::deleteElement(ElementMaster *element)
 {
@@ -150,9 +171,10 @@ void WorkingArea::fwrdWsCtrl(const QJsonObject cmd)
 
 void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 {
-    qCInfo(logC, "called - Area No.: %u", m_AreaNo);
+    //qCInfo(logC, "called - Area No.: %u", m_AreaNo);
 
     QJsonObject address = cmd[QStringLiteral("address")].toObject();
+
 
 
     /* Forward message to target element */
@@ -184,7 +206,7 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 
     switch (hashCmd(strCmd)) {
     case WorkingAreaCmd::HighlightConnection : {
-        qCDebug(logC, "called in area No.: %u - HighlighConnection", m_AreaNo);
+        //qCDebug(logC, "called in area No.: %u - HighlighConnection", m_AreaNo);
         QJsonObject data = cmd[QStringLiteral("data")].toObject();
         quint32 parentId = data.value(QStringLiteral("parentId")).toInt();
         quint32 childId = data.value(QStringLiteral("childId")).toInt();
@@ -491,7 +513,10 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
 
 
 
-                m_connections.append(Connection{m_tmpElement, targetElement, QLine()});
+                m_connections.append(Connection{m_tmpElement,
+                                                targetElement,
+                                                &m_defaultPen,
+                                                QLine()});
                 qCDebug(logC, "Socket found - add Connection!");
             } else {
                 qCDebug(logC, "Socket found - connection already exist!");
@@ -690,7 +715,7 @@ void WorkingArea::paintEvent(QPaintEvent *event)
 
     /* Draw connections */
 
-    m_painter.setPen(m_defaultPen);
+    //m_painter.setPen(m_defaultPen);
 
 
     if(m_draw){
@@ -712,16 +737,16 @@ WorkingAreaCmd::Command WorkingArea::hashCmd(const QLatin1String &inString)
 void WorkingArea::drawPreviewConnection(QPainter *p)
 {
 
+    m_painter.setPen(m_defaultPen);
     p->drawLine(m_previewConnection);
 
-    //p->drawLines(m_connections);
 }
 
 void WorkingArea::drawConnections(QPainter *p)
 {
 
     for(const auto &pair : qAsConst(m_connections)){
-
+        m_painter.setPen(*pair.pen);
         p->drawLine(pair.connLine);
     }
 
@@ -731,10 +756,12 @@ void WorkingArea::drawConnections(QPainter *p)
 void WorkingArea::updateConnection()
 {
     for(auto &pair : m_connections){
+
         /*
          * Correct the start- and end-position so that it looks like
          * the line starts and ends in the middle of the plug / socket
          */
+
         pair.connLine.setP1(pair.parent->pos() + PLUG_OFFSET_POSITION);
         pair.connLine.setP2(pair.child->pos() + SOCKET_OFFSET_POSITION);
     }
@@ -742,13 +769,16 @@ void WorkingArea::updateConnection()
 
 void WorkingArea::highlightConnection(quint32 parentId, quint32 childId)
 {
-    qCInfo(logC, "called ");
+    //qCInfo(logC, "called ");
 
-    for(const auto &pair : qAsConst(m_connections)){
+    for(auto &pair : m_connections){
         if( pair.parent->m_id == parentId &&
             pair.child->m_id  == childId) {
 
-            qCInfo(logC, "connection found ");
+            pair.pen = &m_highlightPen;
+            ConnectionHighlightInfo highlightInfo = {&pair, *m_ptrRefTimer};
+            m_highlightedConnections.append(highlightInfo);
+            update();
         }
     }
 

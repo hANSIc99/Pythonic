@@ -33,6 +33,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QList>
+#include <QVector>
 #include <QStringLiteral>
 
 
@@ -53,10 +54,18 @@
 #define SIZE_INCREMENT_X 300
 #define SIZE_INCREMENT_Y 150
 
+#define CONN_HIGHLIGHT_TIME 2
+
 struct Connection {
     ElementMaster* parent;
     ElementMaster* child;
+    QPen           *pen;
     QLine          connLine;
+};
+
+struct ConnectionHighlightInfo {
+    Connection  *connection;
+    quint32     startTime;
 };
 
 /*! @brief Holds the pointer of two connected elements
@@ -113,7 +122,7 @@ class WorkingArea : public QFrame
 {
     Q_OBJECT
 public:
-    explicit WorkingArea(int areaNo, QWidget *parent = nullptr);
+    explicit WorkingArea(int areaNo, quint32 *ptrTimer, QWidget *parent = nullptr);
 
     void registerElement(const ElementMaster *new_element);
 
@@ -123,6 +132,13 @@ public:
     QVector<Connection>         m_connections;
 
     void                        updateSize();
+
+    QPen                        m_defaultPen;
+    QPen                        m_highlightPen;
+
+    //! Called by the heartbeat (MainWindow)
+    void                        m_heartBeat();
+
 
 signals:
 
@@ -169,6 +185,7 @@ private:
     void drawConnections(QPainter *p);
     void updateConnection();
     void highlightConnection(quint32 parentId, quint32 childId);
+
     void createContextMenu(QSet<ElementMaster*> &elementSet,
                            ElementMaster* currentElement,
                            QPoint pos,
@@ -176,7 +193,7 @@ private:
 
     //bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
-
+    const quint32               *m_ptrRefTimer;
 
     bool                        m_drawing{false};
     bool                        m_startBtnPressed{false};
@@ -204,8 +221,7 @@ private:
 
     QLine                       m_previewConnection;
 
-    QPen                        m_defaultPen;
-    QPen                        m_highlightPen;
+
 
     /* Background */
 
@@ -218,6 +234,8 @@ private:
     QMenu                       m_contextDisconnect;
 
     QList<ConnectionPair*>      m_discMenuConnections;
+
+    QVector<ConnectionHighlightInfo> m_highlightedConnections;
 
     const static QLoggingCategory      logC;
 

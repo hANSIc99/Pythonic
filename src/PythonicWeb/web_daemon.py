@@ -140,6 +140,11 @@ def ctrl(ws):
             elif msg['cmd'] == 'SysCMD' :
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
                 ws.environ['mainWorker'].sysCommand.emit(msg['data'])
+            elif msg['cmd'] == 'QueryElementStates' :
+                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
+                ws.environ['mainWorker'].queryStates.emit()
+                
+                
                 
 
 
@@ -263,10 +268,11 @@ class MainWorker(QObject):
 
 
     startExec       = Signal(object, object) # element-Id, configuration
-    stopExec        = Signal(object) # element-Id
-    saveConfig      = Signal(object) # configuration
-    sysCommand      = Signal(object) # Optional: Element Constructor / Destructor
+    stopExec        = Signal(object)    # element-Id
+    saveConfig      = Signal(object)    # configuration
+    sysCommand      = Signal(object)    # Optional: Element Constructor / Destructor
     frontendCtrl    = Signal(object)
+    queryStates     = Signal()          # Query the running states of elements
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
@@ -290,6 +296,7 @@ class MainWorker(QObject):
         self.startExec.connect(self.operator.startExec)
         self.startExec.connect(self.emitSaveConfig)
         self.stopExec.connect(self.operator.stopExec)
+        self.queryStates.connect(self.operator.getElementStates)
         
         # Instantiate ToolboxLoader
         self.toolbox_loader = ToolboxLoader(www_config)
