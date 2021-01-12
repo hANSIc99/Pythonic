@@ -290,8 +290,6 @@ class MainWorker(QObject):
         self.startExec.connect(self.operator.startExec)
         self.startExec.connect(self.emitSaveConfig)
         self.stopExec.connect(self.operator.stopExec)
-
-
         
         # Instantiate ToolboxLoader
         self.toolbox_loader = ToolboxLoader(www_config)

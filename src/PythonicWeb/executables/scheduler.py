@@ -100,7 +100,7 @@ class Element(Function):
                     return
 
 
-                recordDone = Record(data=None, message='Trigger')     
+                recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
                 self.return_queue.put(recordDone)
 
 

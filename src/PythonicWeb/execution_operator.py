@@ -84,23 +84,16 @@ class ProcessHandler(QThread):
         # or if the execution was stopped by the user (self.element.bStop)
         
         while not bMP:
-            #logging.debug('ProcessHandler::run() MULTITHREADING -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
-            
-            # BAUSTELLE: Der Thread kann bereits hier abgearbeitet sein
-            # BAUSTELLE2: Wenn man man die Prüfung ob der Thread bereits abgearbeite ist wieder hinten macht
-            # wird das eventuell nie geprüft weil die QUEUE leer ist und dann befindet man sich in einer Endlosschleife
 
-            # First: Check if Thread is still alive
-
-            # Second: Check if there is somethin in the Queue
             try:
+                # First: Check if there is somethin in the Queue
                 result = self.return_queue.get(block=True, timeout=0.2)
-                # Thirs: Forward the result
+                # Seconds: Forward the result (is present)
                 self.execComplete.emit(self.element['Id'], result, self.identifier)
             except queue.Empty:
                 #logging.debug('return_queue empty')
                 pass
-
+            # Thirs: Check if Thread is still alive
             if not self.t_0.is_alive():
                 break
 
@@ -115,9 +108,8 @@ class ProcessHandler(QThread):
         ##################################################################
 
         while bMP:
+
             try:
-                if not self.p_0.is_alive():
-                    break
                 result = self.return_queue.get(block=True, timeout=0.2)
                 self.execComplete.emit(self.element['Id'], result, self.identifier)
 
@@ -127,6 +119,8 @@ class ProcessHandler(QThread):
                 #logging.debug('return_queue empty')
                 pass
             
+            if not self.p_0.is_alive():
+                break
             
 
 
@@ -242,7 +236,7 @@ class Operator(QThread):
 
     def removeOperatorThread(self, id, identifier):
 
-        #logging.debug('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+        logging.debug('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
         procHandle = self.processHandles[identifier]
         
         if procHandle.element["HighlightState"]:
