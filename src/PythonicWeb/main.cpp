@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
                                                     "MainWindow.debug=false\n"
                                                     "MainWindow.info=false\n"
 
-                                                    "WorkingArea.debug=false\n"
-                                                    "WorkingArea.info=false\n"
+                                                    "WorkingArea.debug=true\n"
+                                                    "WorkingArea.info=true\n"
 
                                                     "MenuBar.debug=false\n"
                                                     "MenuBar.info=false\n"
@@ -102,8 +102,8 @@ int main(int argc, char *argv[])
                                                     "ToolMaster3.debug=false\n"
                                                     "ToolMaster3.info=false\n"
 
-                                                    "ElementMaster.debug=true\n"
-                                                    "ElementMaster.info=true\n"
+                                                    "ElementMaster.debug=false\n"
+                                                    "ElementMaster.info=false\n"
 
                                                     /* Element Buttons  */
 

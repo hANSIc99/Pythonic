@@ -33,6 +33,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QList>
+#include <QStringLiteral>
 
 
 #include "elementmaster.h"
@@ -40,6 +41,7 @@
 
 #define CONNECTION_THICKNESS 5
 #define CONNECTION_COLOR QColor(57, 57, 172)
+#define CONNECTION_HIGHLIGHT_COLOR QColor(105, 245, 103)
 #define MINIMUM_SIZE QSize(1000, 600)
 #define SOCKET_OFFSET_POSITION QPoint(45, 61)
 #define PLUG_OFFSET_POSITION QPoint(245, 61)
@@ -86,6 +88,15 @@ public:
 };
 Q_DECLARE_METATYPE(ConnectionPair)
 
+
+
+namespace WorkingAreaCmd {
+
+    enum Command {
+        HighlightConnection,
+        NoCmd
+    };
+}
 
 /*! @brief WorkingArea holds and manages all programming elements
  *
@@ -152,9 +163,12 @@ protected:
 
 private:
 
+    static WorkingAreaCmd::Command hashCmd(QLatin1String const &inString);
+
     void drawPreviewConnection(QPainter *p);
     void drawConnections(QPainter *p);
     void updateConnection();
+    void highlightConnection(quint32 parentId, quint32 childId);
     void createContextMenu(QSet<ElementMaster*> &elementSet,
                            ElementMaster* currentElement,
                            QPoint pos,
@@ -190,7 +204,8 @@ private:
 
     QLine                       m_previewConnection;
 
-    QPen                        m_pen;
+    QPen                        m_defaultPen;
+    QPen                        m_highlightPen;
 
     /* Background */
 

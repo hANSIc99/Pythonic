@@ -138,9 +138,9 @@ class ProcessHandler(QThread):
 
 class Operator(QThread):
 
-    currentConfig = None
-    processHandles = {}
-    updateElementStatus = Signal(object) # command
+    currentConfig   = None
+    processHandles  = {}
+    command         = Signal(object) # command
 
     def __init__(self,):
         super().__init__()
@@ -212,8 +212,28 @@ class Operator(QThread):
             'data'      : status
             }
 
-        self.updateElementStatus.emit(cmd)
+        self.command.emit(cmd)
 
+    def highlightConnection(self, parentId, childId, wrkArea):
+
+        #logging.debug('Operator::updateStatus() called - {} - id: 0x{:08x}'.format(status, element['Id']))
+        address = {
+            'target'    : 'WorkingArea',
+            'area'      : wrkArea           
+        }
+
+        data = {
+            'parentId'  : parentId,
+            'childId'   : childId
+        }
+        
+        cmd = { 
+            'cmd'       : 'HighlightConnection',
+            'address'   : address,
+            'data'      : data
+            }
+
+        self.command.emit(cmd)
 
     def operationDone(self, id, record, identifier):
 
@@ -233,6 +253,7 @@ class Operator(QThread):
         for childId in cfgElement['Childs']:
             childElement = [x for x in self.currentConfig if x['Id'] == childId][0]
             self.createProcHandle(childElement)
+            self.highlightConnection(parentId=id, childId=childId, wrkArea=childElement['AreaNo'])
 
     def removeOperatorThread(self, id, identifier):
 

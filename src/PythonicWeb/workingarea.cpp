@@ -39,10 +39,12 @@ WorkingArea::WorkingArea(int areaNo, QWidget *parent)
     m_backgroundGradient.setColorAt(0.5,    BACKGROUND_COLOR_B);
     m_backgroundGradient.setColorAt(1.0,    BACKGROUND_COLOR_C);
 
-    /* Setup connections settings */
+    /* Setup connections pens */
 
-    m_pen.setColor(CONNECTION_COLOR);
-    m_pen.setWidth(CONNECTION_THICKNESS);
+    m_defaultPen.setColor(CONNECTION_COLOR);
+    m_defaultPen.setWidth(CONNECTION_THICKNESS);
+
+    m_highlightPen.setWidth(CONNECTION_THICKNESS);
 
 
 
@@ -150,13 +152,16 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 {
     qCInfo(logC, "called - Area No.: %u", m_AreaNo);
 
-    QJsonObject address = cmd["address"].toObject();
+    QJsonObject address = cmd[QStringLiteral("address")].toObject();
 
 
     /* Forward message to target element */
-    if(address["target"].toString() != "WorkingArea"){
 
-       quint32 id = address["id"].toInt();
+    QLatin1String target(address[QStringLiteral("target")].toString().toLatin1());
+
+    if(target != QStringLiteral("WorkingArea")){
+
+       quint32 id = address[QStringLiteral("id")].toInt();
 
        QList<ElementMaster*> elementList = findChildren<ElementMaster*>();
 
@@ -170,7 +175,28 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 
        return;
     }
+
+
     /* Process own messages here */
+
+
+    QLatin1String strCmd(cmd[QStringLiteral("cmd")].toString().toLatin1());
+
+    switch (hashCmd(strCmd)) {
+    case WorkingAreaCmd::HighlightConnection : {
+        qCDebug(logC, "called in area No.: %u - HighlighConnection", m_AreaNo);
+        QJsonObject data = cmd[QStringLiteral("data")].toObject();
+        quint32 parentId = data.value(QStringLiteral("parentId")).toInt();
+        quint32 childId = data.value(QStringLiteral("childId")).toInt();
+        highlightConnection(parentId, childId);
+        break;
+    }
+    case WorkingAreaCmd::NoCmd : {
+        qCInfo(logC, "called in area No.: %u - no command provided", m_AreaNo);
+        break;
+    }
+    }
+
 }
 
 void WorkingArea::saveConfigFwrd()
@@ -664,7 +690,7 @@ void WorkingArea::paintEvent(QPaintEvent *event)
 
     /* Draw connections */
 
-    m_painter.setPen(m_pen);
+    m_painter.setPen(m_defaultPen);
 
 
     if(m_draw){
@@ -675,6 +701,12 @@ void WorkingArea::paintEvent(QPaintEvent *event)
     updateConnection();
     drawConnections(&m_painter);
     m_painter.end();
+}
+
+WorkingAreaCmd::Command WorkingArea::hashCmd(const QLatin1String &inString)
+{
+    if(inString == QStringLiteral("HighlightConnection")) return WorkingAreaCmd::HighlightConnection;
+    return WorkingAreaCmd::NoCmd;
 }
 
 void WorkingArea::drawPreviewConnection(QPainter *p)
@@ -707,3 +739,18 @@ void WorkingArea::updateConnection()
         pair.connLine.setP2(pair.child->pos() + SOCKET_OFFSET_POSITION);
     }
 }
+
+void WorkingArea::highlightConnection(quint32 parentId, quint32 childId)
+{
+    qCInfo(logC, "called ");
+
+    for(const auto &pair : qAsConst(m_connections)){
+        if( pair.parent->m_id == parentId &&
+            pair.child->m_id  == childId) {
+
+            qCInfo(logC, "connection found ");
+        }
+    }
+
+}
+
