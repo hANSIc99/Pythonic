@@ -250,12 +250,27 @@ class Operator(QThread):
 
         #logging.debug('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d} data: {}'.format(id, identifier, record.data))
 
-
-
         cfgElement = [x for x in self.currentConfig if x['Id'] == id][0]
 
         if cfgElement['Config']['GeneralConfig']['Logging'] and record.message:
             logging.debug('{} - {}'.format(cfgElement['ObjectName'], record.message))
+
+        if cfgElement['Config']['GeneralConfig']['Debug'] :
+
+            data = {
+                'id'        : cfgElement['Id'],
+                'area'      : cfgElement['AreaNo'],
+                'output'    : str(record.data) 
+            }
+            address = {
+                'target'    : 'MainWindow',                        
+            }
+            cmd = { 
+                'cmd'       : 'DebugOutput',
+                'address'   : address,
+                'data'      : data
+            }
+            self.command.emit(cmd)
 
         # return if the element has no childs
         if not cfgElement['Childs']:

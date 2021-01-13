@@ -84,6 +84,8 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     m_symbolWidget.setLayout(&m_symbolWidgetLayout);
 
+    /* Add a start button instead if the element has no socket */
+
     if(m_config[QStringLiteral("Socket")].toBool()){
         m_symbolWidgetLayout.addWidget(&m_socket);
     } else {
@@ -298,15 +300,23 @@ void ElementMaster::switchRunState(bool state)
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
 
     if(state){
+        // green
         m_symbol.setStyleSheet(QStringLiteral("#element { border: 3px solid #69f567; border-radius: 20px; }"));
     } else {
         m_symbol.setStyleSheet(styleSheet());
         m_startBtn.togggleRunning(false);
     }
+    /* Element has a start button instead of a socket */
+
+    if(!m_config[QStringLiteral("Socket")].toBool()){
+        m_startBtn.togggleRunning(state);
+    }
+
 }
 
 void ElementMaster::startHighlight()
 {
+    // yellow
     m_symbol.setStyleSheet(QStringLiteral("#element { border: 3px solid #fce96f; border-radius: 20px; }"));
 }
 
@@ -423,6 +433,7 @@ void ElementStart::togggleRunning(bool running)
     } else {
         resetImage(QUrl(QStringLiteral("http://localhost:7000/StopYellow.png")));
     }
+
 }
 
 void ElementStart::enterEvent(QEvent *event)

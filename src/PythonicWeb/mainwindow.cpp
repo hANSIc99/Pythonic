@@ -143,7 +143,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_wsRcv, &QWebSocket::disconnected,
             &m_heartBeatText,
             [=] {
-        m_heartBeatText.setText("No connection to daemon!");
+        m_heartBeatText.setText(QStringLiteral("No connection to daemon!"));
     });
 
     /* Setup delayes initilaizations */
@@ -170,14 +170,14 @@ void MainWindow::logMessage(const QString msg, const LogLvl lvl)
 
     QJsonObject data
     {
-        {"logLvL", (int)lvl},
-        {"msg", msg}
+        { QStringLiteral("logLvL"), (int)lvl},
+        { QStringLiteral("msg"), msg}
     };
 
     QJsonObject logObj
     {
-        {"cmd", "logMsg"},
-        {"data", data}
+        { QStringLiteral("cmd"), QStringLiteral("logMsg")},
+        { QStringLiteral("data"), data}
     };
 
     /* funktioniert auch so
@@ -210,8 +210,8 @@ void MainWindow::saveConfig()
     }
 
     QJsonObject currentConfig {
-        {"cmd", "writeConfig"},
-        {"data", elementConfigrations}
+        { QStringLiteral("cmd"), QStringLiteral("writeConfig")},
+        { QStringLiteral("data"), elementConfigrations}
     };
 
     wsCtrl(currentConfig);
@@ -230,15 +230,14 @@ void MainWindow::wsRcv(const QString &message)
     QJsonObject jsonMsg(cmd.object());
 
 
-
-    QJsonValue address = jsonMsg.value("address");
+    QJsonValue address = jsonMsg.value(QStringLiteral("address"));
 
     if(!address.isObject()){
         qCWarning(logC, "Address in wrong format");
         return;
     }
 
-    QJsonValue target = address.toObject().value("target");
+    QJsonValue target = address.toObject().value(QStringLiteral("target"));
 
     if(!target.isString()){
         qCWarning(logC, "Address in wrong format");
@@ -247,13 +246,15 @@ void MainWindow::wsRcv(const QString &message)
 
     /* Forward all packaged with a target other than 'MainWindow' */
 
-    if(target.toString() != "MainWindow"){
+    QLatin1String sTarget(target.toString().toLatin1());
+
+    if(sTarget != QStringLiteral("MainWindow")){
         fwrdWsRcv(jsonMsg);
         return;
     }
 
 
-    QJsonValue jsCmd = jsonMsg.value("cmd");
+    QJsonValue jsCmd = jsonMsg.value(QStringLiteral("cmd"));
 
 
     if(!jsCmd.isString()){
@@ -261,7 +262,9 @@ void MainWindow::wsRcv(const QString &message)
         return;
     }
 
-    switch (helper::hashCmd(jsCmd.toString())) {
+    QLatin1String sCMD(jsCmd.toString().toLatin1());
+
+    switch (helper::hashCmd(sCMD)) {
     case Pythonic::Command::Heartbeat: {
 
     if(++it_spinner == m_spinner.end()){
@@ -323,6 +326,13 @@ void MainWindow::wsRcv(const QString &message)
         break;
     }
 
+    case Pythonic::Command::DebugOutput: {
+        qCDebug(logC, "DebugOutput received");
+
+        //openDebugWindow()
+        break;
+    }
+
     default:{
         qCDebug(logC, "Unknown command: %s", jsCmd.toString().toStdString().c_str());
         break;
@@ -333,9 +343,9 @@ void MainWindow::wsRcv(const QString &message)
 
 void MainWindow::fwrdWsRcv(const QJsonObject cmd)
 {
-    QJsonObject address = cmd["address"].toObject();
+    QJsonObject address = cmd[QStringLiteral("address")].toObject();
 
-    int area = address["area"].toInt();
+    int area = address[QStringLiteral("area")].toInt();
 
     m_arr_workingArea[area]->fwrdWsRcv(cmd);
 }
@@ -348,11 +358,11 @@ void MainWindow::reconnect()
     QAbstractSocket::SocketState rcvState  = m_wsRcv.state();
 
     if(ctrlState != QAbstractSocket::SocketState::ConnectedState){
-        m_wsCtrl.open(QUrl("ws://localhost:7000/ctrl"));
+        m_wsCtrl.open(QUrl(QStringLiteral("ws://localhost:7000/ctrl")));
     }
 
     if(rcvState != QAbstractSocket::SocketState::ConnectedState){
-        m_wsRcv.open(QUrl("ws://localhost:7000/rcv"));
+        m_wsRcv.open(QUrl(QStringLiteral("ws://localhost:7000/rcv")));
 
     }
     queryElementStates();
@@ -375,8 +385,8 @@ void MainWindow::startExec(const quint32 id)
 
     /* Step 2: Emit start command */
     QJsonObject startCmd {
-        {"cmd", "StartExec"},
-        {"data", (qint64)id}
+        { QStringLiteral("cmd"),  QStringLiteral("StartExec")},
+        { QStringLiteral("data"), (qint64)id}
     };
 
     wsCtrl(startCmd);
@@ -387,8 +397,8 @@ void MainWindow::stopExec(const quint32 id)
     qCInfo(logC, "called");
 
     QJsonObject stopCmd {
-        {"cmd", "StopExec"},
-        {"data", (qint64)id}
+        { QStringLiteral("cmd"), QStringLiteral("StopExec")},
+        { QStringLiteral("data"), (qint64)id}
     };
     wsCtrl(stopCmd);
 }
@@ -401,10 +411,10 @@ void MainWindow::testSlot(bool checked)
 }
 
 
-void MainWindow::loadSavedConfig(const QJsonObject config)
+void MainWindow::loadSavedConfig(const QJsonObject &config)
 {
     qCInfo(logC, "called");
-    QJsonArray elements = config["data"].toArray();
+    QJsonArray elements = config[QStringLiteral("data")].toArray();
 
     /*
      * Add elements to the workingarea
@@ -414,12 +424,12 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
 
         QJsonObject jsonElement(element.toObject());
 
-        int nWrkArea = jsonElement["AreaNo"].toInt();
+        int nWrkArea = jsonElement[QStringLiteral("AreaNo")].toInt();
 
         /* Extracting position */
-        QJsonObject position = jsonElement["Position"].toObject();
-        int xPos = position["x"].toInt();
-        int yPos = position["y"].toInt();
+        QJsonObject position = jsonElement[QStringLiteral("Position")].toObject();
+        int xPos = position[QStringLiteral("x")].toInt();
+        int yPos = position[QStringLiteral("y")].toInt();
 
 
         ElementMaster *newElement = new ElementMaster(
@@ -427,7 +437,7 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
                         m_arr_workingArea[nWrkArea]->m_AreaNo,
                         m_arr_workingArea[nWrkArea]);
 
-        newElement->m_customConfig = jsonElement["Config"].toObject();
+        newElement->m_customConfig = jsonElement[QStringLiteral("Config")].toObject();
         newElement->move(xPos, yPos);
 
 
@@ -451,16 +461,16 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
     for(const auto& element : qAsConst(elements)){
 
         QJsonObject jsonElement(element.toObject());
-        int nWrkArea = jsonElement["AreaNo"].toInt();
+        int nWrkArea = jsonElement[QStringLiteral("AreaNo")].toInt();
 
-        QJsonArray childs  = jsonElement["Childs"].toArray();
+        QJsonArray childs  = jsonElement[QStringLiteral("Childs")].toArray();
 
 
         if(childs.isEmpty()){
             continue;
         }
 
-        quint32 currentId = jsonElement["Id"].toInt();
+        quint32 currentId = jsonElement[QStringLiteral("Id")].toInt();
         ElementMaster* parentPtr = NULL;
 
         /* Iterate over geristered childs of each element */
@@ -505,18 +515,18 @@ void MainWindow::loadSavedConfig(const QJsonObject config)
     } // for(const auto& element : elements)
 }
 
-void MainWindow::loadToolbox(const QJsonObject toolbox)
+void MainWindow::loadToolbox(const QJsonObject &toolbox)
 {
     qCDebug(logC, "called");
     m_toolBox.clearToolbox();
 
-    QJsonArray elements = toolbox["data"].toArray();
+    QJsonArray elements = toolbox[QStringLiteral("data")].toArray();
     QString currentAssignment;
     for(const auto& element : qAsConst(elements)){
 
         QJsonObject elementHeader(element.toObject());
-        QString assignment = elementHeader["assignment"].toString();
-        QJsonObject elementConfig = elementHeader["config"].toObject();
+        QString assignment = elementHeader[QStringLiteral("assignment")].toString();
+        QJsonObject elementConfig = elementHeader[QStringLiteral("config")].toObject();
 
         if(currentAssignment != assignment){
             currentAssignment = assignment;
@@ -540,7 +550,7 @@ void MainWindow::queryConfig()
     /* Query Config from Daemon */
 
     QJsonObject queryCfg {
-        {"cmd", "QueryConfig"}
+        {QStringLiteral("cmd"), QStringLiteral("QueryConfig")}
     };
     wsCtrl(queryCfg);
 
@@ -553,7 +563,7 @@ void MainWindow::queryToolbox(){
     /* Query Config from Daemon */
 
     QJsonObject queryCfg {
-        {"cmd", "QueryToolbox"}
+        {QStringLiteral("cmd"), QStringLiteral("QueryToolbox") }
     };
     wsCtrl(queryCfg);
 }
@@ -565,7 +575,7 @@ void MainWindow::queryElementStates()
     /* Query Config from Daemon */
 
     QJsonObject queryStates {
-        {"cmd", "QueryElementStates"}
+        {QStringLiteral("cmd"), QStringLiteral("QueryElementStates")}
     };
     wsCtrl(queryStates);
 }
@@ -583,6 +593,13 @@ void MainWindow::connectionEstablished()
         queryConfig();
 
     }
+}
+
+void MainWindow::openDebugWindow(const QJsonObject &debugData)
+{
+    qCDebug(logC, "called");
+
+
 }
 
 

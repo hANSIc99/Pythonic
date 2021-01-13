@@ -44,11 +44,11 @@ int main(int argc, char *argv[])
                                                     "Websocket.info=false\n"
                                                     /* GUI Elements */
 
-                                                    "MainWindow.debug=false\n"
-                                                    "MainWindow.info=false\n"
+                                                    "MainWindow.debug=true\n"
+                                                    "MainWindow.info=true\n"
 
-                                                    "WorkingArea.debug=true\n"
-                                                    "WorkingArea.info=true\n"
+                                                    "WorkingArea.debug=false\n"
+                                                    "WorkingArea.info=false\n"
 
                                                     "MenuBar.debug=false\n"
                                                     "MenuBar.info=false\n"
@@ -102,8 +102,8 @@ int main(int argc, char *argv[])
                                                     "ToolMaster3.debug=false\n"
                                                     "ToolMaster3.info=false\n"
 
-                                                    "ElementMaster.debug=true\n"
-                                                    "ElementMaster.info=true\n"
+                                                    "ElementMaster.debug=false\n"
+                                                    "ElementMaster.info=false\n"
 
                                                     /* Element Buttons  */
 

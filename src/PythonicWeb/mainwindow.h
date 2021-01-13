@@ -33,6 +33,7 @@
 #include <QSet>
 #include <QMap>
 #include <QLatin1Char>
+#include <QLatin1String>
 
 #include "helper.h"
 #include "websocket.h"
@@ -116,9 +117,9 @@ private slots:
     /* DBG Slot */
     void testSlot(bool checked);
     //! Load config from daemon */
-    void loadSavedConfig(const QJsonObject config);
+    void loadSavedConfig(const QJsonObject &config);
     //! Load Toolbox
-    void loadToolbox(const QJsonObject toolbox);
+    void loadToolbox(const QJsonObject &toolbox);
     //! Query config */
     void queryConfig();
     //! Query Toolbox elements
@@ -127,6 +128,8 @@ private slots:
     void queryElementStates();
     //! Proceed with initialization when connection is established
     void connectionEstablished();
+    //! Opens a debug windows which shows the output of an element
+    void openDebugWindow(const QJsonObject &debugData);
 
 private:
 

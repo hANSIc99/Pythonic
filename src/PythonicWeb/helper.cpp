@@ -19,14 +19,15 @@ bool helper::mouseOverElement(const QWidget *element, const QPoint &globalPos)
             withinElementPos.y() <= element->height());
 }
 
-Pythonic::Command helper::hashCmd(QString const &inString)
+Pythonic::Command helper::hashCmd(QLatin1String const &inString)
 {
-        if(inString == "Heartbeat") return Pythonic::Heartbeat;
-        if(inString == "CurrentConfig") return Pythonic::CurrentConfig;
-        if(inString == "Toolbox") return Pythonic::Toolbox;
-        if(inString == "ElementEditorConfig") return Pythonic::ElementEditorConfig;
-        if(inString == "SetInfoText") return Pythonic::SetInfoText;
-        if(inString == "Test") return Pythonic::Test;
+        if(inString == QStringLiteral("Heartbeat")) return Pythonic::Heartbeat;
+        if(inString == QStringLiteral("CurrentConfig")) return Pythonic::CurrentConfig;
+        if(inString == QStringLiteral("Toolbox")) return Pythonic::Toolbox;
+        if(inString == QStringLiteral("ElementEditorConfig")) return Pythonic::ElementEditorConfig;
+        if(inString == QStringLiteral("SetInfoText")) return Pythonic::SetInfoText;
+        if(inString == QStringLiteral("DebugOutput")) return Pythonic::DebugOutput;
+        if(inString == QStringLiteral("Test")) return Pythonic::Test;
         return Pythonic::NoCmd;
 };
 
@@ -59,7 +60,7 @@ QString helper::applyRegExp(const QString in,
             newString.replace(match.capturedStart(),match.capturedLength(), s);
 
         } else {
-            newString.replace(match.capturedStart(),match.capturedLength(), "Keyword cannot be converted");
+            newString.replace(match.capturedStart(),match.capturedLength(), QStringLiteral("Keyword cannot be converted"));
         }
 
 

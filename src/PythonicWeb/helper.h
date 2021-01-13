@@ -25,6 +25,7 @@
 #include <QRegularExpression>
 #include <QRegExpValidator>
 #include <QJsonObject>
+#include <QStringLiteral>
 
 //https://stackoverflow.com/questions/34281682/how-to-convert-enum-to-qstring
 
@@ -36,6 +37,7 @@ namespace Pythonic {
         Toolbox,
         ElementEditorConfig,
         SetInfoText,
+        DebugOutput,
         Test,
         NoCmd
     };
@@ -68,7 +70,7 @@ class helper {
 public:
     static bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
-    static Pythonic::Command hashCmd(QString const &inString);
+    static Pythonic::Command hashCmd(QLatin1String const &inString);
 
 
     static QString applyRegExp(const QString in,
@@ -88,6 +90,8 @@ public:
         if(inString == "Type")              return ElementProperties::Type;
         if(inString == "Version")           return ElementProperties::Version;
         if(inString == "PythonicVersion")   return ElementProperties::PythonicVersion;
+
+
         return ElementProperties::NoProperty;
     }
 
