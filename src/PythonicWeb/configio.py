@@ -1,6 +1,7 @@
 import os, logging, json
 from datetime import datetime
-from threading import Semaphore
+from threading import Semaphore, Lock
+
 from PySide2.QtCore import QThread, QObject, Signal
 
 class ExecSysCMD(QThread):
@@ -25,6 +26,7 @@ class ConfigWriter(QThread):
     config      = None
     configSaved = Signal(object)
     sem         = Semaphore()
+    threadlock  = Lock()      
 
     def __init__(self, www_config):
         super().__init__()
@@ -32,18 +34,22 @@ class ConfigWriter(QThread):
 
     def saveConfig(self, config):
 
-        self.sem.acquire()
+        #self.sem.acquire()
+        self.threadlock.acquire()
         self.config = config
-        self.sem.release()
+        #self.sem.release()
+        self.threadlock.release()
         self.start()
     
     def run(self):
 
         logging.debug('ConfigWriter::saveConfig() called')
-        self.sem.acquire()
+        #self.sem.acquire()
+        self.threadlock.acquire()
         with open(os.path.join(self.www_config + 'current_config.json'), 'w') as file:
             json.dump(self.config, file, indent=4)
-        self.sem.release()
+        #self.sem.release()
+        self.threadlock.release()
         last_saved = "Config last saved: " + datetime.now().strftime('%H:%M:%S')
 
         cmd = {  'cmd'       : 'SetInfoText',

@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
         m_arr_workingTabs.append(new_scroll_area);
 
 
-        m_workingTabs.addTab(new_scroll_area, QString("Grid %1").arg(i+1));
+        m_workingTabs.addTab(new_scroll_area, QString("Area %1").arg(i+1));
 
         /* Signals & Slots */
         connect(new_workingArea, &WorkingArea::startExec,
@@ -329,7 +329,7 @@ void MainWindow::wsRcv(const QString &message)
     case Pythonic::Command::DebugOutput: {
         qCDebug(logC, "DebugOutput received");
 
-        //openDebugWindow()
+        openDebugWindow(jsonMsg["data"].toObject());
         break;
     }
 
@@ -599,7 +599,66 @@ void MainWindow::openDebugWindow(const QJsonObject &debugData)
 {
     qCDebug(logC, "called");
 
+    //QDialog *debugWindow = new QDialog(this);
 
+    QVBoxLayout *dbgLayout = new QVBoxLayout(&m_dialogTest);
+    //debugWindow->setWindowModality(Qt::NonModal);
+    //debugWindow->setWindowModality(Qt::WindowModal);
+    //debugWindow->setAttribute(Qt::WA_DeleteOnClose);
+    //debugWindow->setLayout(dbgLayout);
+
+    m_dialogTest.setLayout(dbgLayout);
+
+    quint32 id = debugData.value(QStringLiteral("Id")).toInt();
+    int areaNo = debugData.value(QStringLiteral("AreaNo")).toInt();
+
+    QString sId = QString("0x%1").arg(id, 8, 16, QChar('0'));
+    QString sArea = QString("Area No.: %1").arg(areaNo);
+
+
+    QFont idFont("Arial", DBG_ID_FONTSIZE, QFont::Bold);
+    QFont defaultFont("Arial", DBG_ID_FONTSIZE);
+
+    QLabel *objectId   =  new QLabel(sId, &m_dialogTest);
+    objectId->setFont(idFont);
+#if 0
+    QLabel *objectName = new QLabel(debugData.value(QStringLiteral("ObjectName")).toString(),
+                                                    debugWindow);
+    objectName->setFont(defaultFont);
+
+    QLabel *objectAreaNo = new QLabel(sArea, debugWindow);
+    objectAreaNo->setFont(defaultFont);
+
+    /* Timestamp Text */
+
+    QString sTimestamp = QString("Output received: %1").arg(m_datetimeText.text());
+    QLabel *outputTimestamp = new QLabel(sTimestamp, debugWindow);
+
+    /* Output Text */
+
+    QString sOutput = debugData.value(QStringLiteral("Output")).toString();
+    QTextEdit *objectOutput = new QTextEdit(sOutput, debugWindow);
+
+    /* Discard Button */
+    /* Proceed Button */
+    /* Ok Button */
+
+    QPushButton *exitButton = new QPushButton(QStringLiteral("Ok"), debugWindow);
+#endif
+   // dbgLayout->addWidget(objectName);
+    dbgLayout->addWidget(objectId);
+    //dbgLayout->addWidget(objectAreaNo);
+    //dbgLayout->addWidget(outputTimestamp);
+    //dbgLayout->addWidget(objectOutput);
+    //dbgLayout->addWidget(exitButton);
+
+    /* Signals and Slots */
+
+    //connect(exitButton, &QPushButton::clicked,
+    //        debugWindow, &QDialog::accept);
+
+    //debugWindow->open();
+    m_dialogTest.open();
 }
 
 

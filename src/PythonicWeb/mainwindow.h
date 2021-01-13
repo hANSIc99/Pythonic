@@ -34,6 +34,8 @@
 #include <QMap>
 #include <QLatin1Char>
 #include <QLatin1String>
+#include <QDialog>
+#include <QTextEdit>
 
 #include "helper.h"
 #include "websocket.h"
@@ -49,6 +51,8 @@
 #define DEFAULT_WORKINGAREA_SIZE    DEFAULT_MAINWINDOW_SIZE - QSize(10, 200)
 
 #define INIT_ELEMENTSTATES_DELAY    5
+
+#define DBG_ID_FONTSIZE 12
 
 //https://stackoverflow.com/questions/39931734/qt-specific-difference-of-stack-vs-heap-attributes
 
@@ -196,6 +200,8 @@ private:
     void                                        (MainWindow::*ptrTmp)();
 
     QLoggingCategory        logC{"MainWindow"};
+
+    QDialog                 m_dialogTest;
 };
 
 

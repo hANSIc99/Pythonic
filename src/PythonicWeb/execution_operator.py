@@ -140,6 +140,7 @@ class Operator(QThread):
 
     currentConfig   = None
     processHandles  = {}
+    stackedHandles  = []
     command         = Signal(object) # command
 
     def __init__(self,):
@@ -258,9 +259,10 @@ class Operator(QThread):
         if cfgElement['Config']['GeneralConfig']['Debug'] :
 
             data = {
-                'id'        : cfgElement['Id'],
-                'area'      : cfgElement['AreaNo'],
-                'output'    : str(record.data) 
+                'Id'        : cfgElement['Id'],
+                'AreaNo'    : cfgElement['AreaNo'],
+                'ObjectName': cfgElement['ObjectName'],
+                'Output'    : str(record.data) 
             }
             address = {
                 'target'    : 'MainWindow',                        
@@ -271,6 +273,7 @@ class Operator(QThread):
                 'data'      : data
             }
             self.command.emit(cmd)
+            # Stack and pause
 
         # return if the element has no childs
         if not cfgElement['Childs']:
