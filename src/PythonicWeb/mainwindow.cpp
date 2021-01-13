@@ -20,6 +20,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_refTimer(0)
+    , m_dbgWindowRefCnt(0)
     , it_spinner(m_spinner.begin())
     , ptrTmp(nullptr)
 {
@@ -273,7 +274,7 @@ void MainWindow::wsRcv(const QString &message)
 
     m_heartBeatText.setText(QString("PythonicDaemon %1 ").arg(*it_spinner));
 
-    QJsonValue datetime = jsonMsg.value("data");
+    QJsonValue datetime = jsonMsg.value(QStringLiteral("data"));
 
     m_datetimeText.setText(datetime.toString());
 
@@ -322,14 +323,14 @@ void MainWindow::wsRcv(const QString &message)
 
     case Pythonic::Command::SetInfoText: {
         qCDebug(logC, "InfoText received");
-        setInfoText(jsonMsg["data"].toString());
+        setInfoText(jsonMsg[QStringLiteral("data")].toString());
         break;
     }
 
     case Pythonic::Command::DebugOutput: {
         qCDebug(logC, "DebugOutput received");
 
-        openDebugWindow(jsonMsg["data"].toObject());
+        openDebugWindow(jsonMsg[QStringLiteral("data")].toObject());
         break;
     }
 
@@ -599,15 +600,23 @@ void MainWindow::openDebugWindow(const QJsonObject &debugData)
 {
     qCDebug(logC, "called");
 
-    //QDialog *debugWindow = new QDialog(this);
 
-    QVBoxLayout *dbgLayout = new QVBoxLayout(&m_dialogTest);
+    if(m_dbgWindowRefCnt > MAX_DGB_WINDOWS){
+        setInfoText(QStringLiteral("Maximum number of debug windows reached"));
+        return;
+    }
+
+    m_dbgWindowRefCnt++;
+
+    QDialog *debugWindow = new QDialog(this);
+
+    QVBoxLayout *dbgLayout = new QVBoxLayout(debugWindow);
+    debugWindow->setModal(false);
     //debugWindow->setWindowModality(Qt::NonModal);
     //debugWindow->setWindowModality(Qt::WindowModal);
-    //debugWindow->setAttribute(Qt::WA_DeleteOnClose);
-    //debugWindow->setLayout(dbgLayout);
+    debugWindow->setAttribute(Qt::WA_DeleteOnClose);
+    debugWindow->setLayout(dbgLayout);
 
-    m_dialogTest.setLayout(dbgLayout);
 
     quint32 id = debugData.value(QStringLiteral("Id")).toInt();
     int areaNo = debugData.value(QStringLiteral("AreaNo")).toInt();
@@ -619,9 +628,9 @@ void MainWindow::openDebugWindow(const QJsonObject &debugData)
     QFont idFont("Arial", DBG_ID_FONTSIZE, QFont::Bold);
     QFont defaultFont("Arial", DBG_ID_FONTSIZE);
 
-    QLabel *objectId   =  new QLabel(sId, &m_dialogTest);
+    QLabel *objectId   =  new QLabel(sId, debugWindow);
     objectId->setFont(idFont);
-#if 0
+
     QLabel *objectName = new QLabel(debugData.value(QStringLiteral("ObjectName")).toString(),
                                                     debugWindow);
     objectName->setFont(defaultFont);
@@ -638,27 +647,80 @@ void MainWindow::openDebugWindow(const QJsonObject &debugData)
 
     QString sOutput = debugData.value(QStringLiteral("Output")).toString();
     QTextEdit *objectOutput = new QTextEdit(sOutput, debugWindow);
+    objectOutput->setReadOnly(true);
+
+    /* Button Widget and Layout Layout */
+
+    QWidget *buttonBar = new QWidget(debugWindow);
+    QHBoxLayout *buttonBarLayout = new QHBoxLayout(buttonBar);
+
+    buttonBar->setLayout(buttonBarLayout);
 
     /* Discard Button */
-    /* Proceed Button */
-    /* Ok Button */
 
-    QPushButton *exitButton = new QPushButton(QStringLiteral("Ok"), debugWindow);
-#endif
-   // dbgLayout->addWidget(objectName);
+    QPushButton *discardBtn = new QPushButton(QStringLiteral("Discard"), buttonBar);
+
+    /* Proceed Button */
+
+    QPushButton *proceedBtn = new QPushButton(QStringLiteral("Proceed"), buttonBar);
+
+    buttonBarLayout->addWidget(discardBtn);
+    buttonBarLayout->addWidget(proceedBtn);
+
+    dbgLayout->addWidget(objectName);
     dbgLayout->addWidget(objectId);
-    //dbgLayout->addWidget(objectAreaNo);
-    //dbgLayout->addWidget(outputTimestamp);
-    //dbgLayout->addWidget(objectOutput);
-    //dbgLayout->addWidget(exitButton);
+    dbgLayout->addWidget(objectAreaNo);
+    dbgLayout->addWidget(outputTimestamp);
+    dbgLayout->addWidget(objectOutput);
+    dbgLayout->addWidget(buttonBar);
 
     /* Signals and Slots */
 
-    //connect(exitButton, &QPushButton::clicked,
-    //        debugWindow, &QDialog::accept);
+    connect(proceedBtn, &QPushButton::clicked,
+            debugWindow, &QDialog::accept);
 
-    //debugWindow->open();
-    m_dialogTest.open();
+    connect(discardBtn, &QPushButton::clicked,
+            debugWindow, &QDialog::reject);
+#if 0
+    connect(proceedBtn, &QPushButton::clicked,
+            debugWindow,
+            [debugWindow, this]() {
+
+        /* Send proceed command */
+         this->logMessage("Proceed", LogLvl::CRITICAL);
+         debugWindow->accept();
+    });
+
+    connect(discardBtn, &QPushButton::clicked,
+            debugWindow,
+            [debugWindow, this]() {
+
+        /* Send reject command */
+         this->logMessage("Discard!", LogLvl::CRITICAL);
+         debugWindow->reject();
+    });
+#endif
+
+    connect(debugWindow, &QDialog::finished,
+            this,
+            [&](int result) {
+
+        if(result == QDialog::Rejected )
+            this->logMessage("Discard!", LogLvl::CRITICAL);
+
+        if(result == QDialog::Accepted)
+            this->logMessage("Proceed", LogLvl::CRITICAL);
+
+        m_dbgWindowRefCnt--;
+        if(m_dbgWindowRefCnt < MAX_DGB_WINDOWS){
+            setInfoText(QStringLiteral(""));
+        }
+        qCDebug(logC, "Dialogue closed");
+    });
+
+    debugWindow->open();
+    debugWindow->adjustSize();
+
 }
 
 

@@ -53,6 +53,7 @@
 #define INIT_ELEMENTSTATES_DELAY    5
 
 #define DBG_ID_FONTSIZE 12
+#define MAX_DGB_WINDOWS 5
 
 //https://stackoverflow.com/questions/39931734/qt-specific-difference-of-stack-vs-heap-attributes
 
@@ -146,6 +147,8 @@ private:
     quint32                 m_elementStatesTimer;
     //! Incremented by heartbeat
     quint32                 m_refTimer;
+    //! Reference counter for debug windows
+    int                     m_dbgWindowRefCnt;
 
     /* Die Reihenfolge hier ist entscheidend */
     QPushButton             *m_sendDebugMessage;
@@ -201,7 +204,6 @@ private:
 
     QLoggingCategory        logC{"MainWindow"};
 
-    QDialog                 m_dialogTest;
 };
 
 
