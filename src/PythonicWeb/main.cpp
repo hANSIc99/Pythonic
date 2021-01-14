@@ -53,9 +53,8 @@ int main(int argc, char *argv[])
                                                     "MenuBar.debug=false\n"
                                                     "MenuBar.info=false\n"
 
-                                                    "OutputArea.debug=true\n"
-                                                    "OutputArea.info=true\n"
-
+                                                    "MessageArea.debug=true\n"
+                                                    "MessageArea.info=true\n"
 
                                                     /* Toolbox elements */
 

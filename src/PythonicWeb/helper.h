@@ -38,6 +38,7 @@ namespace Pythonic {
         ElementEditorConfig,
         SetInfoText,
         DebugOutput,
+        ElementMessage,
         Test,
         NoCmd
     };

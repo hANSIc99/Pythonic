@@ -232,8 +232,8 @@ private:
 
     QLineEdit       m_objectName;
 
-    QCheckBox       m_toggleLogging;
-    QCheckBox       m_toggleDebug;
+    QCheckBox       m_toggleLogMessage;
+    QCheckBox       m_toggleLogOutput;
     QCheckBox       m_toggleMP;
 
     BaseButton      m_delButton;

@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     // BAUSTELLE: Output Area Hinzufügen
     m_bottomArea.addWidget(&m_toolBox);
     m_bottomArea.addWidget(&m_workingTabs);
+    m_bottomArea.addWidget(&m_messageArea);
     m_bottomArea.addWidget(&m_outputArea);
 
     /* Setup Bottom Border */
@@ -327,11 +328,29 @@ void MainWindow::wsRcv(const QString &message)
     case Pythonic::Command::DebugOutput: {
         qCDebug(logC, "DebugOutput received");
 
-        m_outputArea.appendOutput(  jsonMsg[QStringLiteral("data")].toObject(),
-                                    m_datetimeText.text());
+        QJsonObject outputData = jsonMsg[QStringLiteral("data")].toObject();
+
+        OutputWidget *output = new OutputWidget(
+                    outputData.value(QStringLiteral("ObjectName")).toString(),
+                    outputData.value(QStringLiteral("Id")).toInt(),
+                    m_datetimeText.text(),
+                    outputData.value(QStringLiteral("Output")).toString(),
+                    this);
+
+        m_outputArea.addWidget(output);
+
         break;
     }
+    case Pythonic::Command::ElementMessage: {
+        qCDebug(logC, "ElementMessage received");
 
+        MessageWidget *logMsg = new MessageWidget(m_datetimeText.text(),
+                                                  jsonMsg[QStringLiteral("data")].toString());
+
+        m_messageArea.addWidget(logMsg);
+
+        break;
+    }
     default:{
         qCDebug(logC, "Unknown command: %s", jsCmd.toString().toStdString().c_str());
         break;

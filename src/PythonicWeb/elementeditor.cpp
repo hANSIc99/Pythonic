@@ -42,9 +42,9 @@ Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
 
     /* Setup general switches */
 
-    m_toggleLogging.setText("Activate logging");
+    m_toggleLogMessage.setText("Log Messages");
 
-    m_toggleDebug.setText("Activate debuggin");
+    m_toggleLogOutput.setText("Log Output debuggin");
 
     m_toggleMP.setText("Activate multiprocessing");
     m_toggleMP.setChecked(true);
@@ -58,8 +58,8 @@ Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
     m_generalCfgLayout.setSizeConstraint(QLayout::SetMaximumSize);
     m_generalCfgLayout.addWidget(&m_id);
     m_generalCfgLayout.addWidget(&m_objectName);
-    m_generalCfgLayout.addWidget(&m_toggleLogging);
-    m_generalCfgLayout.addWidget(&m_toggleDebug);
+    m_generalCfgLayout.addWidget(&m_toggleLogMessage);
+    m_generalCfgLayout.addWidget(&m_toggleLogOutput);
     m_generalCfgLayout.addWidget(&m_toggleMP);
     m_generalCfgLayout.addWidget(&m_delButton);
     m_generalCfgLayout.addStretch(1);
@@ -96,8 +96,8 @@ void Elementeditor::openEditor(const QJsonObject config)
 
 
     QJsonObject generalConfig = config["GeneralConfig"].toObject();
-    m_toggleLogging.setChecked(generalConfig["Logging"].toBool());
-    m_toggleDebug.setChecked(generalConfig["Debug"].toBool());
+    m_toggleLogMessage.setChecked(generalConfig["Logging"].toBool());
+    m_toggleLogOutput.setChecked(generalConfig["Debug"].toBool());
     m_toggleMP.setChecked(generalConfig["MP"].toBool());
 
     QJsonArray specificConfig = config["SpecificConfig"].toArray();
@@ -277,8 +277,8 @@ QJsonObject Elementeditor::genConfig()
 
     QJsonObject generalConfig = {
         {"ObjectName" , m_objectName.text() },
-        {"Logging" , m_toggleLogging.isChecked() },
-        {"Debug", m_toggleDebug.isChecked() },
+        {"Logging" , m_toggleLogMessage.isChecked() },
+        {"Debug", m_toggleLogOutput.isChecked() },
         {"MP", m_toggleMP.isChecked()}
     };
 

@@ -292,7 +292,7 @@ class MainWorker(QObject):
         self.operator = Operator()
         self.operator.command.connect(self.forwardCmd)
         self.startExec.connect(self.operator.startExec)
-        self.startExec.connect(self.emitSaveConfig)
+        #self.startExec.connect(self.emitSaveConfig)
         self.stopExec.connect(self.operator.stopExec)
         self.queryStates.connect(self.operator.getElementStates)
         
@@ -355,9 +355,10 @@ class MainWorker(QObject):
         self.app.quit()
         os.kill(self.app.applicationPid(), signal.SIGTERM) # kill all related threads
 
+    """
     def emitSaveConfig(self, elementId, config):
         self.saveConfig.emit(config)
-
+    """
 
     def ensure_file_path(self, file_path):
 

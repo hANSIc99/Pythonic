@@ -37,13 +37,15 @@
 #include <QDialog>
 #include <QTextEdit>
 #include <QSplitter>
+#include <QSizePolicy>
+#include <QFontMetrics>
 
 #include "helper.h"
 #include "websocket.h"
 #include "workingarea.h"
 #include "menubar.h"
 #include "toolbox.h"
-#include "outputarea.h"
+#include "messagearea.h"
 
 
 
@@ -55,7 +57,8 @@
 #define INIT_ELEMENTSTATES_DELAY    5
 
 #define DBG_ID_FONTSIZE 12
-#define MAX_DGB_WINDOWS 5
+#define MAX_LOG_MESSAGES 20
+#define MAX_OUTPUT_MSGS  20
 
 //https://stackoverflow.com/questions/39931734/qt-specific-difference-of-stack-vs-heap-attributes
 
@@ -185,8 +188,11 @@ private:
     //! The Toolbox shows the available elements
     Toolbox                 m_toolBox;
 
-    //! DebugOutputArea shows the output of elements
-    OutputArea         m_outputArea;
+    //! OutputArea shows the output of elements
+    MessageArea             m_outputArea{"Element Output", MAX_OUTPUT_MSGS};
+    //! MessageArea shows the logging messages of elements
+    MessageArea             m_messageArea{"Log Messages", MAX_LOG_MESSAGES};
+
 
     /* Bottom Border (Info Text & Size Grip) */
 

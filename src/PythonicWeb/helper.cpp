@@ -27,6 +27,7 @@ Pythonic::Command helper::hashCmd(QLatin1String const &inString)
         if(inString == QStringLiteral("ElementEditorConfig")) return Pythonic::ElementEditorConfig;
         if(inString == QStringLiteral("SetInfoText")) return Pythonic::SetInfoText;
         if(inString == QStringLiteral("DebugOutput")) return Pythonic::DebugOutput;
+        if(inString == QStringLiteral("ElementMessage")) return Pythonic::ElementMessage;
         if(inString == QStringLiteral("Test")) return Pythonic::Test;
         return Pythonic::NoCmd;
 };

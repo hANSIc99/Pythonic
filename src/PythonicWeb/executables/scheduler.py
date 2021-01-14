@@ -77,7 +77,7 @@ class Element(Function):
             #           None           #
             ############################
 
-            recordDone = Record(None, None)
+            recordDone = Record(None, message='Trigger: {:04d}'.format(self.config['Identifier']))
             self.return_queue.put(recordDone)
 
         elif mode == "Interval":
