@@ -30,8 +30,9 @@ Toolbox::Toolbox(QWidget *parent) : QWidget(parent)
     //addTab(&m_basicTools, tr("Basic tools"));
 
     //setMinimumSize(300, 1200);
-    setMaximumWidth(200);
+    //setMaximumWidth(200);
 
+    setFixedWidth(200);
     setLayout(&m_masterLayout);
 
     m_mainWidget.setLayout(&m_layout);

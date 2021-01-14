@@ -53,6 +53,10 @@ int main(int argc, char *argv[])
                                                     "MenuBar.debug=false\n"
                                                     "MenuBar.info=false\n"
 
+                                                    "OutputArea.debug=true\n"
+                                                    "OutputArea.info=true\n"
+
+
                                                     /* Toolbox elements */
 
                                                     "Toolbox.debug=false\n"
@@ -84,7 +88,8 @@ int main(int argc, char *argv[])
                                                     "MenuBar.RunBtn.debug=false\n"
                                                     "MenuBar.RunBtn.info=false\n"
 
-
+                                                    "MenuBar.ReconnectBtn.true=false\n"
+                                                    "MenuBar.ReconnectBtn.true=false\n"
                                                     /* Master Classes */
 
                                                     "BaseLabel.debug=false\n"

@@ -143,14 +143,6 @@ def ctrl(ws):
             elif msg['cmd'] == 'QueryElementStates' :
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
                 ws.environ['mainWorker'].queryStates.emit()
-            elif msg['cmd'] == 'ProceedExecution' :
-                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
-                ws.environ['mainWorker'].proceed.emit()
-            elif msg['cmd'] == 'DiscardExecution' :
-                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
-                ws.environ['mainWorker'].discard.emit()
-                
-                
                 
 
 
@@ -279,8 +271,6 @@ class MainWorker(QObject):
     sysCommand      = Signal(object)    # Optional: Element Constructor / Destructor
     frontendCtrl    = Signal(object)
     queryStates     = Signal()          # Query the running states of elements
-    proceed         = Signal(object)    # Proceed execution with data from debug window
-    discard         = Signal(object)    # Discard data of debug window
 
     def __init__(self, app):
         super(MainWorker, self).__init__()

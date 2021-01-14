@@ -20,14 +20,12 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_refTimer(0)
-    , m_dbgWindowRefCnt(0)
     , it_spinner(m_spinner.begin())
     , ptrTmp(nullptr)
 {
 
-    // BAUSTELLE: Beim Laden des MainWindows Config hochladen laden
-
     /* Setup Working Area Tabs */
+
     m_workingTabs.setMinimumSize(300, 300);
 
     for (int i = 0; i < N_WORKING_GRIDS; i++){
@@ -61,16 +59,19 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     /* Setup Bottom Area */
-
+    /*
     m_bottomArea.setLayout(&m_bottomAreaLayout);
     m_bottomAreaLayout.setContentsMargins(5, 0, 5, 5);
     m_bottomAreaLayout.setSizeConstraint(QLayout::SetMaximumSize);
     m_bottomAreaLayout.addWidget(&m_toolBox);
 
     m_bottomAreaLayout.addWidget(&m_workingTabs);
-
-    //m_bottomAreaLayout.addWidget(&m_scrollDropBox); // double free
-
+    m_bottomAreaLayout.addWidget(&m_outputArea);
+    */
+    // BAUSTELLE: Output Area Hinzufügen
+    m_bottomArea.addWidget(&m_toolBox);
+    m_bottomArea.addWidget(&m_workingTabs);
+    m_bottomArea.addWidget(&m_outputArea);
 
     /* Setup Bottom Border */
 
@@ -87,12 +88,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_mainWidget.setLayout(&m_mainWidgetLayout);
     m_mainWidgetLayout.addWidget(&m_menuBar);
 
-    //m_mainWidgetLayout.addWidget(dynamic_cast<QWidget*>(&m_toolBox));
-    //m_mainWidgetLayout.addWidget(&m_toolBox);
-
-    //m_mainLayout.addWidget(&m_topMenuBar);
-
     m_mainWidgetLayout.addWidget(&m_bottomArea);
+
     /* Stretch BottomArea (working grids) always to maximum */
     m_mainWidgetLayout.setStretchFactor(&m_bottomArea, 1);
     m_mainWidgetLayout.addWidget(&m_bottomBorder);
@@ -330,7 +327,8 @@ void MainWindow::wsRcv(const QString &message)
     case Pythonic::Command::DebugOutput: {
         qCDebug(logC, "DebugOutput received");
 
-        openDebugWindow(jsonMsg[QStringLiteral("data")].toObject());
+        m_outputArea.appendOutput(  jsonMsg[QStringLiteral("data")].toObject(),
+                                    m_datetimeText.text());
         break;
     }
 
@@ -595,7 +593,7 @@ void MainWindow::connectionEstablished()
 
     }
 }
-
+#if 0
 void MainWindow::openDebugWindow(const QJsonObject &debugData)
 {
     qCDebug(logC, "called");
@@ -681,7 +679,7 @@ void MainWindow::openDebugWindow(const QJsonObject &debugData)
 
     connect(discardBtn, &QPushButton::clicked,
             debugWindow, &QDialog::reject);
-#if 0
+
     connect(proceedBtn, &QPushButton::clicked,
             debugWindow,
             [debugWindow, this]() {
@@ -699,7 +697,7 @@ void MainWindow::openDebugWindow(const QJsonObject &debugData)
          this->logMessage("Discard!", LogLvl::CRITICAL);
          debugWindow->reject();
     });
-#endif
+
 
     connect(debugWindow, &QDialog::finished,
             this,
@@ -722,5 +720,5 @@ void MainWindow::openDebugWindow(const QJsonObject &debugData)
     debugWindow->adjustSize();
 
 }
-
+#endif
 

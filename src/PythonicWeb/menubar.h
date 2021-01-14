@@ -138,6 +138,41 @@ private:
     QLoggingCategory    logC;
 };
 
+class ReconnectButton : public BaseButton {
+    Q_OBJECT
+public:
+
+    explicit ReconnectButton(QWidget *parent = nullptr)
+        : BaseButton(QUrl("http://localhost:7000/reconnect.png"), MENU_BTN_SIZE, parent)
+        , logC("MenuBar.ReconnectBtn")
+    {
+        //setStyleSheet("background-color: transparent;");
+        qCDebug(logC, "called");
+    };
+
+signals:
+    void hover(QString text);
+
+protected:
+
+    void enterEvent(QEvent *event) override {
+        Q_UNUSED(event)
+        qCInfo(logC, "called - emit SINGAL hover");
+        //setStyleSheet("background-color: dimgrey;");
+        emit hover(tr("Open workflow"));
+    };
+
+    void leaveEvent(QEvent *event) override {
+        Q_UNUSED(event)
+        qCInfo(logC, "called - emit SINGAL hover");
+        //setStyleSheet("background-color: transparent;");
+        emit hover(tr(""));
+    };
+
+private:
+    QLoggingCategory    logC;
+};
+
 class SaveButton : public BaseButton {
     Q_OBJECT
 public:

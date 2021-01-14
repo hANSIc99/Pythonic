@@ -36,12 +36,14 @@
 #include <QLatin1String>
 #include <QDialog>
 #include <QTextEdit>
+#include <QSplitter>
 
 #include "helper.h"
 #include "websocket.h"
 #include "workingarea.h"
 #include "menubar.h"
 #include "toolbox.h"
+#include "outputarea.h"
 
 
 
@@ -134,7 +136,7 @@ private slots:
     //! Proceed with initialization when connection is established
     void connectionEstablished();
     //! Opens a debug windows which shows the output of an element
-    void openDebugWindow(const QJsonObject &debugData);
+    //void openDebugWindow(const QJsonObject &debugData);
 
 private:
 
@@ -147,8 +149,6 @@ private:
     quint32                 m_elementStatesTimer;
     //! Incremented by heartbeat
     quint32                 m_refTimer;
-    //! Reference counter for debug windows
-    int                     m_dbgWindowRefCnt;
 
     /* Die Reihenfolge hier ist entscheidend */
     QPushButton             *m_sendDebugMessage;
@@ -163,15 +163,12 @@ private:
 
     //! Icon bar (New workflow, save worklow etc ... */
 
-    MenuBar                 m_menuBar;
+    MenuBar                 m_menuBar;        
 
-    /* Dropbox */
-
-
-    //! Bottom Area (QTabWidget WorkingArea & Dropbox)
-    QWidget                 m_bottomArea;
-    //! Layout of #m_bottomArea
-    QHBoxLayout             m_bottomAreaLayout;
+    //! Bottom Area (Toolbox, WorkingArea, Output and Logging)
+    QSplitter                 m_bottomArea;
+    ////! Layout of #m_bottomArea
+    //QHBoxLayout             m_bottomAreaLayout;
 
 
     /* Working Area (Grids) */ // self.scrollArea
@@ -185,7 +182,11 @@ private:
     QVector<QScrollArea*>   m_arr_workingTabs;
     QVector<WorkingArea*>   m_arr_workingArea;
 
+    //! The Toolbox shows the available elements
     Toolbox                 m_toolBox;
+
+    //! DebugOutputArea shows the output of elements
+    OutputArea         m_outputArea;
 
     /* Bottom Border (Info Text & Size Grip) */
 
