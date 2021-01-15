@@ -2,7 +2,7 @@
     {
     	"Type"  : "Text",
         "Name"  : "EditorLink",
-	    "Text"  : "Click <a href=\"http://BASICDATA_Id.py\">http://BASICDATA_Id.py</a><br> to to edit the file."
+	    "Text"  : "Click <a href=\"http://BASICDATA_Id.py\">http://BASICDATA_Id.py</a><br> to to edit the file.<br><br> Click <a href=\"http://localhost:7000/generic_python_BASICDATA_Id.py\">here</a><br> to download the file"
     },
     {
         "Type"  : "HelpText",

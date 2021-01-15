@@ -33,109 +33,56 @@
 #define MENU_BTN_SIZE QSize(32, 32)
 #define LOGO_SIZE QSize(262, 58)
 
-class RunButton : public BaseButton {
+
+class NewConfigButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit RunButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/run.png"), MENU_BTN_SIZE, parent)
-        , logC("MenuBar.RunBtn")
+    explicit NewConfigButton(QWidget *parent = nullptr)
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/new_file.png")), MENU_BTN_SIZE, parent)
     {
-        //setStyleSheet("background-color: transparent;");
+        setToolTip(QStringLiteral("Clear configuration"));
         qCDebug(logC, "called");
     };
 
-signals:
-    void hover(QString text);
 
-protected:
-
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: dimgrey;");
-        emit hover(tr("Run"));
-    };
-
-    void leaveEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: transparent;");
-        emit hover(tr(""));
-    };
 
 private:
-    QLoggingCategory    logC;
+    QLoggingCategory    logC{"MenuBar.NewConfigBtn"};
 };
 
-class NewFileButton : public BaseButton {
+class UploadConfig : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit NewFileButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/new_file.png"), MENU_BTN_SIZE, parent)
-        , logC("MenuBar.NewFileBtn")
+    explicit UploadConfig(QWidget *parent = nullptr)
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/upload_config.png")), MENU_BTN_SIZE, parent)
+
     {
-        //setStyleSheet("background-color: transparent;");
+        setToolTip(QStringLiteral("Upload configuration"));
         qCDebug(logC, "called");
     };
 
-signals:
-    void hover(QString text);
-
-protected:
-
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: dimgrey;");
-        emit hover(tr("New workflow"));
-    };
-
-    void leaveEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: transparent;");
-        emit hover(tr(""));
-    };
 
 private:
-    QLoggingCategory    logC;
+    QLoggingCategory    logC{"MenuBar.UploadConfigBtn"};
 };
 
-class OpenFileButton : public BaseButton {
+class UploadExecutable : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit OpenFileButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/open_file.png"), MENU_BTN_SIZE, parent)
-        , logC("MenuBar.OpenFileBtn")
+    explicit UploadExecutable(QWidget *parent = nullptr)
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/upload_executable.png")), MENU_BTN_SIZE, parent)
     {
-        //setStyleSheet("background-color: transparent;");
+        setToolTip(QStringLiteral("Upload executeable"));
         qCDebug(logC, "called");
     };
 
-signals:
-    void hover(QString text);
 
-protected:
-
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: dimgrey;");
-        emit hover(tr("Open workflow"));
-    };
-
-    void leaveEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: transparent;");
-        emit hover(tr(""));
-    };
 
 private:
-    QLoggingCategory    logC;
+    QLoggingCategory    logC{"MenuBar.UploadExecutableBtn"};
 };
 
 class ReconnectButton : public BaseButton {
@@ -143,34 +90,15 @@ class ReconnectButton : public BaseButton {
 public:
 
     explicit ReconnectButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/reconnect.png"), MENU_BTN_SIZE, parent)
-        , logC("MenuBar.ReconnectBtn")
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/reconnect.png")), MENU_BTN_SIZE, parent)
     {
-        //setStyleSheet("background-color: transparent;");
+        setToolTip(QStringLiteral("Try reconnect to daemon"));
         qCDebug(logC, "called");
     };
 
-signals:
-    void hover(QString text);
-
-protected:
-
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: dimgrey;");
-        emit hover(tr("Open workflow"));
-    };
-
-    void leaveEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: transparent;");
-        emit hover(tr(""));
-    };
 
 private:
-    QLoggingCategory    logC;
+    QLoggingCategory    logC{"MenuBar.ReconnectBtn"};
 };
 
 class SaveButton : public BaseButton {
@@ -178,104 +106,33 @@ class SaveButton : public BaseButton {
 public:
 
     explicit SaveButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/save.png"), MENU_BTN_SIZE, parent)
-        , logC("MenuBar.SaveBtn")
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/save.png")), MENU_BTN_SIZE, parent)
     {
-        //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
+        setToolTip(QStringLiteral("Save configuration"));
     };
 
-signals:
-    void hover(QString text);
 
-protected:
-
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: dimgrey;");
-        emit hover(tr("Save workflow"));
-    };
-
-    void leaveEvent(QEvent *event) override{
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: transparent;");
-        emit hover(tr(""));
-    };
 
 private:
-    QLoggingCategory    logC;
+    QLoggingCategory    logC{"MenuBar.SaveBtn"};
 };
 
-class SaveAsButton : public BaseButton {
-    Q_OBJECT
-public:
-
-    explicit SaveAsButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/save_as.png"), MENU_BTN_SIZE, parent)
-        , logC("MenuBar.SaveAsBtn")
-    {
-        //setStyleSheet("background-color: transparent;");
-        qCDebug(logC, "called");
-    };
-
-signals:
-    void hover(QString text);
-
-protected:
-
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: dimgrey;");
-        emit hover(tr("Save as ..."));
-    };
-
-    void leaveEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: transparent;");
-        emit hover(tr(""));
-    };
-
-private:
-    QLoggingCategory    logC;
-};
 
 class KillProcButton : public BaseButton {
     Q_OBJECT
 public:
 
     explicit KillProcButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/kill.png"), MENU_BTN_SIZE, parent)
-        , logC("MenuBar.KillProcBtn")
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/kill.png")), MENU_BTN_SIZE, parent)
     {
-        //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
+        setToolTip(QStringLiteral("Kill all processes"));
     };
 
-signals:
-    void hover(QString text);
-
-protected:
-
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: dimgrey;");
-        emit hover(tr("Kill running timers and child processes"));
-    };
-
-    void leaveEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: transparent;");
-        emit hover(tr(""));
-    };
 
 private:
-    QLoggingCategory    logC;
+    QLoggingCategory    logC{"MenuBar.KillProcBtn"};
 };
 
 class StopExecButton : public BaseButton {
@@ -283,71 +140,67 @@ class StopExecButton : public BaseButton {
 public:
 
     explicit StopExecButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/stop_exec.png"), MENU_BTN_SIZE, parent)
-        , logC("MenuBar.StopExecBtn")
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/stop_exec.png")), MENU_BTN_SIZE, parent)
     {
         //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
+        setToolTip(QStringLiteral("Stop all elements"));
     };
 
-signals:
-    void hover(QString text);
-
-protected:
-
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: dimgrey;");
-        emit hover(tr("Stop execution"));
-    };
-
-    void leaveEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: transparent;");
-        emit hover(tr(""));
-    };
 
 private:
-    QLoggingCategory    logC;
+    QLoggingCategory    logC{"MenuBar.StopExecBtn"};
 };
 
-class StartDebugButton : public BaseButton {
+class StartAllButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit StartDebugButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl("http://localhost:7000/start_debug.png"), MENU_BTN_SIZE, parent)
-        , logC("MenuBar.StartDebugBtn")
+    explicit StartAllButton(QWidget *parent = nullptr)
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/start_debug.png")), MENU_BTN_SIZE, parent)
     {
         //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
+        setToolTip(QStringLiteral("Start all schedulers"));
     };
 
-signals:
-    void hover(QString text);
-
-protected:
-
-    void enterEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: dimgrey;");
-        emit hover(tr("Start debug"));
-    };
-
-    void leaveEvent(QEvent *event) override {
-        Q_UNUSED(event)
-        qCInfo(logC, "called - emit SINGAL hover");
-        //setStyleSheet("background-color: transparent;");
-        emit hover(tr(""));
-    };
 
 private:
-    QLoggingCategory    logC;
+    QLoggingCategory    logC{"MenuBar.StartDebugBtn"};
 };
 
+class LogWindowButton : public BaseButton {
+    Q_OBJECT
+public:
+
+    explicit LogWindowButton(QWidget *parent = nullptr)
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/message.png")), MENU_BTN_SIZE, parent)
+    {
+        qCDebug(logC, "called");
+        setToolTip(QStringLiteral("Show / hide message window"));
+    };
+
+
+
+private:
+    QLoggingCategory    logC{"MenuBar.LogWindowBtn"};
+};
+
+class OutputButton : public BaseButton {
+    Q_OBJECT
+public:
+
+    explicit OutputButton(QWidget *parent = nullptr)
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/output.png")), MENU_BTN_SIZE, parent)
+    {
+        qCDebug(logC, "called");
+        setToolTip(QStringLiteral("Show / hide element output window"));
+    };
+
+
+private:
+    QLoggingCategory    logC{"MenuBar.OutputBtn"};
+};
 
 class MenuBar : public QWidget
 {
@@ -368,14 +221,19 @@ private:
 
 public:
 
-    NewFileButton       m_newFileBtn;
-    OpenFileButton      m_openFileBtn;
+    ReconnectButton     m_reconnectBtn;
+    NewConfigButton     m_newFileBtn;
+    UploadConfig        m_uploadConfig;
+    UploadExecutable    m_uploadExecutable;
     SaveButton          m_saveBtn;
-    SaveAsButton        m_saveAsBtn;
-    StartDebugButton    m_startDebugBtn;
-    RunButton           m_runBtn;
+    StartAllButton      m_startAllgBtn;
     StopExecButton      m_stopExecBtn;
     KillProcButton      m_killProcBtn;
+
+    LogWindowButton     m_logWindowBtn;
+    OutputButton        m_outputBtn;
+
+
 
 };
 

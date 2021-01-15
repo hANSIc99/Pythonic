@@ -108,10 +108,10 @@ public slots:
     void setInfoText(QString text);
 
 private slots:
+
     //! Send log-message to daemon
     void logMessage(const QString msg, const LogLvl lvl);
     //! Send control command to daemon
-
     //! Receives commands from the daemon
     void wsRcv(const QString &message);
     //! Forward message to working area
@@ -138,18 +138,20 @@ private slots:
     void queryElementStates();
     //! Proceed with initialization when connection is established
     void connectionEstablished();
-    //! Opens a debug windows which shows the output of an element
-    //void openDebugWindow(const QJsonObject &debugData);
+    //! Opens a file browser window to upload the config
+    void uploadConfig();
+    //! Opens a file browser to upload an executable
+    void uploadExecutable();
+    //! Open/close the log message area
+    void toggleMessageArea();
+    //! Open/close the output area
+    void toggleOutputArea();
 
 private:
 
-    //bool                    m_ctrlConnected{false};
-    //bool                    m_recvConnected{false};
-    //! Element state must be initialized with delay
-    //! Value indicates if element states were already initialized
-    bool                    m_initelementStatesTimeFlag{false};
-    //! Necessary for delayes initialization of the Element states
-    quint32                 m_elementStatesTimer;
+    //! Websocket is only active when config or executable is uploaded
+    QWebSocket              m_wsUploadCfg;
+
     //! Incremented by heartbeat
     quint32                 m_refTimer;
 
@@ -169,7 +171,7 @@ private:
     MenuBar                 m_menuBar;        
 
     //! Bottom Area (Toolbox, WorkingArea, Output and Logging)
-    QSplitter                 m_bottomArea;
+    QSplitter               m_bottomArea;
     ////! Layout of #m_bottomArea
     //QHBoxLayout             m_bottomAreaLayout;
 

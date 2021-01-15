@@ -92,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_mainWidgetLayout.addWidget(&m_bottomArea);
 
     /* Stretch BottomArea (working grids) always to maximum */
+
     m_mainWidgetLayout.setStretchFactor(&m_bottomArea, 1);
     m_mainWidgetLayout.addWidget(&m_bottomBorder);
     m_mainWidgetLayout.setSpacing(0);
@@ -104,8 +105,16 @@ MainWindow::MainWindow(QWidget *parent)
     setContentsMargins(0, 0, 0, 0);
     setCentralWidget(&m_mainWidget);
 
+    /* Resize Windows and hide message and output window */
+
     resize(DEFAULT_MAINWINDOW_SIZE);
-    //m_sendDebugMessage = new QPushButton(this);
+
+    QList<int> sizes = m_bottomArea.sizes();
+    //sizes[2] = 0;
+    //sizes[3] = 0;
+
+    //m_bottomArea.setSizes(sizes);
+
     setAcceptDrops(true);
 
 
@@ -113,13 +122,29 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&m_menuBar.m_newFileBtn, &QPushButton::clicked,
             this, &MainWindow::testSlot);
+
+    /****************************
+     *      Menubar Buttons     *
+     ****************************/
+
     /* Reconnect-Button */
-    connect(&m_menuBar.m_openFileBtn, &QPushButton::clicked,
+    connect(&m_menuBar.m_reconnectBtn, &QPushButton::clicked,
             this, &MainWindow::reconnect);
 
     connect(&m_menuBar.m_saveBtn, &QPushButton::clicked,
             this, &MainWindow::saveConfig);
 
+    connect(&m_menuBar.m_uploadConfig, &QPushButton::clicked,
+            this, &MainWindow::uploadConfig);
+
+    connect(&m_menuBar.m_uploadExecutable, &QPushButton::clicked,
+            this, &MainWindow::uploadExecutable);
+
+    connect(&m_menuBar.m_outputBtn, &QPushButton::clicked,
+            this, &MainWindow::toggleOutputArea);
+
+    connect(&m_menuBar.m_logWindowBtn, &QPushButton::clicked,
+            this, &MainWindow::toggleMessageArea);
 
     /* Receive-Websocket connection */
 
@@ -344,8 +369,12 @@ void MainWindow::wsRcv(const QString &message)
     case Pythonic::Command::ElementMessage: {
         qCDebug(logC, "ElementMessage received");
 
-        MessageWidget *logMsg = new MessageWidget(m_datetimeText.text(),
-                                                  jsonMsg[QStringLiteral("data")].toString());
+        QJsonObject outputData = jsonMsg[QStringLiteral("data")].toObject();
+        MessageWidget *logMsg = new MessageWidget(
+                    outputData[QStringLiteral("ObjectName")].toString(),
+                    outputData.value(QStringLiteral("Id")).toInt(),
+                    m_datetimeText.text(),
+                    outputData[QStringLiteral("Message")].toString());
 
         m_messageArea.addWidget(logMsg);
 
@@ -611,6 +640,97 @@ void MainWindow::connectionEstablished()
         queryConfig();
 
     }
+}
+
+void MainWindow::uploadConfig()
+{
+    qCDebug(logC, "Called");
+
+    QString s_homePath = QDir::homePath();
+
+    //QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
+
+    QUrl ws_url(QStringLiteral("ws://localhost:7000/config"));
+    m_wsUploadCfg.open(ws_url);
+
+    auto fileOpenCompleted = [&](const QString &filePath, const QByteArray &fileContent) {
+
+
+        if (filePath.isEmpty() && !m_wsUploadCfg.isValid()) {
+            qDebug() << "No file was selected";
+        } else {
+            qCDebug(logC, "Size of file: %d kb", (fileContent.size() / 1000));
+            qCDebug(logC, "Selected file: %s", filePath.toStdString().c_str());
+            QFileInfo fileName(filePath);
+
+            m_wsUploadCfg.sendTextMessage(fileName.fileName());
+            m_wsUploadCfg.sendBinaryMessage(fileContent);
+            m_wsUploadCfg.close(QWebSocketProtocol::CloseCodeNormal,"Job done");
+        }
+    };
+
+    QFileDialog::getOpenFileContent("", fileOpenCompleted);
+}
+
+void MainWindow::uploadExecutable()
+{
+    qCDebug(logC, "Called");
+
+    QString s_homePath = QDir::homePath();
+
+    //QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
+
+    QUrl ws_url(QStringLiteral("ws://localhost:7000/executable"));
+    m_wsUploadCfg.open(ws_url);
+
+    auto fileOpenCompleted = [&](const QString &filePath, const QByteArray &fileContent) {
+
+
+        if (filePath.isEmpty() && !m_wsUploadCfg.isValid()) {
+            qDebug() << "No file was selected";
+        } else {
+            qCDebug(logC, "Size of file: %d kb", (fileContent.size() / 1000));
+            qCDebug(logC, "Selected file: %s", filePath.toStdString().c_str());
+            QFileInfo fileName(filePath);
+
+            m_wsUploadCfg.sendTextMessage(fileName.fileName());
+            m_wsUploadCfg.sendBinaryMessage(fileContent);
+            m_wsUploadCfg.close(QWebSocketProtocol::CloseCodeNormal,"Job done");
+        }
+    };
+
+    QFileDialog::getOpenFileContent("", fileOpenCompleted);
+}
+
+void MainWindow::toggleMessageArea()
+{
+    qCDebug(logC, "called");
+
+
+    QList<int> sizes = m_bottomArea.sizes();
+
+
+    if(m_messageArea.width() > 5) { // Message area is open
+        sizes[2] = 0;
+    } else {
+        sizes[2] = m_bottomArea.width() / 3;
+    }
+    m_bottomArea.setSizes(sizes);
+}
+
+void MainWindow::toggleOutputArea()
+{
+    qCDebug(logC, "called");
+
+    QList<int> sizes = m_bottomArea.sizes();
+
+
+    if(m_outputArea.width() > 5) { // Message area is open
+        sizes[3] = 0;
+    } else {
+        sizes[3] = m_bottomArea.width() / 3;
+    }
+    m_bottomArea.setSizes(sizes);
 }
 #if 0
 void MainWindow::openDebugWindow(const QJsonObject &debugData)

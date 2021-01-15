@@ -108,15 +108,28 @@ OutputWidget::OutputWidget(
     setMaximumHeight(200);
 }
 
-MessageWidget::MessageWidget(const QString &timestamp, const QString &msg, QWidget *parent)
+MessageWidget::MessageWidget(const QString &objName,
+                             const quint32 id,
+                             const QString &timestamp,
+                             const QString &msg,
+                             QWidget *parent)
     : QFrame(parent)
 {
     setLayout(&m_layout);
 
+    /* Setup top area: Object name and Id */
+    m_topArea.setLayout(&m_topAreaLAyout);
+    m_topAreaLAyout.addWidget(&m_timestamp);
+    m_topAreaLAyout.addStretch(1);
+    m_topAreaLAyout.addWidget(&m_id);
+
+    m_id.setText(QString("0x%1").arg(id));
+    m_objectName.setText(objName);
     m_timestamp.setText(timestamp);
     m_message.setText(msg);
 
-    m_layout.addWidget(&m_timestamp);
+    m_layout.addWidget(&m_topArea);
+    m_layout.addWidget(&m_objectName);
     m_layout.addWidget(&m_message);
 
     if(m_styleOption ){

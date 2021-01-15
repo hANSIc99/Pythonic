@@ -145,16 +145,39 @@ def ctrl(ws):
                 ws.environ['mainWorker'].queryStates.emit()
                 
 
+@websocket.WebSocketWSGI
+def saveConfig(ws):
+    filename = ws.wait()
+    logging.info('Download Config: Filename: {}'.format(filename))
+    data = ws.wait()
+    data_size = float(len(data)) / 1000 #kb
+    logging.info('Sizeof Config: {:.1f} kb'.format(data_size))
+    # BAUSTELLE: FIlename = current_config.json
+    new_file = os.path.join(www_config, 'current_config.json')
+    logging.info('Upload saved to: {}'.format(new_file))
+    with open(new_file, 'wb') as file:
+        file.write(data)
+    
+    ws.environ['mainWorker'].loadConfig()
 
-
+@websocket.WebSocketWSGI
+def saveExecutable(ws):
+    filename = ws.wait()
+    logging.info('Download Config: Filename: {}'.format(filename))
+    data = ws.wait()
+    data_size = float(len(data)) / 1000 #kb
+    logging.info('Sizeof Config: {:.1f} kb'.format(data_size))
+    # BAUSTELLE: FIlename = current_config.json
+    new_file = os.path.join(executables, filename)
+    logging.info('Upload saved to: {}'.format(new_file))
+    with open(new_file, 'wb') as file:
+        file.write(data)
 
 def dispatch(environ, start_response):
 
     """
         WEBSOCKETS
     """
-
-
 
 
     png_req4 = environ['PATH_INFO'][-4:] # last 4 characters '.png'
@@ -167,10 +190,17 @@ def dispatch(environ, start_response):
         logging.debug('PythonicDaemon - Open RCV WebSocket')     
         return rcv(environ, start_response)
 
+    elif environ['PATH_INFO'] == '/config':
+        logging.debug('PythonicDaemon - Open Config WebSocket')  
+        return saveConfig(environ, start_response)
 
-        """
-            STANDARD HTML ENDPOINTS
-        """
+    elif environ['PATH_INFO'] == '/executable':
+        logging.debug('PythonicDaemon - Open Config WebSocket')  
+        return saveExecutable(environ, start_response)
+
+        ###########################
+        # STANDARD HTML ENDPOINTS #
+        ###########################
 
     elif environ['PATH_INFO'] == '/':
         #logging.debug('PATH_INFO == \'/\'')
@@ -216,11 +246,24 @@ def dispatch(environ, start_response):
         open_path = os.path.join(os.path.dirname(__file__), www_static + environ['PATH_INFO'])
         with open(open_path,'rb') as f:
             img_data = f.read()
-
-        
+      
         start_response('200 OK', [('content-type', 'application/javascript')])
         
         return [img_data]
+
+    
+    # Executable (*.py)
+
+    elif png_req3 == '.py':
+        #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
+        open_path = os.path.join(executables + environ['PATH_INFO'])
+        with open(open_path,'rb') as f:
+            img_data = f.read()
+      
+        start_response('200 OK', [('content-type', 'application/javascript')])
+        
+        return [img_data]
+    
 
     elif environ['PATH_INFO'] == '/PythonicWeb.wasm':
         #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')

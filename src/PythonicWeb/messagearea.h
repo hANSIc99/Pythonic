@@ -49,18 +49,26 @@ class MessageWidget : public QFrame
 {
     Q_OBJECT
 public:
-    explicit MessageWidget( // BAUSTELLE ID usw muss hier noch mit rein
-            const QString &timestamp,
-            const QString &msg,
-            QWidget *parent = nullptr);
+    explicit MessageWidget( const QString &objName,
+                            const quint32 id,
+                            const QString &timestamp,
+                            const QString &msg,
+                            QWidget *parent = nullptr);
 
 private:
 
     static bool m_styleOption;
 
+    //! Object name and Id
+    QWidget     m_topArea;
+    QHBoxLayout m_topAreaLAyout;
+
     QVBoxLayout m_layout;
 
+
     QLabel      m_timestamp;
+    QLabel      m_id;
+    QLabel      m_objectName;
     QLabel      m_message;
 };
 
@@ -89,6 +97,7 @@ private:
 
     //! Maximum number of list items
     int                     m_maxItems;
+
     //! Enables scrolling
     QScrollArea             m_scrollArea;
     //! contains m_scrollArea

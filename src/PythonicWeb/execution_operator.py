@@ -255,13 +255,18 @@ class Operator(QThread):
         if cfgElement['Config']['GeneralConfig']['Logging'] and record.message:
             logging.debug('{} - {}'.format(cfgElement['ObjectName'], record.message))
 
+            data = {
+                'Id'        : cfgElement['Id'],
+                'ObjectName': cfgElement['ObjectName'],
+                'Message'   : record.message
+            }
             address = {
                 'target'    : 'MainWindow',                        
             }
             cmd = { 
                 'cmd'       : 'ElementMessage',
                 'address'   : address,
-                'data'      : record.message
+                'data'      : data
             }
             self.command.emit(cmd)
 

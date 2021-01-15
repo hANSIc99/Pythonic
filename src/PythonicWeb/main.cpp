@@ -40,8 +40,9 @@ int main(int argc, char *argv[])
                                                     "FileDownloader.debug=false\n"
                                                     "FileDownloader.info=false\n"
 
-                                                    "Websocket.debug=false\n"
-                                                    "Websocket.info=false\n"
+                                                    "Websocket.debug=true\n"
+                                                    "Websocket.info=true\n"
+
                                                     /* GUI Elements */
 
                                                     "MainWindow.debug=true\n"
