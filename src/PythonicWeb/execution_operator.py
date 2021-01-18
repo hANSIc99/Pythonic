@@ -30,7 +30,7 @@ class ProcessHandler(QThread):
         self.identifier = identifier
         self.instance   = None
         self.element['Config']['Identifier'] = self.identifier
-
+        self.pid        = None
         self.queue      = None 
 
 
@@ -65,7 +65,7 @@ class ProcessHandler(QThread):
         if bMP: ## attach Debugger if flag is set
             self.p_0 = mp.Process(target=self.instance.execute)
             self.p_0.start()
-            #self.pid = p_0.pid
+            self.pid = p_0.pid
         else:
             self.t_0 = mt.Thread(target=self.instance.execute)
             self.t_0.start()
@@ -191,8 +191,33 @@ class Operator(QThread):
         for threadIdentifier, processHandle in self.processHandles.items():
             if processHandle.element['Id'] == id:
                 processHandle.stop()
+
+    def stopAll(self):
+
+        logging.debug('Operator::stopAll() called')
+
+        for threadIdentifier, processHandle in self.processHandles.items():
+            processHandle.stop()
+
+    def startAll(self, config):
+
+        logging.debug('Operator::startAll() called')
+        self.currentConfig = config
         
-    
+        startElements = [x for x in config if not x['Socket']]
+
+        for startElement in startElements:
+            self.createProcHandle(startElement)
+
+    def killAll(self):
+        
+        logging.debug('Operator::killAll() called')
+
+        for threadIdentifier, processHandle in self.processHandles.items():
+            if processHandle.pid :
+                x = 3
+
+
     def getElementStates(self):
         
         logging.debug('Operator::getElementStates() called')

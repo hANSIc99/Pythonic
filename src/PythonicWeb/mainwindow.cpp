@@ -23,10 +23,12 @@ MainWindow::MainWindow(QWidget *parent)
     , it_spinner(m_spinner.begin())
     , ptrTmp(nullptr)
 {
+    setAcceptDrops(true);
 
     /* Setup Working Area Tabs */
 
     m_workingTabs.setMinimumSize(300, 300);
+
 
     for (int i = 0; i < N_WORKING_GRIDS; i++){
 
@@ -59,16 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     /* Setup Bottom Area */
-    /*
-    m_bottomArea.setLayout(&m_bottomAreaLayout);
-    m_bottomAreaLayout.setContentsMargins(5, 0, 5, 5);
-    m_bottomAreaLayout.setSizeConstraint(QLayout::SetMaximumSize);
-    m_bottomAreaLayout.addWidget(&m_toolBox);
 
-    m_bottomAreaLayout.addWidget(&m_workingTabs);
-    m_bottomAreaLayout.addWidget(&m_outputArea);
-    */
-    // BAUSTELLE: Output Area Hinzufügen
     m_bottomArea.addWidget(&m_toolBox);
     m_bottomArea.addWidget(&m_workingTabs);
     m_bottomArea.addWidget(&m_messageArea);
@@ -101,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     /* Setup self layout */
-    //m_mainWidget.setStyleSheet("background-color: blue");
+
     setContentsMargins(0, 0, 0, 0);
     setCentralWidget(&m_mainWidget);
 
@@ -109,13 +102,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     resize(DEFAULT_MAINWINDOW_SIZE);
 
+    /* Hide Message- and Output-area */
+
+    show();
+
     QList<int> sizes = m_bottomArea.sizes();
-    //sizes[2] = 0;
-    //sizes[3] = 0;
+    sizes[2] = 0;
+    sizes[3] = 0;
 
-    //m_bottomArea.setSizes(sizes);
-
-    setAcceptDrops(true);
+    m_bottomArea.setSizes(sizes);
 
 
     /* Signals & Slots - Buttons */
@@ -131,20 +126,30 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_menuBar.m_reconnectBtn, &QPushButton::clicked,
             this, &MainWindow::reconnect);
 
-    connect(&m_menuBar.m_saveBtn, &QPushButton::clicked,
-            this, &MainWindow::saveConfig);
-
     connect(&m_menuBar.m_uploadConfig, &QPushButton::clicked,
             this, &MainWindow::uploadConfig);
 
     connect(&m_menuBar.m_uploadExecutable, &QPushButton::clicked,
             this, &MainWindow::uploadExecutable);
 
-    connect(&m_menuBar.m_outputBtn, &QPushButton::clicked,
-            this, &MainWindow::toggleOutputArea);
+    connect(&m_menuBar.m_saveBtn, &QPushButton::clicked,
+            this, &MainWindow::saveConfig);
+
+    connect(&m_menuBar.m_startAllgBtn, &QPushButton::clicked,
+            this, &MainWindow::startAll);
+
+    connect(&m_menuBar.m_stopExecBtn, &QPushButton::clicked,
+            this, &MainWindow::stopAll);
+
+    connect(&m_menuBar.m_killProcBtn, &QPushButton::clicked,
+            this, &MainWindow::killAll);
 
     connect(&m_menuBar.m_logWindowBtn, &QPushButton::clicked,
             this, &MainWindow::toggleMessageArea);
+
+    connect(&m_menuBar.m_outputBtn, &QPushButton::clicked,
+            this, &MainWindow::toggleOutputArea);
+
 
     /* Receive-Websocket connection */
 
@@ -270,7 +275,8 @@ void MainWindow::wsRcv(const QString &message)
 
     /* Forward all packaged with a target other than 'MainWindow' */
 
-    QLatin1String sTarget(target.toString().toLatin1());
+    QLatin1String sTarget(target.toString().toLatin1(),
+                          target.toString().size());
 
     if(sTarget != QStringLiteral("MainWindow")){
         fwrdWsRcv(jsonMsg);
@@ -286,7 +292,8 @@ void MainWindow::wsRcv(const QString &message)
         return;
     }
 
-    QLatin1String sCMD(jsCmd.toString().toLatin1());
+    QLatin1String sCMD(jsCmd.toString().toLatin1(),
+                       jsCmd.toString().size());
 
     switch (helper::hashCmd(sCMD)) {
     case Pythonic::Command::Heartbeat: {
@@ -448,6 +455,43 @@ void MainWindow::stopExec(const quint32 id)
         { QStringLiteral("data"), (qint64)id}
     };
     wsCtrl(stopCmd);
+}
+
+void MainWindow::startAll()
+{
+    qCInfo(logC, "called");
+
+    /* Step 1: Download configuration to daemon */
+    saveConfig();
+
+    /* Step 2: Emit start command */
+    QJsonObject startCmd {
+        { QStringLiteral("cmd"),  QStringLiteral("StartAll")}
+    };
+
+    wsCtrl(startCmd);
+}
+
+void MainWindow::stopAll()
+{
+    qCInfo(logC, "called");
+
+    QJsonObject startCmd {
+        { QStringLiteral("cmd"),  QStringLiteral("StopAll")}
+    };
+
+    wsCtrl(startCmd);
+}
+
+void MainWindow::killAll()
+{
+    qCInfo(logC, "called");
+
+    QJsonObject startCmd {
+        { QStringLiteral("cmd"),  QStringLiteral("KillAll")}
+    };
+
+    wsCtrl(startCmd);
 }
 
 void MainWindow::testSlot(bool checked)

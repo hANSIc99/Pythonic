@@ -23,6 +23,17 @@ class Element(Function):
 
         recordDone  = Record(None, None)
 
+        specificConfig = self.config.get('SpecificConfig')
+
+        # Set default mode if SpecificConfig is not defined
+        # This is the case if the element was created on the working area
+        # but the configuration was never opened
+
+        if not specificConfig:
+
+            recordDone = Record(None, message='Trigger: {:04d}'.format(self.config['Identifier']))
+            self.return_queue.put(recordDone)
+            return
 
         for attrs in self.config['SpecificConfig']:
             if attrs['Name'] == 'Mode':

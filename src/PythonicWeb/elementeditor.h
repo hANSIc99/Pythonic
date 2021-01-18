@@ -31,6 +31,9 @@
 #include <QComboBox>
 #include <QVariant>
 #include <QList>
+#include <QStringLiteral>
+#include <QLatin1String>
+
 #include "baselabel.h"
 #include "helper.h"
 
@@ -113,7 +116,7 @@ public:
 
         m_outerLayout.addWidget(&m_innerWidget);
         m_outerLayout.addWidget(&m_regExpIndicator);
-        m_regExpIndicator.setStyleSheet("QLabel { color : red; }");
+        m_regExpIndicator.setStyleSheet(QStringLiteral("QLabel { color : red; }"));
         //m_lineedit.setValidator(&m_regExp);
     };
 
@@ -144,9 +147,9 @@ public slots:
     void validateInput(const QString &text){
         QRegularExpressionMatch match = m_regExp.match(text);
         if(match.hasMatch()){
-            m_regExpIndicator.setText("");
+            m_regExpIndicator.setText(QStringLiteral(""));
         } else {
-            m_regExpIndicator.setText("Please provide acceptable input");
+            m_regExpIndicator.setText(QStringLiteral("Please provide acceptable input"));
         }
     }
 
@@ -196,8 +199,8 @@ public slots:
 
 private:
 
-    static ElementEditorTypes::Type hashType(const QString  &inString);
-    static ElementEditorTypes::Property hashEditorProperty(const QString &inString);
+    static ElementEditorTypes::Type hashType(const QLatin1String &inString);
+    static ElementEditorTypes::Property hashEditorProperty(const QLatin1String &inString);
     static ElementProperties::Properties hashElementProperty(const QString &inString);
 
 

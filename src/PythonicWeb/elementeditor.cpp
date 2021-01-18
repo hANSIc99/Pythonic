@@ -33,25 +33,25 @@ Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
 
     /* Setup element id */
 
-    int id = basicData.value("Id").toInt();
+    int id = basicData.value(QStringLiteral("Id")).toInt();
 
-    QFont font("Arial", ID_FONTSIZE, QFont::Bold);
+    QFont font(QStringLiteral("Arial"), ID_FONTSIZE, QFont::Bold);
     m_id.setFont(font);
     m_id.setText(QString("Id: %1").arg(id, 8, 16, QChar('0')));
 
 
     /* Setup general switches */
 
-    m_toggleLogMessage.setText("Log Messages");
+    m_toggleLogMessage.setText(QStringLiteral("Log Messages"));
 
-    m_toggleLogOutput.setText("Log Output debuggin");
+    m_toggleLogOutput.setText(QStringLiteral("Log Output"));
 
-    m_toggleMP.setText("Activate multiprocessing");
+    m_toggleMP.setText(QStringLiteral("Activate multiprocessing"));
     m_toggleMP.setChecked(true);
 
-    m_saveButton.setText("Save");
+    m_saveButton.setText(QStringLiteral("Save"));
 
-    m_delButton.setText("Delete element");
+    m_delButton.setText(QStringLiteral("Delete element"));
 
     m_generalConfig.setLayout(&m_generalCfgLayout);
     m_generalConfig.setContentsMargins(5, 10, 5, 10);
@@ -95,37 +95,40 @@ void Elementeditor::openEditor(const QJsonObject config)
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
 
-    QJsonObject generalConfig = config["GeneralConfig"].toObject();
-    m_toggleLogMessage.setChecked(generalConfig["Logging"].toBool());
-    m_toggleLogOutput.setChecked(generalConfig["Debug"].toBool());
-    m_toggleMP.setChecked(generalConfig["MP"].toBool());
+    QJsonObject generalConfig = config[QStringLiteral("GeneralConfig")].toObject();
+    m_toggleLogMessage.setChecked(generalConfig[QStringLiteral("Logging")].toBool());
+    m_toggleLogOutput.setChecked(generalConfig[QStringLiteral("Debug")].toBool());
+    m_toggleMP.setChecked(generalConfig[QStringLiteral("MP")].toBool());
 
-    QJsonArray specificConfig = config["SpecificConfig"].toArray();
+    QJsonArray specificConfig = config[QStringLiteral("SpecificConfig")].toArray();
 
     if(!specificConfig.isEmpty()){
         for(const QJsonValue &value : qAsConst(specificConfig)){
 
             QJsonObject elementConfig = value.toObject();
 
-            QString type = elementConfig["Type"].toString();
-            QString name = elementConfig["Name"].toString();
+            //QString type = elementConfig[QStringLiteral("Type")].toString();
+            QLatin1String type( elementConfig[QStringLiteral("Type")].toString().toLatin1(),
+                                elementConfig[QStringLiteral("Type")].toString().size());
+
+            QString name = elementConfig[QStringLiteral("Name")].toString();
 
             switch (hashType(type)) {
 
             case ElementEditorTypes::ComboBox: {
                 ComboBox *box = m_specificConfig.findChild<ComboBox*>(name);
-                if(box) box->m_combobox.setCurrentIndex(elementConfig["Index"].toInt());
+                if(box) box->m_combobox.setCurrentIndex(elementConfig[QStringLiteral("Index")].toInt());
                 break;
             }
 
             case ElementEditorTypes::LineEdit: {
                 LineEdit *edit = m_specificConfig.findChild<LineEdit*>(name);
-                if(edit) edit->m_lineedit.setText(elementConfig["Data"].toString());
+                if(edit) edit->m_lineedit.setText(elementConfig[QStringLiteral("Data")].toString());
                 break;
             }
             case ElementEditorTypes::CheckBox: {
                 CheckBox *checkbox = m_specificConfig.findChild<CheckBox*>(name);
-                if(checkbox) checkbox->setChecked(elementConfig["Data"].toBool());
+                if(checkbox) checkbox->setChecked(elementConfig[QStringLiteral("Data")].toBool());
                 break;
             }
             default: {
@@ -158,7 +161,8 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
     for(const QJsonValue &unitJSONVal : config){
         QJsonObject unit = unitJSONVal.toObject();
 
-        QString type = unit["Type"].toString();
+        QLatin1String type( unit[QStringLiteral("Type")].toString().toLatin1(),
+                            unit[QStringLiteral("Type")].toString().size());
 
         switch (hashType(type)) {
 
@@ -207,19 +211,19 @@ void Elementeditor::accept()
 
 }
 
-ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
+ElementEditorTypes::Type Elementeditor::hashType(const QLatin1String &inString)
 {
-    if(inString == "ComboBox") return ElementEditorTypes::ComboBox;
-    if(inString == "LineEdit") return ElementEditorTypes::LineEdit;
-    if(inString == "CheckBox") return ElementEditorTypes::CheckBox;
-    if(inString == "Text")     return ElementEditorTypes::Text;
-    if(inString == "HelpText")     return ElementEditorTypes::HelpText;
+    if(inString == QStringLiteral("ComboBox")) return ElementEditorTypes::ComboBox;
+    if(inString == QStringLiteral("LineEdit")) return ElementEditorTypes::LineEdit;
+    if(inString == QStringLiteral("CheckBox")) return ElementEditorTypes::CheckBox;
+    if(inString == QStringLiteral("Text"))     return ElementEditorTypes::Text;
+    if(inString == QStringLiteral("HelpText")) return ElementEditorTypes::HelpText;
     return ElementEditorTypes::NoType;
 }
 
-ElementEditorTypes::Property Elementeditor::hashEditorProperty(const QString &inString)
+ElementEditorTypes::Property Elementeditor::hashEditorProperty(const QLatin1String &inString)
 {
-    if(inString == "Visibility") return ElementEditorTypes::Visibility;
+    if(inString == QStringLiteral("Visibility")) return ElementEditorTypes::Visibility;
     return ElementEditorTypes::NoProperty;
 }
 
@@ -236,10 +240,10 @@ QJsonObject Elementeditor::genConfig()
     for(const ComboBox* combobox : comboboxes){
 
         QJsonObject comboboxJSON = {
-            { "Type",  "ComboBox"},
-            { "Name",  combobox->objectName()},        
-            { "Data",  combobox->m_combobox.currentData().toString()},
-            { "Index", combobox->m_combobox.currentIndex()}
+            { QStringLiteral("Type"),  QStringLiteral("ComboBox")},
+            { QStringLiteral("Name"),  combobox->objectName()},
+            { QStringLiteral("Data"),  combobox->m_combobox.currentData().toString()},
+            { QStringLiteral("Index"), combobox->m_combobox.currentIndex()}
         };
 
         specificConfig.append(comboboxJSON);
@@ -250,9 +254,9 @@ QJsonObject Elementeditor::genConfig()
     for(const LineEdit* lineedit : lineedits){
 
         QJsonObject lineeditJSON = {
-            { "Type",  "LineEdit"},
-            { "Name",  lineedit->objectName()},
-            { "Data",  lineedit->m_lineedit.text()}
+            { QStringLiteral("Type"),  QStringLiteral("LineEdit")},
+            { QStringLiteral("Name"),  lineedit->objectName()},
+            { QStringLiteral("Data"),  lineedit->m_lineedit.text()}
 
         };
 
@@ -265,9 +269,9 @@ QJsonObject Elementeditor::genConfig()
     for(const CheckBox* checkbox : checkboxes){
 
         QJsonObject checkboxJSON = {
-            { "Type",  "CheckBox"},
-            { "Name",  checkbox->objectName()},
-            { "Data",  checkbox->isChecked()}
+            { QStringLiteral("Type"),  QStringLiteral("CheckBox")},
+            { QStringLiteral("Name"),  checkbox->objectName()},
+            { QStringLiteral("Data"),  checkbox->isChecked()}
 
         };
 
@@ -276,18 +280,18 @@ QJsonObject Elementeditor::genConfig()
     }
 
     QJsonObject generalConfig = {
-        {"ObjectName" , m_objectName.text() },
-        {"Logging" , m_toggleLogMessage.isChecked() },
-        {"Debug", m_toggleLogOutput.isChecked() },
-        {"MP", m_toggleMP.isChecked()}
+        { QStringLiteral("ObjectName") , m_objectName.text() },
+        { QStringLiteral("Logging") , m_toggleLogMessage.isChecked() },
+        { QStringLiteral("Debug"), m_toggleLogOutput.isChecked() },
+        { QStringLiteral("MP"), m_toggleMP.isChecked()}
     };
 
     /* Generate specific config */
 
 
     QJsonObject config = {
-        {"GeneralConfig", generalConfig },
-        {"SpecificConfig", specificConfig}
+        { QStringLiteral("GeneralConfig"), generalConfig },
+        { QStringLiteral("SpecificConfig"), specificConfig}
     };
 
 
@@ -319,7 +323,8 @@ void Elementeditor::checkRulesAndRegExp()
         if(rule.propertyRelated){
             /* Get first element of list = name of property */
             /* (dependentValues of property based rules contain always only one value) */
-            QString property = rule.dependentValues.first();
+            QLatin1String property(rule.dependentValues.first().toLatin1(),
+                                   rule.dependentValues.first().size());
 
 
             switch (hashEditorProperty(property)) {
@@ -341,7 +346,8 @@ void Elementeditor::checkRulesAndRegExp()
         /* Value based rule */
 
         /* Get type name of dependent element */
-        QString sType = dependence->metaObject()->className();
+
+        QLatin1String sType(dependence->metaObject()->className());
 
         /* Perform type dependent value query */
         switch (hashType(sType)) {
@@ -420,14 +426,14 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
 
         QJsonObject ruleObj = rule.toObject();
 
-        QJsonValue dependentProp = ruleObj.value("DependentProperty");
-        QJsonValue dependentVal  = ruleObj.value("DependentValue");
-        QString dependentObjName = ruleObj["Dependence"].toString();
+        QJsonValue dependentProp = ruleObj.value(QStringLiteral("DependentProperty"));
+        QJsonValue dependentVal  = ruleObj.value(QStringLiteral("DependentValue"));
+        QString dependentObjName = ruleObj[QStringLiteral("Dependence")].toString();
 
         /* Add value dependent rule */
         if(!dependentVal.isUndefined()){
 
-            QJsonArray dependentValues = ruleObj["DependentValue"].toArray();
+            QJsonArray dependentValues = ruleObj[QStringLiteral("DependentValue")].toArray();
 
             QStringList  s_dependentValues;
 
@@ -459,7 +465,7 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
 
     /* Adding items to the dropdown (at least if one is given) */
 
-    QJsonArray listItems = dropDownJSON["Items"].toArray();
+    QJsonArray listItems = dropDownJSON[QStringLiteral("Items")].toArray();
 
     if(listItems.isEmpty()){
         qCWarning(logC, "No list tems found for %s", parent()->objectName().toStdString().c_str());
@@ -467,7 +473,7 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
     }
 
     ComboBox *dropdown = new ComboBox(&m_specificConfig);
-    dropdown->setObjectName(dropDownJSON["Name"].toString());
+    dropdown->setObjectName(dropDownJSON[QStringLiteral("Name")].toString());
     m_specificCfgLayout.addWidget(dropdown);
 
     for(const QJsonValue &item : qAsConst(listItems)){
@@ -476,7 +482,7 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
 
     /* Adding title (if one is given) */
 
-    QString title = dropDownJSON["Title"].toString();
+    QString title = dropDownJSON[QStringLiteral("Title")].toString();
     if(!title.isEmpty()){
         //QLabel *label = new QLabel(title, &m_specificConfig);
         //m_specificCfgLayout.addWidget(label);
@@ -490,7 +496,7 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
             this, &Elementeditor::checkRulesAndRegExp);
 
     /* Adding condition (if given) */
-   addRules(dropDownJSON.value("Dependency"), qobject_cast<QWidget*>(dropdown));
+   addRules(dropDownJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(dropdown));
 }
 
 void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
@@ -500,11 +506,11 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
 
     LineEdit *lineedit = new LineEdit(&m_specificConfig);
-    lineedit->setObjectName(lineeditJSON["Name"].toString());
+    lineedit->setObjectName(lineeditJSON[QStringLiteral("Name")].toString());
     m_specificCfgLayout.addWidget(lineedit);
 
     /* Adding title (if one is given) */
-    QString title = lineeditJSON["Title"].toString();
+    QString title = lineeditJSON[QStringLiteral("Title")].toString();
     if(!title.isEmpty()){
         //QLabel *label = new QLabel(title, &m_specificConfig);
         //m_specificCfgLayout.addWidget(label);
@@ -512,14 +518,14 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
     }
 
     /* Adding default text (if given) */
-    QString defaultText = lineeditJSON["Defaulttext"].toString();
+    QString defaultText = lineeditJSON[QStringLiteral("Defaulttext")].toString();
     if(!defaultText.isEmpty()){
         lineedit->m_lineedit.setText(defaultText);
     }
 
     /* Adding RegExp (if given) */
 
-    QString regExpString = lineeditJSON["RegExp"].toString();
+    QString regExpString = lineeditJSON[QStringLiteral("RegExp")].toString();
 
     if(!regExpString.isEmpty()){
 
@@ -532,18 +538,18 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
 
     /* Adding condition (if given) */
-    addRules(lineeditJSON.value("Dependency"), qobject_cast<QWidget*>(lineedit));
+    addRules(lineeditJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(lineedit));
 }
 
 void Elementeditor::addCheckBox(QJsonObject &checkboxJSON)
 {
     qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
 
-    CheckBox *checkbox = new CheckBox(checkboxJSON["Title"].toString(), &m_specificConfig);
-    checkbox->setObjectName(checkboxJSON["Name"].toString());
+    CheckBox *checkbox = new CheckBox(checkboxJSON[QStringLiteral("Title")].toString(), &m_specificConfig);
+    checkbox->setObjectName(checkboxJSON[QStringLiteral("Name")].toString());
     m_specificCfgLayout.addWidget(checkbox);
 
-    addRules(checkboxJSON.value("Dependency"), qobject_cast<QWidget*>(checkbox));
+    addRules(checkboxJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(checkbox));
 }
 
 void Elementeditor::addText(QJsonObject &textJSON)
@@ -553,13 +559,13 @@ void Elementeditor::addText(QJsonObject &textJSON)
     //QString rawString = textJSON["Text"].toString();
 
 
-    Text *text = new Text(textJSON["Text"].toString(), &m_specificConfig);
+    Text *text = new Text(textJSON[QStringLiteral("Text")].toString(), &m_specificConfig);
     text->setTextInteractionFlags(Qt::TextBrowserInteraction);
     text->setOpenExternalLinks(true);
-    text->setObjectName(textJSON["Name"].toString());
+    text->setObjectName(textJSON[QStringLiteral("Name")].toString());
     m_specificCfgLayout.addWidget(text);
 
-    addRules(textJSON.value("Dependency"), qobject_cast<QWidget*>(text));
+    addRules(textJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(text));
 }
 
 void Elementeditor::addHelpText(QJsonObject &textJSON)
@@ -567,12 +573,12 @@ void Elementeditor::addHelpText(QJsonObject &textJSON)
     qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
 
 
-    Text *text = new Text(textJSON["Text"].toString(), &m_specificConfig);
+    Text *text = new Text(textJSON[QStringLiteral("Text")].toString(), &m_specificConfig);
     text->setTextInteractionFlags(Qt::TextBrowserInteraction);
     text->setOpenExternalLinks(true);
-    text->setObjectName(textJSON["Name"].toString());
+    text->setObjectName(textJSON[QStringLiteral("Name")].toString());
     m_helpTextLayout.addWidget(text);
 
-    addRules(textJSON.value("Dependency"), qobject_cast<QWidget*>(text));
+    addRules(textJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(text));
 }
 

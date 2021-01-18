@@ -159,12 +159,12 @@ void WorkingArea::fwrdWsCtrl(const QJsonObject cmd)
     qCInfo(logC, "called - Area No.: %u", m_AreaNo);
     QJsonObject newCmd = cmd;
 
-    QJsonObject address = cmd["address"].toObject();
+    QJsonObject address = cmd[QStringLiteral("address")].toObject();
     /* Extend Address part with area number */
-    address["area"] = m_AreaNo;
+    address[QStringLiteral("area")] = m_AreaNo;
 
 
-    newCmd["address"] = address;
+    newCmd[QStringLiteral("address")] = address;
 
     emit wsCtrl(newCmd);
 }
@@ -179,7 +179,8 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 
     /* Forward message to target element */
 
-    QLatin1String target(address[QStringLiteral("target")].toString().toLatin1());
+    QLatin1String target(   address[QStringLiteral("target")].toString().toLatin1(),
+                            address[QStringLiteral("target")].toString().size());
 
     if(target != QStringLiteral("WorkingArea")){
 
@@ -202,7 +203,8 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
     /* Process own messages here */
 
 
-    QLatin1String strCmd(cmd[QStringLiteral("cmd")].toString().toLatin1());
+    QLatin1String strCmd(   cmd[QStringLiteral("cmd")].toString().toLatin1(),
+                            cmd[QStringLiteral("cmd")].toString().size());
 
     switch (hashCmd(strCmd)) {
     case WorkingAreaCmd::HighlightConnection : {
@@ -312,15 +314,15 @@ void WorkingArea::registerElement(const ElementMaster *new_element)
     /* Qury element specific config in background */
 
     QJsonObject address = {
-        { "target", "Element"},
-        { "id",     (qint64)new_element->m_id }
+        { QStringLiteral("target"), QStringLiteral("Element") },
+        { QStringLiteral("id"),     (qint64)new_element->m_id }
     };
 
 
     QJsonObject jsonQuery {
-        {"cmd", "QueryEditorToolbox"},
-        {"address", address },
-        {"data", new_element->m_config["Typename"].toString()}
+        { QStringLiteral("cmd"), QStringLiteral("QueryEditorToolbox")},
+        { QStringLiteral("address"), address },
+        { QStringLiteral("data"), new_element->m_config[QStringLiteral("Typename")].toString()}
     };
 
     fwrdWsCtrl(jsonQuery);

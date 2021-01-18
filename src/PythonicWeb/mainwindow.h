@@ -118,12 +118,18 @@ private slots:
     void fwrdWsRcv(const QJsonObject cmd);
     //! Reconnect to daemon
     void reconnect();
-    /* Sets the current WorkingArea */
+    //! Sets the current WorkingArea
     void setCurrentWorkingArea(const int tabIndex);
-    /* Start execution of specific element */
+    //! Start execution of specific element
     void startExec(const quint32 id);
-    /* Stop execution of specific element */
+    //! Stop execution of specific element
     void stopExec(const quint32 id);
+    //! Start all elements
+    void startAll();
+    //! Stop alle elements
+    void stopAll();
+    //! Kill all processes
+    void killAll();
     /* DBG Slot */
     void testSlot(bool checked);
     //! Load config from daemon */

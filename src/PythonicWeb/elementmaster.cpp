@@ -263,7 +263,8 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
 
     QJsonObject address = cmd[QStringLiteral("address")].toObject();
-    QLatin1String strCmd(cmd[QStringLiteral("cmd")].toString().toLatin1());
+    QLatin1String strCmd(   cmd[QStringLiteral("cmd")].toString().toLatin1(),
+                            cmd[QStringLiteral("cmd")].toString().size());
 
     switch (hashCmd(strCmd)) {
 
@@ -291,7 +292,8 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
 void ElementMaster::openEditor()
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
-    /* m_config contains nothing when this is called the first time */
+    /* A default general config is created in the constructor */
+    /* The specific config contains nothing when this is called the first time */
     m_editor->openEditor(m_customConfig);
 }
 

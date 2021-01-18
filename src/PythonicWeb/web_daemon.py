@@ -91,7 +91,7 @@ def ctrl(ws):
         else:
             msg = json.loads(m)
             
-            logging.debug('PythonicWeb    - Command: {}'.format(msg['cmd']))
+            #logging.debug('PythonicWeb    - Command: {}'.format(msg['cmd']))
 
             if msg['cmd'] == 'logMsg':
                 # logging
@@ -143,6 +143,16 @@ def ctrl(ws):
             elif msg['cmd'] == 'QueryElementStates' :
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
                 ws.environ['mainWorker'].queryStates.emit()
+            elif msg['cmd'] == 'StartAll' :
+                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
+                ws.environ['mainWorker'].startAll.emit(ws.environ['mainWorker'].config)
+            elif msg['cmd'] == 'StopAll' :
+                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
+                ws.environ['mainWorker'].stopAll.emit()
+            elif msg['cmd'] == 'KillAll' :
+                logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
+                ws.environ['mainWorker'].killAll.emit()
+
                 
 
 @websocket.WebSocketWSGI
@@ -294,8 +304,6 @@ class WSGI_Server(QThread):
         wsgi.server(listener, dispatch, log_output=False, environ=self.mainWorker)
 
 
-
-
 class MainWorker(QObject):
 
     kill_all        = Signal()
@@ -314,6 +322,9 @@ class MainWorker(QObject):
     sysCommand      = Signal(object)    # Optional: Element Constructor / Destructor
     frontendCtrl    = Signal(object)
     queryStates     = Signal()          # Query the running states of elements
+    startAll        = Signal(object)    # Start all elements: (config)
+    stopAll         = Signal()          # Stop all elements
+    killAll         = Signal()          # Kill all running processes
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
@@ -335,9 +346,11 @@ class MainWorker(QObject):
         self.operator = Operator()
         self.operator.command.connect(self.forwardCmd)
         self.startExec.connect(self.operator.startExec)
-        #self.startExec.connect(self.emitSaveConfig)
         self.stopExec.connect(self.operator.stopExec)
         self.queryStates.connect(self.operator.getElementStates)
+        self.startAll.connect(self.operator.startAll)
+        self.stopAll.connect(self.operator.stopAll)
+        self.killAll.connect(self.operator.killAll)
         
         # Instantiate ToolboxLoader
         self.toolbox_loader = ToolboxLoader(www_config)
