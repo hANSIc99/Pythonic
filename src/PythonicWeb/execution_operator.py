@@ -1,4 +1,4 @@
-import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select, queue
+import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select, queue, signal
 import json
 import random
 import multiprocessing as mp
@@ -65,7 +65,7 @@ class ProcessHandler(QThread):
         if bMP: ## attach Debugger if flag is set
             self.p_0 = mp.Process(target=self.instance.execute)
             self.p_0.start()
-            self.pid = p_0.pid
+            self.pid = self.p_0.pid
         else:
             self.t_0 = mt.Thread(target=self.instance.execute)
             self.t_0.start()
@@ -207,16 +207,32 @@ class Operator(QThread):
         startElements = [x for x in config if not x['Socket']]
 
         for startElement in startElements:
-            self.createProcHandle(startElement)
+
+            processes = filter(lambda item: item[1].element['Id'] == startElement['Id'], self.processHandles.items())
+            runningProcess = next(processes, None)
+
+            if(runningProcess):
+                logging.debug('Operator::startAll() -Element already running - {} - id: 0x{:08x}'.format(
+                    runningProcess[1].element['ObjectName'], runningProcess[1].element['Id']))
+                return
+            else:
+                logging.debug('Operator::startAll() -Element started - {} - id: 0x{:08x}'.format(
+                   startElement['ObjectName'], startElement['Id']))
+                self.createProcHandle(startElement)
 
     def killAll(self):
         
         logging.debug('Operator::killAll() called')
+            
+        # Separate dict must be created because call to removerOperatorThreads
+        # modifies self.processHandles
 
-        for threadIdentifier, processHandle in self.processHandles.items():
-            if processHandle.pid :
-                x = 3
-
+        processes = dict(filter(lambda item: item[1].pid, self.processHandles.items())) 
+        
+        for threadIdentifier, processHandle in processes.items():
+            os.kill(processHandle.pid, signal.SIGTERM)
+            # removeOperatorThread is called in run() function of ProcessHandler
+        
 
     def getElementStates(self):
         
