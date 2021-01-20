@@ -325,13 +325,10 @@ void MainWindow::wsRcv(const QString &message)
         if (it->delay < m_refTimer){
 
             // https://stackoverflow.com/questions/2898316/using-a-member-function-pointer-within-a-class
-            ptrTmp = it->init;
-            if(ptrTmp)
-                ((*this).*(ptrTmp))();
+            if(it->init)
+                ((*this).*(it->init))();
 
             it = m_delayedInitializations.erase(it);
-
-
         } else {
             it++;
         }
