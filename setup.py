@@ -5,33 +5,34 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '0.19',
+        version = '2.0',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
-        description='A Python based trading platform for digital currencies',
+        description='Graphical automation tool',
         long_description=long_description,
         long_description_content_type='text/markdown',
         url='https://github.com/hANSIc99/Pythonic',
         packages = ['Pythonic'],
         package_dir = {'' : 'src'},
         package_data = { '' :
-            ['translations/*.qm', 'translations/*.png',
-                'images/*.png', 'elements/*']
+            ['public_html/static/*.png',
+             'public_html/static/qtlogo.svg',
+             'public_html/static/qtloader.js',
+             'public_html/static/PythonicWeb.js',
+             'public_html/static/PythonicWeb.wasm',
+             'public_html/templates/PythonicWeb.html',
+             'public_html/config/Toolbox/*']
         },
         entry_points = {
-            'console_scripts' : ['Pythonic = Pythonic.script:run', 'PythonicDaemon = Pythonic.scriptd:run']
+            'console_scripts' : ['Pythonic = Pythonic.script:run']
             },
-        python_requires = '>=3.6',
+        python_requires = '>=3.7',
         install_requires = [
-            'PyQt5>=5.6',
-            'pandas>=0.20.3',
-            'pythonic-binance>=0.7.2',
-            'requests>=2.21.0',
-            'scikit-learn>=0.21.3'],
+            'PySide2>=5.15.2',
+            'eventlet>=0.27.0'],
         classifiers = [
             'Programming Language :: Python :: 3 :: Only',
-            'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
             'Development Status :: 4 - Beta',
             'Intended Audience :: Financial and Insurance Industry',

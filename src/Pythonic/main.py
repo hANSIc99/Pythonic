@@ -4,9 +4,7 @@ from PySide2.QtCore import QCoreApplication, QTimer
 		
 os.environ['PYTHONWARNINGS'] = 'ignore:semaphore_tracker:UserWarning'
 
-if __name__ == '__main__':
-
-
+def run():
     timer = QTimer()
     timer.start(500)
     timer.timeout.connect(lambda : None)
@@ -20,3 +18,9 @@ if __name__ == '__main__':
     #listener = eventlet.listen(('127.0.0.1', 7000))
     #print('\nVisit http://localhost:7000/ in your websocket-capable browser.\n')
     #wsgi.server(listener, dispatch)
+
+
+
+if __name__ == '__main__':
+
+    run()

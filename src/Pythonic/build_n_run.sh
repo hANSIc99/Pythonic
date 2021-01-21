@@ -11,8 +11,15 @@ source ~/Dokumente/emsdk/emsdk_env.sh
 
 ~/Qt/5.15.1/wasm_32/bin/qmake
 make
+
+mv PythonicWeb.wasm public_html/static/
+mv PythonicWeb.js public_html/static/
+mv qtlogo.svg public_html/static/
+mv qtloader.js public_html/static/
+mv PythonicWeb.html public_html/templates/
+
 #~/Dokumente/qt5/qtbase/bin/qmake
 #make EMMAKEN_CFLAGS="-s PROXY_TO_PTHREAD"
 #emrun --browser firefox PythonicWeb.html
-python3 main.py
+#python3 main.py
 
