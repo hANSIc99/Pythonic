@@ -3,10 +3,11 @@ import json
 import random
 import multiprocessing as mp
 import threading as mt
-from element_types import Record, ProcCMD
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
-
+# DEV
+#from element_types import Record, ProcCMD
+from Pythonic.element_types import Record, ProcCMD
 """
 def target_0(instance, record, feed_pipe):
 

@@ -7,13 +7,20 @@ from threading import Timer, Thread, Event
 from pathlib import Path
 from zipfile import ZipFile
 from enum import Enum
+from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
+from PySide2.QtCore import Signal
+
+### DEV
+"""
 from execution_operator import Operator
 from stdin_reader import stdinReader
 from screen import reset_screen
 from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
-import operator
-from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
-from PySide2.QtCore import Signal
+"""
+from Pythonic.execution_operator import Operator
+from Pythonic.stdin_reader import stdinReader
+from Pythonic.screen import reset_screen
+from Pythonic.configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 
 
 ##############################################

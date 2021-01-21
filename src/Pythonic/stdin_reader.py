@@ -1,9 +1,11 @@
 import sys, os, itertools, time, termios, tty, select, datetime, logging
 from pathlib import Path
 from PySide2.QtCore import QThread, Signal
-from screen import reset_screen
 
-#from PySide2.QtCore import QCoreApplication
+# DEV
+#from screen import reset_screen
+from Pythonic.screen import reset_screen
+
 
 class stdinReader(QThread):
 
