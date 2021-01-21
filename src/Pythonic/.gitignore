@@ -35,6 +35,18 @@ Thumbs.db
 /.qmake.cache
 /.qmake.stash
 
+public_html/template/PythonicWeb.html
+public_html/static/qtlogo.svg
+public_html/static/qtloader.js
+public_html/static/PythonicWeb.js
+public_html/static/PythonicWeb.wasm
+
+PythonicWeb.html
+PythonicWeb.js
+PythonicWeb.wasm
+qtlogo.svg
+qtloader.js
+
 # qtcreator generated files
 *.pro.user*
 
