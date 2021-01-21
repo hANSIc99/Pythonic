@@ -15,6 +15,7 @@ SOURCES += \
     elementmaster.cpp \
     helper.cpp \
     mainwindow.cpp \
+    messagearea.cpp \
     main.cpp \
     menubar.cpp \
     toolbox.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     filedownloader.h \
     helper.h \
     mainwindow.h \
+    messagearea.h \
     menubar.h \
     toolbox.h \
     toolmaster.h \

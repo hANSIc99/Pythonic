@@ -332,7 +332,8 @@ class MainWorker(QObject):
         mp.set_start_method('spawn')
 
         # Setup date- and time-format
-        locale.setlocale(locale.LC_TIME, "C.utf8")
+        #locale.setlocale(locale.LC_TIME, "C.utf8") # Not available on Mint
+        locale.setlocale(locale.LC_TIME, '')
 
         # Instantiate WSGI Server
         self.wsgi_server = WSGI_Server(self)
