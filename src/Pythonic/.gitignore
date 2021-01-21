@@ -40,6 +40,7 @@ public_html/static/qtlogo.svg
 public_html/static/qtloader.js
 public_html/static/PythonicWeb.js
 public_html/static/PythonicWeb.wasm
+public_html/config/current_config.json
 
 PythonicWeb.html
 PythonicWeb.js

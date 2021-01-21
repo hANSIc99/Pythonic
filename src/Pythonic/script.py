@@ -1,9 +1,11 @@
-#!/usr/local/bin/python3
+#!/usr/bin/python3
 
 import eventlet, os, sys, logging
 from Pythonic.web_daemon import MainWorker
 from PySide2.QtCore import QCoreApplication, QTimer
 
+print(os.path.dirname(os.path.realpath(__file__)))
+print(os.path.dirname(__file__))
 def run():
 
     timer = QTimer()

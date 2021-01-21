@@ -107,8 +107,8 @@ int main(int argc, char *argv[])
                                                     "ToolMaster3.debug=false\n"
                                                     "ToolMaster3.info=false\n"
 
-                                                    "ElementMaster.debug=false\n"
-                                                    "ElementMaster.info=false\n"
+                                                    "ElementMaster.debug=true\n"
+                                                    "ElementMaster.info=true\n"
 
                                                     /* Element Buttons  */
 
@@ -123,8 +123,8 @@ int main(int argc, char *argv[])
 
                                                     /* Element Editor */
 
-                                                    "Elementeditor.debug=false\n"
-                                                    "Elementeditor.info=false\n"
+                                                    "Elementeditor.debug=true\n"
+                                                    "Elementeditor.info=true\n"
 
                                                     /* Element Connector Buttons  */
 

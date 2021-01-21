@@ -17,11 +17,17 @@ setuptools.setup(
         package_dir = {'' : 'src'},
         package_data = { '' :
             ['public_html/static/*.png',
+             'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
              'public_html/static/PythonicWeb.js',
              'public_html/static/PythonicWeb.wasm',
              'public_html/templates/PythonicWeb.html',
+             'public_html/config/Toolbox/Basic/GenericPython.json',
+             'public_html/config/Toolbox/Basic/GenericPython.editor',
+             'public_html/config/Toolbox/Basic/Scheduler.json',
+             'public_html/config/Toolbox/Basic/Scheduler.editor',
+             'public_html/config/Toolbox/Connectivity/email.json',
              'public_html/config/Toolbox/*']
         },
         entry_points = {

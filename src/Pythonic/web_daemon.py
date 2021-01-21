@@ -169,7 +169,7 @@ def saveConfig(ws):
     data = ws.wait()
     data_size = float(len(data)) / 1000 #kb
     logging.info('Sizeof Config: {:.1f} kb'.format(data_size))
-    # BAUSTELLE: FIlename = current_config.json
+    # BAUSTELLE: User home directory
     new_file = os.path.join(www_config, 'current_config.json')
     logging.info('Upload saved to: {}'.format(new_file))
     with open(new_file, 'wb') as file:
@@ -241,6 +241,20 @@ def dispatch(environ, start_response):
                                 ('content-length', str(len(img_data)))])
 
         return [img_data]
+
+    elif environ['PATH_INFO'] == '/favicon.ico':
+        #logging.debug('PATH_INFO == \'/qtlogo.svg\'')
+
+        open_path = os.path.join(os.path.dirname(__file__), www_static + 'python.ico')
+
+        with open(open_path,'rb') as f:
+            img_data = f.read()
+
+        start_response('200 OK', [('content-type', 'image/vnd.microsoft.icon'),
+                                ('content-length', str(len(img_data)))])
+
+        return [img_data]
+        
 
     # IMAGES (*.png)
     elif png_req4 == '.png':
@@ -361,21 +375,21 @@ class MainWorker(QObject):
         self.killAll.connect(self.operator.killAll)
         
         # Instantiate ToolboxLoader
-        self.toolbox_loader = ToolboxLoader(www_config)
+        self.toolbox_loader = ToolboxLoader()
         self.toolbox_loader.tooldataLoaded.connect(self.forwardCmd)
         
         # Instantiate (Element)-EditorLoader
 
-        self.editor_loader = EditorLoader(www_config)
+        self.editor_loader = EditorLoader()
         self.editor_loader.editorLoaded.connect(self.forwardCmd)
         
         # Instantiate ConfigWriter
-        self.config_writer = ConfigWriter(www_config)
+        self.config_writer = ConfigWriter()
         self.config_writer.configSaved.connect(self.forwardCmd)
         self.saveConfig.connect(self.config_writer.saveConfig)
 
         # Instantiate ConfigLoader
-        self.config_loader = ConfigLoader(www_config)
+        self.config_loader = ConfigLoader()
         self.config_loader.tooldataLoaded.connect(self.forwardCmd)
 
         # Instantiate System Command Executor
@@ -419,10 +433,6 @@ class MainWorker(QObject):
         self.app.quit()
         os.kill(self.app.applicationPid(), signal.SIGTERM) # kill all related threads
 
-    """
-    def emitSaveConfig(self, elementId, config):
-        self.saveConfig.emit(config)
-    """
 
     def ensure_file_path(self, file_path):
 
