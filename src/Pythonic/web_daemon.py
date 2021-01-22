@@ -395,12 +395,11 @@ class MainWorker(QObject):
         # Instantiate System Command Executor
         self.exec_sys_cmd = ExecSysCMD()
         self.sysCommand.connect(self.exec_sys_cmd.execCommand)
-
-        # Write launch.json
-        # BAUSTELLE
         
+        # Connect the logger
         self.update_logdate.connect(self.stdinReader.updateLogDate)
         
+        # Prepare console
         self.fd = sys.stdin.fileno()
         if os.isatty(sys.stdin.fileno()):
             self.orig_tty_settings = termios.tcgetattr(self.fd) 
