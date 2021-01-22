@@ -66,7 +66,7 @@ class EditorLoaderThread(QThread):
 
         self.address    = address
         self.typeName   = typeName + '.editor'
-        self.www_config = '/public_html/config'
+        self.www_config = '/public_html/config/Toolbox'
         self.cwd = os.path.dirname(__file__)
 
 
@@ -77,7 +77,7 @@ class EditorLoaderThread(QThread):
         config = None
         bFound = False
 
-        for dirpath, dirnames, filenames in os.walk(os.path.join(self.cwd + self.www_config + 'Toolbox/')):
+        for dirpath, dirnames, filenames in os.walk(os.path.join(self.cwd + self.www_config)):
             if self.typeName in filenames:
 
                 try:

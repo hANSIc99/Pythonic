@@ -1,12 +1,38 @@
 #!/usr/bin/python3
 
-import eventlet, os, sys, logging
+import os, sys, logging, json
+from pathlib import Path
 from Pythonic.web_daemon import MainWorker
 from PySide2.QtCore import QCoreApplication, QTimer
 
-print(os.path.dirname(os.path.realpath(__file__)))
-print(os.path.dirname(__file__))
+#print(os.path.dirname(os.path.realpath(__file__)))
+#print(os.path.dirname(__file__))
+
+
 def run():
+
+    """
+    Create launch.json with current PID
+    """
+    cwd = os.path.dirname(__file__)
+
+    Path(os.path.join(cwd, '.vscode/')).mkdir(exist_ok=True)
+
+    launch = {  "version": "0.2.0",
+                "configurations": [
+            {
+                "name"      : "Pythonic: Attach",
+                "type"      : "python",
+                "request"   : "attach",
+                "processId" : os.getpid(),
+                "justMyCode": False,
+                "cwd"       : cwd
+            }
+        ]
+    }
+
+    with open(os.path.join(cwd + '/.vscode/launch.json'), 'w') as file:
+        json.dump(launch, file, indent=4)
 
     timer = QTimer()
     timer.start(500)
@@ -17,15 +43,3 @@ def run():
     ex.start(sys.argv)
     
     app.exec_()
-    """
-    cwd = os.path.dirname(os.path.realpath(__file__))   
-
-    cwd = os.path.dirname(Pythonic.__file__)
-    path = os.path.join(cwd, 'main.py')
-
-    if os.name == 'nt':
-        Popen(['python', path])
-    else:
-        Popen(['python3', path])
-    """
-
