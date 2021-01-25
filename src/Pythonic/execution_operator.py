@@ -4,6 +4,7 @@ import json
 import random
 import multiprocessing as mp
 import threading as mt
+from pathlib import Path
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
 
@@ -55,7 +56,10 @@ class ProcessHandler(QThread):
             self.cmd_queue    = queue.Queue()
 
         try:
-            elementCls = getattr(__import__('executables.' + self.element['Filename'], fromlist=['Element']), 'Element')
+
+            #executable = str(Path.home() / 'Pythonic' / 'executables' / ) + '.py'
+            #elementCls = getattr(__import__('executables.' + self.element['Filename'], fromlist=['Element']), 'Element')
+            elementCls = getattr(__import__(self.element['Filename'], fromlist=['Element']), 'Element')
             #logging.debug('ProcessHandler::run() - loading file - id: 0x{:08x}, ident: {:04d} - {}'.format(
             #    self.element['Id'], self.identifier, self.element['Filename']))
         except Exception as e:

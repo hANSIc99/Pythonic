@@ -15,7 +15,6 @@
     "Author"          : "Stephan Avenwedde",
     "License"         : "GPLv3",
     "ConstructorCMD"  : "cp -u executables/scheduler.py ~/Pythonic/executables/scheduler.py",
-    "DestructorCMD"   : "rm ~/Pythonic/executables/scheduler.py",
     "HighlightState"  : true
 }
 

@@ -1,7 +1,6 @@
 import os, logging, json
 from datetime import datetime
-from threading import Semaphore, Lock
-
+from pathlib import Path
 from PySide2.QtCore import QThread, QObject, Signal, QMutex
 
 class ExecSysCMD(QThread):
@@ -13,6 +12,7 @@ class ExecSysCMD(QThread):
 
     def execCommand(self, cmd):
         self.cmd = cmd
+        logging.info('COMMAND: ' + cmd)
         self.start()
 
     def run(self):
@@ -29,8 +29,7 @@ class ConfigWriter(QThread):
 
     def __init__(self):
         super().__init__()
-        self.www_config = '/public_html/config'
-        self.cwd = os.path.dirname(__file__)
+        self.cfg_file = Path.home() / 'Pythonic' / 'current_config.json'
 
     def saveConfig(self, config):
 
@@ -44,7 +43,7 @@ class ConfigWriter(QThread):
         logging.debug('ConfigWriter::saveConfig() called')
 
         self.mutex.lock()
-        with open(os.path.join(self.cwd + self.www_config + 'current_config.json'), 'w') as file:
+        with open( self.cfg_file, 'w') as file:
             json.dump(self.config, file, indent=4)
 
         self.mutex.unlock()
@@ -66,9 +65,7 @@ class EditorLoaderThread(QThread):
 
         self.address    = address
         self.typeName   = typeName + '.editor'
-        self.www_config = '/public_html/config/Toolbox'
-        self.cwd = os.path.dirname(__file__)
-
+        self.editorPath = Path(__file__).parent.absolute() / 'public_html' / 'config' / 'Toolbox'
 
 
     def run(self):
@@ -77,7 +74,7 @@ class EditorLoaderThread(QThread):
         config = None
         bFound = False
 
-        for dirpath, dirnames, filenames in os.walk(os.path.join(self.cwd + self.www_config)):
+        for dirpath, dirnames, filenames in os.walk(self.editorPath):
             if self.typeName in filenames:
 
                 try:
@@ -106,7 +103,6 @@ class EditorLoaderThread(QThread):
         if not bFound:
             logging.warning('EditorLoader::run() - editor config file {} not found'.format(self.typeName))
 
-    
 
 class EditorLoader(QObject):
 
@@ -162,14 +158,14 @@ class ToolboxLoader(QThread):
 
     def __init__(self):
         super().__init__()
-        self.www_config = '/public_html/config'
-        self.cwd = os.path.dirname(__file__)
+        self.toolBoxPath = Path(__file__).parent.absolute() / 'public_html' / 'config' / 'Toolbox'
 
     def run(self):
 
         logging.debug('ToolboxLoader::run() called')
         
-        toolDirs = [ f for f in os.scandir(os.path.join(self.cwd + self.www_config + '/Toolbox/')) if f.is_dir() ]
+        #toolDirs = [ f for f in os.scandir(os.path.join(self.cwd + self.www_config + '/Toolbox/')) if f.is_dir() ]
+        toolDirs = [ f for f in os.scandir(self.toolBoxPath) if f.is_dir() ]
         elements = [(d, f) for d in toolDirs for f in os.listdir(d.path) if f.endswith('.json')]
         elementsJSON = []
         
@@ -201,15 +197,14 @@ class ConfigLoader(QThread):
 
     def __init__(self):
         super().__init__()
-        self.www_config = '/public_html/config'
-        self.cwd = os.path.dirname(__file__)
+        self.cfg_file = Path.home() / 'Pythonic' / 'current_config.json'
 
     def run(self):
 
 
         config = None
         try:
-            with open(os.path.join(self.cwd + self.www_config + 'current_config.json'), 'r') as file:
+            with open(self.cfg_file, 'r') as file:
                 config = json.load(file)
 
             address = { 'target' : 'MainWindow'}

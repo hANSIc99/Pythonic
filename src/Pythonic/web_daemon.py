@@ -408,6 +408,19 @@ class MainWorker(QObject):
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
 
+        # Create home path (if not already existing)
+        
+        home_path = Path.home() / 'Pythonic'
+        if not os.path.exists(home_path):
+            os.makedirs(home_path)
+        
+        # Create log path (if not already existing)
+
+        self.log_path = home_path / 'log'
+
+        if not os.path.exists(self.log_path):
+            os.makedirs(self.log_path)
+        
         # Get current date
         self.log_date = datetime.datetime.now()
         # self.log_date is kept up to date in heartbeat (WebSocket rcv)
@@ -416,10 +429,8 @@ class MainWorker(QObject):
         log_date_str = self.log_date.strftime('%Y_%m_%d')
         month = self.log_date.strftime('%b')
         year = self.log_date.strftime('%Y')
-        home_dict = str(Path.home())
-        #file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
-        file_path = '{}/Pythonic/log/{}_{}_{}.txt'.format(home_dict, year, month, log_date_str) 
-        self.ensure_file_path(file_path)
+
+        file_path = '{}/{}_{}_{}.txt'.format(str(self.log_path), year, month, log_date_str) 
 
         # Setup logger
 
@@ -432,8 +443,15 @@ class MainWorker(QObject):
 
         # Create directory for executables
 
-        file_path = '{}/Pythonic/{}'.format(home_dict, 'executables/') 
-        self.ensure_file_path(file_path)
+        executables_path = home_path / 'executables'
+
+        if not os.path.exists(executables_path):
+            os.makedirs(executables_path)
+
+
+        # Append executables folder to module search path
+
+        sys.path.append(str(executables_path))
 
         logging.debug('MainWorker::__init__() called')
 
@@ -443,14 +461,6 @@ class MainWorker(QObject):
         time.sleep(3) # wait for 1 seconds to kill all processes
         self.app.quit()
         os.kill(self.app.applicationPid(), signal.SIGTERM) # kill all related threads
-
-
-    def ensure_file_path(self, file_path):
-
-        directory = os.path.dirname(file_path)
-
-        if not os.path.exists(directory):
-            os.makedirs(directory)
 
     
     def printProcessList(self):
@@ -471,9 +481,7 @@ class MainWorker(QObject):
             log_date_str = now.strftime('%Y_%m_%d')
             month = now.strftime('%b')
             year = now.strftime('%Y')
-            home_dict = str(Path.home())
-            file_path = '{}/Pythonic/log/{}_{}_{}.txt'.format(home_dict, year, month, log_date_str) 
-            self.ensure_file_path(file_path)
+            file_path = '{}/{}_{}_{}.txt'.format(str(self.log_path), year, month, log_date_str) 
             file_handler = logging.FileHandler(file_path)
             file_handler.setLevel(self.log_level)
             file_handler.setFormatter(self.formatter)
