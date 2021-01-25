@@ -12,7 +12,7 @@ def reset_screen():
 
     version         = 'v0.18\n'
     gitHub          = 'Visit https://github.com/hANSIc99/Pythonic\n'
-    log_info_msg    = '<<<<<<<<<<<< Logging directory ~/PythonicDaemon_201x/Month/\n'
+    log_info_msg    = '<<<<<<<<<<<< Logging directory ~/Pythonic/log/\n'
     input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
     status_info_msg = '>>>>>>>>>>>> Hold  \'p\' to list all background processes'
     applog_info_msg = '>>>>>>>>>>>> Enter \'l\' to show log messages\n'

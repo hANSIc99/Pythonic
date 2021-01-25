@@ -5,9 +5,6 @@ from pathlib import Path
 from Pythonic.web_daemon import MainWorker
 from PySide2.QtCore import QCoreApplication, QTimer
 
-#print(os.path.dirname(os.path.realpath(__file__)))
-#print(os.path.dirname(__file__))
-
 
 def run():
 

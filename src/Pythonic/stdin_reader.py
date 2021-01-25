@@ -2,10 +2,11 @@ import sys, os, itertools, time, termios, tty, select, datetime, logging
 from pathlib import Path
 from PySide2.QtCore import QThread, Signal
 
-# DEV
-#from screen import reset_screen
-from Pythonic.screen import reset_screen
 
+try:
+    from screen import reset_screen
+except ImportError: 
+    from Pythonic.screen import reset_screen
 
 class stdinReader(QThread):
 
@@ -105,7 +106,7 @@ class stdinReader(QThread):
         month = now.strftime('%b')
         year = now.strftime('%Y')
         home_dict = str(Path.home())
-        file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, self.log_date_str) 
+        file_path = '{}/Pythonic/log/{}_{}_{}.txt'.format(home_dict, year, month, self.log_date_str) 
 
         BLOCK_SIZE = 1024
 

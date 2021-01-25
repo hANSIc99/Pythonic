@@ -10,18 +10,16 @@ from enum import Enum
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
 
-### DEV
-"""
-from execution_operator import Operator
-from stdin_reader import stdinReader
-from screen import reset_screen
-from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
-"""
-from Pythonic.execution_operator import Operator
-from Pythonic.stdin_reader import stdinReader
-from Pythonic.screen import reset_screen
-from Pythonic.configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
-
+try:
+    from execution_operator import Operator
+    from stdin_reader import stdinReader
+    from screen import reset_screen
+    from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
+except ImportError:
+    from Pythonic.execution_operator import Operator
+    from Pythonic.stdin_reader import stdinReader
+    from Pythonic.screen import reset_screen
+    from Pythonic.configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 
 ##############################################
 #                                            #
@@ -75,8 +73,11 @@ def rcv(ws):
             jsonHeartBeat = {   'cmd'       : 'Heartbeat',
                                 'address'   : { 'target' : 'MainWindow'} ,
                                 'data' : date.strftime("%d-%b-%Y %H:%M:%S") }
-            #next(self.spinner)
+
             ws.send(json.dumps(jsonHeartBeat))
+            # Update log_date
+            ws.environ['mainWorker'].update_logfile()
+
         except Exception as e:
             logging.info('PythonicWeb - RCV Socket connection lost: {}'.format(e))
             ws.environ['mainWorker'].frontendCtrl.disconnect(send)
@@ -328,7 +329,7 @@ class WSGI_Server(QThread):
 class MainWorker(QObject):
 
     kill_all        = Signal()
-    update_logdate  = Signal(object)
+    
     log_level       = logging.DEBUG
     formatter       = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
@@ -336,16 +337,16 @@ class MainWorker(QObject):
     max_grid_cnt    = 5
     config          = None # element configuration
 
-
-    startExec       = Signal(object, object) # element-Id, configuration
-    stopExec        = Signal(object)    # element-Id
-    saveConfig      = Signal(object)    # configuration
-    sysCommand      = Signal(object)    # Optional: Element Constructor / Destructor
+    update_logdate  = Signal(object)        # update displayed date string in stdin_reader
+    startExec       = Signal(object, object)# element-Id, configuration
+    stopExec        = Signal(object)        # element-Id
+    saveConfig      = Signal(object)        # configuration
+    sysCommand      = Signal(object)        # Optional: Element Constructor / Destructor
     frontendCtrl    = Signal(object)
-    queryStates     = Signal()          # Query the running states of elements
-    startAll        = Signal(object)    # Start all elements: (config)
-    stopAll         = Signal()          # Stop all elements
-    killAll         = Signal()          # Kill all running processes
+    queryStates     = Signal()              # Query the running states of elements
+    startAll        = Signal(object)        # Start all elements: (config)
+    stopAll         = Signal()              # Stop all elements
+    killAll         = Signal()              # Kill all running processes
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
@@ -406,14 +407,21 @@ class MainWorker(QObject):
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
-        self.log_date = datetime.datetime.now()
 
+        # Get current date
+        self.log_date = datetime.datetime.now()
+        # self.log_date is kept up to date in heartbeat (WebSocket rcv)
+
+        # Create directory structure for logging
         log_date_str = self.log_date.strftime('%Y_%m_%d')
         month = self.log_date.strftime('%b')
         year = self.log_date.strftime('%Y')
         home_dict = str(Path.home())
-        file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+        #file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+        file_path = '{}/Pythonic/log/{}_{}_{}.txt'.format(home_dict, year, month, log_date_str) 
         self.ensure_file_path(file_path)
+
+        # Setup logger
 
         file_handler = logging.FileHandler(file_path)
         file_handler.setLevel(self.log_level)
@@ -422,6 +430,10 @@ class MainWorker(QObject):
         self.logger.addHandler(file_handler)
         self.update_logdate.emit(log_date_str) # forward log_date_str to instance of stdinReader
 
+        # Create directory for executables
+
+        file_path = '{}/Pythonic/{}'.format(home_dict, 'executables/') 
+        self.ensure_file_path(file_path)
 
         logging.debug('MainWorker::__init__() called')
 
@@ -460,7 +472,7 @@ class MainWorker(QObject):
             month = now.strftime('%b')
             year = now.strftime('%Y')
             home_dict = str(Path.home())
-            file_path = '{}/PythonicDaemon_{}/{}/log_{}.txt'.format(home_dict, year, month, log_date_str) 
+            file_path = '{}/Pythonic/log/{}_{}_{}.txt'.format(home_dict, year, month, log_date_str) 
             self.ensure_file_path(file_path)
             file_handler = logging.FileHandler(file_path)
             file_handler.setLevel(self.log_level)

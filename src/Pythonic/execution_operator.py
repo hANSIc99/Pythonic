@@ -1,3 +1,4 @@
+
 import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select, queue, signal
 import json
 import random
@@ -5,9 +6,13 @@ import multiprocessing as mp
 import threading as mt
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
-# DEV
-#from element_types import Record, ProcCMD
-from Pythonic.element_types import Record, ProcCMD
+
+    
+try:
+    from element_types import Record, ProcCMD
+except ImportError:    
+    from Pythonic.element_types import Record, ProcCMD
+
 """
 def target_0(instance, record, feed_pipe):
 
@@ -295,7 +300,7 @@ class Operator(QThread):
         cfgElement = [x for x in self.currentConfig if x['Id'] == id][0]
 
         if cfgElement['Config']['GeneralConfig']['Logging'] and record.message:
-            logging.debug('{} - {}'.format(cfgElement['ObjectName'], record.message))
+            logging.info('{} - {}'.format(cfgElement['ObjectName'], record.message))
 
             data = {
                 'Id'        : cfgElement['Id'],
