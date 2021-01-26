@@ -13,8 +13,8 @@ setuptools.setup(
         long_description=long_description,
         long_description_content_type='text/markdown',
         url='https://github.com/hANSIc99/Pythonic',
-        packages = ['Pythonic'],
-        package_dir = {'' : 'src'},
+        packages = ['Pythonic', 'Pythonic.executables'],
+        package_dir = { '' : 'src'},
         package_data = { '' :
             ['public_html/static/*.png',
              'public_html/static/python.ico',

@@ -1,6 +1,8 @@
 import sys, logging, pickle, locale, datetime, os, signal, time, itertools, tty, termios, select
-from element_types import Record, Function
-
+try:
+    from element_types import Record, Function, ProcCMD
+except ImportError:    
+    from Pythonic.element_types import Record, Function, ProcCMD
     
 class Element(Function):
 

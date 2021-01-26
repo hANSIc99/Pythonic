@@ -83,19 +83,20 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
 
         /* Create unique element id */
         quint32 m_id = QRandomGenerator::global()->bounded(quint32(INT_LEAST32_MAX));
-        m_toolData["Id"] = QJsonValue((qint64)m_id);
+        QJsonObject toolData(m_toolData);
+        toolData["Id"] = QJsonValue((qint64)m_id);
 
         /* Apply RegExp to filename */
 
-        m_toolData["Filename"] = helper::applyRegExp(
-                    m_toolData["Filename"].toString(),
-                    m_toolData,
+        toolData["Filename"] = helper::applyRegExp(
+                    toolData["Filename"].toString(),
+                    toolData,
                     helper::m_regExpSBasicData,
                     helper::jsonValToStringBasicData
                     );
 
         ElementMaster *element = new ElementMaster(
-                        m_toolData,
+                        toolData,
                         m_workingAreaWidget->m_AreaNo,
                         m_workingAreaWidget);
 

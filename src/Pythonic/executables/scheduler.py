@@ -1,6 +1,9 @@
-import sys, logging, pickle, locale, datetime, os, signal, time, itertools, tty, termios, select, queue
-from element_types import Record, Function, ProcCMD
-
+import sys, logging, pickle, locale, os, signal, time, itertools, tty, termios, select, queue
+from datetime import datetime, date, time, timedelta
+try:
+    from element_types import Record, Function, ProcCMD
+except ImportError:    
+    from Pythonic.element_types import Record, Function, ProcCMD
     
 class Element(Function):
 
@@ -15,6 +18,7 @@ class Element(Function):
         cmd         = None
         mode        = ''
         interval    = 0
+        tick        = 1 # Threads wait full seconds
         countdown   = 0
         timebase    = ''
         startTime   = ''
@@ -68,6 +72,7 @@ class Element(Function):
 
         if timebase == 'Seconds':
             interval = int(interval)
+            tick = 0.2
         elif timebase == 'Minutes':
             interval = int(interval) * 60
         elif timebase == 'Hours':
@@ -75,8 +80,8 @@ class Element(Function):
 
         # Setup start- and endtime
 
-        startTime = datetime.datetime.strptime(startTime, '%H:%M').time()
-        stopTime  = datetime.datetime.strptime(endTime, '%H:%M').time()
+        startTime = datetime.strptime(startTime, '%H:%M').time()
+        stopTime  = datetime.strptime(endTime, '%H:%M').time()
 
         # Switch modes
 
@@ -97,22 +102,33 @@ class Element(Function):
             #         Interval         #
             ############################
 
+            countdown = interval / tick
+
             while True :
 
                 try:
-                    cmd = self.cmd_queue.get(block=True, timeout=interval)
+                    # Wait for incoming commands in specified interval
+                    cmd = self.cmd_queue.get(block=True, timeout=tick)
                 except queue.Empty:
                     #logging.debug('Command Queue empty')
                     pass
 
                 if isinstance(cmd, ProcCMD) and cmd.bStop:
                     # Exit here is stop command received
-                    x = 3
                     return
 
+                countdown -= tick
 
-                recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
-                self.return_queue.put(recordDone)
+                if countdown <= 0:
+                    countdown = interval / tick
+                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    self.return_queue.put(recordDone)
+                else:
+
+                    # calculate remaining time
+                    self.remainingTime(startTime, None)
+
+
 
 
         elif mode == "Interval between times":
@@ -136,16 +152,19 @@ class Element(Function):
 
                 # Termination condition multithreading
 
+
+                """
                 if self.bStop:
                     recordDone = Record(None, None) # Exit message
                     # Necessary to end the ProcessHandler     
                     self.return_queue.put(recordDone)
                     break      
+                """
 
                 # Get date and time
                 locale.setlocale(locale.LC_TIME, "en_GB")
-                currentDate    = datetime.date.today()
-                currentTime    = datetime.datetime.now().time()              
+                currentDate    = date.today()
+                currentTime    = datetime.now().time()              
                 stoday         = currentDate.strftime('%A')
             
                 
@@ -154,10 +173,16 @@ class Element(Function):
                     if (dayOfWeek[stoday]):
                         nState = 1
 
+                    #timeRemaining = 
+
                 elif nState == 1:   # Wait for the start time
                     
                     if(currentTime >= startTime):
                         nState = 2
+
+                    
+                    # calculate remaining time
+                    self.remainingTime(startTime, None)
 
                 elif nState == 2:   # Schedule and wait for the stop time
                     
@@ -165,13 +190,22 @@ class Element(Function):
                         nState == 0                 
                     elif countdown <= 0:
                         recordDone = Record(None, None)     
-                        self.queue.put(recordDone)
+                        self.return_queue.put(recordDone)
                         countdown = interval
                     
                     countdown -= 1
                         
 
-                time.sleep(1)
+                try:
+                    # Wait for incoming commands in specified interval
+                    cmd = self.cmd_queue.get(block=True, timeout=tick)
+                except queue.Empty:
+                    #logging.debug('Command Queue empty')
+                    pass
+
+                if isinstance(cmd, ProcCMD) and cmd.bStop:
+                    # Exit here is stop command received
+                    return
 
 
         elif mode == "At specific time":
@@ -195,3 +229,33 @@ class Element(Function):
             #################################
 
             recordDone = Record("Data", "LogMessage")
+
+
+
+    def remainingTime(self, startTime, startDay):
+
+        if not startDay:
+            startDay = date.today()
+        #else: calculate start day
+
+        
+        currentTime    = datetime.now().time()    
+        
+        timedelta = datetime.combine(startDay, startTime) - datetime.now()
+
+        timedelta = self.chop_microseconds(timedelta)
+        sTimeDelta = str(timedelta)
+
+        if timedelta.seconds < 10: # return milliseconds
+            x = 1
+        elif timedelta.seconds < 60: # return full seconds
+            x = 2
+        elif timedelta.seconds < 86400: # return hh:mm:ss
+            x = 3
+        else: #return dd hh:mm:ss
+            x = 4
+
+        #return a string
+
+    def chop_microseconds(self, delta):
+        return delta - timedelta(microseconds=delta.microseconds)

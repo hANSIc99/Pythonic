@@ -74,10 +74,10 @@ public:
     static Pythonic::Command hashCmd(QLatin1String const &inString);
 
 
-    static QString applyRegExp(const QString in,
-                                       const QJsonObject &json,
-                                       const QRegularExpression &regExp,
-                                       QString (*retrieve)(const QString key, const QJsonObject &json));
+    static QString applyRegExp( const QString in,
+                                const QJsonObject &json,
+                                const QRegularExpression &regExp, // keyword to look for
+                                QString (*retrieve)(const QString key, const QJsonObject &json)); // function pointer
 
     static ElementProperties::Properties hashElementProperty(const QString &inString)
     {

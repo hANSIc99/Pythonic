@@ -351,10 +351,14 @@ class MainWorker(QObject):
     def __init__(self, app):
         super(MainWorker, self).__init__()
         self.app = app
+
+        # Select multiprocessing spawn method
         mp.set_start_method('spawn')
 
-        # Setup date- and time-format
-        #locale.setlocale(locale.LC_TIME, "C.utf8") # Not available on Mint
+        # Set working directory
+        os.chdir(Path(__file__).parent.absolute())
+
+        # Setup format
         locale.setlocale(locale.LC_TIME, '')
 
         # Instantiate WSGI Server
