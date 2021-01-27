@@ -2,7 +2,7 @@ import sys, logging, pickle, locale, datetime, os, signal, time, itertools, tty,
 try:
     from element_types import Record, Function, ProcCMD
 except ImportError:    
-    from Pythonic.element_types import Record, Function, ProcCMD
+    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD
     
 class Element(Function):
 

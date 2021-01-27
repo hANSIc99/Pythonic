@@ -54,6 +54,17 @@ class Record():
         #logging.debug('__getstate__() called Record')
         return(self.data, self.message)
 
+class GuiCMD:
+    
+    def __init__(self, text):
+        self.text = text
+
+    def __setstate__(self, state):
+        self.text = state
+
+    def __getstate__(self):
+        return(self.text)
+
 
 class ProcCMD:
 

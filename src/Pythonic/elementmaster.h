@@ -37,6 +37,8 @@
 #include "elementeditor.h"
 #include "helper.h"
 
+#include <QToolTip>
+
 #define LABEL_SIZE QSize(140, 47)
 #define PLUG_SOCKET_SIZE QSize(47, 47)
 
@@ -143,6 +145,7 @@ namespace ElementMasterCmd {
     enum Command {
         ElementEditorConfig,
         UpdateElementStatus,
+        ElementText,
         Test,
         NoCmd
     };
@@ -249,9 +252,10 @@ public:
     ElementStart            m_startBtn;
 
 private:
-    //! Label of the element
-    QLabel                  m_labelText{"labe text"};
-
+    //! Name of the element
+    QLabel                  m_name;
+    //! Optional info text, can be set from daemon
+    QLabel                  m_text;
     //! Editor windows
     Elementeditor           *m_editor;
 

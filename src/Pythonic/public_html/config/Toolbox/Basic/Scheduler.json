@@ -3,7 +3,7 @@
     "Plug"             : true,
     "Typename"         : "Scheduler",
     "Iconname"         : "Scheduler",
-    "Filename"         : "scheduler",
+    "Filename"         : "scheduler_BASICDATA_Id",
     "Version"          : {
                              "Major" : 0,
                              "Minor" : 1
@@ -14,7 +14,8 @@
                          },
     "Author"          : "Stephan Avenwedde",
     "License"         : "GPLv3",
-    "ConstructorCMD"  : "cp -u executables/scheduler.py ~/Pythonic/executables/scheduler.py",
+    "ConstructorCMD"  : "cp -u executables/scheduler.py ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
+    "DestructorCMD"   : "rm ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
     "HighlightState"  : true
 }
 

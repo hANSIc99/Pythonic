@@ -34,7 +34,6 @@ ElementMaster::ElementMaster(QJsonObject configuration,
     m_innerWidgetLayout.setContentsMargins(0, 5, 0, 5);
 
 
-
     /* Check if a pbject name is already present */
 
     QJsonValue objectName = m_config.value(QStringLiteral("ObjectName"));
@@ -69,7 +68,6 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     m_editor = new Elementeditor(genConfig(), this);
 
-
     /* Enable / disable socket/plug */
 
     m_socket.setVisible(m_config[QStringLiteral("Socket")].toBool());
@@ -97,24 +95,29 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     /* Defualt name = object name */
 
-    m_labelText.setWordWrap(true);
-    m_labelText.setText(this->objectName());
+    m_name.setWordWrap(true);
+    m_name.setText(this->objectName());
 
+    /* Configure color of info text */
+    //m_innerWidget #ffffca
 
     /* Setup inner widget: symbol-widget and text-label */
 
     m_innerWidget.setLayout(&m_innerWidgetLayout);
     m_innerWidgetLayout.setSizeConstraint(QLayout::SetFixedSize);
 
-    m_innerWidgetLayout.addWidget(&m_labelText);
+    m_innerWidgetLayout.addWidget(&m_name);
     m_innerWidgetLayout.addWidget(&m_symbolWidget);
+    m_innerWidgetLayout.addWidget(&m_text);
+
+
 
     /* overall layout: innwer-widget and icon-bar */
 
     m_layout.addWidget(&m_innerWidget);
 
     m_layout.setSizeConstraint(QLayout::SetFixedSize);
-    //setSizePolicy(m_sizePolicy);
+
     setLayout(&m_layout);
 
     /* Signals & Slots */
@@ -221,7 +224,7 @@ void ElementMaster::updateConfig(const QJsonObject customConfig)
 
     QJsonObject generalConfig =  customConfig[QStringLiteral("GeneralConfig")].toObject();
     setObjectName(generalConfig[QStringLiteral("ObjectName")].toString());
-    m_labelText.setText(this->objectName());
+    m_name.setText(this->objectName());
 
     /* ObjectName is already defined in over basic data */
     generalConfig.remove(QStringLiteral("ObjectName"));
@@ -254,6 +257,7 @@ ElementMasterCmd::Command ElementMaster::hashCmd(const QLatin1String &inString)
 {
     if(inString == QStringLiteral("ElementEditorConfig")) return ElementMasterCmd::ElementEditorConfig;
     if(inString == QStringLiteral("UpdateElementStatus")) return ElementMasterCmd::UpdateElementStatus;
+    if(inString == QStringLiteral("ElementText")) return ElementMasterCmd::ElementText;
     if(inString == QStringLiteral("Test")) return ElementMasterCmd::Test;
     return ElementMasterCmd::NoCmd;
 }
@@ -282,6 +286,12 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
         switchRunState(cmd[QStringLiteral("data")].toBool());
         break;
     }
+    case ElementMasterCmd::ElementText: {
+        QString text = cmd[QStringLiteral("data")].toString();
+        m_text.setText(text);
+        break;
+    }
+
     default:
         qCDebug(logC, "Unknown command: %s", cmd[QStringLiteral("cmd")].toString().toStdString().c_str());
         break;

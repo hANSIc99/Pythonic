@@ -1,9 +1,9 @@
 import sys, logging, pickle, locale, os, signal, time, itertools, tty, termios, select, queue
 from datetime import datetime, date, time, timedelta
 try:
-    from element_types import Record, Function, ProcCMD
+    from element_types import Record, Function, ProcCMD, GuiCMD
 except ImportError:    
-    from Pythonic.element_types import Record, Function, ProcCMD
+    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD
     
 class Element(Function):
 
@@ -117,7 +117,7 @@ class Element(Function):
                     # Exit here is stop command received
                     return
 
-                countdown -= tick
+                countdown -= 1
 
                 if countdown <= 0:
                     countdown = interval / tick
@@ -126,8 +126,8 @@ class Element(Function):
                 else:
 
                     # calculate remaining time
-                    self.remainingTime(startTime, None)
-
+                    guitext = GuiCMD(self.remainingTime(countdown=countdown, tick=tick))
+                    self.return_queue.put(guitext)
 
 
 
@@ -232,25 +232,33 @@ class Element(Function):
 
 
 
-    def remainingTime(self, startTime, startDay):
+    def remainingTime(self, startTime=None, startDay=None, countdown=None, tick=None):
 
         if not startDay:
             startDay = date.today()
         #else: calculate start day
 
         
-        currentTime    = datetime.now().time()    
+        #currentTime    = datetime.now().time()    
         
-        timedelta = datetime.combine(startDay, startTime) - datetime.now()
+        if not countdown:
+            delta_t = datetime.combine(startDay, startTime) - datetime.now()
+        else:
+            delta_t = timedelta(seconds=countdown*tick)
 
-        timedelta = self.chop_microseconds(timedelta)
-        sTimeDelta = str(timedelta)
+        #delta_t = self.chop_microseconds(delta_t)
 
-        if timedelta.seconds < 10: # return milliseconds
-            x = 1
-        elif timedelta.seconds < 60: # return full seconds
-            x = 2
-        elif timedelta.seconds < 86400: # return hh:mm:ss
+        hours           = delta_t.seconds // 3600
+        minutes         = (delta_t.seconds // 60) % 60
+        seconds         = delta_t.seconds % 60
+        milliseconds    = delta_t.microseconds // 100000
+        ##sTimeDelta = str(timedelta)
+
+        if delta_t.seconds < 10: # return milliseconds   
+            return '{:02d}.{}'.format(seconds, milliseconds)
+        elif delta_t.seconds < 60: # return full seconds
+            return '{:02d}:{:02d}'.format(minutes, seconds)
+        elif delta_t.seconds < 86400: # return hh:mm:ss
             x = 3
         else: #return dd hh:mm:ss
             x = 4

@@ -41,7 +41,7 @@ void MessageArea::addWidget(QWidget *widget){
 
     m_layout.insertWidget(0, widget);
 
-
+    /* Delete old widget if number of widgets exceeds limit */
     QLayoutItem *item;
     if((item = m_layout.layout()->takeAt(m_maxItems)) != NULL){
         delete item->widget();

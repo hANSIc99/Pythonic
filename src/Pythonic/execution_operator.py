@@ -10,9 +10,9 @@ from PySide2.QtCore import Signal
 
     
 try:
-    from element_types import Record, ProcCMD
+    from element_types import Record, ProcCMD, GuiCMD
 except ImportError:    
-    from Pythonic.element_types import Record, ProcCMD
+    from Pythonic.element_types import Record, ProcCMD, GuiCMD
 
 """
 def target_0(instance, record, feed_pipe):
@@ -300,6 +300,21 @@ class Operator(QThread):
     def operationDone(self, id, record, identifier):
 
         #logging.debug('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d} data: {}'.format(id, identifier, record.data))
+
+        if isinstance(record, GuiCMD):
+            #logging.info(record.text)
+            address = {
+                'target'    : 'Element',  
+                'id'        : id                      
+            }
+            cmd = { 
+                'cmd'       : 'ElementText',
+                'address'   : address,
+                'data'      : record.text
+            }
+            self.command.emit(cmd)
+            return
+
 
         cfgElement = [x for x in self.currentConfig if x['Id'] == id][0]
 
