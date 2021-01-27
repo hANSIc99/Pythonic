@@ -98,17 +98,24 @@ ElementMaster::ElementMaster(QJsonObject configuration,
     m_name.setWordWrap(true);
     m_name.setText(this->objectName());
 
-    /* Configure color of info text */
-    //m_innerWidget #ffffca
+    /* Configure (optional) info text */
+
+    m_text.setLayout(&m_textLayout);
+    m_textLayout.addWidget(&m_textLabel);
+    m_textLayout.addStretch(1);
+    m_text.setVisible(false);
+
+
+    m_textLabel.setStyleSheet(QStringLiteral("background-color: #ffffca; border: 1px solid black;"));
 
     /* Setup inner widget: symbol-widget and text-label */
 
     m_innerWidget.setLayout(&m_innerWidgetLayout);
-    m_innerWidgetLayout.setSizeConstraint(QLayout::SetFixedSize);
 
     m_innerWidgetLayout.addWidget(&m_name);
     m_innerWidgetLayout.addWidget(&m_symbolWidget);
     m_innerWidgetLayout.addWidget(&m_text);
+
 
 
 
@@ -288,7 +295,8 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
     }
     case ElementMasterCmd::ElementText: {
         QString text = cmd[QStringLiteral("data")].toString();
-        m_text.setText(text);
+        m_text.setVisible(true);
+        m_textLabel.setText(text);
         break;
     }
 
@@ -317,6 +325,7 @@ void ElementMaster::switchRunState(bool state)
     } else {
         m_symbol.setStyleSheet(styleSheet());
         m_startBtn.togggleRunning(false);
+        m_text.setVisible(false);
     }
     /* Element has a start button instead of a socket */
 

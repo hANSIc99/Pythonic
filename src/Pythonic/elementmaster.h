@@ -255,7 +255,9 @@ private:
     //! Name of the element
     QLabel                  m_name;
     //! Optional info text, can be set from daemon
-    QLabel                  m_text;
+    QWidget                 m_text;
+    QHBoxLayout             m_textLayout;
+    QLabel                  m_textLabel;
     //! Editor windows
     Elementeditor           *m_editor;
 

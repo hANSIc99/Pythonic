@@ -52,20 +52,20 @@ class Element(Function):
                 endTime = attrs['Data']
             elif attrs['Name'] == 'SpecificTime':
                 specTime = attrs['Data']
-            elif attrs['Name'] == 'Monday':
-                dayOfWeek['Monday'] = attrs['Data']
-            elif attrs['Name'] == 'Tuesday':
-                dayOfWeek['Tuesday'] = attrs['Data']
-            elif attrs['Name'] == 'Wednesday':
-                dayOfWeek['Wednesday'] = attrs['Data']
-            elif attrs['Name'] == 'Thursday':
-                dayOfWeek['Thursday'] = attrs['Data']
-            elif attrs['Name'] == 'Friday':
-                dayOfWeek['Friday'] = attrs['Data']
-            elif attrs['Name'] == 'Saturday':
-                dayOfWeek['Saturday'] = attrs['Data']
-            elif attrs['Name'] == 'Sunday':
-                dayOfWeek['Sunday'] = attrs['Data']
+            elif attrs['Name'] == 'Sunday' and attrs['Data']:
+                dayOfWeek.append(0)
+            elif attrs['Name'] == 'Monday'and attrs['Data']:
+                dayOfWeek.append(1)
+            elif attrs['Name'] == 'Tuesday'and attrs['Data']:
+                dayOfWeek.append(2)
+            elif attrs['Name'] == 'Wednesday'and attrs['Data']:
+                dayOfWeek.append(3)
+            elif attrs['Name'] == 'Thursday'and attrs['Data']:
+                dayOfWeek.append(4)
+            elif attrs['Name'] == 'Friday' and attrs['Data']:
+                dayOfWeek.append(5)
+            elif attrs['Name'] == 'Saturday' and attrs['Data']:
+                dayOfWeek.append(6)
 
 
         # Setup interval
@@ -145,7 +145,14 @@ class Element(Function):
                 recordDone = Record(None, "No days selected")     
                 self.return_queue.put(recordDone)
 
-            
+            daylist = dayOfWeek.items()
+
+            for idx, days, value in dayOfWeek.items():
+                print(idx)
+            # TODO: Days in zahlen umwandlen: Mittwoch = 3, Sonntag = 6
+            # 
+            #bCurrentday = dayOfWeek[datetime.now().strftime('%A')]
+
             nState = 0
 
             while True:
@@ -259,7 +266,7 @@ class Element(Function):
         elif delta_t.seconds < 60: # return full seconds
             return '{:02d}:{:02d}'.format(minutes, seconds)
         elif delta_t.seconds < 86400: # return hh:mm:ss
-            x = 3
+            return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
         else: #return dd hh:mm:ss
             x = 4
 

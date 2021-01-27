@@ -43,8 +43,13 @@ class ConfigWriter(QThread):
         logging.debug('ConfigWriter::saveConfig() called')
 
         self.mutex.lock()
-        with open( self.cfg_file, 'w') as file:
-            json.dump(self.config, file, indent=4)
+        try:
+            with open( self.cfg_file, 'w') as file:
+                json.dump(self.config, file, indent=4)
+        except Exception as e:
+            return
+            #pass
+
 
         self.mutex.unlock()
         last_saved = "Config last saved: " + datetime.now().strftime('%H:%M:%S')
