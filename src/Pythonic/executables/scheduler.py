@@ -23,12 +23,13 @@ class Element(Function):
         timebase    = ''
         startTime   = ''
         endTime     = ''
-        dayOfWeek   = {}
+        activeDays  = []
 
         recordDone  = Record(None, None)
 
         specificConfig = self.config.get('SpecificConfig')
 
+        now = datetime.now()
         # Set default mode if SpecificConfig is not defined
         # This is the case if the element was created on the working area
         # but the configuration was never opened
@@ -52,20 +53,20 @@ class Element(Function):
                 endTime = attrs['Data']
             elif attrs['Name'] == 'SpecificTime':
                 specTime = attrs['Data']
-            elif attrs['Name'] == 'Sunday' and attrs['Data']:
-                dayOfWeek.append(0)
             elif attrs['Name'] == 'Monday'and attrs['Data']:
-                dayOfWeek.append(1)
+                activeDays.append(0)
             elif attrs['Name'] == 'Tuesday'and attrs['Data']:
-                dayOfWeek.append(2)
+                activeDays.append(1)
             elif attrs['Name'] == 'Wednesday'and attrs['Data']:
-                dayOfWeek.append(3)
+                activeDays.append(2)
             elif attrs['Name'] == 'Thursday'and attrs['Data']:
-                dayOfWeek.append(4)
+                activeDays.append(3)
             elif attrs['Name'] == 'Friday' and attrs['Data']:
-                dayOfWeek.append(5)
+                activeDays.append(4)
             elif attrs['Name'] == 'Saturday' and attrs['Data']:
-                dayOfWeek.append(6)
+                activeDays.append(5)
+            elif attrs['Name'] == 'Sunday' and attrs['Data']:
+                activeDays.append(6)
 
 
         # Setup interval
@@ -82,6 +83,7 @@ class Element(Function):
 
         startTime = datetime.strptime(startTime, '%H:%M').time()
         stopTime  = datetime.strptime(endTime, '%H:%M').time()
+
 
         # Switch modes
 
@@ -139,16 +141,36 @@ class Element(Function):
 
 
             # Check if at least one day is selected
-
+            """
             activeDays = [value for days, value in dayOfWeek.items() if value]
             if not activeDays:
                 recordDone = Record(None, "No days selected")     
                 self.return_queue.put(recordDone)
 
             daylist = dayOfWeek.items()
+            
 
             for idx, days, value in dayOfWeek.items():
                 print(idx)
+            """
+            delta_t_days    = 0
+            currentWeekday  = now.weekday()
+            iterDays        = iter(activeDays)
+            start_day       = next(iterDays)
+            
+            # start day of today or later that week     
+            if any(i >= currentWeekday for i in activeDays):
+                
+                while start_day < currentWeekday:
+                    start_day = next(iterDays)
+
+                delta_t_days = start_day - currentWeekday
+
+            else:
+                day_offset = 7 - currentWeekday + start_day
+            
+            #calculate start day
+
             # TODO: Days in zahlen umwandlen: Mittwoch = 3, Sonntag = 6
             # 
             #bCurrentday = dayOfWeek[datetime.now().strftime('%A')]

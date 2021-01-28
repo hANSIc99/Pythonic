@@ -15,9 +15,4 @@ configio.py: EditorLoader: cleanupThreadList(...)
 
 3)
 
-The scheduler element relies that the locale setting "en_GB" is available on the system.
-If it is not, day-related function won't work properly. Which locales are available can be checked
-with locale -a.
-
-WorkItem: Fix this
-
+Saving the config file causes the runtime to crash
