@@ -139,41 +139,25 @@ class Element(Function):
             #  Interval between times  #
             ############################
 
-            dayOffset = self.getDayOffset(activeDays, stipTime)
+            
 
 
             nState = 0
             return
             while True:
-
-                # Termination condition multithreading
-
-
-                """
-                if self.bStop:
-                    recordDone = Record(None, None) # Exit message
-                    # Necessary to end the ProcessHandler     
-                    self.return_queue.put(recordDone)
-                    break      
-                """
-
-                # Get date and time
-                locale.setlocale(locale.LC_TIME, "en_GB")
-                currentDate    = date.today()
-                currentTime    = datetime.now().time()              
-                stoday         = currentDate.strftime('%A')
             
                 
-                if nState == 0:     # Wait for the start day
+                if nState == 0:     # Get the day offset 
                     
-                    if (dayOfWeek[stoday]):
-                        nState = 1
-
-                    #timeRemaining = 
-
-                elif nState == 1:   # Wait for the start time
+                    dayOffset = self.getDayOffset(activeDays, stopTime)
                     
-                    if(currentTime >= startTime):
+                    nState = 1
+
+
+
+                elif nState == 1:   # Get the time offset
+                    
+
                         nState = 2
 
                     
