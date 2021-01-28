@@ -139,44 +139,11 @@ class Element(Function):
             #  Interval between times  #
             ############################
 
+            dayOffset = self.getDayOffset(activeDays, stipTime)
 
-            # Check if at least one day is selected
-            """
-            activeDays = [value for days, value in dayOfWeek.items() if value]
-            if not activeDays:
-                recordDone = Record(None, "No days selected")     
-                self.return_queue.put(recordDone)
-
-            daylist = dayOfWeek.items()
-            
-
-            for idx, days, value in dayOfWeek.items():
-                print(idx)
-            """
-            delta_t_days    = 0
-            currentWeekday  = now.weekday()
-            iterDays        = iter(activeDays)
-            start_day       = next(iterDays)
-            
-            # start day of today or later that week     
-            if any(i >= currentWeekday for i in activeDays):
-                
-                while start_day < currentWeekday:
-                    start_day = next(iterDays)
-
-                delta_t_days = start_day - currentWeekday
-
-            else:
-                day_offset = 7 - currentWeekday + start_day
-            
-            #calculate start day
-
-            # TODO: Days in zahlen umwandlen: Mittwoch = 3, Sonntag = 6
-            # 
-            #bCurrentday = dayOfWeek[datetime.now().strftime('%A')]
 
             nState = 0
-
+            return
             while True:
 
                 # Termination condition multithreading
@@ -293,6 +260,48 @@ class Element(Function):
             x = 4
 
         #return a string
+
+
+    def getDayOffset(self, activeDays, stopTime):
+
+        #########################################
+        #                                       #
+        #        Calculate the start day        #
+        #                                       #
+        #########################################
+
+        now             = datetime.now()
+        delta_t_days    = 0
+        currentWeekday  = now.weekday()
+        iterDays        = itertools.cycle(activeDays) 
+        start_day       = next(iterDays)
+        
+        # start day == today or later that week     
+        if any(i >= currentWeekday for i in activeDays):
+            
+            while start_day < currentWeekday:
+                start_day = next(iterDays)
+
+            delta_t_days = start_day - currentWeekday
+
+        # start day is next week
+        else:
+            delta_t_days = 7 - currentWeekday + start_day
+        
+
+        # Check if the start time already passed
+
+        if start_day == currentWeekday and stopTime < now.time():             
+            start_day =next(iterDays)
+            if start_day <= currentWeekday:
+                # rest of the week + start day
+                delta_t_days = 7 - currentWeekday + start_day
+            else:
+                delta_t_days = start_day - currentWeekday
+
+        return delta_t_days
+
+
 
     def chop_microseconds(self, delta):
         return delta - timedelta(microseconds=delta.microseconds)

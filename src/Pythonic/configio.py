@@ -47,8 +47,10 @@ class ConfigWriter(QThread):
             with open( self.cfg_file, 'w') as file:
                 json.dump(self.config, file, indent=4)
         except Exception as e:
+            logging.debug('ConfigWriter::saveConfig() - {}'.format(e))
+            pass
             return
-            #pass
+            
 
 
         self.mutex.unlock()
