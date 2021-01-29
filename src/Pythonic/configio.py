@@ -1,4 +1,5 @@
 import os, logging, json
+from copy import copy
 from datetime import datetime
 from pathlib import Path
 from PySide2.QtCore import QThread, QObject, Signal, QMutex
@@ -34,7 +35,7 @@ class ConfigWriter(QThread):
     def saveConfig(self, config):
 
         self.mutex.lock()
-        self.config = config
+        self.config = copy(config)
         self.mutex.unlock()
         self.start()
     
