@@ -163,6 +163,10 @@ class Element(Function):
         ############################
         #  Interval between times  #
         ############################
+
+        if not self.activeDays:
+            return
+
         nState = 0
         
         while True:
@@ -231,7 +235,8 @@ class Element(Function):
                     # calculate remaining time
                     guitext = GuiCMD(self.remainingTime(countdown=countdown))
                     self.return_queue.put(guitext)
-
+                
+                # BAUSTELLE: EXIT INTERVAL MODE
 
 
             bExit = self.blockAndWait()
