@@ -103,6 +103,10 @@ class Element(Function):
 
         elif mode == "Interval between times":
 
+            ############################
+            #  Interval between times  #
+            ############################
+
             self.intervalBetweenTimes()
             return
 
@@ -119,8 +123,9 @@ class Element(Function):
             ############################
             #  On every full interval  #
             ############################
+            self.onEveryFullInterval()
+            return
 
-            recordDone = Record("Data", "LogMessage")
         elif mode == "Full interval between times":
 
             #################################
@@ -172,7 +177,7 @@ class Element(Function):
         while True:
         
             
-            if nState == 0:     # Get the day offset 
+            if nState == 0:     # Init: Get the day offset 
                 
                 dayOffset = self.getDayOffset(self.activeDays, self.stopTime)
                 
@@ -183,16 +188,16 @@ class Element(Function):
 
                 continue
 
-            elif nState == 1:   # Calculate timedelta
+            elif nState == 1:   # Init: Calculate timedelta
                 
                 delta_t     = datetime.combine(date.today(), self.startTime) - datetime.now()
                 delta_t     = delta_t + timedelta(days=dayOffset)      
                 nState      = 2
                 continue
 
-            elif nState == 2: # Prepare countdown and tick
+            elif nState == 2: # Init: Prepare countdown and tick
 
-                countdown   = delta_t.seconds
+                countdown   = delta_t.seconds + (delta_t.days * 86400)
                 self.tick   = 1
                 nState      = 3
                 continue
@@ -236,13 +241,64 @@ class Element(Function):
                     guitext = GuiCMD(self.remainingTime(countdown=countdown))
                     self.return_queue.put(guitext)
                 
-                # BAUSTELLE: EXIT INTERVAL MODE
+                if datetime.now().time() >= self.stopTime:
+                    
+                    nState = 0
+                    continue
 
 
             bExit = self.blockAndWait()
 
             if bExit:
                 return
+
+
+    def onEveryFullInterval(self):
+        
+        nState = 0
+
+        if self.timebase == 'Seconds':
+            nState = 0
+            self.tick = 0.2
+            # Helper value: Prevents that trigger is fired several times when t
+            # this timebase is selected
+            lastFired = 61 
+        elif self.timebase == 'Minutes':
+            nState = 1
+        elif self.timebase == 'Hours':
+            nState = 3
+
+        countdown = self.interval / self.tick
+        
+
+        while True:
+        
+            
+            if nState == 0:     # Every full second
+
+                countdown -= 1
+            
+                second = datetime.now().time().second
+
+                if  second % self.interval == 0 and lastFired != second:
+                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    self.return_queue.put(recordDone)
+                    countdown = self.interval / self.tick
+                    lastFired = second
+
+                else:
+
+                    # calculate remaining time
+                    guitext = GuiCMD(self.remainingTime(countdown=countdown))
+                    self.return_queue.put(guitext)
+
+                
+
+            bExit = self.blockAndWait()
+
+            if bExit:
+                return
+
 
     def blockAndWait(self):
 
@@ -273,7 +329,6 @@ class Element(Function):
             delta_t = timedelta(seconds=countdown*self.tick)
 
         #delta_t = self.chop_microseconds(delta_t)
-
         hours           = delta_t.seconds // 3600
         minutes         = (delta_t.seconds // 60) % 60
         seconds         = delta_t.seconds % 60
@@ -282,14 +337,15 @@ class Element(Function):
 
         if delta_t.seconds < 10: # return milliseconds   
             return '{:02d}.{}'.format(seconds, milliseconds)
-        elif delta_t.seconds < 60: # return full seconds
+        elif delta_t.seconds < 60 and delta_t.days == 0: # return full seconds
             return '{:02d}:{:02d}'.format(minutes, seconds)
-        elif delta_t.seconds < 86400: # return hh:mm:ss
+        elif delta_t.days == 0: # return hh:mm:ss
             return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
         else: #return dd hh:mm:ss
-            x = 4
+            return '{} {:02d}:{:02d}:{:02d}'.format(delta_t.days, hours, minutes, seconds)
+            
 
-        #return a string and the number of ticks
+
 
 
     def getDayOffset(self, activeDays, stopTime):
@@ -321,7 +377,7 @@ class Element(Function):
 
         # Check if the start time already passed
 
-        if start_day == currentWeekday and stopTime < now.time():             
+        if start_day == currentWeekday and stopTime <= now.time():             
             start_day =next(iterDays)
             if start_day <= currentWeekday:
                 # rest of the week + start day

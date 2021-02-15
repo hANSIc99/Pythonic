@@ -194,5 +194,18 @@
 									]
                             }
 			      		]
+    },
+	{
+        "Type"  : "HelpText",
+        "Name"  : "HelpText1",
+	    "Text"  : "Trigger subsequent elements on full<br>time intervals, e.g. every 5 minutes:<br><br>14:05<br>14:10<br>14:15<br>...",
+		"Dependency" : [
+			{
+				"Dependence"		: "Mode",
+				"DependentValue"	: [
+										"On every full interval"
+				]
+			}
+		]
     }
 ]
