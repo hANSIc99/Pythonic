@@ -19,4 +19,7 @@ Saving the config file causes the runtime to crash
 4)
 Use the virtual filesystem isntead of loading the images from the backend application
 
+5)
+Create backups of the previous saved configurations
+
 

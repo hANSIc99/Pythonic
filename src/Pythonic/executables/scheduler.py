@@ -82,9 +82,7 @@ class Element(Function):
         self.startTime = datetime.strptime(startTime, '%H:%M').time()
         self.stopTime  = datetime.strptime(endTime, '%H:%M').time()
 
-
         # Switch modes
-
 
         if mode == "None":
 
@@ -258,33 +256,84 @@ class Element(Function):
         nState = 0
 
         if self.timebase == 'Seconds':
-            nState = 0
+            nState = 10
             self.tick = 0.2
-            # Helper value: Prevents that trigger is fired several times when t
-            # this timebase is selected
+            # Helper value: Prevents that trigger is fired several times when
+            # countdown in decrement and the modulo condition is still valid
+            # Init with an 'invalid' value (according to the timebase)
             lastFired = 61 
         elif self.timebase == 'Minutes':
-            nState = 1
+            nState = 20
+            lastFired = 61
+            fullMinute = self.interval / 60 # Calculate interval back to minutes
         elif self.timebase == 'Hours':
-            nState = 3
+            nState = 30
+            lastFired = 25
+            fullHour = self.interval = 3600 # Calculate interval back to hours
 
-        countdown = self.interval / self.tick
-        
+
+        # Countdown muss korrekt initialisiert werden
+        countdown = self.interval / self.tick        
 
         while True:
         
-            
-            if nState == 0:     # Every full second
+            countdown   -= 1
+            time        = datetime.now().time()
 
-                countdown -= 1
-            
+            if nState == 10:     # Every full second: Init countdown
+
+
+                # passt
+                #x = (self.interval / self.tick)
+                #y = ((second % self.interval) / self.tick)
+                countdown -= (time.second % self.interval) / self.tick
+                
+                nState = 11
+                continue
+        
+            if nState == 11:    # Every full second
+
+                #countdown -= 1
+
                 second = datetime.now().time().second
 
-                if  second % self.interval == 0 and lastFired != second:
+                if  time.second % self.interval == 0 and lastFired != time.second:
                     recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
-                    lastFired = second
+                    lastFired = time.second
+
+                else:
+
+                    # calculate remaining time
+                    guitext = GuiCMD(self.remainingTime(countdown=countdown))
+                    self.return_queue.put(guitext)
+
+            if nState == 20: # Every full minutes: Init countdown
+
+                
+                
+                # Calculate minutes
+                fullMinutesInterval     = self.interval / 60
+                passedMinutes           = time.minute % fullMinutesInterval
+                countdown               -= (passedMinutes * 60 )/ self.tick
+
+                # Calculate seconds
+                countdown               -= time.second / self.tick            
+
+                nState = 21
+                continue
+
+
+            if nState == 21: # Every full minutes
+
+                minute = datetime.now().time().minute
+
+                if  minute % (self.interval / 60) == 0 and time.second == 0:
+                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    self.return_queue.put(recordDone)
+                    countdown = self.interval / self.tick
+                    lastFired = minute
 
                 else:
 
