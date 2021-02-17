@@ -75,7 +75,7 @@ class Element(Function):
         elif self.timebase == 'Minutes':
             self.interval = int(self.interval) * 60
         elif self.timebase == 'Hours':
-            self.interval == int(self.interval) * 3600
+            self.interval = int(self.interval) * 3600
 
         # Setup start- and endtime
 
@@ -264,12 +264,8 @@ class Element(Function):
             lastFired = 61 
         elif self.timebase == 'Minutes':
             nState = 20
-            lastFired = 61
-            fullMinute = self.interval / 60 # Calculate interval back to minutes
         elif self.timebase == 'Hours':
             nState = 30
-            lastFired = 25
-            fullHour = self.interval = 3600 # Calculate interval back to hours
 
 
         # Countdown muss korrekt initialisiert werden
@@ -295,8 +291,6 @@ class Element(Function):
 
                 #countdown -= 1
 
-                second = datetime.now().time().second
-
                 if  time.second % self.interval == 0 and lastFired != time.second:
                     recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
                     self.return_queue.put(recordDone)
@@ -314,9 +308,9 @@ class Element(Function):
                 
                 
                 # Calculate minutes
-                fullMinutesInterval     = self.interval / 60
+                fullMinutesInterval     = self.interval // 60
                 passedMinutes           = time.minute % fullMinutesInterval
-                countdown               -= (passedMinutes * 60 )/ self.tick
+                countdown               -= (passedMinutes * 60 ) / self.tick
 
                 # Calculate seconds
                 countdown               -= time.second / self.tick            
@@ -327,13 +321,12 @@ class Element(Function):
 
             if nState == 21: # Every full minutes
 
-                minute = datetime.now().time().minute
 
-                if  minute % (self.interval / 60) == 0 and time.second == 0:
+                if  time.minute % (self.interval / 60) == 0 and time.second == 0:
                     recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
-                    lastFired = minute
+                    lastFired = time.minute
 
                 else:
 
@@ -341,7 +334,41 @@ class Element(Function):
                     guitext = GuiCMD(self.remainingTime(countdown=countdown))
                     self.return_queue.put(guitext)
 
+
+            if nState == 30: # Every full hours: Init countdown
                 
+                
+                # Calculate hours
+                fullHoursInterval       = self.interval // 3600
+                passedHours             = time.hour % fullHoursInterval
+                countdown               -= (passedHours * 3600 )/ self.tick
+
+                # Calculate minutes
+                fullMinutesInterval     = self.interval // 60
+                passedMinutes           = time.minute % fullMinutesInterval
+                countdown               -= (passedMinutes * 60 )/ self.tick
+
+                # Calculate seconds
+                countdown               -= time.second / self.tick            
+
+                nState = 21
+                continue
+
+
+            if nState == 31: # Every full hours
+
+
+                if  time.minute % (self.interval / 60) == 0 and time.second == 0:
+                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    self.return_queue.put(recordDone)
+                    countdown = self.interval / self.tick
+                    lastFired = time.minute
+
+                else:
+
+                    # calculate remaining time
+                    guitext = GuiCMD(self.remainingTime(countdown=countdown))
+                    self.return_queue.put(guitext) 
 
             bExit = self.blockAndWait()
 
