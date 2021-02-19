@@ -80,6 +80,7 @@ class Element(Function):
 
         self.startTime = datetime.strptime(startTime, '%H:%M').time()
         self.stopTime  = datetime.strptime(endTime, '%H:%M').time()
+        self.specTime  = datetime.strptime(specTime, '%H:%M').time()
 
         # Switch modes
 
@@ -114,7 +115,9 @@ class Element(Function):
             #     At specific time     #
             ############################
 
-            recordDone = Record("Data", "LogMessage")
+            self.atSpecificTime()
+            return
+
         elif mode == "On every full interval":
 
             ############################
@@ -247,6 +250,65 @@ class Element(Function):
 
             if bExit:
                 return
+
+    def atSpecificTime(self):
+
+        ############################
+        #     At specific time     #
+        ############################
+
+        if not self.activeDays:
+            return
+
+        nState = 0
+        
+        while True:
+            
+            if nState == 0:     # Init: Get the day offset 
+                
+                dayOffset = self.getDayOffset(self.activeDays, self.specTime)
+                
+                nState = 1
+                continue
+
+
+            elif nState == 1:   # Init: Calculate timedelta
+                
+                delta_t     = datetime.combine(date.today(), self.specTime) - datetime.now()
+                delta_t     = delta_t + timedelta(days=dayOffset)      
+                nState      = 2
+                continue
+
+            elif nState == 2: # Init: Prepare countdown and tick
+
+                countdown   = delta_t.seconds + (delta_t.days * 86400)
+                self.tick   = 1
+                nState      = 3
+                continue
+
+            elif nState == 3:   # Wait for the start
+                            
+
+                if countdown <= 0:
+
+                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    self.return_queue.put(recordDone)
+                    nState = 0 # Go to interval mode
+                else:
+
+                    # calculate remaining time
+                    guitext = GuiCMD(self.remainingTime(countdown=countdown))
+                    self.return_queue.put(guitext)
+
+                countdown -= 1
+
+            bExit = self.blockAndWait()
+
+            if bExit:
+                return
+
+
+
 
 
     def onEveryFullInterval(self):
@@ -606,8 +668,6 @@ class Element(Function):
         else: #return dd hh:mm:ss
             return '{} {:02d}:{:02d}:{:02d}'.format(delta_t.days, hours, minutes, seconds)
             
-
-
 
 
     def getDayOffset(self, activeDays, stopTime):
