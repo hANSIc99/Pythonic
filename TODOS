@@ -28,3 +28,7 @@ Create backups of the previous saved configurations
 6)
 Replace macros with constexpr where it is possible
 
+7)
+Check if the 'inline'-keyword can be applied to some loops
+(page 146 C++ Der Programmierer)
+

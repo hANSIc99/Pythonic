@@ -27,7 +27,6 @@ class Element(Function):
 
         specificConfig = self.config.get('SpecificConfig')
 
-        self.now = datetime.now()
         # Set default mode if SpecificConfig is not defined
         # This is the case if the element was created on the working area
         # but the configuration was never opened
@@ -129,8 +128,8 @@ class Element(Function):
             #################################
             #  Full interval between times  #
             #################################
-
-            recordDone = Record("Data", "LogMessage")
+            self.onEveryFullIntervalbetweenTimes()
+            return
 
 
     def intervalScheduler(self):
@@ -173,13 +172,12 @@ class Element(Function):
         nState = 0
         
         while True:
-        
             
             if nState == 0:     # Init: Get the day offset 
                 
                 dayOffset = self.getDayOffset(self.activeDays, self.stopTime)
                 
-                if dayOffset == 0 and self.now.time() >= self.startTime:
+                if dayOffset == 0 and datetime.now().time() >= self.startTime:
                     nState = 2 # Go to interval mode
                 else:
                     nState = 1
@@ -253,6 +251,10 @@ class Element(Function):
 
     def onEveryFullInterval(self):
         
+        ############################
+        #  On every full interval  #
+        ############################
+
         nState = 0
 
         if self.timebase == 'Seconds':
@@ -287,7 +289,7 @@ class Element(Function):
                 nState = 11
                 continue
         
-            if nState == 11:    # Every full second
+            elif nState == 11:    # Every full second
 
                 #countdown -= 1
 
@@ -303,7 +305,7 @@ class Element(Function):
                     guitext = GuiCMD(self.remainingTime(countdown=countdown))
                     self.return_queue.put(guitext)
 
-            if nState == 20: # Every full minutes: Init countdown
+            elif nState == 20: # Every full minutes: Init countdown
 
                 
                 
@@ -319,14 +321,13 @@ class Element(Function):
                 continue
 
 
-            if nState == 21: # Every full minutes
+            elif nState == 21: # Every full minutes
 
 
                 if  time.minute % (self.interval / 60) == 0 and time.second == 0:
                     recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
-                    lastFired = time.minute
 
                 else:
 
@@ -335,7 +336,7 @@ class Element(Function):
                     self.return_queue.put(guitext)
 
 
-            if nState == 30: # Every full hours: Init countdown
+            elif nState == 30: # Every full hours: Init countdown
                 
                 
                 # Calculate hours
@@ -355,20 +356,205 @@ class Element(Function):
                 continue
 
 
-            if nState == 31: # Every full hours
+            elif nState == 31: # Every full hours
 
 
                 if  time.minute % (self.interval / 60) == 0 and time.second == 0:
                     recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
-                    lastFired = time.minute
 
                 else:
 
                     # calculate remaining time
                     guitext = GuiCMD(self.remainingTime(countdown=countdown))
                     self.return_queue.put(guitext) 
+
+            bExit = self.blockAndWait()
+
+            if bExit:
+                return
+
+    def onEveryFullIntervalbetweenTimes(self):
+
+        #########################################
+        #  On every fullinterval between times  #
+        #########################################
+
+        if not self.activeDays:
+            return
+
+        if self.timebase == 'Seconds':
+            self.tick = 0.2
+
+        countdown = self.interval / self.tick  
+
+        nState = 0
+        
+        while True:
+
+            time = datetime.now().time()
+            
+            if nState == 0:     # Init: Get the day offset 
+                
+                dayOffset = self.getDayOffset(self.activeDays, self.stopTime)
+                
+                if dayOffset == 0 and time >= self.startTime:
+                    nState = 2 # Go to interval mode
+                else:
+                    nState = 1
+
+                continue
+
+            elif nState == 1:   # Init: Calculate timedelta
+                
+                delta_t     = datetime.combine(date.today(), self.startTime) - datetime.now()
+                delta_t     = delta_t + timedelta(days=dayOffset)      
+                nState      = 2
+                continue
+
+            elif nState == 2: # Init: Prepare countdown and tick
+
+                countdown   = delta_t.seconds + (delta_t.days * 86400)
+                self.tick   = 1
+                nState      = 3
+                continue
+
+            elif nState == 3:   # Wait for the start
+                
+                countdown -= 1
+
+                if countdown <= 0:
+
+                    #recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    #self.return_queue.put(recordDone)
+                    nState = 4 # Go to interval mode
+                else:
+
+                    # calculate remaining time
+                    guitext = GuiCMD(self.remainingTime(countdown=countdown))
+                    self.return_queue.put(guitext)
+                    
+            elif nState == 4: # Init Interval Mode
+
+                if self.timebase == 'Seconds':
+                    nState = 50
+                    # Helper value: Prevents that trigger is fired several times when
+                    # countdown in decrement and the modulo condition is still valid
+                    # Init with an 'invalid' value (according to the timebase)
+                    lastFired = 61 
+                elif self.timebase == 'Minutes':
+                    nState = 60
+                elif self.timebase == 'Hours':
+                    nState = 70
+
+                continue
+
+            elif nState == 50: # Every full second: Init countdown
+                  
+
+                countdown -= (time.second % self.interval) / self.tick
+                
+                nState = 51
+                continue
+                
+            elif nState == 51:    # Every full second
+
+                countdown   -= 1
+
+
+                if  time.second % self.interval == 0 and lastFired != time.second:
+                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    self.return_queue.put(recordDone)
+                    countdown = self.interval / self.tick
+                    lastFired = time.second
+
+                else:
+
+                    # calculate remaining time
+                    guitext = GuiCMD(self.remainingTime(countdown=countdown))
+                    self.return_queue.put(guitext)
+
+                if time >= self.stopTime:
+                    
+                    nState = 0
+                    continue
+
+            elif nState == 60: # Every full minutes: Init countdown
+            
+                # Calculate minutes
+                fullMinutesInterval     = self.interval // 60
+                passedMinutes           = time.minute % fullMinutesInterval
+                countdown               -= (passedMinutes * 60 ) / self.tick
+
+                # Calculate seconds
+                countdown               -= time.second / self.tick            
+
+                nState = 61
+                continue
+
+
+            elif nState == 61: # Every full minutes
+
+                countdown -= 1
+
+                if  time.minute % (self.interval / 60) == 0 and time.second == 0:
+                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    self.return_queue.put(recordDone)
+                    countdown = self.interval / self.tick
+
+                else:
+
+                    # calculate remaining time
+                    guitext = GuiCMD(self.remainingTime(countdown=countdown))
+                    self.return_queue.put(guitext)
+
+                if time >= self.stopTime:
+                    
+                    nState = 0
+                    continue
+
+
+            elif nState == 70: # Every full hours: Init countdown
+                        
+                        
+                # Calculate hours
+                fullHoursInterval       = self.interval // 3600
+                passedHours             = time.hour % fullHoursInterval
+                countdown               -= (passedHours * 3600 )/ self.tick
+
+                # Calculate minutes
+                fullMinutesInterval     = self.interval // 60
+                passedMinutes           = time.minute % fullMinutesInterval
+                countdown               -= (passedMinutes * 60 )/ self.tick
+
+                # Calculate seconds
+                countdown               -= time.second / self.tick            
+
+                nState = 71
+                continue
+
+
+            elif nState == 71: # Every full hours
+
+                countdown -= 1
+
+                if  time.minute % (self.interval / 60) == 0 and time.second == 0:
+                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    self.return_queue.put(recordDone)
+                    countdown = self.interval / self.tick
+
+                else:
+
+                    # calculate remaining time
+                    guitext = GuiCMD(self.remainingTime(countdown=countdown))
+                    self.return_queue.put(guitext) 
+
+                if time >= self.stopTime:
+                    
+                    nState = 0
+                    continue
+
 
             bExit = self.blockAndWait()
 
