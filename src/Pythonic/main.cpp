@@ -40,13 +40,13 @@ int main(int argc, char *argv[])
                                                     "FileDownloader.debug=false\n"
                                                     "FileDownloader.info=false\n"
 
-                                                    "Websocket.debug=true\n"
-                                                    "Websocket.info=true\n"
+                                                    "Websocket.debug=false\n"
+                                                    "Websocket.info=false\n"
 
                                                     /* GUI Elements */
 
-                                                    "MainWindow.debug=true\n"
-                                                    "MainWindow.info=true\n"
+                                                    "MainWindow.debug=false\n"
+                                                    "MainWindow.info=false\n"
 
                                                     "WorkingArea.debug=false\n"
                                                     "WorkingArea.info=false\n"
@@ -54,8 +54,8 @@ int main(int argc, char *argv[])
                                                     "MenuBar.debug=false\n"
                                                     "MenuBar.info=false\n"
 
-                                                    "MessageArea.debug=true\n"
-                                                    "MessageArea.info=true\n"
+                                                    "MessageArea.debug=false\n"
+                                                    "MessageArea.info=false\n"
 
                                                     /* Toolbox elements */
 
@@ -107,8 +107,8 @@ int main(int argc, char *argv[])
                                                     "ToolMaster3.debug=false\n"
                                                     "ToolMaster3.info=false\n"
 
-                                                    "ElementMaster.debug=true\n"
-                                                    "ElementMaster.info=true\n"
+                                                    "ElementMaster.debug=false\n"
+                                                    "ElementMaster.info=false\n"
 
                                                     /* Element Buttons  */
 
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 
                                                     /* Element Editor */
 
-                                                    "Elementeditor.debug=true\n"
+                                                    "Elementeditor.debug=false\n"
                                                     "Elementeditor.info=true\n"
 
                                                     /* Element Connector Buttons  */

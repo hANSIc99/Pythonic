@@ -199,8 +199,8 @@ public slots:
 
 private:
 
-    static ElementEditorTypes::Type hashType(const QLatin1String &inString);
-    static ElementEditorTypes::Property hashEditorProperty(const QLatin1String &inString);
+    static ElementEditorTypes::Type hashType(const QString &inString);
+    static ElementEditorTypes::Property hashEditorProperty(const QString &inString);
     static ElementProperties::Properties hashElementProperty(const QString &inString);
 
 

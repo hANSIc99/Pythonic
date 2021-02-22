@@ -3,7 +3,7 @@
 podman build -t Pythonic:0.1 .
 
 # Image entfernen
-
+podman rmi <image-name>
 podman image rm 
 
 # Images auflisten

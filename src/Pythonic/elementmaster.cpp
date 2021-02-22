@@ -260,7 +260,7 @@ void ElementMaster::fwrdWsCtrl(const QJsonObject cmd)
     emit wsCtrl(newCmd);
 }
 
-ElementMasterCmd::Command ElementMaster::hashCmd(const QLatin1String &inString)
+ElementMasterCmd::Command ElementMaster::hashCmd(const QString &inString)
 {
     if(inString == QStringLiteral("ElementEditorConfig")) return ElementMasterCmd::ElementEditorConfig;
     if(inString == QStringLiteral("UpdateElementStatus")) return ElementMasterCmd::UpdateElementStatus;
@@ -274,10 +274,10 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
 
     QJsonObject address = cmd[QStringLiteral("address")].toObject();
-    QLatin1String strCmd(   cmd[QStringLiteral("cmd")].toString().toLatin1(),
-                            cmd[QStringLiteral("cmd")].toString().size());
+    //QLatin1String strCmd(   cmd[QStringLiteral("cmd")].toString().toLatin1(),
+    //                        cmd[QStringLiteral("cmd")].toString().size());
 
-    switch (hashCmd(strCmd)) {
+    switch (hashCmd(cmd[QStringLiteral("cmd")].toString())) {
 
     case ElementMasterCmd::Command::ElementEditorConfig: {
 

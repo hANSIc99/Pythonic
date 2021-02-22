@@ -107,7 +107,6 @@ void Elementeditor::openEditor(const QJsonObject config)
 
             QJsonObject elementConfig = value.toObject();
 
-            //QString type = elementConfig[QStringLiteral("Type")].toString();
             QLatin1String type( elementConfig[QStringLiteral("Type")].toString().toLatin1(),
                                 elementConfig[QStringLiteral("Type")].toString().size());
 
@@ -161,10 +160,10 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
     for(const QJsonValue &unitJSONVal : config){
         QJsonObject unit = unitJSONVal.toObject();
 
-        QLatin1String type( unit[QStringLiteral("Type")].toString().toLatin1(),
-                            unit[QStringLiteral("Type")].toString().size());
+        //QLatin1String type( unit[QStringLiteral("Type")].toString().toLatin1(),
+        //                    unit[QStringLiteral("Type")].toString().size());
 
-        switch (hashType(type)) {
+        switch (hashType(unit[QStringLiteral("Type")].toString())) {
 
         case ElementEditorTypes::ComboBox: {
             addComboBox(unit);
@@ -211,7 +210,7 @@ void Elementeditor::accept()
 
 }
 
-ElementEditorTypes::Type Elementeditor::hashType(const QLatin1String &inString)
+ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
 {
     if(inString == QStringLiteral("ComboBox")) return ElementEditorTypes::ComboBox;
     if(inString == QStringLiteral("LineEdit")) return ElementEditorTypes::LineEdit;
@@ -221,7 +220,7 @@ ElementEditorTypes::Type Elementeditor::hashType(const QLatin1String &inString)
     return ElementEditorTypes::NoType;
 }
 
-ElementEditorTypes::Property Elementeditor::hashEditorProperty(const QLatin1String &inString)
+ElementEditorTypes::Property Elementeditor::hashEditorProperty(const QString &inString)
 {
     if(inString == QStringLiteral("Visibility")) return ElementEditorTypes::Visibility;
     return ElementEditorTypes::NoProperty;
@@ -305,6 +304,8 @@ void Elementeditor::checkRulesAndRegExp()
     // https://doc.qt.io/qt-5/qtglobal.html#qAsConst
     for(const ElementEditorTypes::Rule &rule : qAsConst(m_rules)){
 
+
+
         /* Find dependent element */
         QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
 
@@ -323,13 +324,15 @@ void Elementeditor::checkRulesAndRegExp()
         if(rule.propertyRelated){
             /* Get first element of list = name of property */
             /* (dependentValues of property based rules contain always only one value) */
-            QLatin1String property(rule.dependentValues.first().toLatin1(),
-                                   rule.dependentValues.first().size());
+            //QLatin1String property(rule.dependentValues.first().toLatin1(),
+            //                       rule.dependentValues.first().size());
 
-
-            switch (hashEditorProperty(property)) {
+            //qCInfo(logC, "Applying rule for %s - %s", rule.affectedElement->objectName().toStdString().c_str(), rule.dependentValues.first().toStdString().c_str());
+            //switch (hashEditorProperty(property)) {
+            switch (hashEditorProperty(rule.dependentValues.first())) {
 
             case ElementEditorTypes::Visibility: {
+                //qCInfo(logC, "Applying rule for %s - %s", rule.affectedElement->objectName().toStdString().c_str(), "CHECK");
                 bConditionFulfilled = dependence->isVisible();
                 break;
             }
@@ -338,6 +341,7 @@ void Elementeditor::checkRulesAndRegExp()
             }
             }
             /* Apply rule to affected element */
+            //qCInfo(logC, "Applying rule for %s - %u", rule.affectedElement->objectName().toStdString().c_str(), bConditionFulfilled);
             rule.affectedElement->setVisible(bConditionFulfilled);
             /* Loop can be continued when it was a property related rule */
             continue;
@@ -377,6 +381,9 @@ void Elementeditor::checkRulesAndRegExp()
 
         /* Apply rule to affected element */
         rule.affectedElement->setVisible(bConditionFulfilled);
+        //update();
+        //adjustSize();
+
     } // rule for-loop
 
     /****************************************************

@@ -167,7 +167,7 @@ public:
     /* Baisc Element Data
  */
 
-    const QJsonObject             m_config;
+    const QJsonObject       m_config;
     //! Unique 32 bit id of each element, automatic set (CONFIG)
     quint32                 m_id;
     //! Indicates if elements accept parent connections
@@ -222,7 +222,7 @@ private slots:
 
 private:
 
-    static ElementMasterCmd::Command hashCmd(QLatin1String const &inString);
+    static ElementMasterCmd::Command hashCmd(QString const &inString);
 
     const static QLoggingCategory  logC;
 
