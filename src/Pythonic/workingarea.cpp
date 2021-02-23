@@ -31,8 +31,6 @@ WorkingArea::WorkingArea(int areaNo, quint32 *ptrTimer, QWidget *parent)
 
     setObjectName(objectName);
 
-
-
     /* Setup background */
 
     m_backgroundGradient.setStart(0.0, 0.0);
@@ -203,10 +201,10 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
     /* Process own messages here */
 
 
-    QLatin1String strCmd(   cmd[QStringLiteral("cmd")].toString().toLatin1(),
-                            cmd[QStringLiteral("cmd")].toString().size());
+    //QLatin1String strCmd(   cmd[QStringLiteral("cmd")].toString().toLatin1(),
+    //                        cmd[QStringLiteral("cmd")].toString().size());
 
-    switch (hashCmd(strCmd)) {
+    switch (hashCmd(cmd[QStringLiteral("cmd")].toString())) {
     case WorkingAreaCmd::HighlightConnection : {
         //qCDebug(logC, "called in area No.: %u - HighlighConnection", m_AreaNo);
         QJsonObject data = cmd[QStringLiteral("data")].toObject();
@@ -730,7 +728,7 @@ void WorkingArea::paintEvent(QPaintEvent *event)
     m_painter.end();
 }
 
-WorkingAreaCmd::Command WorkingArea::hashCmd(const QLatin1String &inString)
+WorkingAreaCmd::Command WorkingArea::hashCmd(const QString &inString)
 {
     if(inString == QStringLiteral("HighlightConnection")) return WorkingAreaCmd::HighlightConnection;
     return WorkingAreaCmd::NoCmd;

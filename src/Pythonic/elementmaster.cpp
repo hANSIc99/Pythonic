@@ -17,16 +17,25 @@
 
 #include "elementmaster.h"
 
-const QLoggingCategory ElementMaster::logC{"ElementMaster"};
+const       QLoggingCategory ElementMaster::logC{"ElementMaster"};
 
-ElementMaster::ElementMaster(QJsonObject configuration,
-                             int     areaNo,
+
+/* Can be removed when compiling with C++ 17 */
+constexpr   QSizePolicy ElementMaster::m_sizePolicy;
+constexpr   QSize ElementMaster::m_label_size;
+constexpr   QSize ElementSocket::m_socket_size;
+constexpr   QSize ElementPlug::m_socket_size;
+constexpr   QSize ElementStart::m_socket_size;
+
+ElementMaster::ElementMaster(const QJsonObject configuration,
+                             const int     areaNo,
                              QWidget *parent) // only when loaded from config
     : QWidget(parent)
     , m_config(configuration)
     , m_id(configuration[QStringLiteral("Id")].toInt())
+    , m_hasSocket(m_config[QStringLiteral("Socket")].toBool())
     , m_areaNo(areaNo)
-    , m_symbol(QUrl(QStringLiteral("http://localhost:7000/") + configuration[QStringLiteral("Iconname")].toString() + QStringLiteral(".png")), LABEL_SIZE, this)
+    , m_symbol(QUrl(QStringLiteral("http://localhost:7000/") + configuration[QStringLiteral("Iconname")].toString() + QStringLiteral(".png")), m_label_size, this)
 {
 
     setAttribute(Qt::WA_DeleteOnClose);
@@ -46,7 +55,7 @@ ElementMaster::ElementMaster(QJsonObject configuration,
 
     /* Create the basic data */
 
-    m_hasSocket = m_config[QStringLiteral("Socket")].toBool();
+    //m_hasSocket = m_config[QStringLiteral("Socket")].toBool();
 
     /* Create default general config if not defined */
 
@@ -175,6 +184,7 @@ QJsonObject ElementMaster::genConfig() const
 
     return data;
 }
+
 
 void ElementMaster::checkConnectionState()
 {

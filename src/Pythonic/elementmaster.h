@@ -37,33 +37,21 @@
 #include "elementeditor.h"
 #include "helper.h"
 
-#include <QToolTip>
-
-#define LABEL_SIZE QSize(140, 47)
-#define PLUG_SOCKET_SIZE QSize(47, 47)
-
-
 
 struct ChildConfig {
     bool bottomChild;
     bool rightChild;
 };
 
-/*! @brief ElementMaster is the base widget for all programming elements
- *
- *  Detailed description follows here.
- *  @author Stephan Avenwedde
- *  @date October 2020
- *  @copyright [GPLv3](../../../LICENSE)
- */
-
 
 class ElementSocket : public BaseLabel
 {
     Q_OBJECT
+    static constexpr QSize  m_socket_size {47, 47};
+
 public:
     explicit ElementSocket(QWidget *parent = nullptr)
-        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")), PLUG_SOCKET_SIZE, parent)
+        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")), m_socket_size, parent)
         , m_connected(false)
     {
         qCDebug(logC, "called");
@@ -77,17 +65,20 @@ protected:
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
 private:
-    bool                m_connected;
-    QLoggingCategory    logC{"ElementSocket"};
+    bool                    m_connected;
+    QLoggingCategory        logC{"ElementSocket"};
+
 };
 
 
 class ElementPlug : public BaseLabel
 {
     Q_OBJECT
+    static constexpr    QSize  m_socket_size {47, 47};
+
 public:
     explicit ElementPlug(QWidget *parent = nullptr)
-        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")), PLUG_SOCKET_SIZE, parent)
+        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")), m_socket_size, parent)
         , m_connected(false)
     {
         qCDebug(logC, "called");
@@ -105,15 +96,18 @@ protected:
 private:
     bool                m_connected;
     QLoggingCategory    logC{"ElementPlug"};
+
 };
 
 
 class ElementStart : public BaseLabel
 {
     Q_OBJECT
+    static constexpr    QSize  m_socket_size {47, 47};
+
 public:
     explicit ElementStart(QWidget *parent = nullptr)
-        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlayDefault.png")), PLUG_SOCKET_SIZE, parent)
+        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlayDefault.png")), m_socket_size, parent)
         , m_running(false)
     {
         qCDebug(logC, "called");
@@ -133,12 +127,7 @@ private:
     QLoggingCategory    logC{"ElementPlug"};
 };
 
-/*
-struct Version {
-    int     major;
-    int     minor;
-};
-*/
+
 
 namespace ElementMasterCmd {
 
@@ -151,30 +140,39 @@ namespace ElementMasterCmd {
     };
 }
 
-
+/*! @brief ElementMaster is the base widget for all programming elements
+ *
+ *  Detailed description follows here.
+ *  @author Stephan Avenwedde
+ *  @date October 2020
+ *  @copyright [GPLv3](../../../LICENSE)
+ */
 
 class ElementMaster : public QWidget
 {
     Q_OBJECT
+    static constexpr    QSize  m_label_size{140, 47};
+    static constexpr    QSizePolicy m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
+    static const        QLoggingCategory  logC;
+    static              ElementMasterCmd::Command hashCmd(QString const &inString);
+
 public:
 
     explicit ElementMaster(
-            QJsonObject configuration,
-            int gridNo,
+            const QJsonObject configuration,
+            const int gridNo,
             QWidget *parent
             );
 
-    /* Baisc Element Data
- */
+    /* Baisc Element Data */
 
     const QJsonObject       m_config;
     //! Unique 32 bit id of each element, automatic set (CONFIG)
-    quint32                 m_id;
+    const quint32           m_id;
     //! Indicates if elements accept parent connections
-    bool                    m_hasSocket;
-
+    const bool              m_hasSocket;
     //! Number of the grid which holds the element
-    int                     m_areaNo;
+    const int               m_areaNo;
 
 
     /* Internal Configuration */
@@ -190,23 +188,35 @@ public:
     //! Generate and return configuration
     QJsonObject             genConfig() const;
 
+    //! Add parent element to m_parents
     void                    addParent(ElementMaster *parent);
+    //! Add child element to m_childs
     void                    addChild(ElementMaster *child);
+    //! Open the dedicated ElementEditor
     void                    openEditor();
 
 public slots:
 
-    void                    stopHighlight();
+    //! Draw a yellow border arround the element when selected
+    //! in disconnect list, called by WorkingArea::disconnectHover()
     void                    startHighlight();
+    //! Remove the green border from the element
+    void                    stopHighlight();
+    //! Toggle the running state (draws the green border arround the element)
     void                    switchRunState(bool state);
+    //! Stop highlighting plug/socket when connection is deleted
+    //! Called from WorkingArea when an element is deleted
     void                    checkConnectionState();
+    //! Append element address and forward command to WorkinfArea
     void                    fwrdWsRcv(const QJsonObject cmd);
 
 signals:
 
     //! Signal connected to WorkingArea::deleteElement
     void remove(ElementMaster *element);
+    //! Toggles plug connection highlight (called when connected or disconnected)
     void plugConnectionHighlight(bool state);
+    //! Toggles socket connection highlight (called when connected or disconnected)
     void socketConnectionHighlight(bool state);
     //! Signals is emitted when rightcliking an element to open the editor */
     void wsCtrl(const QJsonObject cmd);
@@ -215,16 +225,14 @@ signals:
 
 private slots:
 
+    //! Destroy element and execute DestructorCMD
     void deleteSelf();
     //! Slot is called after closing the elementeditor by click on Save
     void updateConfig(const QJsonObject customConfig);
+    //! Forwards messaged to WorkingArea
     void fwrdWsCtrl(const QJsonObject cmd);
 
 private:
-
-    static ElementMasterCmd::Command hashCmd(QString const &inString);
-
-    const static QLoggingCategory  logC;
 
     //! Layout for IconBar and ElementPicture
     QVBoxLayout             m_layout;
@@ -238,6 +246,7 @@ private:
     QHBoxLayout             m_symbolWidgetLayout;
 
 public:
+
     //! Filename of the icon
     QString                 m_iconName;
     //! Symbol of element
@@ -252,6 +261,7 @@ public:
     ElementStart            m_startBtn;
 
 private:
+
     //! Name of the element
     QLabel                  m_name;
     //! Optional info text, can be set from daemon
@@ -260,9 +270,6 @@ private:
     QLabel                  m_textLabel;
     //! Editor windows
     Elementeditor           *m_editor;
-
-    QSizePolicy             m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
-
 
 };
 

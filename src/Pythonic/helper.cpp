@@ -19,7 +19,7 @@ bool helper::mouseOverElement(const QWidget *element, const QPoint &globalPos)
             withinElementPos.y() <= element->height());
 }
 
-Pythonic::Command helper::hashCmd(QLatin1String const &inString)
+Pythonic::Command helper::hashCmd(QString const &inString)
 {
         if(inString == QStringLiteral("Heartbeat")) return Pythonic::Heartbeat;
         if(inString == QStringLiteral("CurrentConfig")) return Pythonic::CurrentConfig;

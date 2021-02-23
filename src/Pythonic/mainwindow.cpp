@@ -25,6 +25,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setAcceptDrops(true);
 
+    /* Set Window Title */
+#ifdef WASM
+    setWindowTitle(QStringLiteral("Pythonic - WebAssembly"));
+#else
+    setWindowTitle(QStringLiteral("Pythonic"));
+#endif
+
+
     /* Setup Working Area Tabs */
 
     m_workingTabs.setMinimumSize(300, 300);
@@ -292,10 +300,10 @@ void MainWindow::wsRcv(const QString &message)
         return;
     }
 
-    QLatin1String sCMD(jsCmd.toString().toLatin1(),
-                       jsCmd.toString().size());
+    //QLatin1String sCMD(jsCmd.toString().toLatin1(),
+    //                   jsCmd.toString().size());
 
-    switch (helper::hashCmd(sCMD)) {
+    switch (helper::hashCmd(jsCmd.toString())) {
     case Pythonic::Command::Heartbeat: {
 
     if(++it_spinner == m_spinner.end()){

@@ -71,7 +71,7 @@ class helper {
 public:
     static bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
-    static Pythonic::Command hashCmd(QLatin1String const &inString);
+    static Pythonic::Command hashCmd(QString const &inString);
 
 
     static QString applyRegExp( const QString in,

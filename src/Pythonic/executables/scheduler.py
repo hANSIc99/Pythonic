@@ -84,7 +84,7 @@ class Element(Function):
 
         # Switch modes
 
-        if mode == "None":
+        if mode == "Single fire":
 
             ############################
             #           None           #
@@ -92,6 +92,11 @@ class Element(Function):
 
             recordDone = Record(None, message='Trigger: {:04d}'.format(self.config['Identifier']))
             self.return_queue.put(recordDone)
+            return
+
+        elif mode == "Single fire, delayed":
+
+            self.singleFireDelayed()
             return
 
         elif mode == "Interval":
@@ -135,11 +140,33 @@ class Element(Function):
             return
 
 
-    def intervalScheduler(self):
+    def singleFireDelayed(self):
 
         ############################
-        #         Interval         #
+        #   Single fire, delayed   #
         ############################
+
+        countdown = self.interval / self.tick
+
+        while countdown > 0:
+
+
+            guitext = GuiCMD(self.remainingTime(countdown=countdown))
+            self.return_queue.put(guitext)
+
+            bExit = self.blockAndWait()
+
+            if bExit:
+                return
+
+            countdown -= 1
+
+        recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+        self.return_queue.put(recordDone)    
+
+    def intervalScheduler(self):
+
+
 
         countdown = self.interval / self.tick
 

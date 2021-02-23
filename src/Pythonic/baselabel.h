@@ -28,6 +28,15 @@
 #include <QPushButton>
 #include <QLoggingCategory>
 
+// ToDo
+/*
+#ifdef WASM
+    setWindowTitle(QStringLiteral("Pythonic - WebAssembly"));
+#else
+    setWindowTitle(QStringLiteral("Pythonic"));
+#endif
+*/
+
 
 class BaseLabel : public QLabel
 {

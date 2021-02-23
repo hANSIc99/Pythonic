@@ -121,12 +121,15 @@ namespace WorkingAreaCmd {
 class WorkingArea : public QFrame
 {
     Q_OBJECT
+    const static    QLoggingCategory logC;
+    static          WorkingAreaCmd::Command hashCmd(QString const &inString);
+
 public:
     explicit WorkingArea(int areaNo, quint32 *ptrTimer, QWidget *parent = nullptr);
 
     void registerElement(const ElementMaster *new_element);
 
-    int                         m_AreaNo;
+    const int                    m_AreaNo;
 
     /* Connections */
     QVector<Connection>         m_connections;
@@ -151,11 +154,13 @@ signals:
 
 public slots:
 
+    //! Delete element from WorkingArea
     void deleteElement(ElementMaster *element);
+    //! Resize WorkingArea
     void resizeEvent(QResizeEvent *event) override;
-    /* Forward to backend and append grid number */
+    //! Forward to backend and append grid number
     void fwrdWsCtrl(const QJsonObject cmd);
-    /* Forward received messages to element */
+    //! Forward received messages to element
     void fwrdWsRcv(const QJsonObject cmd);
     //! Forward saveConfig signal from ElementMaster to MainWindow
     void saveConfigFwrd();
@@ -179,7 +184,7 @@ protected:
 
 private:
 
-    static WorkingAreaCmd::Command hashCmd(QLatin1String const &inString);
+
 
     void drawPreviewConnection(QPainter *p);
     void drawConnections(QPainter *p);
@@ -191,7 +196,6 @@ private:
                            QPoint pos,
                            bool plug);
 
-    //bool mouseOverElement(const QWidget *element, const QPoint &globalPos);
 
     const quint32               *m_ptrRefTimer;
 
@@ -210,18 +214,18 @@ private:
     ElementMaster*              m_drawTmpTarget{NULL};
 
     /* Drag & Drop */
+
     bool                        m_dragging{false};
     QPoint                      m_dragPosOffset;
 
     /* Drawing */
+
     QPoint                      m_drawStartPos;
     QPoint                      m_drawEndPos;
     bool                        m_draw{false};
     bool                        m_mouseOverSocket{false};
 
     QLine                       m_previewConnection;
-
-
 
     /* Background */
 
@@ -237,7 +241,7 @@ private:
 
     QVector<ConnectionHighlightInfo> m_highlightedConnections;
 
-    const static QLoggingCategory      logC;
+
 
 };
 
