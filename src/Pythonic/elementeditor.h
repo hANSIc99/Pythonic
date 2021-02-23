@@ -32,7 +32,6 @@
 #include <QVariant>
 #include <QList>
 #include <QStringLiteral>
-#include <QLatin1String>
 
 #include "baselabel.h"
 #include "helper.h"

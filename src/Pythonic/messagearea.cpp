@@ -5,7 +5,7 @@ bool OutputWidget::m_styleOption = false;
 bool MessageWidget::m_styleOption = false;
 
 MessageArea::MessageArea(const QString &title,
-                         int maxItems,
+                         const int maxItems,
                          QWidget *parent)
     : QWidget(parent)
     , m_maxItems(maxItems)

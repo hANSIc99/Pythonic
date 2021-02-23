@@ -75,14 +75,12 @@ private:
 
 
 
-
-
 class MessageArea : public QWidget
 {
     Q_OBJECT
 public:
     explicit MessageArea(   const QString &title,
-                            int maxItems,
+                            const int maxItems,
                             QWidget *parent = nullptr);
 
 private slots:
@@ -96,7 +94,7 @@ public slots:
 private:
 
     //! Maximum number of list items
-    int                     m_maxItems;
+    const int               m_maxItems;
 
     //! Enables scrolling
     QScrollArea             m_scrollArea;

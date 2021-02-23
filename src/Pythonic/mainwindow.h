@@ -32,8 +32,6 @@
 #include <QLabel>
 #include <QSet>
 #include <QMap>
-#include <QLatin1Char>
-#include <QLatin1String>
 #include <QDialog>
 #include <QTextEdit>
 #include <QSplitter>
@@ -49,16 +47,10 @@
 
 
 
-
 #define N_WORKING_GRIDS 3
-#define DEFAULT_MAINWINDOW_SIZE     QSize(1200, 800)
-#define DEFAULT_WORKINGAREA_SIZE    DEFAULT_MAINWINDOW_SIZE - QSize(10, 200)
 
 #define INIT_ELEMENTSTATES_DELAY    5
 
-#define DBG_ID_FONTSIZE 12
-#define MAX_LOG_MESSAGES 20
-#define MAX_OUTPUT_MSGS  20
 
 //https://stackoverflow.com/questions/39931734/qt-specific-difference-of-stack-vs-heap-attributes
 
@@ -82,6 +74,10 @@ struct DelayedInitCommand {
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    static constexpr QSize m_default_size{1200, 800};
+    static constexpr QSize m_default_area_size {m_default_size - QSize(10, 200)};
+    static constexpr int   m_max_log_messages{20};
+    static constexpr int   m_max_out_messages{20};
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -197,9 +193,9 @@ private:
     Toolbox                 m_toolBox;
 
     //! OutputArea shows the output of elements
-    MessageArea             m_outputArea{"Element Output", MAX_OUTPUT_MSGS};
+    MessageArea             m_outputArea{"Element Output", m_max_out_messages};
     //! MessageArea shows the logging messages of elements
-    MessageArea             m_messageArea{"Log Messages", MAX_LOG_MESSAGES};
+    MessageArea             m_messageArea{"Log Messages", m_max_log_messages};
 
 
     /* Bottom Border (Info Text & Size Grip) */

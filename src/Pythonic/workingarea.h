@@ -179,16 +179,19 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     //! adding elements,
     void mouseReleaseEvent(QMouseEvent *event) override;
+    //! drawing
     void mouseMoveEvent(QMouseEvent *event) override;
+    //! draw connection lines
     void paintEvent(QPaintEvent *event) override;
 
 private:
 
-
-
+    //! Draw the preview connection during drawing
     void drawPreviewConnection(QPainter *p);
+    //! Called from paintEvent
     void drawConnections(QPainter *p);
     void updateConnection();
+    //! Called when an element sends an output
     void highlightConnection(quint32 parentId, quint32 childId);
 
     void createContextMenu(QSet<ElementMaster*> &elementSet,
@@ -240,9 +243,6 @@ private:
     QList<ConnectionPair*>      m_discMenuConnections;
 
     QVector<ConnectionHighlightInfo> m_highlightedConnections;
-
-
-
 };
 
 #endif // WORKINGAREA_H

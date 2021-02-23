@@ -17,6 +17,9 @@
 
 #include "mainwindow.h"
 
+constexpr QSize MainWindow::m_default_size;
+constexpr QSize MainWindow::m_default_area_size;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_refTimer(0)
@@ -43,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
         //WorkingArea *new_workingArea = new WorkingArea(&m_workingTabs);
         WorkingArea *new_workingArea = new WorkingArea(i, &m_refTimer);
         m_arr_workingArea.append(new_workingArea);
-        new_workingArea->setMinimumSize(DEFAULT_WORKINGAREA_SIZE);
+        new_workingArea->setMinimumSize(m_default_area_size);
 
 
         QScrollArea *new_scroll_area = new QScrollArea(&m_workingTabs);
@@ -108,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* Resize Windows and hide message and output window */
 
-    resize(DEFAULT_MAINWINDOW_SIZE);
+    resize(m_default_size);
 
     /* Hide Message- and Output-area */
 
@@ -283,10 +286,8 @@ void MainWindow::wsRcv(const QString &message)
 
     /* Forward all packaged with a target other than 'MainWindow' */
 
-    QLatin1String sTarget(target.toString().toLatin1(),
-                          target.toString().size());
 
-    if(sTarget != QStringLiteral("MainWindow")){
+    if(target.toString() != QStringLiteral("MainWindow")){
         fwrdWsRcv(jsonMsg);
         return;
     }
@@ -300,8 +301,6 @@ void MainWindow::wsRcv(const QString &message)
         return;
     }
 
-    //QLatin1String sCMD(jsCmd.toString().toLatin1(),
-    //                   jsCmd.toString().size());
 
     switch (helper::hashCmd(jsCmd.toString())) {
     case Pythonic::Command::Heartbeat: {
@@ -781,132 +780,3 @@ void MainWindow::toggleOutputArea()
     }
     m_bottomArea.setSizes(sizes);
 }
-#if 0
-void MainWindow::openDebugWindow(const QJsonObject &debugData)
-{
-    qCDebug(logC, "called");
-
-
-    if(m_dbgWindowRefCnt > MAX_DGB_WINDOWS){
-        setInfoText(QStringLiteral("Maximum number of debug windows reached"));
-        return;
-    }
-
-    m_dbgWindowRefCnt++;
-
-    QDialog *debugWindow = new QDialog(this);
-
-    QVBoxLayout *dbgLayout = new QVBoxLayout(debugWindow);
-    debugWindow->setModal(false);
-    //debugWindow->setWindowModality(Qt::NonModal);
-    //debugWindow->setWindowModality(Qt::WindowModal);
-    debugWindow->setAttribute(Qt::WA_DeleteOnClose);
-    debugWindow->setLayout(dbgLayout);
-
-
-    quint32 id = debugData.value(QStringLiteral("Id")).toInt();
-    int areaNo = debugData.value(QStringLiteral("AreaNo")).toInt();
-
-    QString sId = QString("0x%1").arg(id, 8, 16, QChar('0'));
-    QString sArea = QString("Area No.: %1").arg(areaNo);
-
-
-    QFont idFont("Arial", DBG_ID_FONTSIZE, QFont::Bold);
-    QFont defaultFont("Arial", DBG_ID_FONTSIZE);
-
-    QLabel *objectId   =  new QLabel(sId, debugWindow);
-    objectId->setFont(idFont);
-
-    QLabel *objectName = new QLabel(debugData.value(QStringLiteral("ObjectName")).toString(),
-                                                    debugWindow);
-    objectName->setFont(defaultFont);
-
-    QLabel *objectAreaNo = new QLabel(sArea, debugWindow);
-    objectAreaNo->setFont(defaultFont);
-
-    /* Timestamp Text */
-
-    QString sTimestamp = QString("Output received: %1").arg(m_datetimeText.text());
-    QLabel *outputTimestamp = new QLabel(sTimestamp, debugWindow);
-
-    /* Output Text */
-
-    QString sOutput = debugData.value(QStringLiteral("Output")).toString();
-    QTextEdit *objectOutput = new QTextEdit(sOutput, debugWindow);
-    objectOutput->setReadOnly(true);
-
-    /* Button Widget and Layout Layout */
-
-    QWidget *buttonBar = new QWidget(debugWindow);
-    QHBoxLayout *buttonBarLayout = new QHBoxLayout(buttonBar);
-
-    buttonBar->setLayout(buttonBarLayout);
-
-    /* Discard Button */
-
-    QPushButton *discardBtn = new QPushButton(QStringLiteral("Discard"), buttonBar);
-
-    /* Proceed Button */
-
-    QPushButton *proceedBtn = new QPushButton(QStringLiteral("Proceed"), buttonBar);
-
-    buttonBarLayout->addWidget(discardBtn);
-    buttonBarLayout->addWidget(proceedBtn);
-
-    dbgLayout->addWidget(objectName);
-    dbgLayout->addWidget(objectId);
-    dbgLayout->addWidget(objectAreaNo);
-    dbgLayout->addWidget(outputTimestamp);
-    dbgLayout->addWidget(objectOutput);
-    dbgLayout->addWidget(buttonBar);
-
-    /* Signals and Slots */
-
-    connect(proceedBtn, &QPushButton::clicked,
-            debugWindow, &QDialog::accept);
-
-    connect(discardBtn, &QPushButton::clicked,
-            debugWindow, &QDialog::reject);
-
-    connect(proceedBtn, &QPushButton::clicked,
-            debugWindow,
-            [debugWindow, this]() {
-
-        /* Send proceed command */
-         this->logMessage("Proceed", LogLvl::CRITICAL);
-         debugWindow->accept();
-    });
-
-    connect(discardBtn, &QPushButton::clicked,
-            debugWindow,
-            [debugWindow, this]() {
-
-        /* Send reject command */
-         this->logMessage("Discard!", LogLvl::CRITICAL);
-         debugWindow->reject();
-    });
-
-
-    connect(debugWindow, &QDialog::finished,
-            this,
-            [&](int result) {
-
-        if(result == QDialog::Rejected )
-            this->logMessage("Discard!", LogLvl::CRITICAL);
-
-        if(result == QDialog::Accepted)
-            this->logMessage("Proceed", LogLvl::CRITICAL);
-
-        m_dbgWindowRefCnt--;
-        if(m_dbgWindowRefCnt < MAX_DGB_WINDOWS){
-            setInfoText(QStringLiteral(""));
-        }
-        qCDebug(logC, "Dialogue closed");
-    });
-
-    debugWindow->open();
-    debugWindow->adjustSize();
-
-}
-#endif
-

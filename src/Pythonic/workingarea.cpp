@@ -177,10 +177,7 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 
     /* Forward message to target element */
 
-    QLatin1String target(   address[QStringLiteral("target")].toString().toLatin1(),
-                            address[QStringLiteral("target")].toString().size());
-
-    if(target != QStringLiteral("WorkingArea")){
+    if(address[QStringLiteral("target")].toString() != QStringLiteral("WorkingArea")){
 
        quint32 id = address[QStringLiteral("id")].toInt();
 
@@ -199,10 +196,6 @@ void WorkingArea::fwrdWsRcv(const QJsonObject cmd)
 
 
     /* Process own messages here */
-
-
-    //QLatin1String strCmd(   cmd[QStringLiteral("cmd")].toString().toLatin1(),
-    //                        cmd[QStringLiteral("cmd")].toString().size());
 
     switch (hashCmd(cmd[QStringLiteral("cmd")].toString())) {
     case WorkingAreaCmd::HighlightConnection : {
