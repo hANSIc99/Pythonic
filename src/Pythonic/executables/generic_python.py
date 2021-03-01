@@ -1,6 +1,6 @@
-import sys, logging, pickle, locale, datetime, os, signal, time, itertools, tty, termios, select
+import time, queue
 try:
-    from element_types import Record, Function, ProcCMD
+    from element_types import Record, Function, ProcCMD, GuiCMD
 except ImportError:    
     from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD
     
@@ -12,29 +12,57 @@ class Element(Function):
 
     def execute(self):
 
-        """
+
+        #####################################
+        #                                   #
+        #     REFERENCE IMPLEMENTATION      #
+        #                                   #
+        #####################################
+
+
+        # Use this example method for 
+
+
+
+        cmd = None
         cnt = 0
-        while True :
-            time.sleep(1)
 
-            # if cmdQueue.bStop BAUSTELLE
-            if self.bStop:
-                recordDone = Record(False, cnt, None, True) # Exit message
-                # Necessary to end the ProcessHandler     
-                self.queue.put(recordDone)
-                break      
+        
+
+        # To exit immediately after providing output data, uncomment this
+
+        #recordDone = Record(cnt, 'Sending value of cnt: {}'.format(cnt))     
+        #self.queue.put(recordDone)
+        #return
+
+        # The example executes an infinite loop till it's receives a stop command
+        while(True):
+
+            cnt+=1
+
+            try:
+                # Block for 1 second and wait for incoming commands 
+                cmd = self.cmd_queue.get(block=True, timeout=1)
+            except queue.Empty:
+                pass
+
+            if isinstance(cmd, ProcCMD) and cmd.bStop:
+                # Stop command received, exit
+                return
 
 
-            recordDone = Record(False, cnt, None)     
-            self.queue.put(recordDone)
-            cnt += 1
-    
+
+            # Send status text to GUI every timeout interval
+            guitext = GuiCMD('cnt: {}'.format(cnt))
+            self.return_queue.put(guitext)
 
 
-        """
-        #time.sleep(0.2)
-        recordDone = Record(data="Hello from GenericPython", message='<<<<<<<>>>>>>>>> Message from {:04d}'.format(self.config['Identifier']))     
-        self.return_queue.put(recordDone)
+            # Send data to element output every 5 x timeout
+            if cnt % 5 == 0:
+                # Recors(data, message)
+                recordDone = Record(cnt, 'Sending value of cnt: {}'.format(cnt))     
+                self.return_queue.put(recordDone)
+
 
 
 

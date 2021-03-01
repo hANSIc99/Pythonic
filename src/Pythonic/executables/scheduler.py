@@ -1,4 +1,4 @@
-import sys, logging, pickle, locale, os, signal, time, itertools, tty, termios, select, queue
+import time, itertools, queue
 from datetime import datetime, date, time, timedelta
 try:
     from element_types import Record, Function, ProcCMD, GuiCMD
@@ -165,8 +165,6 @@ class Element(Function):
         self.return_queue.put(recordDone)    
 
     def intervalScheduler(self):
-
-
 
         countdown = self.interval / self.tick
 
@@ -659,11 +657,10 @@ class Element(Function):
             # Wait for incoming commands in specified interval
             cmd = self.cmd_queue.get(block=True, timeout=self.tick)
         except queue.Empty:
-            #logging.debug('Command Queue empty')
             pass
 
         if isinstance(cmd, ProcCMD) and cmd.bStop:
-            # Exit here is stop command received
+            # Exit here if stop command received
             return True
 
         return False

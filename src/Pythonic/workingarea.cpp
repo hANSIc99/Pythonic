@@ -227,6 +227,8 @@ void WorkingArea::clearAllElements()
         delete element;
     }
     m_connections.clear();
+    m_drawTmpTarget = nullptr;
+    m_tmpElement = nullptr;
 }
 
 void WorkingArea::disconnectHover(QAction *action)
@@ -632,16 +634,16 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
 
     } else if (m_draw){
 
-    /*
-     * Draw connections
-     */
+        /*
+         * Draw connections
+         */
 
-    /* Draw preview */
-    m_previewConnection = QLine(m_drawStartPos, event->pos());
-    update();
-     /*
-      * Start & Stop highlighting the socket
-      */
+        /* Draw preview */
+        m_previewConnection = QLine(m_drawStartPos, event->pos());
+        update();
+         /*
+          * Start & Stop highlighting the socket
+          */
 
 
 
