@@ -98,7 +98,7 @@ def ctrl(ws):
         else:
             msg = json.loads(m)
             
-            #logging.debug('PythonicWeb    - Command: {}'.format(msg['cmd']))
+            logging.debug('PythonicWeb    - Command: {}'.format(msg['cmd']))
 
             if msg['cmd'] == 'logMsg':
                 # logging
@@ -167,12 +167,21 @@ def saveConfig(ws):
     filename = ws.wait()
     logging.info('Upload Config: Filename: {}'.format(filename))
     data = ws.wait()
+    # ToDo: Implement check if received file is valid json
+
+    # Create a backup of existing config
+    home_path = Path.home() / 'Pythonic'
+    try:
+        copyfile( (home_path / 'current_config.json'), (home_path / 'current_config.json.old'))
+    except Exception as e:
+        logging.warning('Exception during creating backlup: {}'.format(e))
+        pass
+    
+    new_file = os.path.join(www_config, 'current_config.json')
     data_size = float(len(data)) / 1000 #kb
     logging.info('Sizeof Config: {:.1f} kb'.format(data_size))
     # Backup previous config
-    home_path = Path.home() / 'Pythonic'
-    copyfile( (home_path / 'current_config.json'), (home_path / 'current_config.json.old'))
-    new_file = os.path.join(www_config, 'current_config.json')
+
     logging.info('Upload saved to: {}'.format(home_path / 'current_config.json'))
     with open((home_path / 'current_config.json'), 'wb') as file:
         file.write(data)

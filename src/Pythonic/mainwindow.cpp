@@ -126,14 +126,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* Signals & Slots - Buttons */
 
-    connect(&m_menuBar.m_uploadConfig, &QPushButton::clicked,
-            this, &MainWindow::testSlot);
 
     /****************************
      *      Menubar Buttons     *
      ****************************/
 
-    /* Reconnect-Button */
     connect(&m_menuBar.m_reconnectBtn, &QPushButton::clicked,
             this, &MainWindow::reconnect);
 

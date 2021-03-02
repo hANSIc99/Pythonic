@@ -1,5 +1,6 @@
 import os, logging, json
 from copy import deepcopy
+from shutil import copyfile
 from datetime import datetime
 from pathlib import Path
 from PySide2.QtCore import QThread, QObject, Signal, QMutex
@@ -203,11 +204,16 @@ class ConfigLoader(QThread):
 
     def __init__(self):
         super().__init__()
-        self.cfg_file = Path.home() / 'Pythonic' / 'current_config.json'
+        self.home_path  = Path.home() / 'Pythonic'
+        self.cfg_file   = self.home_path  / 'current_config.json'
 
     def run(self):
 
         config = None
+        self.loadConfig()
+
+    def loadConfig(self, bRecover=False):
+
         try:
             with open(self.cfg_file, 'r') as file:
                 config = json.load(file)
@@ -219,6 +225,23 @@ class ConfigLoader(QThread):
                     'data'      : config }
 
             self.tooldataLoaded.emit(cmd)
-        except Exception as e:
-            logging.warning('ConfigLoader::run() - Exception: {}'.format(e))
+            if(bRecover):
+                logging.warning('Old config restored successfully')
 
+        except Exception as e:
+            
+            # Return if an exception occured when already tried
+            # to recover the old config
+            if(bRecover):
+                return
+
+            logging.warning('ConfigLoader::run() - Exception: {}'.format(e))
+            logging.warning('>>> Check if backup exists')
+
+            try:
+                copyfile( (self.home_path / 'current_config.json.old'), (self.home_path / 'current_config.json'))
+            except Exception as e:
+                logging.warning('Exception restoring backlup: {}'.format(e))
+                pass
+
+            self.loadConfig(bRecover=True)
