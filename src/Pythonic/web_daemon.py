@@ -1,12 +1,11 @@
-import sys, logging, locale, pickle, datetime, os, signal, time, itertools, tty, termios, select
-import json
+import sys, logging, locale, datetime, os, signal, time, tty, termios, json
 import multiprocessing as mp
-import eventlet, json
-from eventlet import wsgi, websocket, greenthread
+from eventlet import wsgi, websocket, greenthread, listen
 from threading import Timer, Thread, Event
 from pathlib import Path
 from zipfile import ZipFile
 from enum import Enum
+from shutil import copyfile
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
 
@@ -166,14 +165,16 @@ def ctrl(ws):
 @websocket.WebSocketWSGI
 def saveConfig(ws):
     filename = ws.wait()
-    logging.info('Download Config: Filename: {}'.format(filename))
+    logging.info('Upload Config: Filename: {}'.format(filename))
     data = ws.wait()
     data_size = float(len(data)) / 1000 #kb
     logging.info('Sizeof Config: {:.1f} kb'.format(data_size))
-    # BAUSTELLE: User home directory
+    # Backup previous config
+    home_path = Path.home() / 'Pythonic'
+    copyfile( (home_path / 'current_config.json'), (home_path / 'current_config.json.old'))
     new_file = os.path.join(www_config, 'current_config.json')
-    logging.info('Upload saved to: {}'.format(new_file))
-    with open(new_file, 'wb') as file:
+    logging.info('Upload saved to: {}'.format(home_path / 'current_config.json'))
+    with open((home_path / 'current_config.json'), 'wb') as file:
         file.write(data)
     
     ws.environ['mainWorker'].loadConfig()
@@ -181,14 +182,17 @@ def saveConfig(ws):
 @websocket.WebSocketWSGI
 def saveExecutable(ws):
     filename = ws.wait()
-    logging.info('Download Config: Filename: {}'.format(filename))
+    logging.info('Upload Executable: Filename: {}'.format(filename))
     data = ws.wait()
     data_size = float(len(data)) / 1000 #kb
     logging.info('Sizeof Config: {:.1f} kb'.format(data_size))
-    # BAUSTELLE: FIlename = current_config.json
-    new_file = os.path.join(executables, filename)
-    logging.info('Upload saved to: {}'.format(new_file))
-    with open(new_file, 'wb') as file:
+    home_path = Path.home() / 'Pythonic'
+
+    #new_file = os.path.join(executables, filename)
+    logging.info('Upload saved to: {}'.format(home_path / executables / filename))
+
+
+    with open(home_path / executables /filename, 'wb') as file:
         file.write(data)
 
 def dispatch(environ, start_response):
@@ -290,11 +294,11 @@ def dispatch(environ, start_response):
         #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
         open_path = os.path.join(executables + environ['PATH_INFO'])
         with open(open_path,'rb') as f:
-            img_data = f.read()
+            py_file = f.read()
       
         start_response('200 OK', [('content-type', 'application/javascript')])
         
-        return [img_data]
+        return [py_file]
     
 
     elif environ['PATH_INFO'] == '/PythonicWeb.wasm':
@@ -322,7 +326,8 @@ class WSGI_Server(QThread):
 
     def run(self):
 
-        listener = eventlet.listen(('127.0.0.1', 7000))
+        #listener = eventlet.listen(('127.0.0.1', 7000))
+        listener = listen(('127.0.0.1', 7000))
         wsgi.server(listener, dispatch, log_output=False, environ=self.mainWorker)
 
 
@@ -330,7 +335,7 @@ class MainWorker(QObject):
 
     kill_all        = Signal()
     
-    log_level       = logging.DEBUG
+    log_level       = logging.INFO
     formatter       = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
     max_grid_size   = 50
@@ -468,13 +473,19 @@ class MainWorker(QObject):
 
     
     def printProcessList(self):
-        b_proc_found = False
+
         termios.tcsetattr(self.fd, termios.TCSADRAIN, self.orig_tty_settings)
         reset_screen()
 
-        print('# BAUSTELLE')
+        
+        for threadIdentifier, processHandle in self.operator.processHandles.items():   
+            if processHandle.pid:
+                print('{} - process, pid: {}'.format(threadIdentifier, processHandle.pid))
+            else:
+                print('{} - thread'.format(threadIdentifier))
 
         print('\n')
+
         tty.setraw(sys.stdin.fileno()) 
     
     def update_logfile(self):

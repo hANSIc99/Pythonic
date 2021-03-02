@@ -205,13 +205,14 @@ class Operator(QThread):
     def stopAll(self):
 
         logging.debug('Operator::stopAll() called')
-
+        logging.info('User command: Stop All')
         for threadIdentifier, processHandle in self.processHandles.items():
             processHandle.stop()
 
     def startAll(self, config):
 
         logging.debug('Operator::startAll() called')
+        logging.info('User command: Start All')
         self.currentConfig = config
         
         startElements = [x for x in config if not x['Socket']]
@@ -233,7 +234,7 @@ class Operator(QThread):
     def killAll(self):
         
         logging.debug('Operator::killAll() called')
-            
+        logging.info('User command: Kill All Processes')   
         # Separate dict must be created because call to removerOperatorThreads
         # modifies self.processHandles
 

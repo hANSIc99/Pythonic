@@ -14,7 +14,7 @@ def reset_screen():
     gitHub          = 'Visit https://github.com/hANSIc99/Pythonic\n'
     log_info_msg    = '<<<<<<<<<<<< Logging directory ~/Pythonic/log/\n'
     input_info_msg  = '>>>>>>>>>>>> Enter \'q\' to stop execution'
-    status_info_msg = '>>>>>>>>>>>> Hold  \'p\' to list all background processes'
+    status_info_msg = '>>>>>>>>>>>> Hold  \'p\' to list all background processes handles'
     applog_info_msg = '>>>>>>>>>>>> Enter \'l\' to show log messages\n'
 
     os.system('clear')

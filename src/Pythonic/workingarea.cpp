@@ -612,8 +612,10 @@ void WorkingArea::mouseReleaseEvent(QMouseEvent *event)
             }
         }
     } // m_openConfig
-    m_openConfig = false;
-    m_tmpElement = NULL;
+
+    m_openConfig    = false;
+    m_tmpElement    = NULL;
+    m_drawTmpTarget = NULL;
     update();
 }
 
@@ -641,11 +643,11 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
         /* Draw preview */
         m_previewConnection = QLine(m_drawStartPos, event->pos());
         update();
-         /*
-          * Start & Stop highlighting the socket
-          */
 
 
+        /****************************************
+         * Start & Stop highlighting the socket *
+         ****************************************/
 
         /* Returns NULL if nothing is found */
         QWidget *e = qobject_cast<QWidget*>(childAt(event->pos()));
@@ -663,6 +665,7 @@ void WorkingArea::mouseMoveEvent(QMouseEvent *event)
          */
         ElementMaster *elm = qobject_cast<ElementMaster*>(e->parent()->parent()->parent());
 
+        /* Stop highlighting when leaving the socket */
 
         if (!elm){
 

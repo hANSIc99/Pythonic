@@ -13,7 +13,6 @@ class ExecSysCMD(QThread):
 
     def execCommand(self, cmd):
         self.cmd = cmd
-        logging.info('COMMAND: ' + cmd)
         self.start()
 
     def run(self):
@@ -157,8 +156,7 @@ class EditorLoader(QObject):
                 x.editorLoaded.disconnect(self.fwrdCmd)
                 x.finished.disconnect(self.cleanupThreadList)
                 x.deleteLater()
-     
-        
+          
 
 class ToolboxLoader(QThread):
 
@@ -209,7 +207,6 @@ class ConfigLoader(QThread):
 
     def run(self):
 
-
         config = None
         try:
             with open(self.cfg_file, 'r') as file:
@@ -223,5 +220,5 @@ class ConfigLoader(QThread):
 
             self.tooldataLoaded.emit(cmd)
         except Exception as e:
-            logging.warning('ConfigLoader::run() - no config found yet')
+            logging.warning('ConfigLoader::run() - Exception: {}'.format(e))
 

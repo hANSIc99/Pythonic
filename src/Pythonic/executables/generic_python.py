@@ -28,8 +28,10 @@ class Element(Function):
         cnt = 0
 
         
-
-        # To exit immediately after providing output data, uncomment this
+        ####################################################
+        # To exit immediately after providing output data, #
+        # uncomment tho next three lines                   #
+        ####################################################
 
         #recordDone = Record(cnt, 'Sending value of cnt: {}'.format(cnt))     
         #self.queue.put(recordDone)
@@ -38,6 +40,7 @@ class Element(Function):
         # The example executes an infinite loop till it's receives a stop command
         while(True):
 
+            # Example code: Do something
             cnt+=1
 
             try:
@@ -52,12 +55,12 @@ class Element(Function):
 
 
 
-            # Send status text to GUI every timeout interval
+            # Example Code: Send status text to GUI every timeout interval
             guitext = GuiCMD('cnt: {}'.format(cnt))
             self.return_queue.put(guitext)
 
 
-            # Send data to element output every 5 x timeout
+            # Example code: Send data to element output every 5 x timeout
             if cnt % 5 == 0:
                 # Recors(data, message)
                 recordDone = Record(cnt, 'Sending value of cnt: {}'.format(cnt))     

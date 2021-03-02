@@ -35,9 +35,6 @@ class stdinReader(QThread):
                 tty.setraw(sys.stdin.fileno()) 
 
         while not self.b_exit:
-
-            #QThread.sleep(0.1)
-            #QCoreApplication.processEvents()
             
             rd_fs, wrt_fs, err_fs =  select.select([sys.stdin], [], [], self.interval)
 

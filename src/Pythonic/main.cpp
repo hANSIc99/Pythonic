@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
     qSetMessagePattern("%{type} : %{function}() - %{message}");
     // https://doc.qt.io/qt-5/qloggingcategory.html
     QLoggingCategory::setFilterRules(QStringLiteral(
-                                                    "debug=true\n"
-                                                    "info=true\n"
+                                                    "debug=false\n"
+                                                    "info=false\n"
 
                                                     /* Miscellaneous */
 
@@ -88,8 +88,8 @@ int main(int argc, char *argv[])
                                                     "MenuBar.RunBtn.debug=false\n"
                                                     "MenuBar.RunBtn.info=false\n"
 
-                                                    "MenuBar.ReconnectBtn.true=false\n"
-                                                    "MenuBar.ReconnectBtn.true=false\n"
+                                                    "MenuBar.ReconnectBtn.debug=false\n"
+                                                    "MenuBar.ReconnectBtn.info=false\n"
                                                     /* Master Classes */
 
                                                     "BaseLabel.debug=false\n"
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
                                                     /* Element Editor */
 
                                                     "Elementeditor.debug=false\n"
-                                                    "Elementeditor.info=true\n"
+                                                    "Elementeditor.info=false\n"
 
                                                     /* Element Connector Buttons  */
 
