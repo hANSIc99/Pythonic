@@ -63,15 +63,16 @@ int main(int argc, char *argv[])
                                                     "Toolbox.info=false\n"
 
                                                     /* GUI Buttons */
+                                                    // reconnect
 
-                                                    "MenuBar.NewFileBtn.debug=false\n"
-                                                    "MenuBar.NewFileBtn.info=false\n"
+                                                    "MenuBar.UploadConfigBtn.debug=false\n"
+                                                    "MenuBar.UploadConfigBtn.info=false\n"
 
-                                                    "MenuBar.OpenFileBtn.debug=false\n"
-                                                    "MenuBar.OpenFileBtn.info=false\n"
+                                                    "MenuBar.UploadExecutableBtn.debug=false\n"
+                                                    "MenuBar.UploadExecutableBtn.info=false\n"
 
-                                                    "MenuBar.SaveBtn.debug=false\n"
-                                                    "MenuBar.SaveBtn.info=false\n"
+                                                    "MenuBar.ReconnectBtn.debug=false\n"
+                                                    "MenuBar.ReconnectBtn.info=false\n"
 
                                                     "MenuBar.SaveAsBtn.debug=false\n"
                                                     "MenuBar.SaveAsBtn.info=false\n"

@@ -33,22 +33,20 @@
 #define MENU_BTN_SIZE QSize(32, 32)
 #define LOGO_SIZE QSize(262, 58)
 
-
-class NewConfigButton : public BaseButton {
+class ReconnectButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit NewConfigButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/new_file.png")), MENU_BTN_SIZE, parent)
+    explicit ReconnectButton(QWidget *parent = nullptr)
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/reconnect.png")), MENU_BTN_SIZE, parent)
     {
-        setToolTip(QStringLiteral("Clear configuration"));
+        setToolTip(QStringLiteral("Try reconnect to daemon"));
         qCDebug(logC, "called");
     };
 
 
-
 private:
-    QLoggingCategory    logC{"MenuBar.NewConfigBtn"};
+    QLoggingCategory    logC{"MenuBar.ReconnectBtn"};
 };
 
 class UploadConfig : public BaseButton {
@@ -85,22 +83,6 @@ private:
     QLoggingCategory    logC{"MenuBar.UploadExecutableBtn"};
 };
 
-class ReconnectButton : public BaseButton {
-    Q_OBJECT
-public:
-
-    explicit ReconnectButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/reconnect.png")), MENU_BTN_SIZE, parent)
-    {
-        setToolTip(QStringLiteral("Try reconnect to daemon"));
-        qCDebug(logC, "called");
-    };
-
-
-private:
-    QLoggingCategory    logC{"MenuBar.ReconnectBtn"};
-};
-
 class SaveButton : public BaseButton {
     Q_OBJECT
 public:
@@ -119,20 +101,21 @@ private:
 };
 
 
-class KillProcButton : public BaseButton {
+class StartAllButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit KillProcButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/kill.png")), MENU_BTN_SIZE, parent)
+    explicit StartAllButton(QWidget *parent = nullptr)
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/start_debug.png")), MENU_BTN_SIZE, parent)
     {
+        //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
-        setToolTip(QStringLiteral("Kill all processes"));
+        setToolTip(QStringLiteral("Start all schedulers"));
     };
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.KillProcBtn"};
+    QLoggingCategory    logC{"MenuBar.StartDebugBtn"};
 };
 
 class StopExecButton : public BaseButton {
@@ -152,22 +135,23 @@ private:
     QLoggingCategory    logC{"MenuBar.StopExecBtn"};
 };
 
-class StartAllButton : public BaseButton {
+
+class KillProcButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit StartAllButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/start_debug.png")), MENU_BTN_SIZE, parent)
+    explicit KillProcButton(QWidget *parent = nullptr)
+        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/kill.png")), MENU_BTN_SIZE, parent)
     {
-        //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
-        setToolTip(QStringLiteral("Start all schedulers"));
+        setToolTip(QStringLiteral("Kill all processes"));
     };
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.StartDebugBtn"};
+    QLoggingCategory    logC{"MenuBar.KillProcBtn"};
 };
+
 
 class LogWindowButton : public BaseButton {
     Q_OBJECT
@@ -222,18 +206,14 @@ private:
 public:
 
     ReconnectButton     m_reconnectBtn;
-    NewConfigButton     m_newFileBtn;
     UploadConfig        m_uploadConfig;
     UploadExecutable    m_uploadExecutable;
     SaveButton          m_saveBtn;
-    StartAllButton      m_startAllgBtn;
+    StartAllButton      m_startAllBtn;
     StopExecButton      m_stopExecBtn;
     KillProcButton      m_killProcBtn;
-
     LogWindowButton     m_logWindowBtn;
     OutputButton        m_outputBtn;
-
-
 
 };
 

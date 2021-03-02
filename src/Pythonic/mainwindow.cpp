@@ -126,7 +126,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* Signals & Slots - Buttons */
 
-    connect(&m_menuBar.m_newFileBtn, &QPushButton::clicked,
+    connect(&m_menuBar.m_uploadConfig, &QPushButton::clicked,
             this, &MainWindow::testSlot);
 
     /****************************
@@ -146,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_menuBar.m_saveBtn, &QPushButton::clicked,
             this, &MainWindow::saveConfig);
 
-    connect(&m_menuBar.m_startAllgBtn, &QPushButton::clicked,
+    connect(&m_menuBar.m_startAllBtn, &QPushButton::clicked,
             this, &MainWindow::startAll);
 
     connect(&m_menuBar.m_stopExecBtn, &QPushButton::clicked,

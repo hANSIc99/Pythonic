@@ -30,7 +30,7 @@ MenuBar::MenuBar(QWidget *parent) : QWidget(parent)
     m_iconBarLayout.addWidget(&m_uploadConfig);
     m_iconBarLayout.addWidget(&m_uploadExecutable);
     m_iconBarLayout.addWidget(&m_saveBtn);
-    m_iconBarLayout.addWidget(&m_startAllgBtn);
+    m_iconBarLayout.addWidget(&m_startAllBtn);
     m_iconBarLayout.addWidget(&m_stopExecBtn);
     m_iconBarLayout.addWidget(&m_killProcBtn);
     m_iconBarLayout.addWidget(&m_logWindowBtn);
