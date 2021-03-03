@@ -26,9 +26,10 @@ setuptools.setup(
              'public_html/config/Toolbox/Basic/GenericPython.json',
              'public_html/config/Toolbox/Basic/GenericPython.editor',
              'public_html/config/Toolbox/Basic/Scheduler.json',
-             'public_html/config/Toolbox/Basic/Scheduler.editor',
-             'public_html/config/Toolbox/Connectivity/email.json',
-             'public_html/config/Toolbox/*']
+             'public_html/config/Toolbox/Basic/Scheduler.editor'
+             ]
+             #'public_html/config/Toolbox/Connectivity/email.json',
+             #'public_html/config/Toolbox/*'
         },
         entry_points = {
             'console_scripts' : ['Pythonic = Pythonic.script:run']
@@ -41,16 +42,15 @@ setuptools.setup(
             'Programming Language :: Python :: 3 :: Only',
             'Programming Language :: Python :: 3.7',
             'Development Status :: 4 - Beta',
-            'Intended Audience :: Financial and Insurance Industry',
+            'Intended Audience :: Manufacturing',
             'Intended Audience :: End Users/Desktop',
+            'Intended Audience :: Developers',
             'Intended Audience :: Education',
             'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
             'Operating System :: OS Independent',
-            'Environment :: X11 Applications :: Qt',
-            'Natural Language :: German',
+            'Environment :: Web Environment',
+            'Environment :: Console',
             'Natural Language :: English',
-            'Natural Language :: Chinese (Simplified)',
-            'Natural Language :: Spanish',
-            'Topic :: Office/Business :: Financial'
+            'Topic :: Software Development'
             ],
         )

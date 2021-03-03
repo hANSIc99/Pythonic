@@ -103,7 +103,7 @@ class stdinReader(QThread):
         month = now.strftime('%b')
         year = now.strftime('%Y')
         home_dict = str(Path.home())
-        file_path = '{}/Pythonic/log/{}_{}_{}.txt'.format(home_dict, year, month, self.log_date_str) 
+        file_path = '{}/Pythonic/log/{}.txt'.format(home_dict, self.log_date_str) 
 
         BLOCK_SIZE = 1024
 

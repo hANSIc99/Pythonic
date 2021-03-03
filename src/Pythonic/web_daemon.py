@@ -40,9 +40,6 @@ class LogLvl(Enum):
     FATAL       = 4
 
 
-
-
-
 @websocket.WebSocketWSGI
 def rcv(ws):
 
@@ -205,16 +202,11 @@ def saveExecutable(ws):
 
 
 
-
-
-
-
 def dispatch(environ, start_response):
 
     """
         WEBSOCKETS
     """
-
 
     png_req4 = environ['PATH_INFO'][-4:] # last 4 characters '.png'
     png_req3 = environ['PATH_INFO'][-3:] # last 4 characters '.js'
@@ -238,13 +230,10 @@ def dispatch(environ, start_response):
         logging.debug('PythonicDaemon - Providing list of log files')  
         log_files = os.listdir(Path.home() / 'Pythonic' / 'log')
         log_files = '\n'.join(log_files)
-        # ToDo: Return html-formatted overview
-        log_files = log_files.encode('utf-8')
+
         start_response('200 OK', [  ('content-type', 'text/html; charset=utf-8'),
                                     ('content-length', str(len(log_files))) ]) 
-                               
-                                    
-        
+                                       
         
         return [log_files]
 
@@ -345,13 +334,12 @@ def dispatch(environ, start_response):
         #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
 
         open_path = Path.home() / 'Pythonic' / 'log' / environ['PATH_INFO'][1:]
-        encoded = environ['PATH_INFO'].encode('utf-8')
+        
         with open(open_path,'rb') as f:
             log_data = f.read()
 
         start_response('200 OK', [  ('content-type', 'text/plain; charset=utf-8')])                                                                   
-                                         
-        
+                                                 
         return [log_data]
 
     else:
@@ -478,10 +466,8 @@ class MainWorker(QObject):
 
         # Create directory structure for logging
         log_date_str = self.log_date.strftime('%Y_%m_%d')
-        month = self.log_date.strftime('%b')
-        year = self.log_date.strftime('%Y')
 
-        file_path = '{}/{}_{}_{}.txt'.format(str(self.log_path), year, month, log_date_str) 
+        file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
 
         # Setup logger
 
@@ -536,9 +522,7 @@ class MainWorker(QObject):
         if (now != self.log_date.date()):
             self.logger.removeHandler(self.logger.handlers[0])
             log_date_str = now.strftime('%Y_%m_%d')
-            month = now.strftime('%b')
-            year = now.strftime('%Y')
-            file_path = '{}/{}_{}_{}.txt'.format(str(self.log_path), year, month, log_date_str) 
+            file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
             file_handler = logging.FileHandler(file_path)
             file_handler.setLevel(self.log_level)
             file_handler.setFormatter(self.formatter)
