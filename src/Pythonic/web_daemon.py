@@ -167,7 +167,6 @@ def saveConfig(ws):
     filename = ws.wait()
     logging.info('Upload Config: Filename: {}'.format(filename))
     data = ws.wait()
-    # ToDo: Implement check if received file is valid json
 
     # Create a backup of existing config
     home_path = Path.home() / 'Pythonic'
@@ -204,6 +203,12 @@ def saveExecutable(ws):
     with open(home_path / executables /filename, 'wb') as file:
         file.write(data)
 
+
+
+
+
+
+
 def dispatch(environ, start_response):
 
     """
@@ -228,6 +233,21 @@ def dispatch(environ, start_response):
     elif environ['PATH_INFO'] == '/executable':
         logging.debug('PythonicDaemon - Open Config WebSocket')  
         return saveExecutable(environ, start_response)
+
+    elif environ['PATH_INFO'] == '/log':
+        logging.debug('PythonicDaemon - Providing list of log files')  
+        log_files = os.listdir(Path.home() / 'Pythonic' / 'log')
+        log_files = '\n'.join(log_files)
+        # ToDo: Return html-formatted overview
+        log_files = log_files.encode('utf-8')
+        start_response('200 OK', [  ('content-type', 'text/html; charset=utf-8'),
+                                    ('content-length', str(len(log_files))) ]) 
+                               
+                                    
+        
+        
+        return [log_files]
+
 
         ###########################
         # STANDARD HTML ENDPOINTS #
@@ -320,6 +340,19 @@ def dispatch(environ, start_response):
 
         start_response('200 OK', [('content-type', 'application/wasm')])
         return [bin_data]		
+
+    elif png_req4 == '.txt': # Log files
+        #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
+
+        open_path = Path.home() / 'Pythonic' / 'log' / environ['PATH_INFO'][1:]
+        encoded = environ['PATH_INFO'].encode('utf-8')
+        with open(open_path,'rb') as f:
+            log_data = f.read()
+
+        start_response('200 OK', [  ('content-type', 'text/plain; charset=utf-8')])                                                                   
+                                         
+        
+        return [log_data]
 
     else:
         path_info = environ['PATH_INFO']
