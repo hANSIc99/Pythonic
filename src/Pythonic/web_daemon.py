@@ -82,8 +82,6 @@ def rcv(ws):
     logging.debug('PythonicWeb - RCV Socket closed')
 
 
-
-
 @websocket.WebSocketWSGI
 def ctrl(ws):
     logging.debug('PythonicDaemon - CTRL WebSocket connected')   
@@ -156,9 +154,7 @@ def ctrl(ws):
             elif msg['cmd'] == 'KillAll' :
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
                 ws.environ['mainWorker'].killAll.emit()
-
-                
-
+             
 @websocket.WebSocketWSGI
 def saveConfig(ws):
     filename = ws.wait()
@@ -200,8 +196,6 @@ def saveExecutable(ws):
     with open(home_path / executables /filename, 'wb') as file:
         file.write(data)
 
-
-
 def dispatch(environ, start_response):
 
     """
@@ -231,9 +225,7 @@ def dispatch(environ, start_response):
         log_files = os.listdir(Path.home() / 'Pythonic' / 'log')
         log_files = '\n'.join(log_files)
 
-        start_response('200 OK', [  ('content-type', 'text/html; charset=utf-8'),
-                                    ('content-length', str(len(log_files))) ]) 
-                                       
+        start_response('200 OK', [  ('content-type', 'text/plain; charset=utf-8') ])                              
         
         return [log_files]
 
@@ -310,7 +302,7 @@ def dispatch(environ, start_response):
 
     elif png_req3 == '.py':
         #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
-        open_path = os.path.join(executables + environ['PATH_INFO'])
+        open_path = Path.home() / 'Pythonic' / 'executables' / environ['PATH_INFO'][1:]
         with open(open_path,'rb') as f:
             py_file = f.read()
       

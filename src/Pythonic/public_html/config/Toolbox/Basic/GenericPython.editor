@@ -2,11 +2,6 @@
     {
     	"Type"  : "Text",
         "Name"  : "EditorLink",
-	    "Text"  : "Click <a href=\"http://BASICDATA_Id.py\">http://BASICDATA_Id.py</a><br> to to edit the file.<br><br> Click <a href=\"http://localhost:7000/generic_python_BASICDATA_Id.py\">here</a><br> to download the file"
-    },
-    {
-        "Type"  : "HelpText",
-        "Name"  : "HelpText1",
-	    "Text"  : "The file is only created after <br> the element has been triggered once."
+	    "Text"  : "Click on<br><a href=\"http://127.0.0.1:7000/generic_python_BASICDATA_Id.py\">http://127.0.0.1:7000/generic_python_BASICDATA_Id.py</a><br>to download the file.<br><br><b>Docker</b><br><br>To edit the file, open the editor <a href=\"http://127.0.0.1:8000\">http://127.0.0.1:8000</a><br><br><br><b>Pip</b><br><br>Navigate to ~/Pythonic/executables/generic_python_BASICDATA_Id.py"
     }
 ]

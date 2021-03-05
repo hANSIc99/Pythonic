@@ -20,22 +20,32 @@ class Element(Function):
         #####################################
 
 
-        # Use this example method for 
-
-
-
         cmd = None
         cnt = 0
 
         
+
+        
         ####################################################
+        #                                                  #
         # To exit immediately after providing output data, #
-        # uncomment tho next three lines                   #
+        # uncomment the following three lines              #
+        #                                                  #
         ####################################################
 
         #recordDone = Record(cnt, 'Sending value of cnt: {}'.format(cnt))     
         #self.queue.put(recordDone)
         #return
+
+
+
+
+
+        #####################################
+        #                                   #
+        #     Start of the infinite loop    #
+        #                                   #
+        #####################################
 
         # The example executes an infinite loop till it's receives a stop command
         while(True):
