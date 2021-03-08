@@ -1,5 +1,5 @@
 
-import sys, logging, pickle, datetime, os, signal, time, itertools, tty, termios, select, queue, signal
+import sys, logging, pickle, datetime, os, signal, time, itertools, select, queue, signal
 import json
 import random
 import multiprocessing as mp

@@ -29,6 +29,8 @@ www_static  = 'public_html/static/'
 www_config  = 'public_html/config/'
 executables = 'executables'
 
+# Allow to quit with CTRL+C
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 class LogLvl(Enum):
     DEBUG       = 0
