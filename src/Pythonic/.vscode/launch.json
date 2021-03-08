@@ -5,9 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Aktuelle Datei",
+            "name": "Pythonic",
             "type": "python",
             "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Pythonic Debug",
+            "type": "python",
+            "request": "launch",
+            "args": ["-Debug"],
             "program": "main.py",
             "console": "integratedTerminal",
             "justMyCode": false

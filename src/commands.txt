@@ -10,7 +10,7 @@ podman image rm
 podman images
 
 # Container starten - hostPort:guestPort
-podman run -d --name Pythonic -p 7001:7000
+podman run -d --name Pythonic -p 7000:7000 -p 8000:8000 pythonic:0.1
 
 
 docker ps

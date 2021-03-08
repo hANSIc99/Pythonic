@@ -4,13 +4,12 @@ from PySide2.QtCore import QThread, Signal
 
 
 try:
-    from screen import reset_screen
+    from screen import reset_screen, reset_screen_dbg
 except ImportError: 
-    from Pythonic.screen import reset_screen
+    from Pythonic.screen import reset_screen, reset_screen_dbg
 
 class stdinReader(QThread):
 
-    print_procs = Signal()
     quit_app = Signal()
     finished = Signal()
     b_init      = True
@@ -21,9 +20,15 @@ class stdinReader(QThread):
     max_log_lines = 20
     spinner = itertools.cycle(['-', '\\', '|', '/'])
 
-    def __init__(self):
+    def __init__(self, refProcessList):
         super().__init__()
+        self.proc_list = refProcessList
         self.startTime = time.time()
+
+        # Prepare console
+        self.fd = sys.stdin.fileno()
+        if os.isatty(sys.stdin.fileno()):
+            self.orig_tty_settings = termios.tcgetattr(self.fd) 
 
     def run(self):
 
@@ -50,13 +55,14 @@ class stdinReader(QThread):
                 elif cmd == ('p' or 'P'): # show proccesses
                     self.b_procs = True
                     termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
-                    self.print_procs.emit()
+                    self.printProcessList()
                     tty.setraw(sys.stdin.fileno()) 
 
                 elif cmd == ('l' or 'L'): # show log
                     if self.b_log:
                         termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
                         reset_screen() # reset the screen to hide the log list
+                        reset_screen_dbg()
                         tty.setraw(sys.stdin.fileno()) 
                     self.b_log = not self.b_log
                     
@@ -74,11 +80,13 @@ class stdinReader(QThread):
         if self.b_procs:
             termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
             reset_screen() # reset the screen to hide the log list
+            reset_screen_dbg()
             tty.setraw(sys.stdin.fileno()) 
 
         if self.b_log:
             termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
             reset_screen()
+            reset_screen_dbg()
             print('Log output active:\n')
             self.tail(self.max_log_lines)
             tty.setraw(sys.stdin.fileno()) 
@@ -137,3 +145,20 @@ class stdinReader(QThread):
     def updateLogDate(self, log_date_str):
         logging.debug('stdinReader::updateLogDate() called with: {}'.format(log_date_str))
         self.log_date_str = log_date_str
+
+    def printProcessList(self):
+
+        # Unix Only
+        termios.tcsetattr(self.fd, termios.TCSADRAIN, self.orig_tty_settings)
+        reset_screen()
+        reset_screen_dbg()
+        
+        for threadIdentifier, processHandle in self.proc_list:   
+            if processHandle.pid:
+                print('{} - process, pid: {}'.format(threadIdentifier, processHandle.pid))
+            else:
+                print('{} - thread'.format(threadIdentifier))
+
+        print('\n')
+
+        tty.setraw(sys.stdin.fileno()) 

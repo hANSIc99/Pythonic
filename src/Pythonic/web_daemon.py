@@ -1,4 +1,4 @@
-import sys, logging, locale, datetime, os, signal, time, tty, termios, json
+import sys, logging, locale, datetime, os, signal, time, json, argparse
 import multiprocessing as mp
 from eventlet import wsgi, websocket, greenthread, listen
 from threading import Timer, Thread, Event
@@ -10,14 +10,12 @@ from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
 
 try:
-    from execution_operator import Operator
-    from stdin_reader import stdinReader
-    from screen import reset_screen
+    from execution_operator import Operator   
+    from screen import reset_screen, reset_screen_dbg
     from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 except ImportError:
     from Pythonic.execution_operator import Operator
-    from Pythonic.stdin_reader import stdinReader
-    from Pythonic.screen import reset_screen
+    from Pythonic.screen import reset_screen, reset_screen_dbg
     from Pythonic.configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 
 ##############################################
@@ -379,9 +377,15 @@ class MainWorker(QObject):
         super(MainWorker, self).__init__()
         self.app = app
 
+        # Setup command line arguments
+        parser = argparse.ArgumentParser(description='Pythonic background daemon')
+        parser.add_argument('-Debug', action='store_true', help='Interactive shell intercace, Unix only')
+        self.args = parser.parse_args()
+
+
         # Select multiprocessing spawn method
         mp.set_start_method('spawn')
-
+        
         # Set working directory
         os.chdir(Path(__file__).parent.absolute())
 
@@ -391,10 +395,7 @@ class MainWorker(QObject):
         # Instantiate WSGI Server
         self.wsgi_server = WSGI_Server(self)
         
-        # Instantiate Standard Input Reader
-        self.stdinReader = stdinReader()
-        self.stdinReader.print_procs.connect(self.printProcessList)
-        self.stdinReader.quit_app.connect(self.exitApp)
+
 
         # Instantiate Execution Operator
         self.operator = Operator()
@@ -406,6 +407,17 @@ class MainWorker(QObject):
         self.stopAll.connect(self.operator.stopAll)
         self.killAll.connect(self.operator.killAll)
         
+        # Instantiate Standard Input Reader (Unix only)
+        if self.args.Debug:
+            try:
+                from stdin_reader import stdinReader
+            except ImportError:
+                from Pythonic.stdin_reader import stdinReader        
+        
+            self.stdinReader = stdinReader(self.operator.processHandles.items())
+            self.stdinReader.quit_app.connect(self.exitApp)
+
+
         # Instantiate ToolboxLoader
         self.toolbox_loader = ToolboxLoader()
         self.toolbox_loader.tooldataLoaded.connect(self.forwardCmd)
@@ -429,12 +441,10 @@ class MainWorker(QObject):
         self.sysCommand.connect(self.exec_sys_cmd.execCommand)
         
         # Connect the logger
-        self.update_logdate.connect(self.stdinReader.updateLogDate)
+        if self.args.Debug:
+            self.update_logdate.connect(self.stdinReader.updateLogDate)
         
-        # Prepare console
-        self.fd = sys.stdin.fileno()
-        if os.isatty(sys.stdin.fileno()):
-            self.orig_tty_settings = termios.tcgetattr(self.fd) 
+
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
@@ -492,21 +502,7 @@ class MainWorker(QObject):
         os.kill(self.app.applicationPid(), signal.SIGTERM) # kill all related threads
 
     
-    def printProcessList(self):
 
-        termios.tcsetattr(self.fd, termios.TCSADRAIN, self.orig_tty_settings)
-        reset_screen()
-
-        
-        for threadIdentifier, processHandle in self.operator.processHandles.items():   
-            if processHandle.pid:
-                print('{} - process, pid: {}'.format(threadIdentifier, processHandle.pid))
-            else:
-                print('{} - thread'.format(threadIdentifier))
-
-        print('\n')
-
-        tty.setraw(sys.stdin.fileno()) 
     
     def update_logfile(self):
 
@@ -524,23 +520,15 @@ class MainWorker(QObject):
 
     def start(self, args):
 
-        #print('\n Arguments: {}'.format(args))
-        reset_screen()        
-        # first argument is main_console.py
-        # second argument is script location
+        logging.info('<#>DAEMON STARTED<#>')
+        reset_screen()    
 
-        logging.debug('MainWorker::start() called')
-        #logging.debug('MainWorker::start() Open the following file: {}'.format(grid_file))
+        if self.args.Debug:
+            reset_screen_dbg()    
+            self.stdinReader.start() # call run() method in separate thread
 
-
-        self.stdinReader.start() # call run() method in separate thread
         self.wsgi_server.start()
         self.operator.start()
-
-
-    def on_callback(self):
-
-        self.stdinReader.run()
     
 
     def loadTools(self):
