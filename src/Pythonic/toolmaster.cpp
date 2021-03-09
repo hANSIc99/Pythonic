@@ -106,27 +106,51 @@ void ToolMaster3::mouseReleaseEvent(QMouseEvent *event)
 
         element->show();
 
-        /* Execute ConstructorCMD (if defined) */
 
-        QJsonValue constrCMD = m_toolData.value("ConstructorCMD");
-        if(!constrCMD.isUndefined()){
+        QString cmd_w32;
+        QString cmd_unix;
 
-            QString sCMD = helper::applyRegExp(
-                        constrCMD.toString(),
+        /* Extract ConstructorCMD for Win32 (if defined) */
+
+        QJsonValue constrCMD_W32 = m_toolData.value("ConstructorCMD_Win32");
+
+        if(!constrCMD_W32.isUndefined()){
+
+            cmd_w32 = helper::applyRegExp(
+                        constrCMD_W32.toString(),
                         element->m_config,
                         helper::m_regExpSBasicData,
                         helper::jsonValToStringBasicData
                         );
-
-            QJsonObject cmd {
-                {"cmd", "SysCMD"},
-                {"data", sCMD }
-            };
-            m_workingAreaWidget->fwrdWsCtrl(cmd);
         }
 
+        /* Extract ConstructorCMD for Unix (if defined) */
+
+        QJsonValue constrCMD_Unix = m_toolData.value("ConstructorCMD_Unix");
+
+        if(!constrCMD_Unix.isUndefined()){
+
+            cmd_unix = helper::applyRegExp(
+                        constrCMD_Unix.toString(),
+                        element->m_config,
+                        helper::m_regExpSBasicData,
+                        helper::jsonValToStringBasicData
+                        );
+        }
+
+        QJsonObject sysCmds {
+            { "Win32", cmd_w32},
+            { "Unix", cmd_unix}
+        };
 
 
+        QJsonObject cmd {
+            {"cmd", "SysCMD"},
+            {"data", sysCmds }
+        };
+
+
+        m_workingAreaWidget->fwrdWsCtrl(cmd);
 
 
         m_workingAreaWidget->updateSize();

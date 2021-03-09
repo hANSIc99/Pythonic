@@ -29,8 +29,10 @@ www_static  = 'public_html/static/'
 www_config  = 'public_html/config/'
 executables = 'executables'
 
+
 # Allow to quit with CTRL+C
 signal.signal(signal.SIGINT, signal.SIG_DFL)
+
 
 class LogLvl(Enum):
     DEBUG       = 0
@@ -445,8 +447,6 @@ class MainWorker(QObject):
         # Connect the logger
         if self.args.Debug:
             self.update_logdate.connect(self.stdinReader.updateLogDate)
-        
-
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
@@ -489,6 +489,8 @@ class MainWorker(QObject):
         if not os.path.exists(executables_path):
             os.makedirs(executables_path)
 
+        # Create trash folder for deleted files
+        # TODO
 
         # Append executables folder to module search path
 

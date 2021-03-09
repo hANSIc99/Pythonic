@@ -19,6 +19,8 @@ class ExecSysCMD(QThread):
     def run(self):
 
         logging.debug('ExecSysCMD::run() called')
+        self.cmd['Win32']
+        self.cmd['Unix']
         os.system(self.cmd)
 
 
