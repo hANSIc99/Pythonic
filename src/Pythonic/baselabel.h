@@ -37,6 +37,124 @@
 #endif
 */
 
+#ifdef WASM
+#include <stdio.h>
+class BaseLabel : public QLabel
+{
+ Q_OBJECT
+public:
+    explicit BaseLabel(QString imagePath, QSize size, QWidget *parent = 0)
+        : QLabel(parent)
+        , m_size(size)
+    {
+        //connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
+        //SLOT (fileDownloaded(QNetworkReply*)));
+
+
+//
+
+        if (m_pixMap.load(m_relPath + imagePath)){
+
+            m_pixMap = m_pixMap.scaled(m_size);
+            setPixmap(m_pixMap);
+            qCWarning(logC, "LOADED");
+        } else {
+            qCWarning(logC, "NOT LOADED");
+        }
+        //QNetworkRequest request(imageUrl);
+        //m_WebCtrl.get(request);
+        //qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
+    };
+
+    explicit BaseLabel(QUrl imagePath, QSize size, QWidget *parent = 0)
+        : QLabel(parent)
+        , m_size(size)
+    {
+    };
+
+
+    //virtual ~BaseLabel();
+
+    void resetImage(QUrl imageUrl){
+        QNetworkRequest request(imageUrl);
+        m_WebCtrl.get(request);
+    }
+
+    QPixmap                 m_pixMap;
+
+private slots:
+
+
+private:
+
+
+    QNetworkAccessManager   m_WebCtrl;
+
+    QByteArray              m_DownloadedData;
+    QSize                   m_size;
+
+    const static QString m_relPath;
+    const static QLoggingCategory logC;
+
+};
+
+
+
+class BaseButton : public QPushButton
+{
+ Q_OBJECT
+public:
+    explicit BaseButton(QUrl imageUrl, QSize size, QWidget *parent = 0)
+        : QPushButton(parent)
+        , m_size(size)
+    {
+        connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
+        SLOT (fileDownloaded(QNetworkReply*)));
+        QNetworkRequest request(imageUrl);
+        m_WebCtrl.get(request);
+        qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
+    };
+
+    //virtual ~BaseLabel();
+
+private slots:
+
+    void fileDownloaded(QNetworkReply* pReply){
+        m_DownloadedData = pReply->readAll();
+
+        if(m_DownloadedData.isEmpty()){
+            qCWarning(logC, "could not be loaded: %s",
+                     pReply->url().toString().toStdString().c_str());
+            return;
+        }
+
+        //emit a signal
+        pReply->deleteLater();
+        //emit downloaded();
+
+
+        m_pixMap.loadFromData(m_DownloadedData);
+        m_pixMap.scaled(m_size);
+        QIcon buttonIcon(m_pixMap);
+        setIcon(buttonIcon);
+        setIconSize(m_size);
+    };
+
+
+
+private:
+
+    QNetworkAccessManager   m_WebCtrl;
+    QPixmap                 m_pixMap;
+    QByteArray              m_DownloadedData;
+    QSize                   m_size;
+
+    const static QString m_baseUrl;
+    const static QLoggingCategory logC;
+};
+
+
+#else
 
 class BaseLabel : public QLabel
 {
@@ -157,6 +275,6 @@ private:
 
     const static QLoggingCategory logC;
 };
-
+#endif
 
 #endif // BASELABEL_H

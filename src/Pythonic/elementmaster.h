@@ -51,7 +51,7 @@ class ElementSocket : public BaseLabel
 
 public:
     explicit ElementSocket(QWidget *parent = nullptr)
-        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")), m_socket_size, parent)
+        : BaseLabel(QStringLiteral("PlugSocket.png"), m_socket_size, parent)
         , m_connected(false)
     {
         qCDebug(logC, "called");
@@ -69,7 +69,6 @@ private:
     QLoggingCategory        logC{"ElementSocket"};
 
 };
-
 
 class ElementPlug : public BaseLabel
 {
@@ -99,7 +98,6 @@ private:
 
 };
 
-
 class ElementStart : public BaseLabel
 {
     Q_OBJECT
@@ -126,7 +124,6 @@ private:
 
     QLoggingCategory    logC{"ElementPlug"};
 };
-
 
 
 namespace ElementMasterCmd {

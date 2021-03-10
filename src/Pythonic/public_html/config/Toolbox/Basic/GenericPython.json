@@ -16,8 +16,8 @@
     "License"         : "GPLv3",
     "ConstructorCMD_Unix"  : "cp -u executables/generic_python.py ~/Pythonic/executables/generic_python_BASICDATA_Id.py",
     "DestructorCMD_Unix"   : "rm ~/Pythonic/executables/generic_python_BASICDATA_Id.py",
-    "ConstructorCMD_Win32"  : "copy executables/generic_python.py %HOMEPATH%/Pythonic/executables/generic_python_BASICDATA_Id.py",
-    "DestructorCMD_Win32"   : "rm ~/Pythonic/executables/generic_python_BASICDATA_Id.py",
+    "ConstructorCMD_Win32"  : "copy executables\\generic_python.py %HOMEPATH%\\Pythonic\\executables\\generic_python_BASICDATA_Id.py",
+    "DestructorCMD_Win32"   : "del %HOMEPATH%\\Pythonic\\executables\\generic_python_BASICDATA_Id.py",
     "HighlightState"  : false,
     "AllowStream"     : true
 

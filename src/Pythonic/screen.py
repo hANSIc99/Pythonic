@@ -23,6 +23,7 @@ def reset_screen():
     print(version)
     print(gitHub)
     print(log_info_msg)
+    #print('working directory: {}'.format(os.getcwd()))
 
 
 def reset_screen_dbg():

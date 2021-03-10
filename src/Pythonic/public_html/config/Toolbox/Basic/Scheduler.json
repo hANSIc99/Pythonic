@@ -14,8 +14,10 @@
                          },
     "Author"          : "Stephan Avenwedde",
     "License"         : "GPLv3",
-    "ConstructorCMD"  : "cp -u executables/scheduler.py ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
-    "DestructorCMD"   : "rm ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
+    "ConstructorCMD_Unix"  : "cp -u executables/scheduler.py ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
+    "DestructorCMD_Unix"   : "rm ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
+    "ConstructorCMD_Win32"  : "copy executables\\scheduler.py %HOMEPATH%\\Pythonic\\executables\\scheduler_BASICDATA_Id.py",
+    "DestructorCMD_Win32"   : "del %HOMEPATH%\\Pythonic\\executables\\scheduler_BASICDATA_Id.py",
     "HighlightState"  : true
 }
 

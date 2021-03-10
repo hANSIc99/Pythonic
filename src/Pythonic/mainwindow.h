@@ -152,7 +152,7 @@ private slots:
 private:
 
     //! Websocket is only active when config or executable is uploaded
-    QWebSocket              m_wsUploadCfg;
+    QWebSocket              m_wsUploadFile;
 
     //! Incremented by heartbeat
     quint32                 m_refTimer;

@@ -201,7 +201,7 @@ private:
     QWidget             m_iconBar;
     QHBoxLayout         m_iconBarLayout;
 
-    BaseLabel           m_logoHorizontal{QUrl("http://localhost:7000/horizontal.png"), LOGO_SIZE};
+    BaseLabel           m_logoHorizontal{QStringLiteral("horizontal.png"), LOGO_SIZE};
 
 public:
 

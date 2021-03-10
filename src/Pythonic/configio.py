@@ -5,6 +5,8 @@ from datetime import datetime
 from pathlib import Path
 from PySide2.QtCore import QThread, QObject, Signal, QMutex
 
+
+
 class ExecSysCMD(QThread):
 
     cmd = None
@@ -19,9 +21,12 @@ class ExecSysCMD(QThread):
     def run(self):
 
         logging.debug('ExecSysCMD::run() called')
-        self.cmd['Win32']
-        self.cmd['Unix']
-        os.system(self.cmd)
+
+        if os.name == 'nt' and self.cmd['Win32'] != '':
+            os.system(self.cmd['Win32'])
+        elif self.cmd['Unix'] != '':
+            os.system(self.cmd['Unix'])
+
 
 
 class ConfigWriter(QThread):
@@ -235,6 +240,7 @@ class ConfigLoader(QThread):
             # Return if an exception occured when already tried
             # to recover the old config
             if(bRecover):
+                logging.warning('>>> No config file found')
                 return
 
             logging.warning('ConfigLoader::run() - Exception: {}'.format(e))

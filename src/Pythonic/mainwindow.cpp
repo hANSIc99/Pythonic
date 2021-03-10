@@ -196,6 +196,8 @@ MainWindow::~MainWindow()
 {
     m_wsRcv.disconnect();
     m_wsCtrl.disconnect();
+    m_wsUploadFile.disconnect();
+
 }
 
 void MainWindow::logMessage(const QString msg, const LogLvl lvl)
@@ -562,13 +564,13 @@ void MainWindow::loadSavedConfig(const QJsonObject &config)
             continue;
         }
 
-        quint32 currentId = jsonElement[QStringLiteral("Id")].toInt();
+        const quint32 currentId = jsonElement[QStringLiteral("Id")].toInt();
         ElementMaster* parentPtr = NULL;
 
-        /* Iterate over geristered childs of each element */
+        /* Iterate over childs of each element */
         for(const QJsonValue &childObj : qAsConst(childs)){
 
-            quint32 childId = childObj.toInt();
+            const quint32 childId = childObj.toInt();
             ElementMaster* childPtr = NULL;
 
             QList<ElementMaster*> mylist = m_arr_workingArea[nWrkArea]->findChildren<ElementMaster*>();
@@ -576,9 +578,9 @@ void MainWindow::loadSavedConfig(const QJsonObject &config)
             foreach (ElementMaster* listElement, mylist) {
                 /* Assign current- and child-pointer */
                 if(listElement->m_id == currentId){
-                    parentPtr = listElement;
+                    parentPtr = listElement; // Parent of child found
                 } else if(listElement->m_id == childId){
-                    childPtr = listElement;
+                    childPtr = listElement; // Child found
                 }
                 //ElementMaster* currentElement = qobject_cast<ElementMaster*>(current);
             }
@@ -691,27 +693,36 @@ void MainWindow::uploadConfig()
 {
     qCDebug(logC, "Called");
 
+    /* Clear all elements */
+
+    for(auto const &wrkArea : qAsConst(m_arr_workingArea)){
+        wrkArea->clearAllElements();
+    }
+
+
     QString s_homePath = QDir::homePath();
 
     //QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
 
     QUrl ws_url(QStringLiteral("ws://localhost:7000/config"));
-    m_wsUploadCfg.open(ws_url);
+    m_wsUploadFile.open(ws_url);
 
-    auto fileOpenCompleted = [&](const QString &filePath, const QByteArray &fileContent) {
+    auto fileOpenCompleted = [this](const QString &filePath, const QByteArray &fileContent) {
 
 
-        if (filePath.isEmpty() && !m_wsUploadCfg.isValid()) {
+        if (filePath.isEmpty() && !m_wsUploadFile.isValid()) {
             qDebug() << "No file was selected";
         } else {
             qCDebug(logC, "Size of file: %d kb", (fileContent.size() / 1000));
             qCDebug(logC, "Selected file: %s", filePath.toStdString().c_str());
             QFileInfo fileName(filePath);
 
-            m_wsUploadCfg.sendTextMessage(fileName.fileName());
-            m_wsUploadCfg.sendBinaryMessage(fileContent);
-            m_wsUploadCfg.close(QWebSocketProtocol::CloseCodeNormal,"Job done");
+            m_wsUploadFile.sendTextMessage(fileName.fileName());
+            m_wsUploadFile.sendBinaryMessage(fileContent);
+            m_wsUploadFile.close(QWebSocketProtocol::CloseCodeNormal,"Job done");
         }
+        // Re-load config
+        queryConfig();
     };
 
     QFileDialog::getOpenFileContent("", fileOpenCompleted);
@@ -726,21 +737,21 @@ void MainWindow::uploadExecutable()
     //QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
 
     QUrl ws_url(QStringLiteral("ws://localhost:7000/executable"));
-    m_wsUploadCfg.open(ws_url);
+    m_wsUploadFile.open(ws_url);
 
-    auto fileOpenCompleted = [&](const QString &filePath, const QByteArray &fileContent) {
+    auto fileOpenCompleted = [this](const QString &filePath, const QByteArray &fileContent) {
 
 
-        if (filePath.isEmpty() && !m_wsUploadCfg.isValid()) {
+        if (filePath.isEmpty() && !m_wsUploadFile.isValid()) {
             qDebug() << "No file was selected";
         } else {
             qCDebug(logC, "Size of file: %d kb", (fileContent.size() / 1000));
             qCDebug(logC, "Selected file: %s", filePath.toStdString().c_str());
             QFileInfo fileName(filePath);
 
-            m_wsUploadCfg.sendTextMessage(fileName.fileName());
-            m_wsUploadCfg.sendBinaryMessage(fileContent);
-            m_wsUploadCfg.close(QWebSocketProtocol::CloseCodeNormal,"Job done");
+            m_wsUploadFile.sendTextMessage(fileName.fileName());
+            m_wsUploadFile.sendBinaryMessage(fileContent);
+            m_wsUploadFile.close(QWebSocketProtocol::CloseCodeNormal,"Job done");
         }
     };
 

@@ -322,7 +322,18 @@ def dispatch(environ, start_response):
             bin_data = f.read()
 
         start_response('200 OK', [('content-type', 'application/wasm')])
-        return [bin_data]		
+        return [bin_data]	
+
+    elif environ['PATH_INFO'] == '/PythonicWeb.data':
+        #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
+
+        open_path = os.path.join(os.path.dirname(__file__), www_static + 'PythonicWeb.data')
+
+        with open(open_path,'rb') as f:
+            bin_data = f.read()
+
+        start_response('200 OK', [('content-type', 'application/wasm')])
+        return [bin_data]	
 
     elif png_req4 == '.txt': # Log files
         #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
