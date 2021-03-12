@@ -246,8 +246,8 @@ public:
 
     //! Filename of the icon
     QString                 m_iconName;
-    //! Symbol of element
-    BaseLabel               m_symbol;
+    //! Symbol of element, upload image from daemon
+    BaseLabelDaemon         m_symbol;
     //! Backend-configuration of the element
     QJsonObject             m_customConfig;
     //! Connector icon

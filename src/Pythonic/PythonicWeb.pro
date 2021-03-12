@@ -4,7 +4,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
 CONFIG += c++11
-CONFIG += wasm
+#CONFIG += wasm
 
 wasm {
 DEFINES += WASM
@@ -28,9 +28,6 @@ QMAKE_LFLAGS += --preload-file public_html/static/new_file.png
 QMAKE_LFLAGS += --preload-file public_html/static/message.png
 QMAKE_LFLAGS += --preload-file public_html/static/kill.png
 QMAKE_LFLAGS += --preload-file public_html/static/horizontal.png
-
-QMAKE_LFLAGS += --preload-file public_html/static/Scheduler.png
-QMAKE_LFLAGS += --preload-file public_html/static/BaseElement.png
 
 }
 # You can make your code fail to compile if it uses deprecated APIs.

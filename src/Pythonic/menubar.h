@@ -115,7 +115,7 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.StartDebugBtn"};
+    QLoggingCategory    logC{"MenuBar.StartAllBtn"};
 };
 
 class StopExecButton : public BaseButton {
@@ -132,7 +132,7 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.StopExecBtn"};
+    QLoggingCategory    logC{"MenuBar.StopAllBtn"};
 };
 
 

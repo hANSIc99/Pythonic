@@ -43,7 +43,7 @@
  *  @copyright [GPLv3](../../../LICENSE)
  */
 
-class ToolMaster3 : public BaseLabel
+class ToolMaster3 : public BaseLabelDaemon
 {
 public:
 

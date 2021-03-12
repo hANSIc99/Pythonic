@@ -22,6 +22,7 @@ setuptools.setup(
              'public_html/static/qtloader.js',
              'public_html/static/PythonicWeb.js',
              'public_html/static/PythonicWeb.wasm',
+             'public_html/static/PythonicWeb.data',
              'public_html/templates/PythonicWeb.html',
              'public_html/config/Toolbox/Basic/GenericPython.json',
              'public_html/config/Toolbox/Basic/GenericPython.editor',

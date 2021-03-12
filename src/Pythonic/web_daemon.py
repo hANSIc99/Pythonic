@@ -47,7 +47,7 @@ def rcv(ws):
 
 
     def send(command):
-        #logging.debug('testfunc called')
+        logging.debug('send() - command: {}'.format(command['cmd']))
         try:
             ws.send(json.dumps(command))
         except Exception as e:
@@ -58,12 +58,12 @@ def rcv(ws):
     
     bConnected = True
     while bConnected:
-        greenthread.sleep(0.1)
+        greenthread.sleep(0.3)
         QCoreApplication.processEvents()
-        greenthread.sleep(0.1)
-        QCoreApplication.processEvents()
-        greenthread.sleep(0.1)
-        QCoreApplication.processEvents()
+        #greenthread.sleep(0.1)
+        #QCoreApplication.processEvents()
+        #greenthread.sleep(0.1)
+        #QCoreApplication.processEvents()
 
         try:
 
@@ -275,7 +275,7 @@ def dispatch(environ, start_response):
 
     # IMAGES (*.png)
     elif png_req4 == '.png':
-        #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
+        logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
         
         open_path = os.path.join(os.path.dirname(__file__), www_static + environ['PATH_INFO'])
 
@@ -325,7 +325,7 @@ def dispatch(environ, start_response):
         return [bin_data]	
 
     elif environ['PATH_INFO'] == '/PythonicWeb.data':
-        #logging.debug('PATH_INFO == \'/PythonicWeb.wasm\'')
+        #logging.debug('PATH_INFO == \'/PythonicWeb.data\'')
 
         open_path = os.path.join(os.path.dirname(__file__), www_static + 'PythonicWeb.data')
 

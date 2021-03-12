@@ -105,8 +105,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_mainWidgetLayout.setSpacing(0);
 
 
-
-
     /* Setup self layout */
 
     setContentsMargins(0, 0, 0, 0);
@@ -679,16 +677,18 @@ void MainWindow::queryElementStates()
 
 void MainWindow::connectionEstablished()
 {
+    qCDebug(logC, "called");
     QAbstractSocket::SocketState ctrlState = m_wsCtrl.state();
     QAbstractSocket::SocketState rcvState  = m_wsRcv.state();
     if(ctrlState == QAbstractSocket::SocketState::ConnectedState &&
        rcvState == QAbstractSocket::SocketState::ConnectedState){
+        qCDebug(logC, "WebSockets connected");
         for(auto const &wrkArea : qAsConst(m_arr_workingArea)){
             wrkArea->clearAllElements();
         }
+
         queryToolbox();
         queryConfig();
-
     }
 }
 
