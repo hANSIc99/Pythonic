@@ -38,7 +38,7 @@ class ReconnectButton : public BaseButton {
 public:
 
     explicit ReconnectButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/reconnect.png")), MENU_BTN_SIZE, parent)
+        : BaseButton(QStringLiteral("reconnect.png"), MENU_BTN_SIZE, parent)
     {
         setToolTip(QStringLiteral("Try reconnect to daemon"));
         qCDebug(logC, "called");
@@ -54,7 +54,7 @@ class UploadConfig : public BaseButton {
 public:
 
     explicit UploadConfig(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/upload_config.png")), MENU_BTN_SIZE, parent)
+        : BaseButton(QStringLiteral("upload_config.png"), MENU_BTN_SIZE, parent)
 
     {
         setToolTip(QStringLiteral("Upload configuration"));
@@ -71,7 +71,7 @@ class UploadExecutable : public BaseButton {
 public:
 
     explicit UploadExecutable(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/upload_executable.png")), MENU_BTN_SIZE, parent)
+        : BaseButton(QStringLiteral("upload_executable.png"), MENU_BTN_SIZE, parent)
     {
         setToolTip(QStringLiteral("Upload executeable"));
         qCDebug(logC, "called");
@@ -88,7 +88,7 @@ class SaveButton : public BaseButton {
 public:
 
     explicit SaveButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/save.png")), MENU_BTN_SIZE, parent)
+        : BaseButton(QStringLiteral("save.png"), MENU_BTN_SIZE, parent)
     {
         qCDebug(logC, "called");
         setToolTip(QStringLiteral("Save configuration"));
@@ -106,7 +106,7 @@ class StartAllButton : public BaseButton {
 public:
 
     explicit StartAllButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/start_debug.png")), MENU_BTN_SIZE, parent)
+        : BaseButton(QStringLiteral("start_debug.png"), MENU_BTN_SIZE, parent)
     {
         //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
@@ -123,7 +123,7 @@ class StopExecButton : public BaseButton {
 public:
 
     explicit StopExecButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/stop_exec.png")), MENU_BTN_SIZE, parent)
+        : BaseButton(QStringLiteral("stop_exec.png"), MENU_BTN_SIZE, parent)
     {
         //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
@@ -141,7 +141,7 @@ class KillProcButton : public BaseButton {
 public:
 
     explicit KillProcButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/kill.png")), MENU_BTN_SIZE, parent)
+        : BaseButton(QStringLiteral("kill.png"), MENU_BTN_SIZE, parent)
     {
         qCDebug(logC, "called");
         setToolTip(QStringLiteral("Kill all processes"));
@@ -158,7 +158,7 @@ class LogWindowButton : public BaseButton {
 public:
 
     explicit LogWindowButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/message.png")), MENU_BTN_SIZE, parent)
+        : BaseButton(QStringLiteral("message.png"), MENU_BTN_SIZE, parent)
     {
         qCDebug(logC, "called");
         setToolTip(QStringLiteral("Show / hide message window"));
@@ -175,7 +175,7 @@ class OutputButton : public BaseButton {
 public:
 
     explicit OutputButton(QWidget *parent = nullptr)
-        : BaseButton(QUrl(QStringLiteral("http://localhost:7000/output.png")), MENU_BTN_SIZE, parent)
+        : BaseButton(QStringLiteral("output.png"), MENU_BTN_SIZE, parent)
     {
         qCDebug(logC, "called");
         setToolTip(QStringLiteral("Show / hide element output window"));

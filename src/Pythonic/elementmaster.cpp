@@ -35,7 +35,7 @@ ElementMaster::ElementMaster(const QJsonObject configuration,
     , m_id(configuration[QStringLiteral("Id")].toInt())
     , m_hasSocket(m_config[QStringLiteral("Socket")].toBool())
     , m_areaNo(areaNo)
-    , m_symbol(QUrl(QStringLiteral("http://localhost:7000/") + configuration[QStringLiteral("Iconname")].toString() + QStringLiteral(".png")), m_label_size, this)
+    , m_symbol(configuration[QStringLiteral("Iconname")].toString() + QStringLiteral(".png"), m_label_size, this)
 {
 
     setAttribute(Qt::WA_DeleteOnClose);
@@ -367,9 +367,9 @@ void ElementPlug::connected(bool connectionState)
 
     m_connected = connectionState;
     if(m_connected){
-        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocketOrange.png")));
+        resetImage(QStringLiteral("PlugSocketOrange.png"));
     } else {
-        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")));
+        resetImage(QStringLiteral("PlugSocket.png"));
     }
 
 }
@@ -381,7 +381,7 @@ void ElementPlug::enterEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_connected){
-        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocketOrange.png")));
+        resetImage(QStringLiteral("PlugSocketOrange.png"));
     }
 
 }
@@ -392,7 +392,7 @@ void ElementPlug::leaveEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_connected){
-      resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")));
+      resetImage(QStringLiteral("PlugSocket.png"));
     }
 
 }
@@ -413,9 +413,9 @@ void ElementSocket::connected(bool connectionState)
 
     m_connected = connectionState;
     if(m_connected){
-        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocketGreen.png")));
+        resetImage(QStringLiteral("PlugSocketGreen.png"));
     } else {
-        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")));
+        resetImage(QStringLiteral("PlugSocket.png"));
     }
 
 }
@@ -428,7 +428,7 @@ void ElementSocket::enterEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_connected){
-       resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocketGreen.png")));
+       resetImage(QStringLiteral("PlugSocketGreen.png"));
     }
 
 }
@@ -439,7 +439,7 @@ void ElementSocket::leaveEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_connected){
-        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")));
+        resetImage(QStringLiteral("PlugSocket.png"));
     }
 
 }
@@ -460,9 +460,9 @@ void ElementStart::togggleRunning(bool running)
     qCInfo(logC, "called");
     m_running = running;
     if(!m_running){
-       resetImage(QUrl(QStringLiteral("http://localhost:7000/PlayDefault.png")));
+       resetImage(QStringLiteral("PlayDefault.png"));
     } else {
-        resetImage(QUrl(QStringLiteral("http://localhost:7000/StopYellow.png")));
+        resetImage(QStringLiteral("StopYellow.png"));
     }
 
 }
@@ -473,7 +473,7 @@ void ElementStart::enterEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_running){
-       resetImage(QUrl(QStringLiteral("http://localhost:7000/PlayGreen.png")));
+       resetImage(QStringLiteral("PlayGreen.png"));
     }
 
 }
@@ -484,7 +484,7 @@ void ElementStart::leaveEvent(QEvent *event)
     qCInfo(logC, "called");
 
     if(!m_running){
-        resetImage(QUrl(QStringLiteral("http://localhost:7000/PlayDefault.png")));
+        resetImage(QStringLiteral("PlayDefault.png"));
     }
 
 }

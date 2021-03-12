@@ -22,4 +22,4 @@ const QLoggingCategory BaseLabel::logC{"BaseLabel"};
 const QString BaseLabel::m_relPath{"public_html/static/"};
 
 const QLoggingCategory BaseButton::logC{"BaseButton"};
-const QString BaseButton::m_baseUrl{"http://localhost:7000/"};
+const QString BaseButton::m_relPath{"public_html/static/"};

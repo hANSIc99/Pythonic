@@ -35,6 +35,9 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle(QStringLiteral("Pythonic"));
 #endif
 
+    /* Print current working directory */
+    QDir dir;
+     qCInfo(logC, "Current working directory: %s", dir.absolutePath().toStdString().c_str());
 
     /* Setup Working Area Tabs */
 

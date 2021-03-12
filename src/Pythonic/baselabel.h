@@ -47,50 +47,38 @@ public:
         : QLabel(parent)
         , m_size(size)
     {
-        //connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
-        //SLOT (fileDownloaded(QNetworkReply*)));
-
-
-//
 
         if (m_pixMap.load(m_relPath + imagePath)){
 
             m_pixMap = m_pixMap.scaled(m_size);
             setPixmap(m_pixMap);
-            qCWarning(logC, "LOADED");
-        } else {
-            qCWarning(logC, "NOT LOADED");
-        }
-        //QNetworkRequest request(imageUrl);
-        //m_WebCtrl.get(request);
-        //qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
-    };
 
-    explicit BaseLabel(QUrl imagePath, QSize size, QWidget *parent = 0)
-        : QLabel(parent)
-        , m_size(size)
-    {
+        } else {
+            qCWarning(logC, "could not be loaded: %s", imagePath.toStdString().c_str());
+        }
     };
 
 
     //virtual ~BaseLabel();
 
-    void resetImage(QUrl imageUrl){
-        QNetworkRequest request(imageUrl);
-        m_WebCtrl.get(request);
+    void resetImage(QString imagePath){
+
+        if (m_pixMap.load(m_relPath + imagePath)){
+
+            m_pixMap = m_pixMap.scaled(m_size);
+            setPixmap(m_pixMap);
+
+        } else {
+            qCWarning(logC, "could not be loaded: %s", imagePath.toStdString().c_str());
+        }
+
     }
 
     QPixmap                 m_pixMap;
 
-private slots:
-
 
 private:
 
-
-    QNetworkAccessManager   m_WebCtrl;
-
-    QByteArray              m_DownloadedData;
     QSize                   m_size;
 
     const static QString m_relPath;
@@ -99,57 +87,34 @@ private:
 };
 
 
-
 class BaseButton : public QPushButton
 {
  Q_OBJECT
 public:
-    explicit BaseButton(QUrl imageUrl, QSize size, QWidget *parent = 0)
+    explicit BaseButton(QString imagePath, QSize size, QWidget *parent = 0)
         : QPushButton(parent)
         , m_size(size)
     {
-        connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
-        SLOT (fileDownloaded(QNetworkReply*)));
-        QNetworkRequest request(imageUrl);
-        m_WebCtrl.get(request);
-        qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
+        if (m_pixMap.load(m_relPath + imagePath)){
+
+            m_pixMap = m_pixMap.scaled(m_size);
+            QIcon buttonIcon(m_pixMap);
+            setIcon(buttonIcon);
+            setIconSize(m_size);
+
+        } else {
+            qCWarning(logC, "could not be loaded: %s", imagePath.toStdString().c_str());
+        }
     };
 
     //virtual ~BaseLabel();
 
-private slots:
-
-    void fileDownloaded(QNetworkReply* pReply){
-        m_DownloadedData = pReply->readAll();
-
-        if(m_DownloadedData.isEmpty()){
-            qCWarning(logC, "could not be loaded: %s",
-                     pReply->url().toString().toStdString().c_str());
-            return;
-        }
-
-        //emit a signal
-        pReply->deleteLater();
-        //emit downloaded();
-
-
-        m_pixMap.loadFromData(m_DownloadedData);
-        m_pixMap.scaled(m_size);
-        QIcon buttonIcon(m_pixMap);
-        setIcon(buttonIcon);
-        setIconSize(m_size);
-    };
-
-
-
 private:
 
-    QNetworkAccessManager   m_WebCtrl;
     QPixmap                 m_pixMap;
-    QByteArray              m_DownloadedData;
     QSize                   m_size;
 
-    const static QString m_baseUrl;
+    const static QString m_relPath;
     const static QLoggingCategory logC;
 };
 
@@ -160,119 +125,77 @@ class BaseLabel : public QLabel
 {
  Q_OBJECT
 public:
-    explicit BaseLabel(QUrl imageUrl, QSize size, QWidget *parent = 0)
+    explicit BaseLabel(QString imagePath, QSize size, QWidget *parent = 0)
         : QLabel(parent)
         , m_size(size)
     {
-        connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
-        SLOT (fileDownloaded(QNetworkReply*)));
+        if (m_pixMap.load(m_relPath + imagePath)){
 
-        QNetworkRequest request(imageUrl);
-        m_WebCtrl.get(request);
-        qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
+            m_pixMap = m_pixMap.scaled(m_size);
+            setPixmap(m_pixMap);
+
+        } else {
+            qCWarning(logC, "image could not be loaded");
+        }
     };
 
     //virtual ~BaseLabel();
 
-    void resetImage(QUrl imageUrl){
-        QNetworkRequest request(imageUrl);
-        m_WebCtrl.get(request);
+    void resetImage(QString imagePath){
+        if (m_pixMap.load(m_relPath + imagePath)){
+
+            m_pixMap = m_pixMap.scaled(m_size);
+            setPixmap(m_pixMap);
+
+        } else {
+            qCWarning(logC, "image could not be loaded");
+        }
     }
 
     QPixmap                 m_pixMap;
 
 private slots:
 
-    void fileDownloaded(QNetworkReply* pReply){
-        m_DownloadedData = pReply->readAll();
-
-        if(m_DownloadedData.isEmpty()){
-            qCWarning(logC, "could not be loaded: %s",
-                     pReply->url().toString().toStdString().c_str());
-            return;
-            // BAUSTELLE could not be loaded pop error Exception
-        }
-
-        //emit a signal
-        pReply->deleteLater();
-        //emit downloaded();
-
-
-        m_pixMap.loadFromData(m_DownloadedData);
-
-
-        if(m_pixMap.isNull()){
-            qCWarning(logC, "could not be loaded: %s", pReply->url().toString().toStdString().c_str());
-        }else{
-           m_pixMap = m_pixMap.scaled(m_size);
-           setPixmap(m_pixMap);
-        }
-
-    };
-
-
-
 
 private:
 
-
-    QNetworkAccessManager   m_WebCtrl;
-
-    QByteArray              m_DownloadedData;
     QSize                   m_size;
 
+    const static QString m_relPath;
     const static QLoggingCategory logC;
 };
+
+
 
 class BaseButton : public QPushButton
 {
  Q_OBJECT
 public:
-    explicit BaseButton(QUrl imageUrl, QSize size, QWidget *parent = 0)
+    explicit BaseButton(QString imagePath, QSize size, QWidget *parent = 0)
         : QPushButton(parent)
         , m_size(size)
     {
-        connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
-        SLOT (fileDownloaded(QNetworkReply*)));
-        QNetworkRequest request(imageUrl);
-        m_WebCtrl.get(request);
-        qCDebug(logC, "called - %s", imageUrl.toString().toStdString().c_str());
+        if (m_pixMap.load(m_relPath + imagePath)){
+
+            m_pixMap = m_pixMap.scaled(m_size);
+            QIcon buttonIcon(m_pixMap);
+            setIcon(buttonIcon);
+            setIconSize(m_size);
+
+        } else {
+            qCWarning(logC, "image could not be loaded");
+        }
     };
 
     //virtual ~BaseLabel();
 
-private slots:
-
-    void fileDownloaded(QNetworkReply* pReply){
-        m_DownloadedData = pReply->readAll();
-
-        if(m_DownloadedData.isEmpty()){
-            qCWarning(logC, "could not be loaded: %s",
-                     pReply->url().toString().toStdString().c_str());
-            return;
-        }
-
-        //emit a signal
-        pReply->deleteLater();
-        //emit downloaded();
-
-
-        m_pixMap.loadFromData(m_DownloadedData);
-        m_pixMap.scaled(m_size);
-        QIcon buttonIcon(m_pixMap);
-        setIcon(buttonIcon);
-        setIconSize(m_size);
-    };
-
-
 
 private:
 
-    QNetworkAccessManager   m_WebCtrl;
     QPixmap                 m_pixMap;
-    QByteArray              m_DownloadedData;
     QSize                   m_size;
 
+    const static QString m_relPath;
     const static QLoggingCategory logC;
 };
 #endif

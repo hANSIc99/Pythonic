@@ -37,6 +37,7 @@
 #include <QSplitter>
 #include <QSizePolicy>
 #include <QFontMetrics>
+#include <QDir>
 
 #include "helper.h"
 #include "websocket.h"

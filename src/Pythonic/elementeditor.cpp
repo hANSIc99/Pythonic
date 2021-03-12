@@ -24,7 +24,7 @@ const QLoggingCategory Elementeditor::logC{"Elementeditor"};
 Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
     : QDialog(parent)
     , m_basicData(basicData)
-    , m_delButton(QUrl("http://localhost:7000/del.png"), DEL_BTN_SIZE, parent)
+    , m_delButton(QStringLiteral("del.png"), DEL_BTN_SIZE, parent)
 {
     setWindowModality(Qt::WindowModal);
 

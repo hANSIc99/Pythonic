@@ -77,7 +77,7 @@ class ElementPlug : public BaseLabel
 
 public:
     explicit ElementPlug(QWidget *parent = nullptr)
-        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlugSocket.png")), m_socket_size, parent)
+        : BaseLabel(QStringLiteral("PlugSocket.png"), m_socket_size, parent)
         , m_connected(false)
     {
         qCDebug(logC, "called");
@@ -105,7 +105,7 @@ class ElementStart : public BaseLabel
 
 public:
     explicit ElementStart(QWidget *parent = nullptr)
-        : BaseLabel(QUrl(QStringLiteral("http://localhost:7000/PlayDefault.png")), m_socket_size, parent)
+        : BaseLabel(QStringLiteral("PlayDefault.png"), m_socket_size, parent)
         , m_running(false)
     {
         qCDebug(logC, "called");

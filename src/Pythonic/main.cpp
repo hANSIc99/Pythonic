@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
                                                     /* GUI Elements */
 
                                                     "MainWindow.debug=false\n"
-                                                    "MainWindow.info=false\n"
+                                                    "MainWindow.info=true\n"
 
                                                     "WorkingArea.debug=false\n"
                                                     "WorkingArea.info=false\n"
