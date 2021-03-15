@@ -62,4 +62,4 @@ to `%HOMEPATH%\Pythonic\executables`. On Linux or Mac you can find them under `~
 
 ## Contribute
 
-<a href="https://www.patreon.com/bePatron?u=52281688" data-patreon-widget-type="become-patron-button">Become a Patron!</a>
+### [Become a Patron!](https://www.patreon.com/bePatron?u=52281688)
