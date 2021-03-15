@@ -212,22 +212,51 @@ void ElementMaster::deleteSelf()
 
     /* Execute Destructor Command (if defined) */
 
-    QJsonValue constrCMD = m_config.value(QStringLiteral("DestructorCMD"));
-    if(!constrCMD.isUndefined()){
+    QString cmd_w32;
+    QString cmd_unix;
 
-        QString sCMD = helper::applyRegExp(
-                    constrCMD.toString(),
+    /* Extract DestructorCMD for Win32 (if defined) */
+
+    QJsonValue destructorCMD_W32 = m_config.value("DestructorCMD_Win32");
+
+    if(!destructorCMD_W32.isUndefined()){
+
+        cmd_w32 = helper::applyRegExp(
+                    destructorCMD_W32.toString(),
                     m_config,
                     helper::m_regExpSBasicData,
                     helper::jsonValToStringBasicData
                     );
-
-        QJsonObject cmd {
-            { QStringLiteral("cmd"), QStringLiteral("SysCMD")},
-            { QStringLiteral("data"), sCMD }
-        };
-        fwrdWsCtrl(cmd);
     }
+
+    /* Extract ConstructorCMD for Unix (if defined) */
+
+    QJsonValue destructorCMD_Unix = m_config.value("DestructorCMD_Unix");
+
+    if(!destructorCMD_Unix.isUndefined()){
+
+        cmd_unix = helper::applyRegExp(
+                    destructorCMD_Unix.toString(),
+                    m_config,
+                    helper::m_regExpSBasicData,
+                    helper::jsonValToStringBasicData
+                    );
+    }
+
+    QJsonObject sysCmds {
+        { "Win32", cmd_w32},
+        { "Unix", cmd_unix}
+    };
+
+
+    QJsonObject cmd {
+        {"cmd", "SysCMD"},
+        {"data", sysCmds }
+    };
+
+
+    fwrdWsCtrl(cmd);
+
 
     emit remove(this);
 }

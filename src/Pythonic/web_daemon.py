@@ -58,12 +58,12 @@ def rcv(ws):
     
     bConnected = True
     while bConnected:
-        greenthread.sleep(0.3)
+        greenthread.sleep(0.1)
         QCoreApplication.processEvents()
-        #greenthread.sleep(0.1)
-        #QCoreApplication.processEvents()
-        #greenthread.sleep(0.1)
-        #QCoreApplication.processEvents()
+        greenthread.sleep(0.1)
+        QCoreApplication.processEvents()
+        greenthread.sleep(0.1)
+        QCoreApplication.processEvents()
 
         try:
 

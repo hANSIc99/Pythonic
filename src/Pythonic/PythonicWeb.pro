@@ -28,7 +28,7 @@ QMAKE_LFLAGS += --preload-file public_html/static/new_file.png
 QMAKE_LFLAGS += --preload-file public_html/static/message.png
 QMAKE_LFLAGS += --preload-file public_html/static/kill.png
 QMAKE_LFLAGS += --preload-file public_html/static/horizontal.png
-
+QMAKE_LFLAGS += --preload-file public_html/static/wall_of_fame.png
 }
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

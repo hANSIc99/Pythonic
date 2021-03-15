@@ -30,15 +30,13 @@
 
 #include "baselabel.h"
 
-#define MENU_BTN_SIZE QSize(32, 32)
-#define LOGO_SIZE QSize(262, 58)
 
 class ReconnectButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit ReconnectButton(QWidget *parent = nullptr)
-        : BaseButton(QStringLiteral("reconnect.png"), MENU_BTN_SIZE, parent)
+    explicit ReconnectButton(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("reconnect.png"), btnSize, parent)
     {
         setToolTip(QStringLiteral("Try reconnect to daemon"));
         qCDebug(logC, "called");
@@ -46,15 +44,15 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.ReconnectBtn"};
+    const QLoggingCategory    logC{"MenuBar.ReconnectBtn"};
 };
 
 class UploadConfig : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit UploadConfig(QWidget *parent = nullptr)
-        : BaseButton(QStringLiteral("upload_config.png"), MENU_BTN_SIZE, parent)
+    explicit UploadConfig(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("upload_config.png"), btnSize, parent)
 
     {
         setToolTip(QStringLiteral("Upload configuration"));
@@ -63,15 +61,15 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.UploadConfigBtn"};
+    const QLoggingCategory    logC{"MenuBar.UploadConfigBtn"};
 };
 
 class UploadExecutable : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit UploadExecutable(QWidget *parent = nullptr)
-        : BaseButton(QStringLiteral("upload_executable.png"), MENU_BTN_SIZE, parent)
+    explicit UploadExecutable(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("upload_executable.png"), btnSize, parent)
     {
         setToolTip(QStringLiteral("Upload executeable"));
         qCDebug(logC, "called");
@@ -80,15 +78,15 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.UploadExecutableBtn"};
+    const QLoggingCategory    logC{"MenuBar.UploadExecutableBtn"};
 };
 
 class SaveButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit SaveButton(QWidget *parent = nullptr)
-        : BaseButton(QStringLiteral("save.png"), MENU_BTN_SIZE, parent)
+    explicit SaveButton(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("save.png"), btnSize, parent)
     {
         qCDebug(logC, "called");
         setToolTip(QStringLiteral("Save configuration"));
@@ -97,16 +95,15 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.SaveBtn"};
+    const QLoggingCategory    logC{"MenuBar.SaveBtn"};
 };
-
 
 class StartAllButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit StartAllButton(QWidget *parent = nullptr)
-        : BaseButton(QStringLiteral("start_debug.png"), MENU_BTN_SIZE, parent)
+    explicit StartAllButton(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("start_debug.png"), btnSize, parent)
     {
         //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
@@ -115,15 +112,15 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.StartAllBtn"};
+    const QLoggingCategory    logC{"MenuBar.StartAllBtn"};
 };
 
 class StopExecButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit StopExecButton(QWidget *parent = nullptr)
-        : BaseButton(QStringLiteral("stop_exec.png"), MENU_BTN_SIZE, parent)
+    explicit StopExecButton(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("stop_exec.png"), btnSize, parent)
     {
         //setStyleSheet("background-color: transparent;");
         qCDebug(logC, "called");
@@ -132,16 +129,15 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.StopAllBtn"};
+    const QLoggingCategory    logC{"MenuBar.StopAllBtn"};
 };
-
 
 class KillProcButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit KillProcButton(QWidget *parent = nullptr)
-        : BaseButton(QStringLiteral("kill.png"), MENU_BTN_SIZE, parent)
+    explicit KillProcButton(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("kill.png"), btnSize, parent)
     {
         qCDebug(logC, "called");
         setToolTip(QStringLiteral("Kill all processes"));
@@ -149,16 +145,15 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.KillProcBtn"};
+    const QLoggingCategory    logC{"MenuBar.KillProcBtn"};
 };
-
 
 class LogWindowButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit LogWindowButton(QWidget *parent = nullptr)
-        : BaseButton(QStringLiteral("message.png"), MENU_BTN_SIZE, parent)
+    explicit LogWindowButton(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("message.png"), btnSize, parent)
     {
         qCDebug(logC, "called");
         setToolTip(QStringLiteral("Show / hide message window"));
@@ -167,15 +162,15 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.LogWindowBtn"};
+    const QLoggingCategory    logC{"MenuBar.LogWindowBtn"};
 };
 
 class OutputButton : public BaseButton {
     Q_OBJECT
 public:
 
-    explicit OutputButton(QWidget *parent = nullptr)
-        : BaseButton(QStringLiteral("output.png"), MENU_BTN_SIZE, parent)
+    explicit OutputButton(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("output.png"), btnSize, parent)
     {
         qCDebug(logC, "called");
         setToolTip(QStringLiteral("Show / hide element output window"));
@@ -183,12 +178,31 @@ public:
 
 
 private:
-    QLoggingCategory    logC{"MenuBar.OutputBtn"};
+    const QLoggingCategory    logC{"MenuBar.OutputBtn"};
+};
+
+
+class WallOfFameButton : public BaseButton {
+    Q_OBJECT
+public:
+
+    explicit WallOfFameButton(QSize btnSize, QWidget *parent = nullptr)
+        : BaseButton(QStringLiteral("wall_of_fame.png"), btnSize, parent)
+    {
+        qCDebug(logC, "called");
+        setToolTip(QStringLiteral("Show / hide element output window"));
+    };
+
+
+private:
+    const QLoggingCategory    logC{"MenuBar.WallOfFameBtn"};
 };
 
 class MenuBar : public QWidget
 {
     Q_OBJECT
+    static constexpr QSize  m_btnSize{32, 32};
+    static constexpr QSize  m_logoSize{262, 58};
 public:
     explicit MenuBar(QWidget *parent = nullptr);
 
@@ -201,19 +215,20 @@ private:
     QWidget             m_iconBar;
     QHBoxLayout         m_iconBarLayout;
 
-    BaseLabel           m_logoHorizontal{QStringLiteral("horizontal.png"), LOGO_SIZE};
+    BaseLabel           m_logoHorizontal{QStringLiteral("horizontal.png"), m_logoSize};
 
 public:
 
-    ReconnectButton     m_reconnectBtn;
-    UploadConfig        m_uploadConfig;
-    UploadExecutable    m_uploadExecutable;
-    SaveButton          m_saveBtn;
-    StartAllButton      m_startAllBtn;
-    StopExecButton      m_stopExecBtn;
-    KillProcButton      m_killProcBtn;
-    LogWindowButton     m_logWindowBtn;
-    OutputButton        m_outputBtn;
+    ReconnectButton     m_reconnectBtn{m_btnSize};
+    UploadConfig        m_uploadConfig{m_btnSize};
+    UploadExecutable    m_uploadExecutable{m_btnSize};
+    SaveButton          m_saveBtn{m_btnSize};
+    StartAllButton      m_startAllBtn{m_btnSize};
+    StopExecButton      m_stopExecBtn{m_btnSize};
+    KillProcButton      m_killProcBtn{m_btnSize};
+    LogWindowButton     m_logWindowBtn{m_btnSize};
+    OutputButton        m_outputBtn{m_btnSize};
+    WallOfFameButton    m_wallOfFameBtn{m_btnSize};
 
 };
 

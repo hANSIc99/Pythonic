@@ -20,6 +20,8 @@
 
 Q_LOGGING_CATEGORY(log_menubar, "MenuBar")
 
+constexpr   QSize MenuBar::m_btnSize;
+constexpr   QSize MenuBar::m_logoSize;
 
 MenuBar::MenuBar(QWidget *parent) : QWidget(parent)
 {
@@ -35,6 +37,7 @@ MenuBar::MenuBar(QWidget *parent) : QWidget(parent)
     m_iconBarLayout.addWidget(&m_killProcBtn);
     m_iconBarLayout.addWidget(&m_logWindowBtn);
     m_iconBarLayout.addWidget(&m_outputBtn);
+    m_iconBarLayout.addWidget(&m_wallOfFameBtn);
 
     m_iconBarLayout.addStretch(1);
     m_iconBarLayout.addWidget(&m_logoHorizontal);

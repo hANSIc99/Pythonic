@@ -85,17 +85,14 @@ int main(int argc, char *argv[])
                                                     "MenuBar.KillProcBtn.debug=false\n"
                                                     "MenuBar.KillProcBtn.info=false\n"
 
-                                                    "MenuBar.RunBtn.debug=false\n"
-                                                    "MenuBar.RunBtn.info=false\n"
-
-                                                    "MenuBar.ReconnectBtn.debug=false\n"
-                                                    "MenuBar.ReconnectBtn.info=false\n"
-
                                                     "MenuBar.LogWindowBtn.debug=false\n"
                                                     "MenuBar.LogWindowBtn.info=false\n"
 
                                                     "MenuBar.OutputBtn.debug=false\n"
                                                     "MenuBar.OutputBtn.info=false\n"
+
+                                                    "MenuBar.WallOfFameBtn.debug=false\n"
+                                                    "MenuBar.WallOfFameBtn.info=false\n"
 
                                                     /* Master Classes */
 

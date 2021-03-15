@@ -16,7 +16,8 @@ setuptools.setup(
         packages = ['Pythonic', 'Pythonic.executables'],
         package_dir = { '' : 'src'},
         package_data = { '' :
-            ['public_html/static/*.png',
+            ['public_html/static/Scheduler.png',
+             'public_html/static/BaseElement.png',
              'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
