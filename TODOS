@@ -12,23 +12,7 @@ when it comes to loading the
 WorkItem: Check if the sequence can be improved
 configio.py: EditorLoader: cleanupThreadList(...)
 
-
 3)
-Saving the config file causes the runtime to crash
--> When the execution of an element is started, the configuration is
-saved automatically. In case of an exception, wirintg the configuration fails.
-Synchronize saving and starting
-
-4)
-Use the virtual filesystem isntead of loading the images from the backend application
-
-5)
-Create backups of the previous saved configurations
-
-6)
-Replace macros with constexpr where it is possible
-
-7)
 Check if the 'inline'-keyword can be applied to some loops
 (page 146 C++ Der Programmierer)
 
