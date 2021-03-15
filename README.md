@@ -40,7 +40,7 @@ if part of the `Path` environemnt variable.
 
 Open a command shell and simply type `Pythonic`.
 
-#### 4. Endpoints
+## Endpoints
 
 Open your favorite WebAssembly compatible web browser and navigate to...
 
@@ -51,7 +51,7 @@ Open your favorite WebAssembly compatible web browser and navigate to...
 - [http://1270.0.01:7000/current_config.json](http://1270.0.01:7000/current_config.json) ... to download the grid configuration file
 - [http://1270.0.01:8000/](http://1270.0.01:8000/) ... to open code server (VS Code in browser - **container only**)
 
-#### 5. Editing files
+## Editing elements
 
 On Windows, when you drop an element to the working areay, the related *\*.py*-file gets copied
 to `%HOMEPATH%\Pythonic\executables`. On Linux or Mac you can find them under `~/Pythonic/executables`.
