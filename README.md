@@ -9,8 +9,7 @@
 [<img src="https://img.shields.io/badge/platform-Windows%20Linux%20Mac-blueviolet.svg">](https://github.com/hANSIc99/Pythonic)
 
 
-![Alt text](screenshot-4.png?raw=true "Screenshot")
-
+<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/gui_new/screenshot-5.PNG" alt="Pythonic" "></p>
 
 ## Installation into existing Python 3.x environment
 
