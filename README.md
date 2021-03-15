@@ -46,12 +46,12 @@ Open a command shell and simply type `Pythonic`.
 
 #### 4. Endpoints
 
-Open your favorite WebAssembly compatible web browser and navigate to:
+Open your favorite WebAssembly compatible web browser and navigate to...
 
-[http://1270.0.01:7000/]http://1270.0.01:7000/() to open the GUI
-[http://1270.0.01:7000/log](http://1270.0.01:7000/log) - To get an overview of available log files
-[http://1270.0.01:7000/2021_03_15.txt](http://1270.0.01:7000/2021_03_15.txt) - To open the actual log file of 15. March 2021 (if available)
-
+- [http://1270.0.01:7000/]http://1270.0.01:7000/](http://1270.0.01:7000/]http://1270.0.01:7000/) ... to open the GUI
+- [http://1270.0.01:7000/log](http://1270.0.01:7000/log) ... to get an overview of available log files
+- [http://1270.0.01:7000/2021_03_15.txt](http://1270.0.01:7000/2021_03_15.txt) ... to open the actual log file of 15. March 2021 (if available)
+- [http://1270.0.01:7000/generic_python_73594528.py](http://1270.0.01:7000/generic_python_73594528.py) ... to download a specific *\*.py*-file
 
 #### 5. Editing files
 
