@@ -1,4 +1,4 @@
-<p align="center"><img src="src/Pythonic/images/horizontal.png" alt="Pythonic" height="120px"></p>
+<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/gui_new/src/Pythonic/public_html/static/horizontal.png" alt="Pythonic" height="120px"></p>
 
 ## Graphical Python programming for trading and automation
 
@@ -9,14 +9,19 @@
 [<img src="https://img.shields.io/badge/platform-Windows%20Linux%20Mac-blueviolet.svg">](https://github.com/hANSIc99/Pythonic)
 
 
-![Alt text](screenshot-4.png?raw=true "Screenshot")
+<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/gui_new/screenshot-5.PNG" alt="Pythonic" "></p>
 
 
-## Installation into existing Python 3.x environment
+## [Become a Patron](https://www.patreon.com/pythonicautomation?fan_landing=true)
 
-Pythonic is compatible with Python version 3.6 and 3.7.
+## Installation 
 
-#### 1. Install [Python 3.7](https://www.python.org/)
+You can run Pythonic natively on your Linux, Mac or Windows system
+or as a container.
+
+## Native Installation
+
+#### 1. Install [Python 3.9](https://www.python.org/)
 
 #### 2a. [Linux]
 
@@ -32,9 +37,28 @@ In general, root-rights are not required but when you run without it, the start 
 On Windows, open the command line or the Powershell and type:
 `pip3 install Pythonic`
 
-You can now start Pythonic from the command line by typing:
+Make sure that the Python script folder (e.g. under Python 3.7: `%HOMEPATH%\AppData\Local\Programs\Python\Python37\Scripts`)
+if part of the `Path` environemnt variable.
 
-#### 3. `./Pythonic`
+#### 3. Run Pythonic
+
+Open a command shell and simply type `Pythonic`.
+
+#### 4. Endpoints
+
+Open your favorite WebAssembly compatible web browser and navigate to...
+
+- [http://1270.0.01:7000/](http://1270.0.01:7000/) ... to open the GUI
+- [http://1270.0.01:7000/log](http://1270.0.01:7000/log) ... to get an overview of available log files
+- [http://1270.0.01:7000/2021_03_15.txt](http://1270.0.01:7000/2021_03_15.txt) ... to open the actual log file of 15. March 2021 (requested date must be available)
+- [http://1270.0.01:7000/generic_python_73594528.py](http://1270.0.01:7000/generic_python_73594528.py) ... to download a specific *\*.py*-file
+- [http://1270.0.01:7000/current_config.json](http://1270.0.01:7000/current_config.json) ... to download the grid configuration file
+- [http://1270.0.01:8000/](http://1270.0.01:8000/) ... to open code server (VS Code in browser - **container only**)
+
+#### 5. Editing files
+
+On Windows, when you drop an element to the working areay, the related *\*.py*-file gets copied
+to `%HOMEPATH%\Pythonic\executables`. On Linux or Mac you can find them under `~/Pythonic/executables`.
 
 ## Tutorial
 Available on [Steemit](https://steemit.com)

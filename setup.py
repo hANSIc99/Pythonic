@@ -41,8 +41,10 @@ setuptools.setup(
             'PySide2>=5.15.2',
             'eventlet>=0.27.0'],
         classifiers = [
-            'Programming Language :: Python :: 3 :: Only',
             'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
+            'Programming Language :: Python :: 3.10',
             'Development Status :: 4 - Beta',
             'Intended Audience :: Manufacturing',
             'Intended Audience :: End Users/Desktop',
