@@ -347,6 +347,18 @@ def dispatch(environ, start_response):
                                                  
         return [log_data]
 
+    # Config file (*.json)
+
+    elif environ['PATH_INFO'] == '/current_config.json':
+        #logging.debug('PATH_INFO == ' + environ['PATH_INFO'])
+        open_path = Path.home() / 'Pythonic' / 'current_config.json'
+        with open(open_path,'rb') as f:
+            config_file = f.read()
+      
+        start_response('200 OK', [  ('content-type', 'application/json; charset=utf-8')])
+        
+        return [config_file]
+
     else:
         path_info = environ['PATH_INFO']
         logging.debug('PATH_INFO = {}'.format(path_info))
