@@ -8,7 +8,7 @@
 [<img src="https://img.shields.io/github/last-commit/hANSIc99/Pythonic.svg">](https://github.com/hANSIc99/Pythonic)
 [<img src="https://img.shields.io/badge/platform-Windows%20Linux%20Mac-blueviolet.svg">](https://github.com/hANSIc99/Pythonic)
 
-<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/gui_new/screenshot-5.PNG" alt="Pythonic" "></p>
+<p align="center"><img src="screenshot-6.PNG" alt="Pythonic" "></p>
 
 ## Installation 
 
