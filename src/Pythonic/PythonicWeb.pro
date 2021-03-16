@@ -45,6 +45,7 @@ SOURCES += \
     menubar.cpp \
     toolbox.cpp \
     toolmaster.cpp \
+    wall_of_fame.cpp \
     workingarea.cpp
 
 HEADERS += \
@@ -58,6 +59,7 @@ HEADERS += \
     menubar.h \
     toolbox.h \
     toolmaster.h \
+    wall_of_fame.h \
     websocket.h \
     workingarea.h
 

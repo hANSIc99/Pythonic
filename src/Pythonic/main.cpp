@@ -57,6 +57,9 @@ int main(int argc, char *argv[])
                                                     "MessageArea.debug=false\n"
                                                     "MessageArea.info=false\n"
 
+                                                    "WallOfFame.debug=false\n"
+                                                    "WallOfFame.info=false\n"
+
                                                     /* Toolbox elements */
 
                                                     "Toolbox.debug=false\n"

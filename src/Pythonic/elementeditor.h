@@ -36,9 +36,6 @@
 #include "baselabel.h"
 #include "helper.h"
 
-#define ID_FONTSIZE 12
-
-#define DEL_BTN_SIZE QSize(28, 28)
 
 namespace ElementEditorTypes {
 
@@ -177,6 +174,11 @@ public:
 class Elementeditor : public QDialog
 {
     Q_OBJECT
+    static constexpr QSize  m_delBtnSize{28, 28};
+    static constexpr int m_fontSize{12};
+    static const QLoggingCategory logC;
+
+
 public:
     explicit Elementeditor(QJsonObject basicData, QWidget *parent = nullptr);
 
@@ -243,8 +245,6 @@ private:
 
 
     QList<ElementEditorTypes::Rule> m_rules;
-
-    const static QLoggingCategory logC;
 
 };
 

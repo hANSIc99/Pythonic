@@ -16,3 +16,8 @@ configio.py: EditorLoader: cleanupThreadList(...)
 Check if the 'inline'-keyword can be applied to some loops
 (page 146 C++ Der Programmierer)
 
+4)
+Create 3 basic Python elements:
+- Generic Pythonc (executes and return)
+- Python Process (executes and keeps alive)
+- Python Stream (keeps alive and accept streams)

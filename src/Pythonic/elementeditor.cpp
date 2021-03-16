@@ -18,24 +18,21 @@
 #include "elementeditor.h"
 
 const QLoggingCategory Elementeditor::logC{"Elementeditor"};
-
-
+constexpr QSize Elementeditor::m_delBtnSize;
+constexpr int Elementeditor::m_fontSize;
 
 Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
     : QDialog(parent)
     , m_basicData(basicData)
-    , m_delButton(QStringLiteral("del.png"), DEL_BTN_SIZE, parent)
+    , m_delButton(QStringLiteral("del.png"), m_delBtnSize, parent)
 {
     setWindowModality(Qt::WindowModal);
-
-    //setMinimumSize(300, 300);
-    //setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 
     /* Setup element id */
 
     int id = basicData.value(QStringLiteral("Id")).toInt();
 
-    QFont font(QStringLiteral("Arial"), ID_FONTSIZE, QFont::Bold);
+    QFont font(QStringLiteral("Arial"), m_fontSize, QFont::Bold);
     m_id.setFont(font);
     m_id.setText(QString("Id: %1").arg(id, 8, 16, QChar('0')));
 

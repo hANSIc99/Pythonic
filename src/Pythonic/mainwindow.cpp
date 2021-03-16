@@ -114,6 +114,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     resize(m_default_size);
 
+    /* Create WallOfFame */
+
+    m_ptrWallOfFame = new WallOfFame(this);
+
     /* Hide Message- and Output-area */
 
     show();
@@ -159,6 +163,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_menuBar.m_outputBtn, &QPushButton::clicked,
             this, &MainWindow::toggleOutputArea);
 
+    connect(&m_menuBar.m_wallOfFameBtn, &QPushButton::clicked,
+            this, &MainWindow::openWallOfFame);
 
     /* Receive-Websocket connection */
 
@@ -784,10 +790,16 @@ void MainWindow::toggleOutputArea()
     QList<int> sizes = m_bottomArea.sizes();
 
 
-    if(m_outputArea.width() > 5) { // Message area is open
-        sizes[3] = 0;
+    if(m_outputArea.width() > 5) { // OutputArea is already open
+        sizes[3] = 0; // Close OutputArea
     } else {
-        sizes[3] = m_bottomArea.width() / 3;
+        sizes[3] = m_bottomArea.width() / 3; // Enlarge to 1/3 of the bottom area
     }
     m_bottomArea.setSizes(sizes);
+}
+
+void MainWindow::openWallOfFame()
+{
+    qCDebug(logC, "called");
+    m_ptrWallOfFame->open();
 }

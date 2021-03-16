@@ -45,7 +45,7 @@
 #include "menubar.h"
 #include "toolbox.h"
 #include "messagearea.h"
-
+#include "wall_of_fame.h"
 
 
 #define N_WORKING_GRIDS 3
@@ -149,6 +149,8 @@ private slots:
     void toggleMessageArea();
     //! Open/close the output area
     void toggleOutputArea();
+    //! Open the Wall of Fame
+    void openWallOfFame();
 
 private:
 
@@ -175,8 +177,9 @@ private:
 
     //! Bottom Area (Toolbox, WorkingArea, Output and Logging)
     QSplitter               m_bottomArea;
-    ////! Layout of #m_bottomArea
-    //QHBoxLayout             m_bottomAreaLayout;
+
+    //! The famous Wall of Fame
+    WallOfFame*             m_ptrWallOfFame;
 
 
     /* Working Area (Grids) */ // self.scrollArea
@@ -208,13 +211,15 @@ private:
     QLabel                  m_infoText;
     QLabel                  m_heartBeatText;
 
+
+
     const QVector<char>     m_spinner{'-', '\\', '|', '/' };
     QVector<char>::const_iterator it_spinner;
 
     QVector<DelayedInitCommand<MainWindow> >    m_delayedInitializations;
     void                                        (MainWindow::*ptrTmp)();
 
-    QLoggingCategory        logC{"MainWindow"};
+    const QLoggingCategory        logC{"MainWindow"};
 
 };
 
