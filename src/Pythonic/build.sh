@@ -8,8 +8,7 @@ source ~/Dokumente/emsdk/emsdk_env.sh # Version 1.39.8
 #make clean
 make
 
-cp PythonicWeb.html public_html/static/
-cp qtloader.js public_html/static/
-cp PythonicWeb.wasm public_html/static/
-cp PythonicWeb.js public_html/static/
-cp PythonicWeb.data public_html/static/
+cp *.html public_html/static/
+cp *.wasm public_html/static/
+cp *.js public_html/static/
+cp *.data public_html/static/
