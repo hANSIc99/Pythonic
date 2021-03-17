@@ -93,11 +93,11 @@ RUN rm /ms-python.vscode-pylance-2020.12.2.vsix
 RUN /usr/bin/python3 -m pip install eventlet==0.30.0
 RUN /usr/bin/python3 -m pip install PySide2==5.12.2
 
-COPY dist/Pythonic-1.0.tar.gz /
+COPY dist/Pythonic-1.1.tar.gz /
 
-RUN /usr/bin/python3 -m pip install /Pythonic-1.0.tar.gz
+RUN /usr/bin/python3 -m pip install /Pythonic-1.1.tar.gz
 
-RUN rm Pythonic-1.0.tar.gz
+RUN rm Pythonic-1.1.tar.gz
 
 ###################################
 #                                 #
