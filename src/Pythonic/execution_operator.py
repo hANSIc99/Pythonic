@@ -4,6 +4,7 @@ import json
 import random
 import multiprocessing as mp
 import threading as mt
+from importlib import reload
 from pathlib import Path
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
 from PySide2.QtCore import Signal
@@ -57,13 +58,17 @@ class ProcessHandler(QThread):
 
         try:
 
-            #executable = str(Path.home() / 'Pythonic' / 'executables' / ) + '.py'
-            #elementCls = getattr(__import__('executables.' + self.element['Filename'], fromlist=['Element']), 'Element')
-            elementCls = getattr(__import__(self.element['Filename'], fromlist=['Element']), 'Element')
-            #logging.debug('ProcessHandler::run() - loading file - id: 0x{:08x}, ident: {:04d} - {}'.format(
-            #    self.element['Id'], self.identifier, self.element['Filename']))
+            # This affects only first invocation
+            module = __import__(self.element['Filename'])
+            #logging.warning("Load module first time")
+            
+            # Reload to execute possible changes
+            module = reload(module) 
+
+            elementCls = getattr(module, 'Element')
+
         except Exception as e:
-            logging.debug('ProcessHandler::run() - Error loading file - id: 0x{:08x}, ident: {:04d} - {} Error: {}'.format(
+            logging.warning('ProcessHandler::run() - Error loading file - id: 0x{:08x}, ident: {:04d} - {} Error: {}'.format(
                 self.element['Id'], self.identifier, self.element['Filename'], e))
             return
 

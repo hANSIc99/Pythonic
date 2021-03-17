@@ -1,3 +1,12 @@
+1.1
+    PythonicDaemon: Bug in execution_operator fixed (reloading modules)
+    PythonicDaemon: Bug in GenericPython template fixed (wrong name of queue)
+
+
+
+######################################################################
+
+
 0.18
 
     PythonicDaemon: tty bug fixed: can be run as cronjob now

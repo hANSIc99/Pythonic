@@ -9,7 +9,7 @@
 #                   Full multi-processing and multi-threading capable.
 #
 #
-#CreationDate:      24.12.2020
+#CreationDate:      17.03.2021
 #Creator:           Stephan Avenwedde
 #
 #
@@ -57,9 +57,7 @@ RUN dnf -y install pip
 #                                 #
 ###################################
 
-
 RUN /usr/bin/python3 -m pip install supervisor==4.2.1
-
 
 	
 ###################################
@@ -95,10 +93,11 @@ RUN rm /ms-python.vscode-pylance-2020.12.2.vsix
 RUN /usr/bin/python3 -m pip install eventlet==0.30.0
 RUN /usr/bin/python3 -m pip install PySide2==5.12.2
 
-COPY dist/Pythonic-1.0.tar.gz /
+COPY dist/Pythonic-1.1.tar.gz /
 
-RUN /usr/bin/python3 -m pip install /Pythonic-1.0.tar.gz
+RUN /usr/bin/python3 -m pip install /Pythonic-1.1.tar.gz
 
+RUN rm Pythonic-1.1.tar.gz
 
 ###################################
 #                                 #
@@ -107,9 +106,8 @@ RUN /usr/bin/python3 -m pip install /Pythonic-1.0.tar.gz
 ###################################
 
 COPY src/code-server/config.yaml /root/.config/code-server/
-COPY src/supervisor/supervisord.conf /etc/
+COPY src/supervisor/supervisord.conf /etc/supervisord.conf
 
 
-ENTRYPOINT ["/usr/local/bin/supervisord -c /etc/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
 WORKDIR /root
-
