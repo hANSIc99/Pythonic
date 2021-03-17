@@ -34,7 +34,7 @@ class Element(Function):
         ####################################################
 
         #recordDone = Record(cnt, 'Sending value of cnt: {}'.format(cnt))     
-        #self.queue.put(recordDone)
+        #self.return_queue.put(recordDone)
         #return
 
 

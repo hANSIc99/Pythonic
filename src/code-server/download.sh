@@ -1,7 +1,5 @@
 #!/bin/sh
-
-#FILE=/etc/resolv.conf
-
+cd "${0%/*}"
 
 
 if [ -f "code-server-3.8.0-amd64.rpm" ]; then
