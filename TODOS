@@ -21,3 +21,6 @@ Create 3 basic Python elements:
 - Generic Pythonc (executes and return)
 - Python Process (executes and keeps alive)
 - Python Stream (keeps alive and accept streams)
+
+5)
+Add debugging capabilities to Docker image
