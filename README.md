@@ -15,6 +15,22 @@
 You can run Pythonic natively on your Linux, Mac or Windows system
 or as a container.
 
+## Container based installation
+
+Pythonic is available as container image which can be run by [Podman](https://podman.io/) or [Docker](https://www.docker.com/).
+
+#### 1. Pull the image from the server
+
+`podman pull pythonicautomation/pythonic`
+
+`docker pull pythonicautomation/pythonic`
+
+#### 2. Create a container
+
+`podman run -d -p 7000:7000 -p 8000:8000 pythonic`
+
+`docker run -d -p 7000:7000 -p 8000:8000 pythonic`
+
 ## Native Installation
 
 #### 1. Install [Python 3.9](https://www.python.org/)
