@@ -1,3 +1,9 @@
+1.2
+
+    Templates added
+    Python debugging in container enabled
+    Autostart option for elements added
+
 1.1
     PythonicDaemon: Bug in execution_operator fixed (reloading modules)
     PythonicDaemon: Bug in GenericPython template fixed (wrong name of queue)

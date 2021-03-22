@@ -30,7 +30,11 @@ Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
 
     /* Setup element id */
 
-    int id = basicData.value(QStringLiteral("Id")).toInt();
+    const int id = basicData.value(QStringLiteral("Id")).toInt();
+
+    /* Get information if element has a socket */
+
+    const bool bHasSocket = basicData.value(QStringLiteral("Socket")).toBool();
 
     QFont font(QStringLiteral("Arial"), m_fontSize, QFont::Bold);
     m_id.setFont(font);
@@ -46,6 +50,9 @@ Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
     m_toggleMP.setText(QStringLiteral("Activate multiprocessing"));
     m_toggleMP.setChecked(true);
 
+    m_toggleAutostart.setText(QStringLiteral("Autostart on startup"));
+    m_toggleAutostart.setChecked(false);
+
     m_saveButton.setText(QStringLiteral("Save"));
 
     m_delButton.setText(QStringLiteral("Delete element"));
@@ -58,6 +65,10 @@ Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
     m_generalCfgLayout.addWidget(&m_toggleLogMessage);
     m_generalCfgLayout.addWidget(&m_toggleLogOutput);
     m_generalCfgLayout.addWidget(&m_toggleMP);
+
+    if(!bHasSocket)
+        m_generalCfgLayout.addWidget(&m_toggleAutostart); // Option only added if element has no socket
+
     m_generalCfgLayout.addWidget(&m_delButton);
     m_generalCfgLayout.addStretch(1);
     m_generalCfgLayout.addWidget(&m_saveButton);
@@ -96,6 +107,7 @@ void Elementeditor::openEditor(const QJsonObject config)
     m_toggleLogMessage.setChecked(generalConfig[QStringLiteral("Logging")].toBool());
     m_toggleLogOutput.setChecked(generalConfig[QStringLiteral("Debug")].toBool());
     m_toggleMP.setChecked(generalConfig[QStringLiteral("MP")].toBool());
+    m_toggleAutostart.setChecked(generalConfig[QStringLiteral("Autostart")].toBool());
 
     QJsonArray specificConfig = config[QStringLiteral("SpecificConfig")].toArray();
 
@@ -279,7 +291,8 @@ QJsonObject Elementeditor::genConfig()
         { QStringLiteral("ObjectName") , m_objectName.text() },
         { QStringLiteral("Logging") , m_toggleLogMessage.isChecked() },
         { QStringLiteral("Debug"), m_toggleLogOutput.isChecked() },
-        { QStringLiteral("MP"), m_toggleMP.isChecked()}
+        { QStringLiteral("MP"), m_toggleMP.isChecked()},
+        { QStringLiteral("Autostart"), m_toggleAutostart.isChecked()},
     };
 
     /* Generate specific config */

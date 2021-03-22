@@ -65,7 +65,8 @@ ElementMaster::ElementMaster(const QJsonObject configuration,
         QJsonObject generalConfig = {
             { QStringLiteral("Logging"), true },
             { QStringLiteral("Debug"), false },
-            { QStringLiteral("MP"), true }
+            { QStringLiteral("MP"), true },
+            { QStringLiteral("Autostart"), false }
         };
 
         m_customConfig[QStringLiteral("GeneralConfig")] = generalConfig;

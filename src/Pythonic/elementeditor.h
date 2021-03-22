@@ -239,6 +239,7 @@ private:
     QCheckBox       m_toggleLogMessage;
     QCheckBox       m_toggleLogOutput;
     QCheckBox       m_toggleMP;
+    QCheckBox       m_toggleAutostart;
 
     BaseButton      m_delButton;
     QPushButton     m_saveButton;

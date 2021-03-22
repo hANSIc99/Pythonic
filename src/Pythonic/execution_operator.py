@@ -157,11 +157,25 @@ class Operator(QThread):
     processHandles  = {}
     command         = Signal(object) # command
 
-    def __init__(self,):
+    def __init__(self):
         super().__init__()
+
+    def begin(self, config):
+
+        # check for autostart elements
+        logging.debug('Operator::begin() called')
+
+        self.currentConfig = config
+        self.start()
 
     def run(self):
 
+        startElements = [x for x in self.currentConfig if not x['Socket'] and x['Config']['GeneralConfig']['Autostart']]
+
+        for startElement in startElements:
+            logging.info("START ELEMENT " + startElement['ObjectName'])
+
+        # keep a separate thread open
         while True:
             time.sleep(1)
 
@@ -197,8 +211,7 @@ class Operator(QThread):
 
         self.processHandles[identifier] = runElement
         #logging.debug('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
-
-        
+    
 
     def stopExec(self, id):
         logging.debug('Operator::stopExec() called - id: 0x{:08x}'.format(id))
@@ -235,6 +248,7 @@ class Operator(QThread):
                 logging.debug('Operator::startAll() -Element started - {} - id: 0x{:08x}'.format(
                    startElement['ObjectName'], startElement['Id']))
                 self.createProcHandle(startElement)
+
 
     def killAll(self):
         

@@ -114,8 +114,8 @@ def ctrl(ws):
                 elif logObj['logLvL'] == LogLvl.FATAL.value:
                     logging.critical('PythonicWeb    - {}q'.format(logObj['msg']))
 
-            elif msg['cmd'] == 'start':
-                logging.debug('PythonicWeb    - {}'.format("START"))
+            #elif msg['cmd'] == 'start':
+            #    logging.debug('PythonicWeb    - {}'.format("START"))
 
             elif msg['cmd'] == 'writeConfig':
                 logging.debug('Config loaded')
@@ -405,8 +405,14 @@ class MainWorker(QObject):
         self.app = app
 
         # Setup command line arguments
+        
+        
         parser = argparse.ArgumentParser(description='Pythonic background daemon')
+        # Debug output switch 
         parser.add_argument('-Debug', action='store_true', help='Interactive shell intercace, Unix only')
+        # Log level
+        #parser.add_argument('-lvl', type=int, choices=range(0, 2)) # exception
+
         self.args = parser.parse_args()
 
 
@@ -422,8 +428,6 @@ class MainWorker(QObject):
         # Instantiate WSGI Server
         self.wsgi_server = WSGI_Server(self)
         
-
-
         # Instantiate Execution Operator
         self.operator = Operator()
         self.operator.command.connect(self.forwardCmd)
@@ -444,6 +448,8 @@ class MainWorker(QObject):
             self.stdinReader = stdinReader(self.operator.processHandles.items())
             self.stdinReader.quit_app.connect(self.exitApp)
 
+        
+
 
         # Instantiate ToolboxLoader
         self.toolbox_loader = ToolboxLoader()
@@ -461,7 +467,7 @@ class MainWorker(QObject):
 
         # Instantiate ConfigLoader
         self.config_loader = ConfigLoader()
-        self.config_loader.tooldataLoaded.connect(self.forwardCmd)
+        self.config_loader.configLoaded.connect(self.configLoaded)
 
         # Instantiate System Command Executor
         self.exec_sys_cmd = ExecSysCMD()
@@ -521,15 +527,14 @@ class MainWorker(QObject):
 
         logging.debug('MainWorker::__init__() called')
 
+
+        
     def exitApp(self):
         print('# Stopping all processes....')
         self.kill_all.emit()
         time.sleep(3) # wait for 1 seconds to kill all processes
         self.app.quit()
         os.kill(self.app.applicationPid(), signal.SIGTERM) # kill all related threads
-
-    
-
     
     def update_logfile(self):
 
@@ -554,8 +559,11 @@ class MainWorker(QObject):
             reset_screen_dbg()    
             self.stdinReader.start() # call run() method in separate thread
 
+        self.config = self.config_loader.loadConfigSync()
+
+
         self.wsgi_server.start()
-        self.operator.start()
+        self.operator.begin(self.config)
     
 
     def loadTools(self):
@@ -578,6 +586,17 @@ class MainWorker(QObject):
         logging.debug('MainWorker::loadConfig() called')
         self.config_loader.start()
            
+    def configLoaded(self, config):
+
+        self.config = config
+
+        address = { 'target' : 'MainWindow'}
+        
+        cmd = { 'cmd'       : 'CurrentConfig',
+                'address'   : address,
+                'data'      : config }
+
+        self.frontendCtrl.emit(cmd)
 
     def checkArgs(self, args):
 
