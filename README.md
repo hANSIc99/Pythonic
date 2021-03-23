@@ -29,7 +29,7 @@ Pythonic is available as container image which can be run by [Podman](https://po
 
 `podman run -d -p 7000:7000 -p 8000:8000 pythonic`
 
-`docker run -d -p 7000:7000 -p 8000:8000 pythonic`
+`docker run -d -p 7000:7000 -p 8000:8000 pythonicautomation/pythonic`
 
 ## Native Installation
 
