@@ -5,7 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #TARGET="PythonicWeb_1.1"
 CONFIG += c++11
-CONFIG += wasm
+#CONFIG += wasm
 
 wasm {
 DEFINES += WASM

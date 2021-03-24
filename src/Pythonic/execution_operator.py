@@ -37,17 +37,23 @@ class ProcessHandler(QThread):
         self.inputData  = inputdata
         self.identifier = identifier
         self.instance   = None
-        self.element['Config']['Identifier'] = self.identifier
         self.pid        = None
         self.queue      = None 
+        self.element['Config']['Identifier'] = self.identifier
 
-
-        self.finished.connect(self.done)
 
     def run(self):
         #logging.debug('ProcessHandler::run() -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+
+        def finished():
+            self.removeSelf.emit(self.element['Id'], self.identifier)
+            #self.deleteLater()
+
+        self.finished.connect(finished)  
+
+
+
         bMP = self.element['Config']['GeneralConfig']['MP']
-        
 
         if bMP:
             self.return_queue = mp.Queue()
@@ -146,7 +152,7 @@ class ProcessHandler(QThread):
         self.cmd_queue.put(ProcCMD(True))
 
     def done(self):
-        #logging.debug('ProcessHandler::done() removing Self - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        logging.info('ProcessHandler::done() removing Self - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         self.removeSelf.emit(self.element['Id'], self.identifier)
     
 
@@ -168,16 +174,13 @@ class Operator(QThread):
         self.currentConfig = config
         self.start()
 
-    def run(self):
+    def run(self): # run is called only once on startup
 
         startElements = [x for x in self.currentConfig if not x['Socket'] and x['Config']['GeneralConfig']['Autostart']]
 
         for startElement in startElements:
-            logging.info("START ELEMENT " + startElement['ObjectName'])
-
-        # keep a separate thread open
-        while True:
-            time.sleep(1)
+            logging.info("Autostart " + startElement['ObjectName'])
+            self.createProcHandle(startElement)
 
     def startExec(self, id, config):
         #logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
@@ -319,7 +322,7 @@ class Operator(QThread):
 
     def operationDone(self, id, record, identifier):
 
-        #logging.debug('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d} data: {}'.format(id, identifier, record.data))
+        #logging.info('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d} data: {}'.format(id, identifier, record.data))
 
         if isinstance(record, GuiCMD):
             #logging.info(record.text)

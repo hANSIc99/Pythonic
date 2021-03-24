@@ -5,12 +5,6 @@ the RegExp-Parser does not recognize when there are subsequent 'BASICDATA_xy'-pa
 WorkItem: Improve the regular expression
 helper.cpp
 
-2)
-There is maybe a (harmless) memory leak due to not deleted thread handles
-when it comes to loading the 
-
-WorkItem: Check if the sequence can be improved
-configio.py: EditorLoader: cleanupThreadList(...)
 
 3)
 Check if the 'inline'-keyword can be applied to some loops
