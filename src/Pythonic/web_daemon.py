@@ -6,7 +6,7 @@ from pathlib import Path
 from zipfile import ZipFile
 from enum import Enum
 from shutil import copyfile
-from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
+from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt
 from PySide2.QtCore import Signal
 
 try:
@@ -563,15 +563,15 @@ class MainWorker(QObject):
 
 
         self.wsgi_server.start()
-        self.operator.begin(self.config)
+        self.operator.start(self.config)
     
 
-    def loadTools(self):
+    def loadTools(self): # Multithreaded
         
         logging.debug('MainWorker::loadTools() called')
         self.toolbox_loader.start()
 
-    def loadEditorConfig(self, address, typeName):
+    def loadEditorConfig(self, address, typeName): # Multithreaded
         
         logging.debug('MainWorker::loadEditorConfig() called')
         self.editor_loader.startLoad(address, typeName)
@@ -581,8 +581,8 @@ class MainWorker(QObject):
         #logging.debug('MainWorker::forwardCmd() called')
         self.frontendCtrl.emit(cmd)
 
-    def loadConfig(self):
-
+    def loadConfig(self): # Multithreaded
+        
         logging.debug('MainWorker::loadConfig() called')
         self.config_loader.start()
            

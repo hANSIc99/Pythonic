@@ -6,7 +6,7 @@ import multiprocessing as mp
 import threading as mt
 from importlib import reload
 from pathlib import Path
-from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
+from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QRunnable, QThreadPool
 from PySide2.QtCore import Signal
 
     
@@ -155,9 +155,39 @@ class ProcessHandler(QThread):
         logging.info('ProcessHandler::done() removing Self - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         self.removeSelf.emit(self.element['Id'], self.identifier)
     
+# https://www.learnpyqt.com/tutorials/multithreading-pyqt-applications-qthreadpool/
+class OperatorStartAll(QRunnable):
+    
+    createProcHandle = Signal(object) # command
 
+    def __init__(self, config):
+        super().__init__()
+        self.currentConfig = config
 
-class Operator(QThread):
+    def run(self):
+
+        logging.debug('Operator::startAll() called')
+        logging.info('User command: Start All')
+        self.currentConfig = config
+        
+        startElements = [x for x in config if not x['Socket']]
+
+        for startElement in startElements:
+
+            processes = filter(lambda item: item[1].element['Id'] == startElement['Id'], self.processHandles.items())
+            runningProcess = next(processes, None)
+
+            if(runningProcess):
+                logging.debug('Operator::startAll() -Element already running - {} - id: 0x{:08x}'.format(
+                    runningProcess[1].element['ObjectName'], runningProcess[1].element['Id']))
+                return
+            else:
+                logging.debug('Operator::startAll() -Element started - {} - id: 0x{:08x}'.format(
+                   startElement['ObjectName'], startElement['Id']))
+                #self.createProcHandle(startElement)
+                self.createProcHandle.emit(startElement)
+
+class Operator(QObject):
 
     currentConfig   = None
     processHandles  = {}
@@ -165,16 +195,17 @@ class Operator(QThread):
 
     def __init__(self):
         super().__init__()
+        self.threadpool = QThreadPool()
 
-    def begin(self, config):
+        self._startAll  = OperatorStartAll(self.currentConfig) # causes logger to log to stdout
+        self._startAll.createProcHandle.connect(self.createProcHandle) 
+
+    def start(self, config):
 
         # check for autostart elements
-        logging.debug('Operator::begin() called')
+        logging.debug('Operator::start() called')
 
         self.currentConfig = config
-        self.start()
-
-    def run(self): # run is called only once on startup
 
         startElements = [x for x in self.currentConfig if not x['Socket'] and x['Config']['GeneralConfig']['Autostart']]
 
@@ -192,6 +223,7 @@ class Operator(QThread):
         startElement = [x for x in config if x['Id'] == id][0]
 
         self.createProcHandle(startElement)
+
 
     def createProcHandle(self, element):    
         #neue function
@@ -233,6 +265,10 @@ class Operator(QThread):
     def startAll(self, config):
 
         logging.debug('Operator::startAll() called')
+        self.threadpool.start(self._startAll)
+
+        """
+        logging.debug('Operator::startAll() called')
         logging.info('User command: Start All')
         self.currentConfig = config
         
@@ -251,7 +287,7 @@ class Operator(QThread):
                 logging.debug('Operator::startAll() -Element started - {} - id: 0x{:08x}'.format(
                    startElement['ObjectName'], startElement['Id']))
                 self.createProcHandle(startElement)
-
+        """
 
     def killAll(self):
         

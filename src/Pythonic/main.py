@@ -7,9 +7,9 @@ os.environ['PYTHONWARNINGS'] = 'ignore:semaphore_tracker:UserWarning'
 
 
 def run():
-    timer = QTimer()
-    timer.start(500)
-    timer.timeout.connect(lambda : None)
+    #timer = QTimer()
+    #timer.start(500)
+    #timer.timeout.connect(lambda : None)
     
     app = QCoreApplication(sys.argv)
     ex = MainWorker(app)
