@@ -18,6 +18,10 @@ except ImportError:
     from Pythonic.screen import reset_screen, reset_screen_dbg
     from Pythonic.configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 
+from guppy import hpy
+import gc
+h=hpy()
+
 ##############################################
 #                                            #
 #                GLOBAL PATHS                #
@@ -41,7 +45,7 @@ class LogLvl(Enum):
     CRITICAL    = 3
     FATAL       = 4
 
-
+# Replace the websockets with QWebSockets
 @websocket.WebSocketWSGI
 def rcv(ws):
 
@@ -93,6 +97,7 @@ def ctrl(ws):
             logging.debug('PythonicDaemon - CTRL Socket Closed')            
             break;   
         else:
+
             msg = json.loads(m)
             
             logging.debug('PythonicWeb    - Command: {}'.format(msg['cmd']))
@@ -114,8 +119,6 @@ def ctrl(ws):
                 elif logObj['logLvL'] == LogLvl.FATAL.value:
                     logging.critical('PythonicWeb    - {}q'.format(logObj['msg']))
 
-            #elif msg['cmd'] == 'start':
-            #    logging.debug('PythonicWeb    - {}'.format("START"))
 
             elif msg['cmd'] == 'writeConfig':
                 logging.debug('Config loaded')
@@ -124,7 +127,8 @@ def ctrl(ws):
                 # Save config to file
                 ws.environ['mainWorker'].saveConfig.emit(msg['data'])
             elif msg['cmd'] == 'StartExec':
-                elementId = msg['data']        
+                #logging.info(h.heap())
+                elementId = msg['data']      
                 ws.environ['mainWorker'].startExec.emit(elementId, ws.environ['mainWorker'].config)
             elif msg['cmd'] == 'StopExec':
                 elementId = msg['data']
@@ -156,6 +160,9 @@ def ctrl(ws):
             elif msg['cmd'] == 'KillAll' :
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
                 ws.environ['mainWorker'].killAll.emit()
+        
+        del msg
+        del m
              
 @websocket.WebSocketWSGI
 def saveConfig(ws):

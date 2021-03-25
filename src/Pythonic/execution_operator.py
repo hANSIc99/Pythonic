@@ -9,22 +9,33 @@ from pathlib import Path
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QRunnable, QThreadPool, QMutex
 from PySide2.QtCore import Signal
 
-    
+
+
+
+
 try:
     from element_types import Record, ProcCMD, GuiCMD
 except ImportError:    
     from Pythonic.element_types import Record, ProcCMD, GuiCMD
 
+class ProcessHandlerSignal(QObject):
 
+    execComplete    = Signal(int, object, int) 
+    removeSelf      = Signal(int, int) # id, thread-identifier
 
-class ProcessHandler(QThread):
+    def __init__(self, parent=None):
+        super(ProcessHandlerSignal, self).__init__(parent)
+        self.parent = parent
+
+class ProcessHandler(QRunnable):
 
     execComplete  = Signal(object, object, object) # id, data, thread-identifier
     removeSelf    = Signal(object, object) # id, thread-identifier
 
     def __init__(self, element, inputdata, identifier):
         #super().__init__()
-        super(ProcessHandler, self).__init__()
+        super(ProcessHandler, self).__init__(self)
+        #self.parent     = parent
         self.element    = element
         self.inputData  = inputdata
         self.identifier = identifier
@@ -33,18 +44,20 @@ class ProcessHandler(QThread):
         self.queue      = None 
         self.element['Config']['Identifier'] = self.identifier
         #self.finished.connect(self.done)
+        self.signals    = ProcessHandlerSignal()
+        self.setAutoDelete(True)
 
     def run(self):
-        #logging.debug('ProcessHandler::run() -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        logging.debug('ProcessHandler::run() -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
 
-        
+        """
         def finished():
             self.removeSelf.emit(self.element['Id'], self.identifier)
             #self.deleteLater()
-
-        self.finished.connect(finished)  
-        
         """
+        #self.finished.connect(finished)  
+        
+        
 
         bMP = self.element['Config']['GeneralConfig']['MP']
 
@@ -99,9 +112,11 @@ class ProcessHandler(QThread):
 
         """
         recordDone = Record(2, 'Sending value of cnt: x')
-        self.execComplete.emit(self.element['Id'], recordDone, self.identifier)
-        return
+        self.signals.execComplete.emit(self.element['Id'], recordDone, self.identifier)
+        self.signals.removeSelf.emit(self.element['Id'], self.identifier)
 
+        return
+        """
 
 
         while not bMP:
@@ -110,7 +125,7 @@ class ProcessHandler(QThread):
                 # First: Check if there is somethin in the Queue
                 result = self.return_queue.get(block=True, timeout=0.2)
                 # Seconds: Forward the result (is present)
-                self.execComplete.emit(self.element['Id'], result, self.identifier)
+                self.signals.execComplete.emit(self.element['Id'], result, self.identifier)
             except queue.Empty:
                 #logging.debug('return_queue empty')
                 pass
@@ -132,7 +147,7 @@ class ProcessHandler(QThread):
 
             try:
                 result = self.return_queue.get(block=True, timeout=0.2)
-                self.execComplete.emit(self.element['Id'], result, self.identifier)
+                self.signals.execComplete.emit(self.element['Id'], result, self.identifier)
 
                 #logging.debug('ProcessHandler::run() - Multiprocessing: execution completed - id: 0x{:08x}, ident: {:04d}, pid: {}'.format(
                 #    self.element['Id'], self.identifier, self.p_0.pid))
@@ -145,7 +160,7 @@ class ProcessHandler(QThread):
             
 
 
-        #logging.debug('ProcessHandler::run() - PROCESSING DONE - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        logging.debug('ProcessHandler::run() - PROCESSING DONE - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         
     def stop(self):
         logging.debug('ProcessHandler::stop() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
@@ -200,14 +215,19 @@ class WorkerSignalOpDone(QObject):
     createProcHandle    = Signal(object)
     highlightConnection = Signal(int, int, int) 
 
-    def __init__(self):
-        super(WorkerSignalOpDone, self).__init__()
+    def __init__(self, parent=None):
+        super(WorkerSignalOpDone, self).__init__(parent)
+        self.parent = parent
 
 class OperatorElementOpDone(QRunnable):
 
     def __init__(self, config, id, record, identifier):
         super(OperatorElementOpDone, self).__init__()
-        self.signals = WorkerSignalOpDone() 
+        #self.parent = parent
+
+
+
+        self.signals = WorkerSignalOpDone(self) 
 
         self.currentConfig  = config
         self.id             = id
@@ -301,6 +321,9 @@ class Operator(QObject):
     def startExec(self, id, config):
         #logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
         ## create processor and forward config and start filename
+
+
+
         self.currentConfig = config
         # https://stackoverflow.com/questions/34609935/passing-a-function-with-two-arguments-to-filter-in-python
 
@@ -314,22 +337,23 @@ class Operator(QObject):
 
         # register elements für den fall das alles gestoppt werden muss
         inputData = None
-
+        
         # creating a random identifier
         identifier = random.randint(0, 9999)
-        self.runElement = ProcessHandler(element,inputData, identifier)
-        self.runElement.execComplete.connect(self.operationDone)
-        self.runElement.removeSelf.connect(self.removeOperatorThread)
+        runElement = ProcessHandler(element, inputData, identifier)
+        runElement.signals.execComplete.connect(self.operationDone)
+        #runElement.signals.removeSelf.connect(self.removeOperatorThread)
+        #runElement.removeSelf.connect(self.removeOperatorThread)
 
-        
-        if element["HighlightState"]:
+        """
+        if element["HighlightState"]: ## MEMORY LEAK
             self.updateStatus(element, True)
+        """
+        self.threadpool.start(runElement)
+        #runElement.start()
         
-
-        self.runElement.start()
-
-        self.processHandles[identifier] = self.runElement
-        #logging.debug('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
+        #self.processHandles[identifier] = runElement
+        #logging.info('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
     
 
     def stopExec(self, id):
@@ -385,7 +409,7 @@ class Operator(QObject):
         # id
         # target = "Element"
         # cmd = UpdateElementStatus
-        logging.debug('Operator::updateStatus() called - {} - id: 0x{:08x}'.format(status, element['Id']))
+        #logging.debug('Operator::updateStatus() called - {} - id: 0x{:08x}'.format(status, element['Id']))
         address = {
             'target'    : 'Element',
             'area'      : element['AreaNo'],
@@ -398,7 +422,7 @@ class Operator(QObject):
             'data'      : status
             }
 
-        self.command.emit(cmd)
+        #self.command.emit(cmd)
 
     def highlightConnection(self, parentId, childId, wrkArea):
 
@@ -428,7 +452,7 @@ class Operator(QObject):
     def operationDone(self, id, record, identifier):
 
         #logging.info('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-
+        
         if isinstance(record, GuiCMD):
             #logging.info(record.text)
             address = {
@@ -503,16 +527,21 @@ class Operator(QObject):
         
 
     def removeOperatorThread(self, id, identifier):
-
+        """
         logging.debug('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
         procHandle = self.processHandles[identifier]
+        """
         
+        startElement = [x for x in self.currentConfig if x['Id'] == id][0]
+        self.updateStatus(startElement, False)
+        """
         if procHandle.element["HighlightState"]:
             self.updateStatus(procHandle.element, False)
-        
+        """
+        """
         procHandle.deleteLater()
         del self.processHandles[identifier]
-
+        """
 
 
 
