@@ -6,7 +6,7 @@ import multiprocessing as mp
 import threading as mt
 from importlib import reload
 from pathlib import Path
-from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QRunnable, QThreadPool
+from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QRunnable, QThreadPool, QMutex
 from PySide2.QtCore import Signal
 
     
@@ -15,15 +15,6 @@ try:
 except ImportError:    
     from Pythonic.element_types import Record, ProcCMD, GuiCMD
 
-"""
-def target_0(instance, record, feed_pipe):
-
-    element = instance(*record)
-    ret = element.execute_ex(record)
-    feed_pipe.send(ret)
-
-    ## return element id und data
-"""
 
 
 class ProcessHandler(QThread):
@@ -32,7 +23,8 @@ class ProcessHandler(QThread):
     removeSelf    = Signal(object, object) # id, thread-identifier
 
     def __init__(self, element, inputdata, identifier):
-        super().__init__()
+        #super().__init__()
+        super(ProcessHandler, self).__init__()
         self.element    = element
         self.inputData  = inputdata
         self.identifier = identifier
@@ -40,18 +32,19 @@ class ProcessHandler(QThread):
         self.pid        = None
         self.queue      = None 
         self.element['Config']['Identifier'] = self.identifier
-
+        #self.finished.connect(self.done)
 
     def run(self):
         #logging.debug('ProcessHandler::run() -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
 
+        
         def finished():
             self.removeSelf.emit(self.element['Id'], self.identifier)
             #self.deleteLater()
 
         self.finished.connect(finished)  
-
-
+        
+        """
 
         bMP = self.element['Config']['GeneralConfig']['MP']
 
@@ -103,7 +96,14 @@ class ProcessHandler(QThread):
 
         # Check if it is an intemediate result (result.bComplete)
         # or if the execution was stopped by the user (self.element.bStop)
-        
+
+        """
+        recordDone = Record(2, 'Sending value of cnt: x')
+        self.execComplete.emit(self.element['Id'], recordDone, self.identifier)
+        return
+
+
+
         while not bMP:
 
             try:
@@ -152,25 +152,32 @@ class ProcessHandler(QThread):
         self.cmd_queue.put(ProcCMD(True))
 
     def done(self):
-        logging.info('ProcessHandler::done() removing Self - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        #logging.info('ProcessHandler::done() removing Self - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         self.removeSelf.emit(self.element['Id'], self.identifier)
     
+
+
+# https://forum.qt.io/topic/112731/super-in-python/2
 # https://www.learnpyqt.com/tutorials/multithreading-pyqt-applications-qthreadpool/
-class OperatorStartAll(QRunnable):
+
+
+
+class OperatorStartAll(QThread):
     
     createProcHandle = Signal(object) # command
 
-    def __init__(self, config):
-        super().__init__()
-        self.currentConfig = config
+    def __init__(self):
+        super(OperatorStartAll, self).__init__()
+        self.currentConfig  = None
+        self.processHandles = {}
+        
+        
 
     def run(self):
 
-        logging.debug('Operator::startAll() called')
-        logging.info('User command: Start All')
-        self.currentConfig = config
-        
-        startElements = [x for x in config if not x['Socket']]
+        logging.debug('OperatorStartAll::startAll() called')
+            
+        startElements = [x for x in self.currentConfig if not x['Socket']]
 
         for startElement in startElements:
 
@@ -184,8 +191,83 @@ class OperatorStartAll(QRunnable):
             else:
                 logging.debug('Operator::startAll() -Element started - {} - id: 0x{:08x}'.format(
                    startElement['ObjectName'], startElement['Id']))
-                #self.createProcHandle(startElement)
+                
                 self.createProcHandle.emit(startElement)
+        
+class WorkerSignalOpDone(QObject):
+
+    command             = Signal(object)
+    createProcHandle    = Signal(object)
+    highlightConnection = Signal(int, int, int) 
+
+    def __init__(self):
+        super(WorkerSignalOpDone, self).__init__()
+
+class OperatorElementOpDone(QRunnable):
+
+    def __init__(self, config, id, record, identifier):
+        super(OperatorElementOpDone, self).__init__()
+        self.signals = WorkerSignalOpDone() 
+
+        self.currentConfig  = config
+        self.id             = id
+        self.record         = record
+        self.identifier     = identifier
+
+        self.setAutoDelete(True)
+
+    def run(self):
+
+        logging.debug("OperatorElementOpDone::run() called")
+
+        cfgElement = [x for x in self.currentConfig if x['Id'] == self.id][0]
+
+        if cfgElement['Config']['GeneralConfig']['Logging'] and self.record.message:
+            logging.info('{} - {}'.format(cfgElement['ObjectName'], self.record.message))
+
+            data = {
+                'Id'        : cfgElement['Id'],
+                'ObjectName': cfgElement['ObjectName'],
+                'Message'   : self.record.message
+            }
+            address = {
+                'target'    : 'MainWindow',                        
+            }
+            cmd = { 
+                'cmd'       : 'ElementMessage',
+                'address'   : address,
+                'data'      : data
+            }
+            self.signals.command.emit(cmd)
+
+
+        if cfgElement['Config']['GeneralConfig']['Debug'] :
+
+            data = {
+                'Id'        : cfgElement['Id'],
+                'AreaNo'    : cfgElement['AreaNo'],
+                'ObjectName': cfgElement['ObjectName'],
+                'Output'    : str(self.record.data) 
+            }
+            address = {
+                'target'    : 'MainWindow',                        
+            }
+            cmd = { 
+                'cmd'       : 'DebugOutput',
+                'address'   : address,
+                'data'      : data
+            }
+            self.signals.command.emit(cmd)
+
+
+        # return if the element has no childs
+        if not cfgElement['Childs']:
+            return
+        
+        for childId in cfgElement['Childs']:
+            childElement = [x for x in self.currentConfig if x['Id'] == childId][0]
+            self.signals.createProcHandle.emit(childElement)
+            self.signals.highlightConnection.emit(self.id, childId, childElement['AreaNo'])
 
 class Operator(QObject):
 
@@ -194,16 +276,19 @@ class Operator(QObject):
     command         = Signal(object) # command
 
     def __init__(self):
-        super().__init__()
-        self.threadpool = QThreadPool()
+        super(Operator, self).__init__()
 
-        self._startAll  = OperatorStartAll(self.currentConfig) # causes logger to log to stdout
+        self.threadpool = QThreadPool.globalInstance()
+        self._startAll  = OperatorStartAll()
         self._startAll.createProcHandle.connect(self.createProcHandle) 
 
     def start(self, config):
 
         # check for autostart elements
         logging.debug('Operator::start() called')
+
+        if not config: # return here when there is no config file
+            return
 
         self.currentConfig = config
 
@@ -224,7 +309,6 @@ class Operator(QObject):
 
         self.createProcHandle(startElement)
 
-
     def createProcHandle(self, element):    
         #neue function
 
@@ -233,18 +317,18 @@ class Operator(QObject):
 
         # creating a random identifier
         identifier = random.randint(0, 9999)
-        runElement = ProcessHandler(element,inputData, identifier)
-        runElement.execComplete.connect(self.operationDone)
-        runElement.removeSelf.connect(self.removeOperatorThread)
+        self.runElement = ProcessHandler(element,inputData, identifier)
+        self.runElement.execComplete.connect(self.operationDone)
+        self.runElement.removeSelf.connect(self.removeOperatorThread)
 
         
         if element["HighlightState"]:
             self.updateStatus(element, True)
         
 
-        runElement.start()
+        self.runElement.start()
 
-        self.processHandles[identifier] = runElement
+        self.processHandles[identifier] = self.runElement
         #logging.debug('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
     
 
@@ -264,30 +348,12 @@ class Operator(QObject):
 
     def startAll(self, config):
 
-        logging.debug('Operator::startAll() called')
-        self.threadpool.start(self._startAll)
-
-        """
-        logging.debug('Operator::startAll() called')
         logging.info('User command: Start All')
-        self.currentConfig = config
-        
-        startElements = [x for x in config if not x['Socket']]
+        self.currentConfig              = config
+        self._startAll.currentConfig    = config
+        self._startAll.processHandles   = self.processHandles
 
-        for startElement in startElements:
-
-            processes = filter(lambda item: item[1].element['Id'] == startElement['Id'], self.processHandles.items())
-            runningProcess = next(processes, None)
-
-            if(runningProcess):
-                logging.debug('Operator::startAll() -Element already running - {} - id: 0x{:08x}'.format(
-                    runningProcess[1].element['ObjectName'], runningProcess[1].element['Id']))
-                return
-            else:
-                logging.debug('Operator::startAll() -Element started - {} - id: 0x{:08x}'.format(
-                   startElement['ObjectName'], startElement['Id']))
-                self.createProcHandle(startElement)
-        """
+        self._startAll.start()
 
     def killAll(self):
         
@@ -302,7 +368,6 @@ class Operator(QObject):
             os.kill(processHandle.pid, signal.SIGTERM)
             # removeOperatorThread is called in run() function of ProcessHandler
         
-
     def getElementStates(self):
         
         logging.debug('Operator::getElementStates() called')
@@ -356,9 +421,13 @@ class Operator(QObject):
 
         self.command.emit(cmd)
 
+    def emitCommand(self, command):
+
+        self.command.emit(command)
+
     def operationDone(self, id, record, identifier):
 
-        #logging.info('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d} data: {}'.format(id, identifier, record.data))
+        #logging.info('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
 
         if isinstance(record, GuiCMD):
             #logging.info(record.text)
@@ -373,8 +442,16 @@ class Operator(QObject):
             }
             self.command.emit(cmd)
             return
+        """
+        operationDoneRunnable = OperatorElementOpDone(self.currentConfig, id, record, identifier)
+        operationDoneRunnable.signals.command.connect(self.emitCommand)
+        operationDoneRunnable.signals.createProcHandle.connect(self.createProcHandle)
+        operationDoneRunnable.signals.highlightConnection.connect(self.highlightConnection)
 
+        self.threadpool.start(operationDoneRunnable)
+        """
 
+        
         cfgElement = [x for x in self.currentConfig if x['Id'] == id][0]
 
         if cfgElement['Config']['GeneralConfig']['Logging'] and record.message:
@@ -394,7 +471,7 @@ class Operator(QObject):
                 'data'      : data
             }
             self.command.emit(cmd)
-
+        
 
         if cfgElement['Config']['GeneralConfig']['Debug'] :
 
@@ -423,6 +500,7 @@ class Operator(QObject):
             childElement = [x for x in self.currentConfig if x['Id'] == childId][0]
             self.createProcHandle(childElement)
             self.highlightConnection(parentId=id, childId=childId, wrkArea=childElement['AreaNo'])
+        
 
     def removeOperatorThread(self, id, identifier):
 
