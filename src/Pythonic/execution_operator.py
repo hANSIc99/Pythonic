@@ -314,9 +314,11 @@ class Operator(QObject):
     def __init__(self):
         super(Operator, self).__init__()
 
-        self.threadpool = QThreadPool.globalInstance()
-        self._startAll  = OperatorStartAll()
+        self.threadpool         = QThreadPool.globalInstance()
+        self.procHandleMutex    = QMutex()
+        self._startAll          = OperatorStartAll()
         self._startAll.createProcHandle.connect(self.createProcHandle) 
+        
 
     def start(self, config):
 
@@ -356,7 +358,9 @@ class Operator(QObject):
 
     def addHandle(self, identifier, handle):
         
+        self.procHandleMutex.lock()
         self.processHandles[identifier] = handle
+        self.procHandleMutex.unlock()
 
     def stopExec(self, id):
         logging.debug('Operator::stopExec() called - id: 0x{:08x}'.format(id))
@@ -479,8 +483,10 @@ class Operator(QObject):
     def removeOperatorThread(self, id, identifier):
         
         #logging.info('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+        self.procHandleMutex.lock()
         procHandle = self.processHandles[identifier]
-        
+        del self.processHandles[identifier]
+        self.procHandleMutex.unlock()
         
         #startElement = [x for x in self.currentConfig if x['Id'] == id][0]
         #self.updateStatus(startElement, False)
@@ -488,7 +494,7 @@ class Operator(QObject):
         if procHandle.element["HighlightState"]:
             self.updateStatus(procHandle.element, False)
         
-        del self.processHandles[identifier]
+        
 
 
 
