@@ -138,6 +138,7 @@ class ProcessHandler(QRunnable):
                 break
             
         self.signals.removeSelf.emit(self.element['Id'], self.identifier)
+        QCoreApplication.processEvents()
         self.signals.deleteLater()
 
         #del self.signals
@@ -176,7 +177,8 @@ class OperatorStartAll(QThread):
         startElements = [x for x in self.currentConfig if not x['Socket']]
 
         for startElement in startElements:
-
+            
+            
             processes = filter(lambda item: item[1].element['Id'] == startElement['Id'], self.processHandles.items())
             runningProcess = next(processes, None)
 
@@ -292,16 +294,19 @@ class OperatorCreateProcHandle(QRunnable):
 
         threadpool = QThreadPool.globalInstance()
 
-        identifier = random.randint(0, 9999)
+        identifier = random.randint(0, 32767)
         runElement = ProcessHandler(self.element, self.inputData, identifier)
         runElement.signals.execComplete.connect(self.operator.operationDone)
         runElement.signals.removeSelf.connect(self.operator.removeOperatorThread)
 
         if self.element["HighlightState"]: 
             self.signals.updateStatus.emit(self.element, True)
-
+        
+        self.signals.addHandle.emit(identifier, runElement) # AENDERUNG!!!!
         threadpool.start(runElement)
-        self.signals.addHandle.emit(identifier, runElement)
+        
+        logging.info('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
+        #QCoreApplication.processEvents()
         self.signals.deleteLater()
 
 
@@ -364,17 +369,21 @@ class Operator(QObject):
 
     def stopExec(self, id):
         logging.debug('Operator::stopExec() called - id: 0x{:08x}'.format(id))
-        
+        # TODO MULTUTHREADING
+        self.procHandleMutex.lock()
         for threadIdentifier, processHandle in self.processHandles.items():
             if processHandle.element['Id'] == id:
                 processHandle.stop()
+        self.procHandleMutex.unlock()
 
     def stopAll(self):
 
         logging.debug('Operator::stopAll() called')
         logging.info('User command: Stop All')
+        self.procHandleMutex.lock()
         for threadIdentifier, processHandle in self.processHandles.items():
             processHandle.stop()
+        self.procHandleMutex.unlock()
 
     def startAll(self, config):
 
@@ -391,9 +400,9 @@ class Operator(QObject):
         logging.info('User command: Kill All Processes')   
         # Separate dict must be created because call to removerOperatorThreads
         # modifies self.processHandles
-
+        self.procHandleMutex.lock()
         processes = dict(filter(lambda item: item[1].pid, self.processHandles.items())) 
-        
+        self.procHandleMutex.unlock()
         for threadIdentifier, processHandle in processes.items():
             os.kill(processHandle.pid, signal.SIGTERM)
             # removeOperatorThread is called in run() function of ProcessHandler
@@ -401,11 +410,11 @@ class Operator(QObject):
     def getElementStates(self):
         
         logging.debug('Operator::getElementStates() called')
-
+        self.procHandleMutex.lock()
         for threadIdentifier, processHandle in self.processHandles.items():
             #logging.debug('running elements: 0x{:08x}'.format(processHandle.element['Id']))
             self.updateStatus(processHandle.element, True)
-
+        self.procHandleMutex.unlock()
         #if procHandle.element["HighlightState"]:
         #    self.updateStatus(procHandle.element, False)
 
@@ -477,14 +486,21 @@ class Operator(QObject):
         operationDoneRunnable.signals.command.connect(self.emitCommand)
         operationDoneRunnable.signals.createProcHandle.connect(self.createProcHandle)
         operationDoneRunnable.signals.highlightConnection.connect(self.highlightConnection)
-
+        QCoreApplication.processEvents()
         self.threadpool.start(operationDoneRunnable)
         
     def removeOperatorThread(self, id, identifier):
         
-        #logging.info('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+        logging.info('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+        QCoreApplication.processEvents()
         self.procHandleMutex.lock()
-        procHandle = self.processHandles[identifier]
+        try:
+            procHandle = self.processHandles[identifier]
+            
+        except Exception as e:
+            x = 3
+            pass
+        
         del self.processHandles[identifier]
         self.procHandleMutex.unlock()
         
