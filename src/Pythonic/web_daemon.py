@@ -18,9 +18,9 @@ except ImportError:
     from Pythonic.screen import reset_screen, reset_screen_dbg
     from Pythonic.configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 
-from guppy import hpy
-import gc
-h=hpy()
+#from guppy import hpy
+#import gc
+#h=hpy()
 
 ##############################################
 #                                            #

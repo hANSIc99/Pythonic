@@ -429,7 +429,9 @@ void MainWindow::reconnect()
         m_wsRcv.open(QUrl(QStringLiteral("ws://localhost:7000/rcv")));
 
     }
-    queryElementStates();
+    //queryElementStates();
+    DelayedInitCommand<MainWindow> elementRunningStates = { &MainWindow::queryElementStates, INIT_ELEMENTSTATES_DELAY};
+    m_delayedInitializations.append(elementRunningStates);
 }
 
 
