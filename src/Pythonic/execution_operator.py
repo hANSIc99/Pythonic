@@ -15,20 +15,13 @@ try:
 except ImportError:    
     from Pythonic.element_types import Record, ProcCMD, GuiCMD
 
-class ProcessHandlerSignal(QObject):
-
-    execComplete    = Signal(int, object, int) 
-    removeSelf      = Signal(int, int) # id, thread-identifier
-
-    def __init__(self):
-        super(ProcessHandlerSignal, self).__init__()
 
 class ProcessHandler(QRunnable):
 
     execComplete  = Signal(object, object, object) # id, data, thread-identifier
     removeSelf    = Signal(object, object) # id, thread-identifier
 
-    def __init__(self, element, inputdata, identifier):
+    def __init__(self, element, inputdata, identifier, operator):
         super(ProcessHandler, self).__init__(self)
 
         self.element    = element
@@ -37,9 +30,9 @@ class ProcessHandler(QRunnable):
         self.instance   = None
         self.pid        = None
         self.queue      = None 
+        self.operator   = operator
         self.element['Config']['Identifier'] = self.identifier
-        self.signals    = ProcessHandlerSignal()
-        self.setAutoDelete(True)
+
 
     def run(self):
         logging.debug('ProcessHandler::run() -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
@@ -104,7 +97,7 @@ class ProcessHandler(QRunnable):
                 # First: Check if there is somethin in the Queue
                 result = self.return_queue.get(block=True, timeout=0.2)
                 # Seconds: Forward the result (is present)
-                self.signals.execComplete.emit(self.element['Id'], result, self.identifier)
+                self.operator.operationDone(self.element['Id'], result, self.identifier)
             except queue.Empty:
                 #logging.debug('return_queue empty')
                 pass
@@ -126,8 +119,8 @@ class ProcessHandler(QRunnable):
 
             try:
                 result = self.return_queue.get(block=True, timeout=0.2)
-                self.signals.execComplete.emit(self.element['Id'], result, self.identifier)
 
+                self.operator.operationDone(self.element['Id'], result, self.identifier)
                 #logging.debug('ProcessHandler::run() - Multiprocessing: execution completed - id: 0x{:08x}, ident: {:04d}, pid: {}'.format(
                 #    self.element['Id'], self.identifier, self.p_0.pid))
             except queue.Empty:
@@ -137,19 +130,7 @@ class ProcessHandler(QRunnable):
             if not self.p_0.is_alive():
                 break
             
-        self.signals.removeSelf.emit(self.element['Id'], self.identifier)
-        QCoreApplication.processEvents()
-        self.signals.deleteLater()
-
-        #del self.signals
-        #del self.element  
-        #del self.inputData
-        #del self.identifier
-        #del self.instance
-        #del self.pid
-        #del self.queue
-    
-        #logging.info('ProcessHandler::run() - PROCESSING DONE - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        self.operator.removeOperatorThread(self.element['Id'], self.identifier)
         
     def stop(self):
         logging.debug('ProcessHandler::stop() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
@@ -161,20 +142,19 @@ class ProcessHandler(QRunnable):
 
 
 
-class OperatorStartAll(QThread):
+class OperatorStartAll(QRunnable): # AENDERN
     
-    createProcHandle = Signal(object) # command
 
-    def __init__(self):
+    def __init__(self, operator):
         super(OperatorStartAll, self).__init__()
-        self.currentConfig  = None
-        self.processHandles = {}
+        self.operator       = operator
+        self.setAutoDelete(False)
         
     def run(self):
 
         logging.debug('OperatorStartAll::startAll() called')
             
-        startElements = [x for x in self.currentConfig if not x['Socket']]
+        startElements = [x for x in self.operator.currentConfig if not x['Socket']]
 
         for startElement in startElements:
             
@@ -191,30 +171,21 @@ class OperatorStartAll(QThread):
                    startElement['ObjectName'], startElement['Id']))
                 
                 self.createProcHandle.emit(startElement)
-        
-class WorkerSignalOpDone(QObject):
+                self.operator.createProcHandle(startElement)
 
-    command             = Signal(object)
-    createProcHandle    = Signal(object)
-    highlightConnection = Signal(int, int, int) 
-
-    def __init__(self):
-        super(WorkerSignalOpDone, self).__init__()
 
 class OperatorElementOpDone(QRunnable):
 
-    def __init__(self, config, id, record, identifier):
+    def __init__(self, config, id, record, identifier, operator):
         super(OperatorElementOpDone, self).__init__()
-        #self.parent = parent
 
-        self.signals = WorkerSignalOpDone() 
 
         self.currentConfig  = config
         self.id             = id
         self.record         = record
         self.identifier     = identifier
+        self.operator       = operator
 
-        self.setAutoDelete(True)
 
     def run(self):
 
@@ -238,7 +209,8 @@ class OperatorElementOpDone(QRunnable):
                 'address'   : address,
                 'data'      : data
             }
-            self.signals.command.emit(cmd)
+
+            self.operator.emitCommand(cmd)
 
 
         if cfgElement['Config']['GeneralConfig']['Debug'] :
@@ -257,28 +229,17 @@ class OperatorElementOpDone(QRunnable):
                 'address'   : address,
                 'data'      : data
             }
-            self.signals.command.emit(cmd)
 
+            self.operator.emitCommand(cmd)
 
         # return if the element has no childs
         if not cfgElement['Childs']:
-            self.signals.deleteLater()
             return
         
         for childId in cfgElement['Childs']:
             childElement = [x for x in self.currentConfig if x['Id'] == childId][0]
-            self.signals.createProcHandle.emit(childElement)
-            self.signals.highlightConnection.emit(self.id, childId, childElement['AreaNo'])
-
-        self.signals.deleteLater()
-
-class OperatorCreatProcHandleSignals(QObject):
-    
-    updateStatus    = Signal(object, bool)
-    addHandle       = Signal(int, object)
-
-    def __init__(self):
-        super(OperatorCreatProcHandleSignals, self).__init__()
+            self.operator.createProcHandle(childElement)
+            self.operator.highlightConnection(self.id, childId, childElement['AreaNo'])
 
 
 class OperatorCreateProcHandle(QRunnable):
@@ -288,26 +249,22 @@ class OperatorCreateProcHandle(QRunnable):
         self.element    = element
         self.inputData  = inputData
         self.operator   = operator
-        self.signals    = OperatorCreatProcHandleSignals()
 
     def run(self):
 
-        threadpool = QThreadPool.globalInstance()
 
-        identifier = random.randint(0, 32767)
-        runElement = ProcessHandler(self.element, self.inputData, identifier)
-        runElement.signals.execComplete.connect(self.operator.operationDone)
-        runElement.signals.removeSelf.connect(self.operator.removeOperatorThread)
+        identifier = self.operator.getIdent()
+        runElement = ProcessHandler(self.element, self.inputData, identifier, self.operator)
+        #runElement.signals.execComplete.connect(self.operator.operationDone)
+        #runElement.signals.removeSelf.connect(self.operator.removeOperatorThread)
 
         if self.element["HighlightState"]: 
-            self.signals.updateStatus.emit(self.element, True)
+            self.operator.updateStatus(self.element, True)
         
-        self.signals.addHandle.emit(identifier, runElement) # AENDERUNG!!!!
-        threadpool.start(runElement)
+        self.operator.addHandle(identifier, runElement)
+        self.operator.threadpool.start(runElement)
         
         logging.info('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
-        #QCoreApplication.processEvents()
-        self.signals.deleteLater()
 
 
 class Operator(QObject):
@@ -321,9 +278,14 @@ class Operator(QObject):
 
         self.threadpool         = QThreadPool.globalInstance()
         self.procHandleMutex    = QMutex()
-        self._startAll          = OperatorStartAll()
-        self._startAll.createProcHandle.connect(self.createProcHandle) 
-        
+
+        self._startAll          = OperatorStartAll(self)
+
+        self.identGenMutex      = QMutex()
+        self.n_ident            = 0
+
+        self.updateStateMutex   = QMutex()
+        self.operationDoneMutex = QMutex()
 
     def start(self, config):
 
@@ -341,6 +303,17 @@ class Operator(QObject):
             logging.info("Autostart " + startElement['ObjectName'])
             self.createProcHandle(startElement)
 
+    def getIdent(self):
+
+        self.identGenMutex.lock()
+        self.n_ident += 1
+
+        if not self.n_ident & 0x7fff:
+            self.n_ident = 0
+        self.identGenMutex.unlock()
+        return self.n_ident
+
+
     def startExec(self, id, config):
         #logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
         ## create processor and forward config and start filename
@@ -357,8 +330,8 @@ class Operator(QObject):
         #neue function
         procHandle = OperatorCreateProcHandle(element, inputData, self)
 
-        procHandle.signals.updateStatus.connect(self.updateStatus)
-        procHandle.signals.addHandle.connect(self.addHandle)
+        #procHandle.signals.updateStatus.connect(self.updateStatus)
+        #procHandle.signals.addHandle.connect(self.addHandle)
         self.threadpool.start(procHandle)    
 
     def addHandle(self, identifier, handle):
@@ -389,10 +362,7 @@ class Operator(QObject):
 
         logging.info('User command: Start All')
         self.currentConfig              = config
-        self._startAll.currentConfig    = config
-        self._startAll.processHandles   = self.processHandles
-
-        self._startAll.start()
+        self.threadpool.start(self._startAll)
 
     def killAll(self):
         
@@ -425,6 +395,7 @@ class Operator(QObject):
         # target = "Element"
         # cmd = UpdateElementStatus
         #logging.debug('Operator::updateStatus() called - {} - id: 0x{:08x}'.format(status, element['Id']))
+        self.updateStateMutex.lock()
         address = {
             'target'    : 'Element',
             'area'      : element['AreaNo'],
@@ -438,6 +409,7 @@ class Operator(QObject):
             }
 
         self.command.emit(cmd)
+        self.updateStateMutex.unlock()
 
     def highlightConnection(self, parentId, childId, wrkArea):
 
@@ -467,7 +439,7 @@ class Operator(QObject):
     def operationDone(self, id, record, identifier):
 
         #logging.info('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-        
+        #self.operationDoneMutex.lock()
         if isinstance(record, GuiCMD):
             #logging.info(record.text)
             address = {
@@ -480,35 +452,26 @@ class Operator(QObject):
                 'data'      : record.text
             }
             self.command.emit(cmd)
+            self.operationDoneMutex.unlock()
             return
         
-        operationDoneRunnable = OperatorElementOpDone(self.currentConfig, id, record, identifier)
-        operationDoneRunnable.signals.command.connect(self.emitCommand)
-        operationDoneRunnable.signals.createProcHandle.connect(self.createProcHandle)
-        operationDoneRunnable.signals.highlightConnection.connect(self.highlightConnection)
-        QCoreApplication.processEvents()
+        operationDoneRunnable = OperatorElementOpDone(self.currentConfig, id, record, identifier, self)
+
         self.threadpool.start(operationDoneRunnable)
+        #self.operationDoneMutex.unlock()
         
     def removeOperatorThread(self, id, identifier):
         
         logging.info('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-        QCoreApplication.processEvents()
+
         self.procHandleMutex.lock()
-        try:
-            procHandle = self.processHandles[identifier]
-            
-        except Exception as e:
-            x = 3
-            pass
-        
-        del self.processHandles[identifier]
-        self.procHandleMutex.unlock()
-        
-        #startElement = [x for x in self.currentConfig if x['Id'] == id][0]
-        #self.updateStatus(startElement, False)
-        
+        procHandle = self.processHandles[identifier]
         if procHandle.element["HighlightState"]:
             self.updateStatus(procHandle.element, False)
+
+        del self.processHandles[identifier]
+
+        self.procHandleMutex.unlock()
         
         
 
