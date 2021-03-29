@@ -135,12 +135,6 @@ class ProcessHandler(QRunnable):
         logging.debug('ProcessHandler::stop() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         self.cmd_queue.put(ProcCMD(True))
 
-
-# https://forum.qt.io/topic/112731/super-in-python/2
-# https://www.learnpyqt.com/tutorials/multithreading-pyqt-applications-qthreadpool/
-
-
-
 class OperatorStartAll(QRunnable):
     
 
@@ -170,7 +164,6 @@ class OperatorStartAll(QRunnable):
                    startElement['ObjectName'], startElement['Id']))
                 
                 self.operator.createProcHandle(startElement)
-
 
 class OperatorElementOpDone(QRunnable):
 
@@ -239,7 +232,6 @@ class OperatorElementOpDone(QRunnable):
             self.operator.createProcHandle(childElement)
             self.operator.highlightConnection(self.id, childId, childElement['AreaNo'])
 
-
 class OperatorCreateProcHandle(QRunnable):
     
     def __init__(self, element, inputData, operator):
@@ -262,6 +254,32 @@ class OperatorCreateProcHandle(QRunnable):
         
         logging.info('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
 
+class OperatorReturnElementState(QRunnable):
+
+    def __init__(self, processHandles, operator):
+        super(OperatorReturnElementState, self).__init__()
+        self.processHandles = processHandles
+        self.operator       = operator
+
+    def run(self):
+
+        for threadIdentifier, processHandle in self.processHandles.items():
+            #logging.debug('running elements: 0x{:08x}'.format(processHandle.element['Id']))
+            self.operator.updateStatus(processHandle.element, True)
+
+class OperatorStopExec(QRunnable):
+
+    def __init__(self, processHandles, id, operator):
+        super(OperatorStopExec, self).__init__()
+        self.processHandles = processHandles
+        self.operator       = operator
+        self.id             = id
+
+    def run(self):
+
+        for threadIdentifier, processHandle in self.processHandles.items():
+            if processHandle.element['Id'] == self.id:
+                processHandle.stop()
 
 class Operator(QObject):
 
@@ -307,7 +325,6 @@ class Operator(QObject):
 
         return self.n_ident
 
-
     def startExec(self, id, config):
         logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
         ## create processor and forward config and start filename
@@ -324,8 +341,6 @@ class Operator(QObject):
         #logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
         procHandle = OperatorCreateProcHandle(element, inputData, self)
 
-        #procHandle.signals.updateStatus.connect(self.updateStatus)
-        #procHandle.signals.addHandle.connect(self.addHandle)
         self.threadpool.start(procHandle)    
 
     def addHandle(self, identifier, handle):
@@ -336,12 +351,14 @@ class Operator(QObject):
 
     def stopExec(self, id):
         logging.debug('Operator::stopExec() called - id: 0x{:08x}'.format(id))
-        # TODO MULTUTHREADING
+
         self.procHandleMutex.lock()
-        for threadIdentifier, processHandle in self.processHandles.items():
-            if processHandle.element['Id'] == id:
-                processHandle.stop()
+        processHandles = self.processHandles.copy()
         self.procHandleMutex.unlock()
+
+        stopOperator = OperatorStopExec(processHandles, id, self)
+
+        self.threadpool.start(stopOperator)
 
     def stopAll(self):
 
@@ -355,7 +372,7 @@ class Operator(QObject):
     def startAll(self, config):
 
         logging.info('User command: Start All')
-        self.currentConfig              = config
+        self.currentConfig = config
         self.threadpool.start(self._startAll)
 
     def killAll(self):
@@ -374,14 +391,15 @@ class Operator(QObject):
     def getElementStates(self):
         
         logging.debug('Operator::getElementStates() called')
+        
         self.procHandleMutex.lock()
-        for threadIdentifier, processHandle in self.processHandles.items():
-            #logging.debug('running elements: 0x{:08x}'.format(processHandle.element['Id']))
-            self.updateStatus(processHandle.element, True)
+        processHandles = self.processHandles.copy()
         self.procHandleMutex.unlock()
-        #if procHandle.element["HighlightState"]:
-        #    self.updateStatus(procHandle.element, False)
 
+        stateOperator = OperatorReturnElementState(processHandles, self)
+
+        self.threadpool.start(stateOperator)
+        
     def updateStatus(self, element, status):
         #start highlight
         # area
@@ -463,11 +481,3 @@ class Operator(QObject):
         del self.processHandles[identifier]
 
         self.procHandleMutex.unlock()
-        
-        
-
-
-
-
-
-

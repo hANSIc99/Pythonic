@@ -1,0 +1,7 @@
+[
+    {
+    	"Type"  : "Text",
+        "Name"  : "EditorLink",
+	    "Text"  : "Click on<br><a href=\"http://127.0.0.1:7000/generic_python_BASICDATA_Id.py\">http://127.0.0.1:7000/generic_python_BASICDATA_Id.py</a><br>to download the file.<br><br><b>Docker</b><br><br>To edit the file, open the editor <a href=\"http://127.0.0.1:8000\">http://127.0.0.1:8000</a><br><br><br><b>Pip</b><br><br>Navigate to ~/Pythonic/executables/generic_python_BASICDATA_Id.py"
+    }
+]
