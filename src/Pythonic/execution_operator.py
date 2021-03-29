@@ -18,9 +18,6 @@ except ImportError:
 
 class ProcessHandler(QRunnable):
 
-    execComplete  = Signal(object, object, object) # id, data, thread-identifier
-    removeSelf    = Signal(object, object) # id, thread-identifier
-
     def __init__(self, element, inputdata, identifier, operator):
         super(ProcessHandler, self).__init__(self)
 
@@ -32,6 +29,8 @@ class ProcessHandler(QRunnable):
         self.queue      = None 
         self.operator   = operator
         self.element['Config']['Identifier'] = self.identifier
+
+        logging.debug('ProcessHandler::__init__() called') 
 
 
     def run(self):
@@ -105,7 +104,7 @@ class ProcessHandler(QRunnable):
             if not self.t_0.is_alive():
                 break
 
-            #logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+            logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
 
 
 
@@ -142,7 +141,7 @@ class ProcessHandler(QRunnable):
 
 
 
-class OperatorStartAll(QRunnable): # AENDERN
+class OperatorStartAll(QRunnable):
     
 
     def __init__(self, operator):
@@ -159,7 +158,7 @@ class OperatorStartAll(QRunnable): # AENDERN
         for startElement in startElements:
             
             
-            processes = filter(lambda item: item[1].element['Id'] == startElement['Id'], self.processHandles.items())
+            processes = filter(lambda item: item[1].element['Id'] == startElement['Id'], self.operator.processHandles.items())
             runningProcess = next(processes, None)
 
             if(runningProcess):
@@ -170,7 +169,6 @@ class OperatorStartAll(QRunnable): # AENDERN
                 logging.debug('Operator::startAll() -Element started - {} - id: 0x{:08x}'.format(
                    startElement['ObjectName'], startElement['Id']))
                 
-                self.createProcHandle.emit(startElement)
                 self.operator.createProcHandle(startElement)
 
 
@@ -255,8 +253,6 @@ class OperatorCreateProcHandle(QRunnable):
 
         identifier = self.operator.getIdent()
         runElement = ProcessHandler(self.element, self.inputData, identifier, self.operator)
-        #runElement.signals.execComplete.connect(self.operator.operationDone)
-        #runElement.signals.removeSelf.connect(self.operator.removeOperatorThread)
 
         if self.element["HighlightState"]: 
             self.operator.updateStatus(self.element, True)
@@ -284,9 +280,6 @@ class Operator(QObject):
         self.identGenMutex      = QMutex()
         self.n_ident            = 0
 
-        self.updateStateMutex   = QMutex()
-        self.operationDoneMutex = QMutex()
-
     def start(self, config):
 
         # check for autostart elements
@@ -311,11 +304,12 @@ class Operator(QObject):
         if not self.n_ident & 0x7fff:
             self.n_ident = 0
         self.identGenMutex.unlock()
+
         return self.n_ident
 
 
     def startExec(self, id, config):
-        #logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
+        logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
         ## create processor and forward config and start filename
 
         self.currentConfig = config
@@ -327,7 +321,7 @@ class Operator(QObject):
         self.createProcHandle(startElement)
 
     def createProcHandle(self, element, inputData=None):    
-        #neue function
+        #logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
         procHandle = OperatorCreateProcHandle(element, inputData, self)
 
         #procHandle.signals.updateStatus.connect(self.updateStatus)
@@ -395,7 +389,7 @@ class Operator(QObject):
         # target = "Element"
         # cmd = UpdateElementStatus
         #logging.debug('Operator::updateStatus() called - {} - id: 0x{:08x}'.format(status, element['Id']))
-        self.updateStateMutex.lock()
+
         address = {
             'target'    : 'Element',
             'area'      : element['AreaNo'],
@@ -409,11 +403,10 @@ class Operator(QObject):
             }
 
         self.command.emit(cmd)
-        self.updateStateMutex.unlock()
 
     def highlightConnection(self, parentId, childId, wrkArea):
 
-        #logging.debug('Operator::updateStatus() called - {} - id: 0x{:08x}'.format(status, element['Id']))
+        logging.debug('Operator::updateStatus() called')
         address = {
             'target'    : 'WorkingArea',
             'area'      : wrkArea           
@@ -438,10 +431,10 @@ class Operator(QObject):
 
     def operationDone(self, id, record, identifier):
 
-        #logging.info('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
-        #self.operationDoneMutex.lock()
+        logging.debug('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+
         if isinstance(record, GuiCMD):
-            #logging.info(record.text)
+
             address = {
                 'target'    : 'Element',  
                 'id'        : id                      
@@ -452,13 +445,11 @@ class Operator(QObject):
                 'data'      : record.text
             }
             self.command.emit(cmd)
-            self.operationDoneMutex.unlock()
             return
         
         operationDoneRunnable = OperatorElementOpDone(self.currentConfig, id, record, identifier, self)
 
         self.threadpool.start(operationDoneRunnable)
-        #self.operationDoneMutex.unlock()
         
     def removeOperatorThread(self, id, identifier):
         
