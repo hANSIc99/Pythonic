@@ -116,8 +116,7 @@ void Elementeditor::openEditor(const QJsonObject config)
 
             QJsonObject elementConfig = value.toObject();
 
-            QLatin1String type( elementConfig[QStringLiteral("Type")].toString().toLatin1(),
-                                elementConfig[QStringLiteral("Type")].toString().size());
+            QString type(elementConfig[QStringLiteral("Type")].toString());
 
             QString name = elementConfig[QStringLiteral("Name")].toString();
 

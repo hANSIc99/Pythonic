@@ -19,7 +19,7 @@ except ImportError:
 class ProcessHandler(QRunnable):
 
     def __init__(self, element, inputdata, identifier, operator):
-        super(ProcessHandler, self).__init__(self)
+        super(ProcessHandler, self).__init__()
 
         self.element    = element
         self.inputData  = inputdata

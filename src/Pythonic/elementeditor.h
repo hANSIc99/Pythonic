@@ -177,7 +177,9 @@ class Elementeditor : public QDialog
     static constexpr QSize  m_delBtnSize{28, 28};
     static constexpr int m_fontSize{12};
     static const QLoggingCategory logC;
-
+    static ElementEditorTypes::Type hashType(const QString &inString);
+    static ElementEditorTypes::Property hashEditorProperty(const QString &inString);
+    static ElementProperties::Properties hashElementProperty(const QString &inString);
 
 public:
     explicit Elementeditor(QJsonObject basicData, QWidget *parent = nullptr);
@@ -199,10 +201,6 @@ public slots:
 
 
 private:
-
-    static ElementEditorTypes::Type hashType(const QString &inString);
-    static ElementEditorTypes::Property hashEditorProperty(const QString &inString);
-    static ElementProperties::Properties hashElementProperty(const QString &inString);
 
 
     QJsonObject     m_currentConfig;
