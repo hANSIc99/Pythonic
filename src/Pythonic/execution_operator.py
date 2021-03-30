@@ -242,7 +242,8 @@ class OperatorCreateProcHandle(QRunnable):
 
     def run(self):
 
-
+        # check if element is already running
+        
         identifier = self.operator.getIdent()
         runElement = ProcessHandler(self.element, self.inputData, identifier, self.operator)
 
