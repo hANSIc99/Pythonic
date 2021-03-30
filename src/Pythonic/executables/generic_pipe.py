@@ -21,7 +21,10 @@ class Element(Function):
 
 
 
-        output = input + 1
+        if self.inputData is None:
+            output = 0
+        else:
+            output = self.inputData + 1
 
 
         

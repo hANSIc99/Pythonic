@@ -229,7 +229,7 @@ class OperatorElementOpDone(QRunnable):
         
         for childId in cfgElement['Childs']:
             childElement = [x for x in self.currentConfig if x['Id'] == childId][0]
-            self.operator.createProcHandle(childElement)
+            self.operator.createProcHandle(childElement, self.record.data)
             self.operator.highlightConnection(self.id, childId, childElement['AreaNo'])
 
 class OperatorCreateProcHandle(QRunnable):
@@ -243,7 +243,7 @@ class OperatorCreateProcHandle(QRunnable):
     def run(self):
 
         # check if element is already running
-        
+
         identifier = self.operator.getIdent()
         runElement = ProcessHandler(self.element, self.inputData, identifier, self.operator)
 
