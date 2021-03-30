@@ -6,8 +6,8 @@ except ImportError:
     
 class Element(Function):
 
-    def __init__(self, config, inputData, return_queue, cmd_queue):
-        super().__init__(config, inputData, return_queue, cmd_queue)
+    def __init__(self, id, config, inputData, return_queue, cmd_queue):
+        super().__init__(id, config, inputData, return_queue, cmd_queue)
 
 
     def execute(self):
@@ -55,7 +55,7 @@ class Element(Function):
             # Example code: Send data to element output every 5 x timeout
             if cnt % 5 == 0:
                 # Recors(data, message)
-                recordDone = Record(cnt, 'ID: 0x{:08x} - Sending value of cnt: {}'.format(self.config['id'], cnt))     
+                recordDone = Record(cnt, 'ID: 0x{:08x} - Sending value of cnt: {}'.format(self.id, cnt))     
                 self.return_queue.put(recordDone)
 
 

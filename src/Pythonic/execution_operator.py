@@ -62,17 +62,17 @@ class ProcessHandler(QRunnable):
                 self.element['Id'], self.identifier, self.element['Filename'], e))
             return
 
-        self.instance = elementCls(self.element['Config'], self.inputData, self.return_queue, self.cmd_queue)
+        self.instance = elementCls(self.element['Id'], self.element['Config'], self.inputData, self.return_queue, self.cmd_queue)
         result = None
 
         
 
         if bMP: ## attach Debugger if flag is set
-            self.p_0 = mp.Process(target=self.instance.execute)
+            self.p_0 = mp.Process(target=self.instance.execute_ex)
             self.p_0.start()
             self.pid = self.p_0.pid
         else:
-            self.t_0 = mt.Thread(target=self.instance.execute)
+            self.t_0 = mt.Thread(target=self.instance.execute_ex)
             self.t_0.start()
 
 

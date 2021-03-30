@@ -7,15 +7,15 @@ except ImportError:
     
 class Element(Function):
 
-    def __init__(self, config, inputData, return_queue, cmd_queue):
-        super().__init__(config, inputData, return_queue, cmd_queue)
+    def __init__(self, id, config, inputData, return_queue, cmd_queue):
+        super().__init__(id, config, inputData, return_queue, cmd_queue)
 
 
     def execute(self):
 
         #interval_str, interval_index, offset, log_state = self.config
 
-        mode        = ''
+        mode             = ''
         self.timebase    = ''
         self.startTime   = ''
         self.endTime     = ''

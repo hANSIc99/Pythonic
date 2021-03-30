@@ -4,8 +4,9 @@ import logging
 
 class Function():
 
-    def __init__(self, config, inputData, return_queue, cmd_queue):
+    def __init__(self, id, config, inputData, return_queue, cmd_queue):
         #logging.debug('Function.__init__()')
+        self.id             = id
         self.config         = config
         self.inputData      = inputData
         self.return_queue   = return_queue
@@ -13,27 +14,24 @@ class Function():
         self.logger         = logging.getLogger() # mt only
         self.bStop          = False
 
+        self.logger.setLevel(logging.DEBUG)
+
     def __setstate__(self, state):
         #logging.debug('__setstate__() called Function')
-        self.config, self.inputData, self.return_queue, self.cmd_queue, self.logger, self.bStop = state
+        self.id, self.config, self.inputData, self.return_queue, self.cmd_queue, self.logger, self.bStop = state
 
     def __getstate__(self):
         #logging.debug('__getstate__() called Function')
-        return (self.config, self.inputData, self.return_queue, self.cmd_queue, self.logger, self.bStop)
+        return (self.id, self.config, self.inputData, self.return_queue, self.cmd_queue, self.logger, self.bStop)
 
-    def execute(self, input):
-        #logging.debug('execute() called Function')
-
-        result = None
-        return result
-
-    def execute_ex(self, input):
+    def execute_ex(self):
 
         #logging.debug('execute_ex() called Function')
 
         try:
-            result = self.execute(input)
+            result = self.execute()
         except Exception as e:
+            self.logger.error(e)
             result = e
 
         return result
