@@ -55,7 +55,7 @@ class Element(Function):
             # Example code: Send data to element output every 5 x timeout
             if cnt % 5 == 0:
                 # Recors(data, message)
-                recordDone = Record(cnt, 'ID: 0x{:08x} - Sending value of cnt: {}'.format(self.config['id'], cnt))     
+                recordDone = Record(cnt, 'ID: 0x{:08x} - Sending value of cnt: {}'.format(self.id, cnt))     
                 self.return_queue.put(recordDone)
 
 

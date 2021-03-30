@@ -20,6 +20,5 @@
     "DestructorCMD_Win32"   : "del %HOMEPATH%\\Pythonic\\executables\\generic_pipe_BASICDATA_Id.py",
     "HighlightState"  : false,
     "AllowStream"     : false
-
 }
 

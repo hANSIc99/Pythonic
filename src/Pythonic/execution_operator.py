@@ -234,15 +234,23 @@ class OperatorElementOpDone(QRunnable):
 
 class OperatorCreateProcHandle(QRunnable):
     
-    def __init__(self, element, inputData, operator):
+    def __init__(self, element, inputData, procHandles, operator):
         super(OperatorCreateProcHandle, self).__init__()
-        self.element    = element
-        self.inputData  = inputData
-        self.operator   = operator
+        self.element        = element
+        self.inputData      = inputData
+        self.procHandles    = procHandles
+        self.operator       = operator
 
     def run(self):
 
         # check if element is already running
+        # BAUSTELLE: Zweite Abfrage: for threadIdentifier, processHandle in processes.items():
+        # -> processHandles nach der ID durchsuchen. Daraus eine 2. If-Abfrage machen
+        if self.element['AllowStream'] and self.element['Id'] in self.procHandles:
+            x = 3
+
+        #for threadIdentifier, processHandle in processes.items():
+        #    os.kill(processHandle.pid, signal.SIGTERM)
 
         identifier = self.operator.getIdent()
         runElement = ProcessHandler(self.element, self.inputData, identifier, self.operator)
@@ -340,7 +348,12 @@ class Operator(QObject):
 
     def createProcHandle(self, element, inputData=None):    
         #logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
-        procHandle = OperatorCreateProcHandle(element, inputData, self)
+
+        self.procHandleMutex.lock()
+        processHandles = self.processHandles.copy()
+        self.procHandleMutex.unlock()
+
+        procHandle = OperatorCreateProcHandle(element, inputData, processHandles, self)
 
         self.threadpool.start(procHandle)    
 
