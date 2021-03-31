@@ -51,6 +51,7 @@ FROM fedora:31
 ENV TERM=dumb
 
 RUN dnf -y install pip 
+RUN dnf -y install bsdtar 
 ###################################
 #                                 #
 #           Supervisor            #
@@ -71,9 +72,20 @@ COPY src/code-server/ms-python-release.vsix /
 COPY src/code-server/ms-python.vscode-pylance-2020.12.2.vsix /
 
 
+
 RUN rpm -i /code-server-3.8.0-amd64.rpm
-RUN code-server --install-extension /ms-python-release.vsix
-RUN code-server --install-extension /ms-python.vscode-pylance-2020.12.2.vsix 
+
+#RUN mkdir -p /root/.code-server/extensions
+WORKDIR "/root/extension"
+RUN bsdtar -xvf ../../ms-python-release.vsix
+#RUN rm \[Content_Types\].xml
+#RUN rm extension.vsixmanifest
+#RUN mv extension /root/.code-server/extensions/ms-python.python-vscode-2.0.3
+RUN mv extension ms-python.python-vscode-2.0.3
+WORKDIR "/"
+
+#RUN code-server --install-extension /ms-python-release.vsix
+#RUN code-server --install-extension /ms-python.vscode-pylance-2020.12.2.vsix 
 #TODO https://github.com/cdr/code-server/issues/171
 #code-server --extensions-dir /home/stephan/.vscode-oss/extensions/ /home/stephan/Pythonic/executables/
 #RUN rm /code-server-3.8.0-amd64.rpm
