@@ -11,11 +11,12 @@ from PySide2.QtCore import QCoreApplication, QTimer
 def run():
 
     """
-    Create launch.json with current PID
+    Create launch.json with current PID in hte libraries installation path
     """
-    cwd = os.path.dirname(__file__)
+    libPath = os.path.dirname(__file__)
+    
 
-    Path(os.path.join(cwd, '.vscode/')).mkdir(exist_ok=True)
+    Path(os.path.join(libPath, '.vscode/')).mkdir(exist_ok=True)
 
     launch = {  "version": "0.2.0",
                 "configurations": [
@@ -25,20 +26,35 @@ def run():
                 "request"   : "attach",
                 "processId" : os.getpid(),
                 "justMyCode": False,
-                "cwd"       : cwd
+               "cwd"       : libPath
             }
         ]
     }
 
-    with open(os.path.join(cwd + '/.vscode/launch.json'), 'w') as file:
+    with open(os.path.join(libPath + '/.vscode/launch.json'), 'w') as file:
         json.dump(launch, file, indent=4)
 
-    timer = QTimer()
-    timer.start(500)
-    timer.timeout.connect(lambda : None)
+    """
+    Create launch.json with current PID in the user executables path
+    """
+
+    userDir = Path.home() / 'Pythonic' / 'executables' / '.vscode' 
+    
+    Path(userDir).mkdir(exist_ok=True)
+
+    
+    with open(userDir / 'launch.json', 'w') as file:
+        json.dump(launch, file, indent=4)
+    
+
+
     app = QCoreApplication(sys.argv)
     
     ex = MainWorker(app)
     ex.start(sys.argv)
     
     app.exec_()
+
+if __name__ == '__main__':
+
+    run()

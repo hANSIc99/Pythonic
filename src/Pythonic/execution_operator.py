@@ -136,7 +136,7 @@ class ProcessHandler(QRunnable):
         self.cmd_queue.put(ProcCMD(None, True))
 
     def feed(self, data): 
-        logging.info('ProcessHandler::feed() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        logging.debug('ProcessHandler::feed() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
         self.cmd_queue.put(ProcCMD(data))
 
 class OperatorStartAll(QRunnable):
@@ -268,7 +268,7 @@ class OperatorCreateProcHandle(QRunnable):
         self.operator.addHandle(identifier, runElement)
         self.operator.threadpool.start(runElement)
         
-        logging.info('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
+        logging.debug('Operator::createProcHandle() called - identifier: {:04d}'.format(identifier))
 
 class OperatorReturnElementState(QRunnable):
 
@@ -492,7 +492,7 @@ class Operator(QObject):
         
     def removeOperatorThread(self, id, identifier):
         
-        logging.info('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
+        logging.debug('Operator::removeOperatorThread() called - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
 
         self.procHandleMutex.lock()
         procHandle = self.processHandles[identifier]

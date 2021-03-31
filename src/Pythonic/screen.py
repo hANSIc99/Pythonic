@@ -16,8 +16,6 @@ def reset_screen():
 
 
 
-    os.system('clear')
-
     print('\n')
     print(welcome_msg)
     print(version)
