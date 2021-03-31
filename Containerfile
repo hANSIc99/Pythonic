@@ -74,10 +74,11 @@ COPY src/code-server/ms-python.vscode-pylance-2020.12.2.vsix /
 RUN rpm -i /code-server-3.8.0-amd64.rpm
 RUN code-server --install-extension /ms-python-release.vsix
 RUN code-server --install-extension /ms-python.vscode-pylance-2020.12.2.vsix 
-
-RUN rm /code-server-3.8.0-amd64.rpm
-RUN rm /ms-python-release.vsix
-RUN rm /ms-python.vscode-pylance-2020.12.2.vsix
+#TODO https://github.com/cdr/code-server/issues/171
+#code-server --extensions-dir /home/stephan/.vscode-oss/extensions/ /home/stephan/Pythonic/executables/
+#RUN rm /code-server-3.8.0-amd64.rpm
+#RUN rm /ms-python-release.vsix
+#RUN rm /ms-python.vscode-pylance-2020.12.2.vsix
 
 # TODO https://github.com/cdr/code-server/issues/2341
 # Hier 2020.10 installieren
@@ -90,14 +91,12 @@ RUN rm /ms-python.vscode-pylance-2020.12.2.vsix
 #                                 #
 ###################################
 
-RUN /usr/bin/python3 -m pip install eventlet==0.30.0
-RUN /usr/bin/python3 -m pip install PySide2==5.12.2
 
-COPY dist/Pythonic-1.1.tar.gz /
+COPY dist/Pythonic-1.2.tar.gz /
 
-RUN /usr/bin/python3 -m pip install /Pythonic-1.1.tar.gz
+RUN /usr/bin/python3 -m pip install /Pythonic-1.2.tar.gz
 
-RUN rm Pythonic-1.1.tar.gz
+RUN rm Pythonic-1.2.tar.gz
 
 ###################################
 #                                 #

@@ -10,11 +10,33 @@ from PySide2.QtCore import QCoreApplication, QTimer
 
 def run():
 
+
+    # Create home path (if not already existing)
+    
+    home_path = Path.home() / 'Pythonic'
+    home_path.mkdir(exist_ok=True)
+
+    # Create log path (if not already existing)
+
+    logPath = home_path / 'log'
+    logPath.mkdir(exist_ok=True)
+
+    # Create directory for executables (if not already existing)
+
+    execPath = home_path / 'executables'
+    execPath.mkdir(exist_ok=True)
+
+    # Create directory for vs code configuration (if not already existing)
+
+    vsCodepath = execPath / '.vscode' 
+    vsCodepath.mkdir(exist_ok=True)
+
+
+    
     """
     Create launch.json with current PID in hte libraries installation path
     """
     libPath = os.path.dirname(__file__)
-    
 
     Path(os.path.join(libPath, '.vscode/')).mkdir(exist_ok=True)
 
@@ -34,16 +56,16 @@ def run():
     with open(os.path.join(libPath + '/.vscode/launch.json'), 'w') as file:
         json.dump(launch, file, indent=4)
 
+
+
+
+
+
     """
     Create launch.json with current PID in the user executables path
     """
-
-    userDir = Path.home() / 'Pythonic' / 'executables' / '.vscode' 
     
-    Path(userDir).mkdir(exist_ok=True)
-
-    
-    with open(userDir / 'launch.json', 'w') as file:
+    with open(vsCodepath / 'launch.json', 'w') as file:
         json.dump(launch, file, indent=4)
     
 
