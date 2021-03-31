@@ -133,7 +133,11 @@ class ProcessHandler(QRunnable):
         
     def stop(self):
         logging.debug('ProcessHandler::stop() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
-        self.cmd_queue.put(ProcCMD(True))
+        self.cmd_queue.put(ProcCMD(None, True))
+
+    def feed(self, data): 
+        logging.info('ProcessHandler::feed() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        self.cmd_queue.put(ProcCMD(data))
 
 class OperatorStartAll(QRunnable):
     
@@ -244,13 +248,16 @@ class OperatorCreateProcHandle(QRunnable):
     def run(self):
 
         # check if element is already running
-        # BAUSTELLE: Zweite Abfrage: for threadIdentifier, processHandle in processes.items():
-        # -> processHandles nach der ID durchsuchen. Daraus eine 2. If-Abfrage machen
-        if self.element['AllowStream'] and self.element['Id'] in self.procHandles:
-            x = 3
+        if self.element['AllowStream']:
+            
+            runningInstance =  list(filter(lambda item: item[1].element['Id'] == self.element['Id'], self.procHandles.items())) 
+            # when runningInstance contains an element forward input data to it
+            if runningInstance:
+                # [0] first element in the list, [1] ProcessHandler
+                tagetProc = runningInstance[0][1]
+                tagetProc.feed(self.inputData)
+                return
 
-        #for threadIdentifier, processHandle in processes.items():
-        #    os.kill(processHandle.pid, signal.SIGTERM)
 
         identifier = self.operator.getIdent()
         runElement = ProcessHandler(self.element, self.inputData, identifier, self.operator)

@@ -41,9 +41,13 @@ class Element(Function):
             except queue.Empty:
                 pass
 
-            if isinstance(cmd, ProcCMD) and cmd.bStop:
-                # Stop command received, exit
-                return
+            if isinstance(cmd, ProcCMD):
+                if cmd.bStop:
+                    # Stop command received, exit
+                    return
+                else:
+                    print('Data received {}'.format(cmd.data))
+                    cmd = None
 
 
 

@@ -66,13 +66,14 @@ class GuiCMD:
 
 class ProcCMD:
 
-    def __init__(self, bStop):
-        self.bStop = bStop
+    def __init__(self, data, bStop=False):
+        self.bStop  = bStop
+        self.data   = data
 
     def __setstate__(self, state):
         #logging.debug('__setstate__() called Record')
-        self.bStop = state
+        self.bStop, self.data = state
 
     def __getstate__(self):
         #logging.debug('__getstate__() called Record')
-        return(self.bStop)
+        return(self.bStop, self.data)

@@ -16,8 +16,10 @@ setuptools.setup(
         packages = ['Pythonic', 'Pythonic.executables'],
         package_dir = { '' : 'src'},
         package_data = { '' :
-            ['public_html/static/Scheduler.png',
-             'public_html/static/BaseElement.png',
+            ['public_html/static/GenericPipe.png',
+             'public_html/static/GenericProcess.png',
+             'public_html/static/ProcessPipe.png',
+             'public_html/static/Scheduler.png',
              'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
@@ -25,13 +27,8 @@ setuptools.setup(
              'public_html/static/*.wasm',
              'public_html/static/*.data',
              'public_html/templates/*.html',
-             'public_html/config/Toolbox/Basic/GenericPython.json',
-             'public_html/config/Toolbox/Basic/GenericPython.editor',
-             'public_html/config/Toolbox/Basic/Scheduler.json',
-             'public_html/config/Toolbox/Basic/Scheduler.editor'
+             'public_html/config/Toolbox/Basic/*'
              ]
-             #'public_html/config/Toolbox/Connectivity/email.json',
-             #'public_html/config/Toolbox/*'
         },
         entry_points = {
             'console_scripts' : ['Pythonic = Pythonic.script:run']
