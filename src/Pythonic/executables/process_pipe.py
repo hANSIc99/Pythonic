@@ -46,21 +46,17 @@ class Element(Function):
                     # Stop command received, exit
                     return
                 else:
-                    print('Data received {}'.format(cmd.data))
+                    # Example Code: Send number of received data packets to GUI
+                    cnt+=1
+                    guitext = GuiCMD('Data received: {}'.format(cnt))
+                    self.return_queue.put(guitext)
+                    cmd.data += 1
+                    
+                    # Example Code: Increment received data by one and forward it to subsequent elements
+                    recordDone = Record(cmd.data, 'Sending value of cnt: {}'.format(cmd.data))     
+                    self.return_queue.put(recordDone)
+                    
                     cmd = None
-
-
-
-            # Example Code: Send status text to GUI every timeout interval
-            guitext = GuiCMD('cnt: {}'.format(cnt))
-            self.return_queue.put(guitext)
-
-
-            # Example code: Send data to element output every 5 x timeout
-            if cnt % 5 == 0:
-                # Recors(data, message)
-                recordDone = Record(cnt, 'ID: 0x{:08x} - Sending value of cnt: {}'.format(self.id, cnt))     
-                self.return_queue.put(recordDone)
 
 
 
