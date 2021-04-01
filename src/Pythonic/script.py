@@ -49,7 +49,7 @@ def run():
                 "name": "Pythonic: Attach",
                 "type": "python",
                 "request": "attach",
-                "justMyCode": false,
+                "justMyCode": False,
                 "connect" : {
                     "host" : "localhost",
                     "port"  : 5678
