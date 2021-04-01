@@ -67,7 +67,7 @@ RUN /usr/bin/python3 -m pip install toml==0.10.2
 RUN /usr/bin/python3 -m pip install typed-ast==1.4.2
 RUN /usr/bin/python3 -m pip install wrapt==1.12.1
 RUN /usr/bin/python3 -m pip install pylint==2.7.4
-RUN /usr/bin/python3 -m pip install debugpy==1.2.1
+
 ###################################
 #                                 #
 #            Pythonic             #
