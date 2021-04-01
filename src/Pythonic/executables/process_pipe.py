@@ -33,7 +33,6 @@ class Element(Function):
         while(True):
 
             # Example code: Do something
-            cnt+=1
 
             try:
                 # Block for 1 second and wait for incoming commands 
