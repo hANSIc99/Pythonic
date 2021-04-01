@@ -104,7 +104,7 @@ class ProcessHandler(QRunnable):
             if not self.t_0.is_alive():
                 break
 
-            logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+            #logging.debug('ProcessHandler::run() - Multithreading: result received - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
 
 
 
