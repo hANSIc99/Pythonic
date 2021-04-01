@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
 import os, sys, logging, json
+import debugpy
 from pathlib import Path
 from Pythonic.web_daemon import MainWorker
 from PySide2.QtCore import QCoreApplication, QTimer
 
-
+debugpy.listen(5678)
 
 
 def run():
@@ -31,8 +32,10 @@ def run():
     vsCodepath = execPath / '.vscode' 
     vsCodepath.mkdir(exist_ok=True)
 
+    # Append executables folder to module search path
+    sys.path.append(str(execPath))
 
-    
+
     """
     Create launch.json with current PID in hte libraries installation path
     """
@@ -43,21 +46,20 @@ def run():
     launch = {  "version": "0.2.0",
                 "configurations": [
             {
-                "name"      : "Pythonic: Attach",
-                "type"      : "python",
-                "request"   : "attach",
-                "processId" : os.getpid(),
-                "justMyCode": False,
-               "cwd"       : libPath
+                "name": "Pythonic: Attach",
+                "type": "python",
+                "request": "attach",
+                "justMyCode": false,
+                "connect" : {
+                    "host" : "localhost",
+                    "port"  : 5678
+                }
             }
         ]
     }
 
     with open(os.path.join(libPath + '/.vscode/launch.json'), 'w') as file:
         json.dump(launch, file, indent=4)
-
-
-
 
 
 

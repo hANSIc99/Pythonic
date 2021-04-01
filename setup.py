@@ -36,7 +36,9 @@ setuptools.setup(
         python_requires = '>=3.7',
         install_requires = [
             'PySide2==5.14.2.3',
-            'eventlet>=0.27.0'],
+            'eventlet>=0.27.0',
+             'debugpy==1.2.1'
+             ],
         classifiers = [
             'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',

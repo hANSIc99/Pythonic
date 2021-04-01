@@ -390,6 +390,7 @@ class MainWorker(QObject):
     kill_all        = Signal()
     
     log_level       = logging.INFO
+    log_path        = Path.home() / 'Pythonic' / 'log'
     formatter       = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
     max_grid_size   = 50
@@ -416,9 +417,9 @@ class MainWorker(QObject):
         
         parser = argparse.ArgumentParser(description='Pythonic background daemon')
         # Debug output switch 
-        parser.add_argument('-Debug', action='store_true', help='Interactive shell intercace, Unix only')
+        parser.add_argument('-Ex', action='store_true', help='Interactive shell intercace, Unix only')
         # Log level
-        #parser.add_argument('-lvl', type=int, choices=range(0, 2)) # exception
+        parser.add_argument('-v', action='store_true', help='Verbose output')
 
         self.args = parser.parse_args()
 
@@ -446,7 +447,7 @@ class MainWorker(QObject):
         self.killAll.connect(self.operator.killAll)
         
         # Instantiate Standard Input Reader (Unix only)
-        if self.args.Debug:
+        if self.args.Ex:
             try:
                 from stdin_reader import stdinReader
             except ImportError:
@@ -481,24 +482,18 @@ class MainWorker(QObject):
         self.sysCommand.connect(self.exec_sys_cmd.execCommand)
         
         # Connect the logger
-        if self.args.Debug:
+        if self.args.Ex:
             self.update_logdate.connect(self.stdinReader.updateLogDate)
+
+        # Set Log Level
+
+        if self.args.v:
+            self.log_level = logging.DEBUG
 
         self.logger = logging.getLogger()
         self.logger.setLevel(self.log_level)
 
-        # Create home path (if not already existing)
-        
-        home_path = Path.home() / 'Pythonic'
-        if not os.path.exists(home_path):
-            os.makedirs(home_path)
-        
-        # Create log path (if not already existing)
 
-        self.log_path = home_path / 'log'
-
-        if not os.path.exists(self.log_path):
-            os.makedirs(self.log_path)
         
         # Get current date
         self.log_date = datetime.datetime.now()
@@ -518,19 +513,7 @@ class MainWorker(QObject):
         self.logger.addHandler(file_handler)
         self.update_logdate.emit(log_date_str) # forward log_date_str to instance of stdinReader
 
-        # Create directory for executables
-
-        executables_path = home_path / 'executables'
-
-        if not os.path.exists(executables_path):
-            os.makedirs(executables_path)
-
-        # Create trash folder for deleted files
-        # TODO
-
-        # Append executables folder to module search path
-
-        sys.path.append(str(executables_path))
+       
 
         logging.debug('MainWorker::__init__() called')
 
@@ -562,7 +545,7 @@ class MainWorker(QObject):
         logging.info('<#>DAEMON STARTED<#>')
         reset_screen()    
 
-        if self.args.Debug:
+        if self.args.Ex:
             reset_screen_dbg()    
             self.stdinReader.start() # call run() method in separate thread
 
