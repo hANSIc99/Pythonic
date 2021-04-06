@@ -494,11 +494,8 @@ class MainWorker(QObject):
         self.logger.setLevel(self.log_level)
 
 
-        
-        # Get current date
+        # TODO
         self.log_date = datetime.datetime.now()
-        # self.log_date is kept up to date in heartbeat (WebSocket rcv)
-
         # Create directory structure for logging
         log_date_str = self.log_date.strftime('%Y_%m_%d')
 
@@ -527,18 +524,8 @@ class MainWorker(QObject):
     def update_logfile(self):
 
         self.update_logdate.emit(log_date_str)
-        now = datetime.datetime.now().date()
-        if (now != self.log_date.date()):
-            logging.debug('MainWorker::update_logfile() - Change logile')
-            self.logger.removeHandler(self.logger.handlers[0])
-            log_date_str = now.strftime('%Y_%m_%d')
-            file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
-            file_handler = logging.FileHandler(file_path)
-            file_handler.setLevel(self.log_level)
-            file_handler.setFormatter(self.formatter)
-            self.logger.addHandler(file_handler)
-            self.log_date = datetime.datetime.now()
-            self.update_logdate.emit(log_date_str)
+
+
 
     def start(self, args):
 

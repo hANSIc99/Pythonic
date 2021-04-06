@@ -18,20 +18,32 @@ except ImportError:
 
 class CheckTime(QRunnable):
 
-    def __init__(self, element, inputdata, identifier, operator):
+    def __init__(self, operator):
         super(CheckTime, self).__init__()
-        now = datetime.datetime.now().date()
-        if (now != self.log_date.date()):
-            logging.debug('MainWorker::update_logfile() - Change logile')
-            self.logger.removeHandler(self.logger.handlers[0])
-            log_date_str = now.strftime('%Y_%m_%d')
-            file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
-            file_handler = logging.FileHandler(file_path)
-            file_handler.setLevel(self.log_level)
-            file_handler.setFormatter(self.formatter)
-            self.logger.addHandler(file_handler)
-            self.log_date = datetime.datetime.now()
-            self.update_logdate.emit(log_date_str)
+        self.operator   = operator
+        # Get current date
+        self.log_date = datetime.datetime.now()
+        self.setAutoDelete(False)
+
+    def run(self):
+
+        while True:
+            logging.debug('CheckTime::run() called')
+            time.sleep(1)
+
+            now = datetime.datetime.now().date()
+            # BAUSTELLE
+            if (now != self.log_date.date()):
+                logging.debug('CheckTime::run() - Changing logfile')
+                self.logger.removeHandler(self.logger.handlers[0])
+                log_date_str = now.strftime('%Y_%m_%d')
+                file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
+                file_handler = logging.FileHandler(file_path)
+                file_handler.setLevel(self.log_level)
+                file_handler.setFormatter(self.formatter)
+                self.logger.addHandler(file_handler)
+                self.log_date = datetime.datetime.now()
+                self.update_logdate.emit(log_date_str)
 
 class ProcessHandler(QRunnable):
 
@@ -327,9 +339,14 @@ class Operator(QObject):
         self.procHandleMutex    = QMutex()
 
         self._startAll          = OperatorStartAll(self)
+        self._checkTime         = CheckTime(self)
 
         self.identGenMutex      = QMutex()
         self.n_ident            = 0
+
+        self.threadpool.start(self._checkTime)
+
+
 
     def start(self, config):
 
