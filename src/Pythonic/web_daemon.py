@@ -516,9 +516,7 @@ class MainWorker(QObject):
        
 
         logging.debug('MainWorker::__init__() called')
-
-
-        
+    
     def exitApp(self):
         print('# Stopping all processes....')
         self.kill_all.emit()
@@ -528,8 +526,10 @@ class MainWorker(QObject):
     
     def update_logfile(self):
 
+        self.update_logdate.emit(log_date_str)
         now = datetime.datetime.now().date()
         if (now != self.log_date.date()):
+            logging.debug('MainWorker::update_logfile() - Change logile')
             self.logger.removeHandler(self.logger.handlers[0])
             log_date_str = now.strftime('%Y_%m_%d')
             file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
@@ -554,7 +554,6 @@ class MainWorker(QObject):
 
         self.wsgi_server.start()
         self.operator.start(self.config)
-    
 
     def loadTools(self): # Multithreaded
         

@@ -16,6 +16,23 @@ except ImportError:
     from Pythonic.element_types import Record, ProcCMD, GuiCMD
 
 
+class CheckTime(QRunnable):
+
+    def __init__(self, element, inputdata, identifier, operator):
+        super(CheckTime, self).__init__()
+        now = datetime.datetime.now().date()
+        if (now != self.log_date.date()):
+            logging.debug('MainWorker::update_logfile() - Change logile')
+            self.logger.removeHandler(self.logger.handlers[0])
+            log_date_str = now.strftime('%Y_%m_%d')
+            file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
+            file_handler = logging.FileHandler(file_path)
+            file_handler.setLevel(self.log_level)
+            file_handler.setFormatter(self.formatter)
+            self.logger.addHandler(file_handler)
+            self.log_date = datetime.datetime.now()
+            self.update_logdate.emit(log_date_str)
+
 class ProcessHandler(QRunnable):
 
     def __init__(self, element, inputdata, identifier, operator):
@@ -333,7 +350,12 @@ class Operator(QObject):
     def getIdent(self):
 
         self.identGenMutex.lock()
-        self.n_ident += 1
+        
+        self.n_ident += 1 
+        # check if current ident is already in use
+        while list(filter(lambda item: item[0] == self.n_ident, self.processHandles.items())):
+            self.n_ident += 1
+        
 
         if not self.n_ident & 0x7fff:
             self.n_ident = 0
