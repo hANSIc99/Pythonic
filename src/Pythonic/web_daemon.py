@@ -10,17 +10,16 @@ from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt
 from PySide2.QtCore import Signal
 
 try:
+    from logfile_hanlder import LogFileHandler
     from execution_operator import Operator   
     from screen import reset_screen, reset_screen_dbg
     from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 except ImportError:
+    from Pythonic.logfile_hanlder import LogFileHandler
     from Pythonic.execution_operator import Operator
     from Pythonic.screen import reset_screen, reset_screen_dbg
     from Pythonic.configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 
-#from guppy import hpy
-#import gc
-#h=hpy()
 
 ##############################################
 #                                            #
@@ -49,9 +48,10 @@ class LogLvl(Enum):
 @websocket.WebSocketWSGI
 def rcv(ws):
 
+    #logging.getLogger()
 
     def send(command):
-        logging.debug('send() - command: {}'.format(command['cmd']))
+        #logging.debug('send() - command: {}'.format(command['cmd']))
         try:
             ws.send(json.dumps(command))
         except Exception as e:
@@ -77,8 +77,6 @@ def rcv(ws):
                                 'data' : date.strftime("%d-%b-%Y %H:%M:%S") }
 
             ws.send(json.dumps(jsonHeartBeat))
-            # Update log_date
-            ws.environ['mainWorker'].update_logfile()
 
         except Exception as e:
             logging.info('PythonicWeb - RCV Socket connection lost: {}'.format(e))
@@ -389,9 +387,6 @@ class MainWorker(QObject):
 
     kill_all        = Signal()
     
-    log_level       = logging.INFO
-    log_path        = Path.home() / 'Pythonic' / 'log'
-    formatter       = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
     max_grid_size   = 50
     max_grid_cnt    = 5
@@ -414,7 +409,6 @@ class MainWorker(QObject):
 
         # Setup command line arguments
         
-        
         parser = argparse.ArgumentParser(description='Pythonic background daemon')
         # Debug output switch 
         parser.add_argument('-Ex', action='store_true', help='Interactive shell intercace, Unix only')
@@ -423,6 +417,14 @@ class MainWorker(QObject):
 
         self.args = parser.parse_args()
 
+        # Set Log Level
+        if self.args.v:
+            log_level = logging.DEBUG
+        else:
+            log_level = logging.INFO
+
+        # Instantiate the LogFileHandler
+        self.logFileHandler = LogFileHandler(log_level)
 
         # Select multiprocessing spawn method
         mp.set_start_method('spawn')
@@ -446,6 +448,7 @@ class MainWorker(QObject):
         self.stopAll.connect(self.operator.stopAll)
         self.killAll.connect(self.operator.killAll)
         
+
         # Instantiate Standard Input Reader (Unix only)
         if self.args.Ex:
             try:
@@ -453,11 +456,14 @@ class MainWorker(QObject):
             except ImportError:
                 from Pythonic.stdin_reader import stdinReader        
         
-            self.stdinReader = stdinReader(self.operator.processHandles.items())
+            self.stdinReader = stdinReader(self.operator.processHandles.items(), self.logFileHandler.log_date_str)
             self.stdinReader.quit_app.connect(self.exitApp)
 
-        
 
+        # Connect the logger
+        if self.args.Ex:
+            self.logFileHandler.update_logdate.connect(self.stdinReader.updateLogDate)
+               
 
         # Instantiate ToolboxLoader
         self.toolbox_loader = ToolboxLoader()
@@ -480,39 +486,7 @@ class MainWorker(QObject):
         # Instantiate System Command Executor
         self.exec_sys_cmd = ExecSysCMD()
         self.sysCommand.connect(self.exec_sys_cmd.execCommand)
-        
-        # Connect the logger
-        if self.args.Ex:
-            self.update_logdate.connect(self.stdinReader.updateLogDate)
-
-        # Set Log Level
-
-        if self.args.v:
-            self.log_level = logging.DEBUG
-
-        self.logger = logging.getLogger()
-        self.logger.setLevel(self.log_level)
-
-
-        # TODO
-        self.log_date = datetime.datetime.now()
-        # Create directory structure for logging
-        log_date_str = self.log_date.strftime('%Y_%m_%d')
-
-        file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
-
-        # Setup logger
-
-        file_handler = logging.FileHandler(file_path)
-        file_handler.setLevel(self.log_level)
-        file_handler.setFormatter(self.formatter)
-
-        self.logger.addHandler(file_handler)
-        self.update_logdate.emit(log_date_str) # forward log_date_str to instance of stdinReader
-
-       
-
-        logging.debug('MainWorker::__init__() called')
+            
     
     def exitApp(self):
         print('# Stopping all processes....')
@@ -521,15 +495,10 @@ class MainWorker(QObject):
         self.app.quit()
         os.kill(self.app.applicationPid(), signal.SIGTERM) # kill all related threads
     
-    def update_logfile(self):
-
-        self.update_logdate.emit(log_date_str)
-
-
 
     def start(self, args):
 
-        logging.info('<#>DAEMON STARTED<#>')
+        
         reset_screen()    
 
         if self.args.Ex:

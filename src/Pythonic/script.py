@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os, sys, logging, json
+import os, sys, json
 import debugpy
 from pathlib import Path
 from Pythonic.web_daemon import MainWorker

@@ -6,8 +6,7 @@ import multiprocessing as mp
 import threading as mt
 from importlib import reload
 from pathlib import Path
-from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QRunnable, QThreadPool, QMutex
-from PySide2.QtCore import Signal
+from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QRunnable, QThreadPool, QMutex, Signal
 
 
 try:
@@ -16,34 +15,6 @@ except ImportError:
     from Pythonic.element_types import Record, ProcCMD, GuiCMD
 
 
-class CheckTime(QRunnable):
-
-    def __init__(self, operator):
-        super(CheckTime, self).__init__()
-        self.operator   = operator
-        # Get current date
-        self.log_date = datetime.datetime.now()
-        self.setAutoDelete(False)
-
-    def run(self):
-
-        while True:
-            logging.debug('CheckTime::run() called')
-            time.sleep(1)
-
-            now = datetime.datetime.now().date()
-            # BAUSTELLE
-            if (now != self.log_date.date()):
-                logging.debug('CheckTime::run() - Changing logfile')
-                self.logger.removeHandler(self.logger.handlers[0])
-                log_date_str = now.strftime('%Y_%m_%d')
-                file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
-                file_handler = logging.FileHandler(file_path)
-                file_handler.setLevel(self.log_level)
-                file_handler.setFormatter(self.formatter)
-                self.logger.addHandler(file_handler)
-                self.log_date = datetime.datetime.now()
-                self.update_logdate.emit(log_date_str)
 
 class ProcessHandler(QRunnable):
 
@@ -335,28 +306,27 @@ class Operator(QObject):
     def __init__(self):
         super(Operator, self).__init__()
 
+
+        logging.debug('Operator::__init__() called')
         self.threadpool         = QThreadPool.globalInstance()
         self.procHandleMutex    = QMutex()
 
         self._startAll          = OperatorStartAll(self)
-        self._checkTime         = CheckTime(self)
 
         self.identGenMutex      = QMutex()
         self.n_ident            = 0
 
-        self.threadpool.start(self._checkTime)
-
-
 
     def start(self, config):
 
-        # check for autostart elements
-        logging.debug('Operator::start() called')
+        logging.info('<#>DAEMON STARTED<#>')
 
         if not config: # return here when there is no config file
             return
 
         self.currentConfig = config
+
+        # check for autostart elements
 
         startElements = [x for x in self.currentConfig if not x['Socket'] and x['Config']['GeneralConfig']['Autostart']]
 
