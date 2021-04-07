@@ -19,3 +19,6 @@ podman push pythonicautomation/pythonic:<tag>
 
 # pull image
 podman pull pythonicautomation/pythonic
+
+# Chage time
+sudo date +%T -s "23:50:00"
