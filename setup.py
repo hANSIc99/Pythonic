@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '1.01',
+        version = '1.02',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -16,8 +16,10 @@ setuptools.setup(
         packages = ['Pythonic', 'Pythonic.executables'],
         package_dir = { '' : 'src'},
         package_data = { '' :
-            ['public_html/static/Scheduler.png',
-             'public_html/static/BaseElement.png',
+            ['public_html/static/GenericPipe.png',
+             'public_html/static/GenericProcess.png',
+             'public_html/static/ProcessPipe.png',
+             'public_html/static/Scheduler.png',
              'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
@@ -25,21 +27,18 @@ setuptools.setup(
              'public_html/static/*.wasm',
              'public_html/static/*.data',
              'public_html/templates/*.html',
-             'public_html/config/Toolbox/Basic/GenericPython.json',
-             'public_html/config/Toolbox/Basic/GenericPython.editor',
-             'public_html/config/Toolbox/Basic/Scheduler.json',
-             'public_html/config/Toolbox/Basic/Scheduler.editor'
+             'public_html/config/Toolbox/Basic/*'
              ]
-             #'public_html/config/Toolbox/Connectivity/email.json',
-             #'public_html/config/Toolbox/*'
         },
         entry_points = {
             'console_scripts' : ['Pythonic = Pythonic.script:run']
             },
         python_requires = '>=3.7',
         install_requires = [
-            'PySide2>=5.15.2',
-            'eventlet>=0.27.0'],
+            'PySide2==5.14.2.3',
+            'eventlet>=0.27.0',
+             'debugpy==1.2.1'
+             ],
         classifiers = [
             'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',

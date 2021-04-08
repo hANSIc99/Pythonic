@@ -6,17 +6,20 @@ from pathlib import Path
 from zipfile import ZipFile
 from enum import Enum
 from shutil import copyfile
-from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QTimer
+from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt
 from PySide2.QtCore import Signal
 
 try:
+    from logfile_hanlder import LogFileHandler
     from execution_operator import Operator   
     from screen import reset_screen, reset_screen_dbg
     from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
 except ImportError:
+    from Pythonic.logfile_hanlder import LogFileHandler
     from Pythonic.execution_operator import Operator
     from Pythonic.screen import reset_screen, reset_screen_dbg
     from Pythonic.configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
+
 
 ##############################################
 #                                            #
@@ -41,13 +44,14 @@ class LogLvl(Enum):
     CRITICAL    = 3
     FATAL       = 4
 
-
+# Replace the websockets with QWebSockets
 @websocket.WebSocketWSGI
 def rcv(ws):
 
+    #logging.getLogger()
 
     def send(command):
-        logging.debug('send() - command: {}'.format(command['cmd']))
+        #logging.debug('send() - command: {}'.format(command['cmd']))
         try:
             ws.send(json.dumps(command))
         except Exception as e:
@@ -73,8 +77,6 @@ def rcv(ws):
                                 'data' : date.strftime("%d-%b-%Y %H:%M:%S") }
 
             ws.send(json.dumps(jsonHeartBeat))
-            # Update log_date
-            ws.environ['mainWorker'].update_logfile()
 
         except Exception as e:
             logging.info('PythonicWeb - RCV Socket connection lost: {}'.format(e))
@@ -93,6 +95,7 @@ def ctrl(ws):
             logging.debug('PythonicDaemon - CTRL Socket Closed')            
             break;   
         else:
+
             msg = json.loads(m)
             
             logging.debug('PythonicWeb    - Command: {}'.format(msg['cmd']))
@@ -114,8 +117,6 @@ def ctrl(ws):
                 elif logObj['logLvL'] == LogLvl.FATAL.value:
                     logging.critical('PythonicWeb    - {}q'.format(logObj['msg']))
 
-            elif msg['cmd'] == 'start':
-                logging.debug('PythonicWeb    - {}'.format("START"))
 
             elif msg['cmd'] == 'writeConfig':
                 logging.debug('Config loaded')
@@ -124,7 +125,8 @@ def ctrl(ws):
                 # Save config to file
                 ws.environ['mainWorker'].saveConfig.emit(msg['data'])
             elif msg['cmd'] == 'StartExec':
-                elementId = msg['data']        
+                #logging.info(h.heap())
+                elementId = msg['data']      
                 ws.environ['mainWorker'].startExec.emit(elementId, ws.environ['mainWorker'].config)
             elif msg['cmd'] == 'StopExec':
                 elementId = msg['data']
@@ -156,6 +158,9 @@ def ctrl(ws):
             elif msg['cmd'] == 'KillAll' :
                 logging.debug('PythonicWeb    - {}'.format(msg['cmd']))
                 ws.environ['mainWorker'].killAll.emit()
+        
+        del msg
+        del m
              
 @websocket.WebSocketWSGI
 def saveConfig(ws):
@@ -382,8 +387,6 @@ class MainWorker(QObject):
 
     kill_all        = Signal()
     
-    log_level       = logging.INFO
-    formatter       = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
 
     max_grid_size   = 50
     max_grid_cnt    = 5
@@ -405,10 +408,23 @@ class MainWorker(QObject):
         self.app = app
 
         # Setup command line arguments
+        
         parser = argparse.ArgumentParser(description='Pythonic background daemon')
-        parser.add_argument('-Debug', action='store_true', help='Interactive shell intercace, Unix only')
+        # Debug output switch 
+        parser.add_argument('-Ex', action='store_true', help='Interactive shell intercace, Unix only')
+        # Log level
+        parser.add_argument('-v', action='store_true', help='Verbose output')
+
         self.args = parser.parse_args()
 
+        # Set Log Level
+        if self.args.v:
+            log_level = logging.DEBUG
+        else:
+            log_level = logging.INFO
+
+        # Instantiate the LogFileHandler
+        self.logFileHandler = LogFileHandler(log_level)
 
         # Select multiprocessing spawn method
         mp.set_start_method('spawn')
@@ -422,8 +438,6 @@ class MainWorker(QObject):
         # Instantiate WSGI Server
         self.wsgi_server = WSGI_Server(self)
         
-
-
         # Instantiate Execution Operator
         self.operator = Operator()
         self.operator.command.connect(self.forwardCmd)
@@ -434,16 +448,22 @@ class MainWorker(QObject):
         self.stopAll.connect(self.operator.stopAll)
         self.killAll.connect(self.operator.killAll)
         
+
         # Instantiate Standard Input Reader (Unix only)
-        if self.args.Debug:
+        if self.args.Ex:
             try:
                 from stdin_reader import stdinReader
             except ImportError:
                 from Pythonic.stdin_reader import stdinReader        
         
-            self.stdinReader = stdinReader(self.operator.processHandles.items())
+            self.stdinReader = stdinReader(self.operator.processHandles.items(), self.logFileHandler.log_date_str)
             self.stdinReader.quit_app.connect(self.exitApp)
 
+
+        # Connect the logger
+        if self.args.Ex:
+            self.logFileHandler.update_logdate.connect(self.stdinReader.updateLogDate)
+               
 
         # Instantiate ToolboxLoader
         self.toolbox_loader = ToolboxLoader()
@@ -461,109 +481,42 @@ class MainWorker(QObject):
 
         # Instantiate ConfigLoader
         self.config_loader = ConfigLoader()
-        self.config_loader.tooldataLoaded.connect(self.forwardCmd)
+        self.config_loader.configLoaded.connect(self.configLoaded)
 
         # Instantiate System Command Executor
         self.exec_sys_cmd = ExecSysCMD()
         self.sysCommand.connect(self.exec_sys_cmd.execCommand)
-        
-        # Connect the logger
-        if self.args.Debug:
-            self.update_logdate.connect(self.stdinReader.updateLogDate)
-
-        self.logger = logging.getLogger()
-        self.logger.setLevel(self.log_level)
-
-        # Create home path (if not already existing)
-        
-        home_path = Path.home() / 'Pythonic'
-        if not os.path.exists(home_path):
-            os.makedirs(home_path)
-        
-        # Create log path (if not already existing)
-
-        self.log_path = home_path / 'log'
-
-        if not os.path.exists(self.log_path):
-            os.makedirs(self.log_path)
-        
-        # Get current date
-        self.log_date = datetime.datetime.now()
-        # self.log_date is kept up to date in heartbeat (WebSocket rcv)
-
-        # Create directory structure for logging
-        log_date_str = self.log_date.strftime('%Y_%m_%d')
-
-        file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
-
-        # Setup logger
-
-        file_handler = logging.FileHandler(file_path)
-        file_handler.setLevel(self.log_level)
-        file_handler.setFormatter(self.formatter)
-
-        self.logger.addHandler(file_handler)
-        self.update_logdate.emit(log_date_str) # forward log_date_str to instance of stdinReader
-
-        # Create directory for executables
-
-        executables_path = home_path / 'executables'
-
-        if not os.path.exists(executables_path):
-            os.makedirs(executables_path)
-
-        # Create trash folder for deleted files
-        # TODO
-
-        # Append executables folder to module search path
-
-        sys.path.append(str(executables_path))
-
-        logging.debug('MainWorker::__init__() called')
-
+            
+    
     def exitApp(self):
         print('# Stopping all processes....')
         self.kill_all.emit()
         time.sleep(3) # wait for 1 seconds to kill all processes
         self.app.quit()
         os.kill(self.app.applicationPid(), signal.SIGTERM) # kill all related threads
-
     
-
-    
-    def update_logfile(self):
-
-        now = datetime.datetime.now().date()
-        if (now != self.log_date.date()):
-            self.logger.removeHandler(self.logger.handlers[0])
-            log_date_str = now.strftime('%Y_%m_%d')
-            file_path = '{}/{}.txt'.format(str(self.log_path), log_date_str) 
-            file_handler = logging.FileHandler(file_path)
-            file_handler.setLevel(self.log_level)
-            file_handler.setFormatter(self.formatter)
-            self.logger.addHandler(file_handler)
-            self.log_date = datetime.datetime.now()
-            self.update_logdate.emit(log_date_str)
 
     def start(self, args):
 
-        logging.info('<#>DAEMON STARTED<#>')
+        
         reset_screen()    
 
-        if self.args.Debug:
+        if self.args.Ex:
             reset_screen_dbg()    
             self.stdinReader.start() # call run() method in separate thread
 
-        self.wsgi_server.start()
-        self.operator.start()
-    
+        self.config = self.config_loader.loadConfigSync()
 
-    def loadTools(self):
+
+        self.wsgi_server.start()
+        self.operator.start(self.config)
+
+    def loadTools(self): # Multithreaded
         
         logging.debug('MainWorker::loadTools() called')
         self.toolbox_loader.start()
 
-    def loadEditorConfig(self, address, typeName):
+    def loadEditorConfig(self, address, typeName): # Multithreaded
         
         logging.debug('MainWorker::loadEditorConfig() called')
         self.editor_loader.startLoad(address, typeName)
@@ -573,11 +526,22 @@ class MainWorker(QObject):
         #logging.debug('MainWorker::forwardCmd() called')
         self.frontendCtrl.emit(cmd)
 
-    def loadConfig(self):
-
+    def loadConfig(self): # Multithreaded
+        
         logging.debug('MainWorker::loadConfig() called')
         self.config_loader.start()
            
+    def configLoaded(self, config):
+
+        self.config = config
+
+        address = { 'target' : 'MainWindow'}
+        
+        cmd = { 'cmd'       : 'CurrentConfig',
+                'address'   : address,
+                'data'      : config }
+
+        self.frontendCtrl.emit(cmd)
 
     def checkArgs(self, args):
 

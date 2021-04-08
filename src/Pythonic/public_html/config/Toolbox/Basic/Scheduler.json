@@ -18,6 +18,7 @@
     "DestructorCMD_Unix"   : "rm ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
     "ConstructorCMD_Win32"  : "copy executables\\scheduler.py %HOMEPATH%\\Pythonic\\executables\\scheduler_BASICDATA_Id.py",
     "DestructorCMD_Win32"   : "del %HOMEPATH%\\Pythonic\\executables\\scheduler_BASICDATA_Id.py",
-    "HighlightState"  : true
+    "HighlightState"  : true,
+    "AllowStream"     : true
 }
 

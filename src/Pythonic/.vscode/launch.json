@@ -13,13 +13,22 @@
             "justMyCode": false
         },
         {
-            "name": "Pythonic Debug",
+            "name": "Pythonic Verbose",
             "type": "python",
             "request": "launch",
-            "args": ["-Debug"],
+            "args": ["-v"],
             "program": "main.py",
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "Debugpy",
+            "type": "python",
+            "request": "attach",
+            "connect" : {
+                "host" : "localhost",
+                "port"  : 5678
+            }
         }
     ]
 }

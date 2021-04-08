@@ -205,19 +205,36 @@ class ToolboxLoader(QThread):
         self.tooldataLoaded.emit(cmd)
 
 
+
 class ConfigLoader(QThread):
 
-    tooldataLoaded      = Signal(object)
+    configLoaded      = Signal(object)
 
     def __init__(self):
         super().__init__()
+        self.config     = None
         self.home_path  = Path.home() / 'Pythonic'
         self.cfg_file   = self.home_path  / 'current_config.json'
 
+    def loadConfigSync(self):
+
+        try:
+            with open(self.cfg_file, 'r') as file:
+                config = json.load(file)
+
+            return config
+
+
+        except Exception as e:
+
+            logging.warning('No config file found')
+            return None
+
+
     def run(self):
 
-        config = None
         self.loadConfig()
+
 
     def loadConfig(self, bRecover=False):
 
@@ -225,13 +242,8 @@ class ConfigLoader(QThread):
             with open(self.cfg_file, 'r') as file:
                 config = json.load(file)
 
-            address = { 'target' : 'MainWindow'}
-            
-            cmd = { 'cmd'       : 'CurrentConfig',
-                    'address'   : address,
-                    'data'      : config }
+            self.configLoaded.emit(config)
 
-            self.tooldataLoaded.emit(cmd)
             if(bRecover):
                 logging.warning('Old config restored successfully')
 

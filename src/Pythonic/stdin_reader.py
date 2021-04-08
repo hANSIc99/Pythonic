@@ -20,10 +20,11 @@ class stdinReader(QThread):
     max_log_lines = 20
     spinner = itertools.cycle(['-', '\\', '|', '/'])
 
-    def __init__(self, refProcessList):
+    def __init__(self, refProcessList, logDateStr):
         super().__init__()
-        self.proc_list = refProcessList
-        self.startTime = time.time()
+        self.proc_list      = refProcessList
+        self.startTime      = time.time()
+        self.log_date_str   = logDateStr
 
         # Prepare console
         self.fd = sys.stdin.fileno()
