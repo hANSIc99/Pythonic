@@ -3,6 +3,9 @@
     Templates added
     Python debugging in container enabled
     Autostart option for elements added
+    
+    PythonicDaemon: Bug in identifier for process handles fixed
+    PythonicDaemon: Bug in logfile handling fixed
 
 1.1
     PythonicDaemon: Bug in execution_operator fixed (reloading modules)
