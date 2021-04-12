@@ -379,7 +379,7 @@ class WSGI_Server(QThread):
     def run(self):
 
         #listener = eventlet.listen(('127.0.0.1', 7000))
-        listener = listen(('127.0.0.1', 7000))
+        listener = listen(('0.0.0.0', 7000))
         wsgi.server(listener, dispatch, log_output=False, environ=self.mainWorker)
 
 
