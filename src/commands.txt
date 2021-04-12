@@ -1,3 +1,10 @@
+##############################################################
+#                                                            #
+#                          PODMAN                            #
+#                                                            #
+##############################################################
+
+
 # Image bauen
 podman build -t Pythonic:0.1 .
 
@@ -9,6 +16,9 @@ podman image rm
 podman images
 
 # Container starten - hostPort:guestPort
+# Ports are exposed to 0.0.0.0 by default
+# To restrict this exportse to 127.0.0.1:7000:7000
+
 podman run -d --name Pythonic -p 7000:7000 -p 8000:8000 pythonic
 
 # login to remote repository
@@ -20,5 +30,36 @@ podman push pythonicautomation/pythonic:<tag>
 # pull image
 podman pull pythonicautomation/pythonic
 
+
+##############################################################
+#                                                            #
+#                             GIT                            #
+#                                                            #
+##############################################################
+
+git tag v1.2
+git push origin v1.2
+
+
+##############################################################
+#                                                            #
+#                            PYPI                            #
+#                                                            #
+##############################################################
+
+# upload package
+python3 -m twine upload dist/
+
+##############################################################
+#                                                            #
+#                            MISC                            #
+#                                                            #
+##############################################################
+
 # Chage time
 sudo date +%T -s "23:50:00"
+
+
+
+
+
