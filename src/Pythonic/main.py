@@ -5,7 +5,7 @@ from web_daemon import MainWorker
 from PySide2.QtCore import QCoreApplication, QTimer
 
 os.environ['PYTHONWARNINGS'] = 'ignore:semaphore_tracker:UserWarning'
-debugpy.listen(5678)
+
 
 
 def run():

@@ -137,6 +137,11 @@ class ProcessHandler(QRunnable):
 
     def feed(self, data): 
         logging.debug('ProcessHandler::feed() - id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
+        """
+        if isinstance(data, ProcCMD):
+            self.cmd_queue.put(data)
+        else:
+        """
         self.cmd_queue.put(ProcCMD(data))
 
 class OperatorStartAll(QRunnable):
@@ -247,6 +252,13 @@ class OperatorCreateProcHandle(QRunnable):
 
     def run(self):
 
+        # check if inputData is a Stop command
+        bStop = False
+        if isinstance(self.inputData, ProcCMD):
+            bStop = self.inputData.bStop
+
+
+
         # check if element is already running
         if self.element['AllowStream']:
             
@@ -255,9 +267,18 @@ class OperatorCreateProcHandle(QRunnable):
             if runningInstance:
                 # [0] first element in the list, [1] ProcessHandler
                 tagetProc = runningInstance[0][1]
-                tagetProc.feed(self.inputData)
+
+                if not bStop:
+                    tagetProc.feed(self.inputData)
+                else:
+                    tagetProc.stop() # Send Stop command to running process
+
                 return
 
+
+        # return here if inputData is a Stop command
+        if bStop:
+            return
 
         identifier = self.operator.getIdent()
         runElement = ProcessHandler(self.element, self.inputData, identifier, self.operator)
