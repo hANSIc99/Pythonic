@@ -10,7 +10,7 @@ The *Scheduler* activates subsequent elements depending on the set schedule.
 
 - Start subsequent elements
 - Start by hand
-- Optional autostart on startup
+- Optional: Autostart on startup
 
 #### Generic Pipe
 <img src="https://github.com/hANSIc99/Pythonic/blob/master/src/Pythonic/public_html/static/GenericPipe.png" alt="Scheduler">
@@ -36,10 +36,11 @@ Intendet use:
 <img src="https://github.com/hANSIc99/Pythonic/blob/master/src/Pythonic/public_html/static/ProcessPipe.png" alt="Scheduler">
 
 The *Process Pipe* executes an infinite loop. In contrast to *Generic Process* additional activations of the *Process Pipe* element won't cause
-the creation of additional instances. The payload of activation can be processed within the loop.
+the creation of additional instances. The payload of subsequent activations can be processed within the loop.
 
-Stream processing
-Long running processes
-Machine learning
-Feed diffrent data to the same process
+Intendet use: 
+- Stream processing
+- Long running processes
+- Machine learning
+- Feed process with varying data
 
