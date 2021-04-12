@@ -17,6 +17,10 @@ The *Scheduler* activates subsequent elements depending on the set schedule.
 
 The *Generic Pipe* processes the input data and terminates immediately after completion.
 
+Intendet use: 
+- Simple data processing
+- Tranformation of data between two elements
+
 #### Generic Process
 <img src="https://github.com/hANSIc99/Pythonic/blob/master/src/Pythonic/public_html/static/GenericProcess.png" alt="Scheduler">
 
@@ -26,6 +30,16 @@ The *Generic Process* executes an infinite loop. The executions stops when a sto
 
 Intendet use: 
 - Listener application
+- Waiting for external events (e.g. TCP/IP related)
 
 #### Process Pipe
 <img src="https://github.com/hANSIc99/Pythonic/blob/master/src/Pythonic/public_html/static/ProcessPipe.png" alt="Scheduler">
+
+The *Process Pipe* executes an infinite loop. In contrast to *Generic Process* additional activations of the *Process Pipe* element won't cause
+the creation of additional instances. The payload of activation can be processed within the loop.
+
+Stream processing
+Long running processes
+Machine learning
+Feed diffrent data to the same process
+
