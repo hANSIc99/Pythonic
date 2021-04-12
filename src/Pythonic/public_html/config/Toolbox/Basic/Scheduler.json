@@ -1,5 +1,5 @@
 {
-    "Socket"           : false,
+    "Socket"           : true,
     "Plug"             : true,
     "Typename"         : "Scheduler",
     "Iconname"         : "Scheduler",
@@ -21,4 +21,3 @@
     "HighlightState"  : true,
     "AllowStream"     : true
 }
-

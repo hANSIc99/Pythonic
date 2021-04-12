@@ -259,8 +259,8 @@ class OperatorCreateProcHandle(QRunnable):
 
 
 
-        # check if element is already running
-        if self.element['AllowStream']:
+        # Check if an already running element has to be stopped
+        if self.element['AllowStream'] or bStop:
             
             runningInstance =  list(filter(lambda item: item[1].element['Id'] == self.element['Id'], self.procHandles.items())) 
             # when runningInstance contains an element forward input data to it

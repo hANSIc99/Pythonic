@@ -3,7 +3,8 @@
 	    "Type"  : "ComboBox",
         "Name"  : "Mode",
 	    "Title" : "Choose the scheduler mode",
-	    "Items" : [	"Delay",
+	    "Items" : [	"Single fire",
+					"Single fire, delayed",
 			  		"Interval",
 			  		"Interval between times",
 			  		"At specific time",
@@ -20,7 +21,7 @@
 			             { 
                         	"Dependence" : "Mode",
  			        	    "DependentValue" : [
-												"Delay",
+												"Single fire, delayed",
 					        	               	"Interval",
 					       	    			   	"Interval between times",
 						               			"On every full interval",

@@ -84,9 +84,19 @@ class Element(Function):
 
         # Switch modes
 
-        if mode == "Delay":
+        if mode == "Single fire":
 
-            self.delayed()
+            ############################
+            #           None           #
+            ############################
+
+            recordDone = Record(None, message='Trigger: {:04d}'.format(self.config['Identifier']))
+            self.return_queue.put(recordDone)
+            return
+
+        elif mode == "Single fire, delayed":
+
+            self.singleFireDelayed()
             return
 
         elif mode == "Interval":
@@ -130,7 +140,7 @@ class Element(Function):
             return
 
 
-    def delay(self):
+    def singleFireDelayed(self):
 
         ############################
         #   Single fire, delayed   #
@@ -321,6 +331,10 @@ class Element(Function):
 
             if bExit:
                 return
+
+
+
+
 
     def onEveryFullInterval(self):
         
