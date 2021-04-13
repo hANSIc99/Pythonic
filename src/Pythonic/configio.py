@@ -6,7 +6,6 @@ from pathlib import Path
 from PySide2.QtCore import QThread, QObject, Signal, QMutex
 
 
-
 class ExecSysCMD(QThread):
 
     cmd = None
@@ -26,7 +25,6 @@ class ExecSysCMD(QThread):
             os.system(self.cmd['Win32'])
         elif self.cmd['Unix'] != '':
             os.system(self.cmd['Unix'])
-
 
 
 class ConfigWriter(QThread):
@@ -164,7 +162,7 @@ class EditorLoader(QObject):
                 x.editorLoaded.disconnect(self.fwrdCmd)
                 x.finished.disconnect(self.cleanupThreadList)
                 x.deleteLater()
-          
+
 
 class ToolboxLoader(QThread):
 
@@ -181,7 +179,8 @@ class ToolboxLoader(QThread):
         #toolDirs = [ f for f in os.scandir(os.path.join(self.cwd + self.www_config + '/Toolbox/')) if f.is_dir() ]
         toolDirs = [ f for f in os.scandir(self.toolBoxPath) if f.is_dir() ]
         elements = [(d, f) for d in toolDirs for f in os.listdir(d.path) if f.endswith('.json')]
-        elements.sort(key=lambda record: record[1]) # sort alphabetical
+        elements.sort(key=lambda record: record[1]) # sort elements alphabetical
+        elements.sort(key=lambda record: record[0].name) # sort groups alphabetical
         elementsJSON = []
         
         for d, f in elements:
@@ -204,7 +203,6 @@ class ToolboxLoader(QThread):
                 'data'      : elementsJSON }
         
         self.tooldataLoaded.emit(cmd)
-
 
 
 class ConfigLoader(QThread):

@@ -16,11 +16,15 @@ setuptools.setup(
         packages = ['Pythonic', 'Pythonic.executables'],
         package_dir = { '' : 'src'},
         package_data = { '' :
-            ['public_html/static/GenericPipe.png',
+            [
+             'public_html/static/ManualScheduler.png',
+             'public_html/static/Scheduler.png',
+             'public_html/static/ManualStopProcess.png',
+             'public_html/static/StopProcess.png',
+             'public_html/static/GenericPipe.png',
              'public_html/static/GenericProcess.png',
              'public_html/static/ProcessPipe.png',
-             'public_html/static/Scheduler.png',
-             'public_html/static/ManualScheduler.png',
+             'public_html/static/Telegram.png',
              'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
