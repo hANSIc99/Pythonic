@@ -374,6 +374,7 @@ void ElementMaster::switchRunState(bool state)
         m_startBtn.togggleRunning(false);
         m_text.setVisible(false);
     }
+
     /* Element has a start button instead of a socket */
 
     if(!m_config[QStringLiteral("Socket")].toBool()){

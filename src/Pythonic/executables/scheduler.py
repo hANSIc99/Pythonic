@@ -130,7 +130,7 @@ class Element(Function):
             return
 
 
-    def delay(self):
+    def delayed(self):
 
         ############################
         #   Single fire, delayed   #

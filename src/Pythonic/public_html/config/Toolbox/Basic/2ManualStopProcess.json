@@ -18,7 +18,7 @@
     "DestructorCMD_Unix"   : "rm ~/Pythonic/executables/manual_stop_process_BASICDATA_Id.py",
     "ConstructorCMD_Win32"  : "copy executables\\stop_process.py %HOMEPATH%\\Pythonic\\executables\\manual_stop_process_BASICDATA_Id.py",
     "DestructorCMD_Win32"   : "del %HOMEPATH%\\Pythonic\\executables\\manual_stop_process_BASICDATA_Id.py",
-    "HighlightState"  : false,
+    "HighlightState"  : true,
     "AllowStream"     : false
 }
 
