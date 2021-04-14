@@ -42,7 +42,8 @@ setuptools.setup(
         install_requires = [
             'PySide2==5.14.2.3',
             'eventlet>=0.27.0',
-             'debugpy==1.2.1'
+            'debugpy==1.2.1',
+            'python-telegram-bot==13.4.1'
              ],
         classifiers = [
             'Programming Language :: Python :: 3.7',
