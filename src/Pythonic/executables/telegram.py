@@ -9,6 +9,10 @@ from telegram.error import (TelegramError, Unauthorized, BadRequest,
                             TimedOut, ChatMigrated, NetworkError)
 
 
+
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, CallbackContext
+
 try:
     from element_types import Record, Function, ProcCMD, GuiCMD
 except ImportError:    
@@ -55,15 +59,11 @@ class Element(Function):
 
         dispatcher = updater.dispatcher
 
-        def start(update, context):
-            location_keyboard = KeyboardButton(text="send_location", request_location=True)
-            #custom_keyboard = [[ location_keyboard ]]
-            #reply_markup = ReplyKeyboardMarkup(custom_keyboard)
-            #context.bot.send_message(chat_id=update.effective_chat.id, 
-            #                text="Would you mind sharing your location and contact with me?", 
-            #                reply_markup=reply_markup)
-            context.bot.send_message(chat_id=update.effective_chat.id, 
-                            text="Hello from bot")
+
+
+        def start(update: Update, context: CallbackContext):
+
+            context.bot.send_message(chat_id=update.effective_chat.id, text="Hello from bot")
 
 
         def echo(update, context):
@@ -92,6 +92,11 @@ class Element(Function):
         def unknown(update, context):
             context.bot.send_message(chat_id=update.effective_chat.id, text='Sorry, I didn\'t understand that command.')
 
+        def send_message(context: CallbackContext, text):
+            """Send the alarm message."""
+            job = context.job
+            context.bot.send_message(job.context, text='Beep!')
+
 
         start_handler = CommandHandler('start', start)
         echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
@@ -106,7 +111,7 @@ class Element(Function):
         dispatcher.add_handler(unknown_handler) # muss als letztes hinzugefügt werden
 
         updater.start_polling()
-
+        n_cnt = 0
         while(updater.running):
 
             try:
@@ -118,3 +123,17 @@ class Element(Function):
             if isinstance(cmd, ProcCMD) and cmd.bStop:
                 # Stop command received, exit
                 updater.stop()
+
+            elif isinstance(cmd, ProcCMD):
+                n_cnt += 1
+                guitext = GuiCMD("Data received: " + str(cmd.data) + "  " + str(n_cnt))
+                self.return_queue.put(guitext)
+                #try:
+                 #dispatcher.job_queue.run_once(lambda context: context.bot.send_message(context.job.context, text='test123', ), 0)
+                dispatcher.job_queue.run_once(send_message, 0, job_kwargs={ 'kwargs' : {'text' : 'Hello From Pythonic'}})
+                #except Exception as e:
+                #    errorRecord = Record(None, 'Telegram Exception: {}'.format(str(e)))     
+                #    self.return_queue.put(errorRecord)
+
+            cmd = None
+
