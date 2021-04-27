@@ -94,11 +94,11 @@ def storePersist(func):
     return wrapper
 
 
-class persistList(list):
+class ListPersist(list):
 
     def __init__(self, name: str) -> None:
-
-        self.filename = Path("{}_{}.obj".format(self.__module__, name))
+        # BAUSTELLE
+        self.filename = Path.home() / 'Pythonic' / 'executables' / '{}_{}.obj'.format(self.__module__, name)
 
         if self.filename.exists():
 
