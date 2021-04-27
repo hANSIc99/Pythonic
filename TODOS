@@ -13,3 +13,6 @@ Check if the 'inline'-keyword can be applied to some loops
 
 5)
 Add debugging capabilities to Docker image
+
+DataClasses
+Check if DataClasses can be used (elementtypes.py)
