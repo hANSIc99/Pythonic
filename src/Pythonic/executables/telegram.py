@@ -3,6 +3,11 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, Filters
 
 try:
+    from element_types import Record, Function, ProcCMD, GuiCMD, ListPersist
+except ImportError:    
+    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD, ListPersist
+
+try:
     from element_types import Record, Function, ProcCMD, GuiCMD
 except ImportError:    
     from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD
@@ -24,7 +29,7 @@ class Element(Function):
 
         cmd = None
         specificConfig = self.config.get('SpecificConfig')
-        chat_ids = []
+        chat_ids = ListPersist('chat_ids')
         # Set default mode if SpecificConfig is not defined
         # This is the case if the element was created on the working area
         # but the configuration was never opened
@@ -58,12 +63,18 @@ class Element(Function):
         def unknown(update, context):
             context.bot.send_message(chat_id=update.effective_chat.id, text='Sorry, I didn\'t understand that command.')
 
-        start_handler = CommandHandler('start', start)
-        unknown_handler = MessageHandler(Filters.command, unknown)
-
+        def message(update, context):
+            context.bot.send_message(chat_id=update.effective_chat.id, text='Message received')
+            record = Record(cmd.data, 'Sending value of cnt: {}'.format(cmd.data))
+            self.return_queue.put(recordDone)
+            
+        start_handler       = CommandHandler('start', start)
+        message_handler     = MessageHandler(Filters.text &~ Filters.command, message)
+        unknown_cmd_handler = MessageHandler(Filters.command, unknown)
 
         dispatcher.add_handler(start_handler)
-        dispatcher.add_handler(unknown_handler) # muss als letztes hinzugefügt werden
+        dispatcher.add_handler(message_handler) # muss als letztes hinzugefügt werden
+        dispatcher.add_handler(unknown_cmd_handler)
 
         updater.start_polling()
         n_cnt = 0
@@ -81,7 +92,7 @@ class Element(Function):
 
             elif isinstance(cmd, ProcCMD):
                 n_cnt += 1
-                guitext = GuiCMD("Data received: " + str(cmd.data) + "  " + str(n_cnt))
+                guitext = GuiCMD("Module: " + self.__module__ + "  " + str(cmd.data) + "  " + str(n_cnt))
                 self.return_queue.put(guitext)
 
                 for chat_id in chat_ids:
