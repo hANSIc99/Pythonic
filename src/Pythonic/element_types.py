@@ -98,7 +98,7 @@ class ListPersist(list):
 
     def __init__(self, name: str) -> None:
         # BAUSTELLE
-        self.filename = Path.home() / 'Pythonic' / 'executables' / '{}_{}.obj'.format(self.__module__, name)
+        self.filename = Path.home() / 'Pythonic' / 'executables' / '{}.obj'.format(name)
 
         if self.filename.exists():
 
