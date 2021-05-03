@@ -2,7 +2,7 @@
 
     Scheduler for manual trigger added
     Possibility to control running state programatically added
-    Telegram control element added
+    Telegram bot control element added
 
 
 1.2

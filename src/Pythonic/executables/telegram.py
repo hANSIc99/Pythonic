@@ -44,8 +44,7 @@ class Element(Function):
             self.return_queue.put(recordDone)
             return
 
-
-        updater = Updater(token='1323666957:AAH6rIDQJty0ixLc9fyrLQIohxks_y6wwho', use_context=True)
+        updater = Updater(token=self.config['SpecificConfig'][0]['Data'], use_context=True)
         dispatcher = updater.dispatcher
 
 
