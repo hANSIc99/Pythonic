@@ -20,7 +20,6 @@ class Element(Function):
 
     def execute(self):
 
-
         #####################################
         #                                   #
         #     REFERENCE IMPLEMENTATION      #
@@ -30,9 +29,6 @@ class Element(Function):
         cmd = None
         specificConfig = self.config.get('SpecificConfig')
         chat_ids = ListPersist('chat_ids')
-        # Set default mode if SpecificConfig is not defined
-        # This is the case if the element was created on the working area
-        # but the configuration was never opened
 
         if not specificConfig:
 
@@ -59,15 +55,16 @@ class Element(Function):
             context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, this chat ID is now registered for communication.")
 
 
-
         def unknown(update, context):
             context.bot.send_message(chat_id=update.effective_chat.id, text='Sorry, I didn\'t understand that command.')
 
         def message(update, context):
             context.bot.send_message(chat_id=update.effective_chat.id, text='Message received')
-            record = Record(cmd.data, 'Sending value of cnt: {}'.format(cmd.data))
-            self.return_queue.put(recordDone)
-            
+            guitext = GuiCMD('Message received from: {}, MsgId.: {:d}'.format(update.message.from_user.first_name, update.message.message_id))
+            self.return_queue.put(guitext)
+            record = Record(update.message, 'Message received from: {}, MsgId.: {:d}'.format(update.message.from_user.first_name, update.message.message_id))
+            self.return_queue.put(record)
+
         start_handler       = CommandHandler('start', start)
         message_handler     = MessageHandler(Filters.text &~ Filters.command, message)
         unknown_cmd_handler = MessageHandler(Filters.command, unknown)
@@ -77,7 +74,7 @@ class Element(Function):
         dispatcher.add_handler(unknown_cmd_handler)
 
         updater.start_polling()
-        n_cnt = 0
+
         while(updater.running):
 
             try:
@@ -91,8 +88,8 @@ class Element(Function):
                 updater.stop()
 
             elif isinstance(cmd, ProcCMD):
-                n_cnt += 1
-                guitext = GuiCMD("Module: " + self.__module__ + "  " + str(cmd.data) + "  " + str(n_cnt))
+
+                guitext = GuiCMD("Sending data: " + str(cmd.data))
                 self.return_queue.put(guitext)
 
                 for chat_id in chat_ids:
