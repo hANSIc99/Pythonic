@@ -96,7 +96,7 @@ class ProcessHandler(QRunnable):
                 # First: Check if there is somethin in the Queue
                 result = self.return_queue.get(block=True, timeout=0.2)
                 # Seconds: Forward the result (is present)
-                self.operator.operationDone(self.element['Id'], result, self.identifier)
+                self.operator.operationDone(self.element['Id'], self.element['AreaNo'], result, self.identifier)
             except queue.Empty:
                 #logging.debug('return_queue empty')
                 pass
@@ -119,7 +119,7 @@ class ProcessHandler(QRunnable):
             try:
                 result = self.return_queue.get(block=True, timeout=0.2)
 
-                self.operator.operationDone(self.element['Id'], result, self.identifier)
+                self.operator.operationDone(self.element['Id'], self.element['AreaNo'], result, self.identifier)
                 #logging.debug('ProcessHandler::run() - Multiprocessing: execution completed - id: 0x{:08x}, ident: {:04d}, pid: {}'.format(
                 #    self.element['Id'], self.identifier, self.p_0.pid))
             except queue.Empty:
@@ -498,7 +498,7 @@ class Operator(QObject):
 
         self.command.emit(command)
 
-    def operationDone(self, id, record, identifier):
+    def operationDone(self, id, area, record, identifier):
 
         logging.debug('Operator::operationDone() result received - id: 0x{:08x}, ident: {:04d}'.format(id, identifier))
 
@@ -506,7 +506,8 @@ class Operator(QObject):
 
             address = {
                 'target'    : 'Element',  
-                'id'        : id                      
+                'id'        : id,
+                'area'      : area            
             }
             cmd = { 
                 'cmd'       : 'ElementText',

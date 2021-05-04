@@ -32,7 +32,9 @@ setuptools.setup(
              'public_html/static/*.wasm',
              'public_html/static/*.data',
              'public_html/templates/*.html',
-             'public_html/config/Toolbox/Basic/*'
+             'public_html/config/Toolbox/Basic/*',
+             'public_html/config/Toolbox/Connectivity/Telegram.editor',
+             'public_html/config/Toolbox/Connectivity/0Telegram.json'
              ]
         },
         entry_points = {

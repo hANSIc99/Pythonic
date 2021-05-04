@@ -33,7 +33,7 @@ class Element(Function):
 
         if not specificConfig:
 
-            recordDone = Record(None, message='Trigger: {:04d}'.format(self.config['Identifier']))
+            recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier'])) 
             self.return_queue.put(recordDone)
             return
 
@@ -90,7 +90,7 @@ class Element(Function):
             #           None           #
             ############################
 
-            recordDone = Record(None, message='Trigger: {:04d}'.format(self.config['Identifier']))
+            recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier'])) 
             self.return_queue.put(recordDone)
             return
 
@@ -161,7 +161,7 @@ class Element(Function):
 
             countdown -= 1
 
-        recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+        recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))     
         self.return_queue.put(recordDone)    
 
     def intervalScheduler(self):
@@ -180,7 +180,7 @@ class Element(Function):
 
             if countdown <= 0:
                 countdown = self.interval / self.tick
-                recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))   
                 self.return_queue.put(recordDone)
             else:
 
@@ -232,7 +232,7 @@ class Element(Function):
 
                 if countdown <= 0:
 
-                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))    
                     self.return_queue.put(recordDone)
                     nState = 4 # Go to interval mode
                 else:
@@ -257,7 +257,7 @@ class Element(Function):
 
                 if countdown <= 0:
                     countdown = self.interval / self.tick
-                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))  
                     self.return_queue.put(recordDone)
                 else:
 
@@ -316,7 +316,7 @@ class Element(Function):
 
                 if countdown <= 0:
 
-                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))    
                     self.return_queue.put(recordDone)
                     nState = 0 # Go to interval mode
                 else:
@@ -381,7 +381,7 @@ class Element(Function):
                 #countdown -= 1
 
                 if  time.second % self.interval == 0 and lastFired != time.second:
-                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))   
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
                     lastFired = time.second
@@ -412,7 +412,7 @@ class Element(Function):
 
 
                 if  time.minute % (self.interval / 60) == 0 and time.second == 0:
-                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))    
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
 
@@ -447,7 +447,7 @@ class Element(Function):
 
 
                 if  time.minute % (self.interval / 60) == 0 and time.second == 0:
-                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))   
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
 
@@ -512,9 +512,6 @@ class Element(Function):
                 countdown -= 1
 
                 if countdown <= 0:
-
-                    #recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
-                    #self.return_queue.put(recordDone)
                     nState = 4 # Go to interval mode
                 else:
 
@@ -551,7 +548,7 @@ class Element(Function):
 
 
                 if  time.second % self.interval == 0 and lastFired != time.second:
-                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))    
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
                     lastFired = time.second
@@ -586,7 +583,7 @@ class Element(Function):
                 countdown -= 1
 
                 if  time.minute % (self.interval / 60) == 0 and time.second == 0:
-                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))   
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
 
@@ -627,7 +624,7 @@ class Element(Function):
                 countdown -= 1
 
                 if  time.minute % (self.interval / 60) == 0 and time.second == 0:
-                    recordDone = Record(data=None, message='Trigger: {:04d}'.format(self.config['Identifier']))    
+                    recordDone = Record(data=None, message='>Trigger<   ProcHdl::{:04d}'.format(self.config['Identifier']))   
                     self.return_queue.put(recordDone)
                     countdown = self.interval / self.tick
 
