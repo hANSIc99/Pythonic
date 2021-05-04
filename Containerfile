@@ -9,7 +9,7 @@
 #                   Full multi-processing and multi-threading capable.
 #
 #
-#CreationDate:      17.03.2021
+#CreationDate:      05.04.2021
 #Creator:           Stephan Avenwedde
 #
 #
@@ -75,11 +75,11 @@ RUN /usr/bin/python3 -m pip install pylint==2.7.4
 ###################################
 
 
-COPY dist/Pythonic-1.2.tar.gz /
+COPY dist/Pythonic-1.3.tar.gz /
 
-RUN /usr/bin/python3 -m pip install /Pythonic-1.2.tar.gz
+RUN /usr/bin/python3 -m pip install /Pythonic-1.3.tar.gz
 
-RUN rm Pythonic-1.2.tar.gz
+RUN rm Pythonic-1.3.tar.gz
 	
 ###################################
 #                                 #

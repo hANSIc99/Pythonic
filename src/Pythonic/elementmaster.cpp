@@ -61,11 +61,18 @@ ElementMaster::ElementMaster(const QJsonObject configuration,
 
     QJsonValue generalConfig = m_config.value(QStringLiteral("Config"));
 
+    /**************************************
+     *                                    *
+     *    BASIC CONFIG DEFAULT SETTINGS   *
+     *                                    *
+     **************************************/
+
+
     if(generalConfig.isUndefined()){
         QJsonObject generalConfig = {
-            { QStringLiteral("Logging"), true },
+            { QStringLiteral("Logging"), false },
             { QStringLiteral("Debug"), false },
-            { QStringLiteral("MP"), true },
+            { QStringLiteral("MP"), false },
             { QStringLiteral("Autostart"), false }
         };
 
@@ -367,6 +374,7 @@ void ElementMaster::switchRunState(bool state)
         m_startBtn.togggleRunning(false);
         m_text.setVisible(false);
     }
+
     /* Element has a start button instead of a socket */
 
     if(!m_config[QStringLiteral("Socket")].toBool()){

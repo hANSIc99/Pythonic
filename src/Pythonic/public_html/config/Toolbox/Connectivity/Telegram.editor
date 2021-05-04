@@ -1,0 +1,14 @@
+[ 
+    {
+        "Type"	      : "LineEdit",
+	    "Name"        : "Token",
+        "Title"       : "Token",
+	    "Defaulttext" : "",                      
+        "RegExp"     : "[0-9]{9}:[a-zA-Z0-9_-]{35}" 
+    },
+    {
+    	"Type"  : "Text",
+        "Name"  : "Helptext",
+	    "Text"  : "Documentation can be found <a href=\"https://github.com/hANSIc99/Pythonic/blob/master/DOKU.md\">here</a>"
+    }
+]

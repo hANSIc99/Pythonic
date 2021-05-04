@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '1.02',
+        version = '1.03',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -16,10 +16,15 @@ setuptools.setup(
         packages = ['Pythonic', 'Pythonic.executables'],
         package_dir = { '' : 'src'},
         package_data = { '' :
-            ['public_html/static/GenericPipe.png',
+            [
+             'public_html/static/ManualScheduler.png',
+             'public_html/static/Scheduler.png',
+             'public_html/static/ManualStopProcess.png',
+             'public_html/static/StopProcess.png',
+             'public_html/static/GenericPipe.png',
              'public_html/static/GenericProcess.png',
              'public_html/static/ProcessPipe.png',
-             'public_html/static/Scheduler.png',
+             'public_html/static/Telegram.png',
              'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
@@ -27,7 +32,9 @@ setuptools.setup(
              'public_html/static/*.wasm',
              'public_html/static/*.data',
              'public_html/templates/*.html',
-             'public_html/config/Toolbox/Basic/*'
+             'public_html/config/Toolbox/Basic/*',
+             'public_html/config/Toolbox/Connectivity/Telegram.editor',
+             'public_html/config/Toolbox/Connectivity/0Telegram.json'
              ]
         },
         entry_points = {
@@ -37,7 +44,8 @@ setuptools.setup(
         install_requires = [
             'PySide2==5.14.2.3',
             'eventlet>=0.27.0',
-             'debugpy==1.2.1'
+            'debugpy==1.2.1',
+            'python-telegram-bot==13.4.1'
              ],
         classifiers = [
             'Programming Language :: Python :: 3.7',

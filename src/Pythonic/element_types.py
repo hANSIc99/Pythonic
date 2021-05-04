@@ -1,5 +1,5 @@
-import logging
-
+import logging, pickle
+from pathlib import Path
 
 
 class Function():
@@ -77,3 +77,71 @@ class ProcCMD:
     def __getstate__(self):
         #logging.debug('__getstate__() called Record')
         return(self.bStop, self.data)
+
+
+def storePersist(func):
+
+    def wrapper(self, *args, **kwargs):
+
+        func(self, *args, **kwargs)
+
+        with open(self.filename, 'wb') as f:
+            try:
+                pickle.dump(self.copy(), f)
+            except Exception as e:
+                pass
+        
+    return wrapper
+
+
+class ListPersist(list):
+
+    def __init__(self, name: str) -> None:
+        # BAUSTELLE
+        self.filename = Path.home() / 'Pythonic' / 'executables' / '{}.obj'.format(name)
+
+        if self.filename.exists():
+
+            with open(self.filename, 'rb') as f:
+
+                data = pickle.load(f)
+                super().extend(data)
+
+
+
+    def reload(self):
+
+        if self.filename.exists():
+
+            with open(self.filename, 'rb') as f:
+
+                data = pickle.load(f)
+                super().clear()
+                super().extend(data)
+                return True
+
+        else:
+            return False
+
+
+    
+
+    @storePersist
+    def append(self, __object) -> None:
+        return super().append(__object)
+
+    @storePersist
+    def extend(self, __iterable) -> None:
+        return super().extend(__iterable)
+
+    @storePersist
+    def remove(self, __value) -> None:
+        return super().remove(__value)
+
+    @storePersist
+    def pop(self, __index: int):
+        return super().pop(__index=__index)
+
+    @storePersist
+    def clear(self) -> None:
+        return super().clear()

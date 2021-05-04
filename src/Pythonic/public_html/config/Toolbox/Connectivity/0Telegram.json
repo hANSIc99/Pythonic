@@ -1,0 +1,25 @@
+{
+    "Socket"           : true,
+    "Plug"             : true,
+    "Typename"         : "Telegram",
+    "Iconname"         : "Telegram",
+    "Filename"         : "telegram_BASICDATA_Id",
+    "Version"          : {
+                             "Major" : 0,
+                             "Minor" : 1
+                         },
+    "PythonicVersion" :  {
+                             "Major" : 1,
+                             "Minor" : 3
+                         },
+    "Author"          : "Stephan Avenwedde",
+    "License"         : "GPLv3",
+    "ConstructorCMD_Unix"  : "cp -u executables/telegram.py ~/Pythonic/executables/telegram_BASICDATA_Id.py",
+    "DestructorCMD_Unix"   : "rm ~/Pythonic/executables/telegram_BASICDATA_Id.py",
+    "ConstructorCMD_Win32"  : "copy executables\\telegram.py %HOMEPATH%\\Pythonic\\executables\\telegram_BASICDATA_Id.py",
+    "DestructorCMD_Win32"   : "del %HOMEPATH%\\Pythonic\\executables\\telegram_BASICDATA_Id.py",
+    "HighlightState"  : true,
+    "AllowStream"     : true
+
+}
+
