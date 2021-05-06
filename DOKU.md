@@ -44,3 +44,23 @@ Intendet use:
 - Machine learning
 - Feed process with varying data
 
+### Connectivity
+
+#### Telegram
+<img src="https://github.com/hANSIc99/Pythonic/blob/master/src/Pythonic/public_html/static/Telegram.png" alt="Scheduler">
+
+Use Telegram to send or receive data 
+This Telegram bot allows you to send or receive messages, pictures or files to or from multiple user which
+subscribed to the bot. Talk to the  BotFather to get a token, the process is described on [telegram.org](https://core.telegram.org/bots#6-botfather).
+
+On first invocation, the bot is started and an attempt is made to establish a connection to the Telegram server.
+If succeeded, the payload of subsequent invocations is forwarded to registered chat Ids.
+Use the stop command to disconnect the bot and exit the process.
+
+Bot commands:
+
+`/start` : This command will register the chat id of a user. The chat Ids are saved persistent in *~/Pythonic/executables/chat_ids.obj* 
+and are automatically loaded on startup. When a certain chat Id cannot be reached anymore it is automatically removed.
+
+`<message>`: Each message is forwarded to subsequent elements within Pythonic.
+
