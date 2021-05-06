@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '1.03',
+        version = '1.04',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -42,7 +42,7 @@ setuptools.setup(
             },
         python_requires = '>=3.7',
         install_requires = [
-            'PySide2==5.14.2.3',
+            'PySide2',
             'eventlet>=0.27.0',
             'debugpy==1.2.1',
             'python-telegram-bot==13.4.1'
