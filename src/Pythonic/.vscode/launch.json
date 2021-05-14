@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal",
-            "justMyCode": false
+            "justMyCode": false,
+            "subProcess": false
         },
         {
             "name": "Pythonic Verbose",
@@ -29,6 +30,12 @@
                 "host" : "localhost",
                 "port"  : 5678
             }
+        },
+        {
+            "name": "CCXT Testy",
+            "type": "python",
+            "request": "launch",
+            "program": "ccxt_test.py"
         }
     ]
 }
