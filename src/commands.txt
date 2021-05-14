@@ -30,6 +30,11 @@ podman push pythonicautomation/pythonic:<tag>
 # pull image
 podman pull pythonicautomation/pythonic
 
+# chagne tag
+podman tag pythonicautomation/pythonic:1.3 pythonicautomation/pythonic:1.4
+
+#import image from file
+
 
 ##############################################################
 #                                                            #

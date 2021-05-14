@@ -11,4 +11,4 @@
 src/code-server/download.sh
 
 # BUILD CONTAINER IMAGE
-podman build -t pythonicautomation/pythonic:1.3 .
+podman build -t pythonicautomation/pythonic:1.4.1 .
