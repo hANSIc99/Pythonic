@@ -31,10 +31,7 @@ podman push pythonicautomation/pythonic:<tag>
 podman pull pythonicautomation/pythonic
 
 # chagne tag
-podman tag pythonic:1.3 pythonic:1.4
-
-# save imga to file
-podman save -o pythonic_1_4 localhost/pythonic:1.4
+podman tag pythonicautomation/pythonic:1.3 pythonicautomation/pythonic:1.4
 
 #import image from file
 
