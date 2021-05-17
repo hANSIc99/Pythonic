@@ -44,6 +44,7 @@ namespace ElementEditorTypes {
         QString               dependence;
         bool                  propertyRelated;
         QList<QString>        dependentValues;
+        bool                  fullfilled;
     };
 
     enum Type {
