@@ -310,24 +310,6 @@ void Elementeditor::checkRulesAndRegExp()
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
-    // https://doc.qt.io/qt-5/qtglobal.html#qAsConst
-
-    /****************************************************
-     *                                                  *
-     *                Reset Conditions                  *
-     *                                                  *
-     ****************************************************/
-
-    for(ElementEditorTypes::ValueRule &rule : m_value_rules){
-        rule.fullfilled = false;
-        rule.affectedElement->setVisible(false);
-    }
-
-    for(ElementEditorTypes::PropertyRule &rule : m_property_rules){
-        rule.fullfilled = false;
-        rule.affectedElement->setVisible(false);
-    }
-
     /****************************************************
      *                                                  *
      *  Check if value based condition is fullfilled    *
@@ -381,9 +363,15 @@ void Elementeditor::checkRulesAndRegExp()
         }
         }
 
-        /* Apply rule to affected element */
+        /* Save evaluation result to map */
 
-        rule.fullfilled = bConditionFulfilled or rule.fullfilled;
+        if(m_ruleProvidedElements.contains(rule.affectedElement)){
+            bool actualState = m_ruleProvidedElements.value(rule.affectedElement);
+             m_ruleProvidedElements.insert(rule.affectedElement, actualState and bConditionFulfilled);
+        }else{
+            m_ruleProvidedElements.insert(rule.affectedElement, bConditionFulfilled);
+        }
+
 
     }
 
@@ -391,13 +379,21 @@ void Elementeditor::checkRulesAndRegExp()
 
     /****************************************************
      *                                                  *
-     *        Apply condition (fullfilled or not)       *
+     *       Apply value based condition  or not)       *
      *                                                  *
      ****************************************************/
 
-    for(const ElementEditorTypes::ValueRule &rule : qAsConst(m_value_rules)){
-        rule.affectedElement->setVisible(rule.fullfilled);
+
+    m_ruleProvElmIt = m_ruleProvidedElements.constBegin();
+
+    while (m_ruleProvElmIt != m_ruleProvidedElements.constEnd()) {
+
+        m_ruleProvElmIt.key()->setVisible(m_ruleProvElmIt.value());
+
+        ++m_ruleProvElmIt;
     }
+
+    m_ruleProvidedElements.clear();
 
     /****************************************************
      *                                                  *
@@ -429,25 +425,35 @@ void Elementeditor::checkRulesAndRegExp()
                 break;
             }
             }
-            /* Apply rule to affected element */
-            //qCInfo(logC, "Applying rule for %s - %u", rule.affectedElement->objectName().toStdString().c_str(), bConditionFulfilled);
-            //rule.affectedElement->setVisible(bConditionFulfilled);
-            rule.fullfilled = bConditionFulfilled or rule.fullfilled;
-            /* Loop can be continued when it was a property related rule */
-            continue;
+
+            /* Save evaluation result to map */
+
+            if(m_ruleProvidedElements.contains(rule.affectedElement)){
+                bool actualState = m_ruleProvidedElements.value(rule.affectedElement);
+                 m_ruleProvidedElements.insert(rule.affectedElement, actualState and bConditionFulfilled);
+            }else{
+                m_ruleProvidedElements.insert(rule.affectedElement, bConditionFulfilled);
+            }
 
     } // rule for-loop
 
 
     /****************************************************
      *                                                  *
-     *        Apply condition (fullfilled or not)       *
+     *         Apply property based condition           *
      *                                                  *
      ****************************************************/
 
-    for(const ElementEditorTypes::PropertyRule &rule : qAsConst(m_property_rules)){
-        rule.affectedElement->setVisible(rule.fullfilled);
+    m_ruleProvElmIt = m_ruleProvidedElements.constBegin();
+
+    while (m_ruleProvElmIt != m_ruleProvidedElements.constEnd()) {
+
+        m_ruleProvElmIt.key()->setVisible(m_ruleProvElmIt.value());
+
+        ++m_ruleProvElmIt;
     }
+
+    m_ruleProvidedElements.clear();
 
     /****************************************************
      *                                                  *
@@ -511,7 +517,7 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
                 s_dependentValues.append(dependency.toString());
             }
 
-            m_value_rules.append({affectedElement, dependentObjName, s_dependentValues, false});
+            m_value_rules.append({affectedElement, dependentObjName, s_dependentValues});
         }
 
 
@@ -519,7 +525,7 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
         if(!dependentProp.isUndefined()){
             QString sProperty = dependentProp.toString();
 
-            m_property_rules.append({affectedElement, dependentObjName, sProperty, false});
+            m_property_rules.append({affectedElement, dependentObjName, sProperty});
         }
 
     }

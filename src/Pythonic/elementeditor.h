@@ -39,18 +39,24 @@
 
 namespace ElementEditorTypes {
 
+    /* TBD: Should work with C++ 17 */
+    struct BaseRule {
+        QWidget               *affectedElement;
+        QString               dependence;
+        bool                  fullfilled;
+    };
+
+
     struct ValueRule {
         QWidget               *affectedElement;
         QString               dependence;
         QList<QString>        dependentValues;
-        bool                  fullfilled;
     };
 
     struct PropertyRule {
         QWidget               *affectedElement;
         QString               dependence;
         QString               property;
-        bool                  fullfilled;
     };
 
     enum Type {
@@ -250,8 +256,11 @@ private:
     QPushButton     m_saveButton;
 
 
-    QList<ElementEditorTypes::ValueRule>     m_value_rules;
-    QList<ElementEditorTypes::PropertyRule>  m_property_rules;
+    QList<ElementEditorTypes::ValueRule>    m_value_rules;
+    QList<ElementEditorTypes::PropertyRule> m_property_rules;
+
+    QHash<QWidget*, bool>                   m_ruleProvidedElements;
+    QHash<QWidget*, bool>::const_iterator   m_ruleProvElmIt;
 };
 
 #endif // ELEMENTEDITOR_H
