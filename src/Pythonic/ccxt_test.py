@@ -15,9 +15,26 @@ exchange = exchangeClass({
 })
 """
 exchange = exchangeClass({'enableRateLimit'   : True})
+exchange = ccxt.binance()
+#tickers = exchange.fetch_tickers() # keine argumente
+#if exchange.has['fetchOHLCV']: #https://github.com/ccxt/ccxt/wiki/Manual#ohlcv-candlestick-charts
+#def myfunc2(*args, **kwargs): hier mit arbeiten
 
-tickers = exchange.fetch_tickers()
 
+# Public API 
 
+#lmarkets = exchange.load_markets()
+#fmarkets = exchange.fetch_markets()
+#currencies = exchange.fetch_currencies()
+#ticker = exchange.fetch_ticker('ETH/BTC')
+#tickers = exchange.fetch_tickers('ETH/BTC XMR/BTC ADA/BNB')
+#orderbook = exchange.fetch_order_book('ADA/BNB')
+
+#ohlcv = exchange.fetch_ohlcv('ADA/BNB', timeframe='1m', limit=500)
+#since = UTC timestamp in milliseconds
+
+#status = exchange.fetch_status()
+
+trades = exchange.fetch_trades('ADA/BNB')
 
 print('end')

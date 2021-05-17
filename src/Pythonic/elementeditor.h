@@ -39,11 +39,17 @@
 
 namespace ElementEditorTypes {
 
-    struct Rule {
+    struct ValueRule {
         QWidget               *affectedElement;
         QString               dependence;
-        bool                  propertyRelated;
         QList<QString>        dependentValues;
+        bool                  fullfilled;
+    };
+
+    struct PropertyRule {
+        QWidget               *affectedElement;
+        QString               dependence;
+        QString               property;
         bool                  fullfilled;
     };
 
@@ -244,8 +250,8 @@ private:
     QPushButton     m_saveButton;
 
 
-    QList<ElementEditorTypes::Rule> m_rules;
-
+    QList<ElementEditorTypes::ValueRule>     m_value_rules;
+    QList<ElementEditorTypes::PropertyRule>  m_property_rules;
 };
 
 #endif // ELEMENTEDITOR_H

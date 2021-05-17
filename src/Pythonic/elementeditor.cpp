@@ -318,7 +318,12 @@ void Elementeditor::checkRulesAndRegExp()
      *                                                  *
      ****************************************************/
 
-    for(ElementEditorTypes::Rule &rule : m_rules){
+    for(ElementEditorTypes::ValueRule &rule : m_value_rules){
+        rule.fullfilled = false;
+        rule.affectedElement->setVisible(false);
+    }
+
+    for(ElementEditorTypes::PropertyRule &rule : m_property_rules){
         rule.fullfilled = false;
         rule.affectedElement->setVisible(false);
     }
@@ -329,59 +334,56 @@ void Elementeditor::checkRulesAndRegExp()
      *                                                  *
      ****************************************************/
 
-    for(ElementEditorTypes::Rule &rule : m_rules){
+    for(ElementEditorTypes::ValueRule &rule : m_value_rules){
 
-        if(!rule.propertyRelated){
+        /* Find dependent element */
+        QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
 
-            /* Find dependent element */
-            QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
-
-            if(!dependence){
-                qCInfo(logC, "%s - Object %s not found",
-                       parent()->objectName().toStdString().c_str(),
-                       rule.dependence.toStdString().c_str());
-                continue;
-            }
-
-            bool bConditionFulfilled = false;
-
-
-            /* Value based rule */
-
-            /* Get type name of dependent element */
-
-            QString sType(dependence->metaObject()->className());
-
-            /* Perform type dependent value query */
-            switch (hashType(sType)) {
-
-
-            case ElementEditorTypes::ComboBox: {
-
-                ComboBox *t = qobject_cast<ComboBox*>(dependence);
-
-                if(rule.dependentValues.contains(t->m_combobox.currentData().toString())){
-                    bConditionFulfilled = true;
-                }
-
-                break;
-            }
-
-            case ElementEditorTypes::LineEdit: {
-                /* BAUSTELLE*/
-                //LineEdit *t = qobject_cast<LineEdit*>(dependence);
-                break;
-            }
-
-            default: {
-                break;
-            }
-            }
-
-            /* Apply rule to affected element */
-
-            rule.fullfilled = bConditionFulfilled or rule.fullfilled;
+        if(!dependence){
+            qCInfo(logC, "%s - Object %s not found",
+                   parent()->objectName().toStdString().c_str(),
+                   rule.dependence.toStdString().c_str());
+            continue;
         }
+
+        bool bConditionFulfilled = false;
+
+
+        /* Value based rule */
+
+        /* Get type name of dependent element */
+
+        QString sType(dependence->metaObject()->className());
+
+        /* Perform type dependent value query */
+        switch (hashType(sType)) {
+
+
+        case ElementEditorTypes::ComboBox: {
+
+            ComboBox *t = qobject_cast<ComboBox*>(dependence);
+
+            if(rule.dependentValues.contains(t->m_combobox.currentData().toString())){
+                bConditionFulfilled = true;
+            }
+
+            break;
+        }
+
+        case ElementEditorTypes::LineEdit: {
+            /* BAUSTELLE*/
+            //LineEdit *t = qobject_cast<LineEdit*>(dependence);
+            break;
+        }
+
+        default: {
+            break;
+        }
+        }
+
+        /* Apply rule to affected element */
+
+        rule.fullfilled = bConditionFulfilled or rule.fullfilled;
 
     }
 
@@ -393,7 +395,7 @@ void Elementeditor::checkRulesAndRegExp()
      *                                                  *
      ****************************************************/
 
-    for(const ElementEditorTypes::Rule &rule : qAsConst(m_rules)){
+    for(const ElementEditorTypes::ValueRule &rule : qAsConst(m_value_rules)){
         rule.affectedElement->setVisible(rule.fullfilled);
     }
 
@@ -402,33 +404,21 @@ void Elementeditor::checkRulesAndRegExp()
      * Check if property based condition is fullfilled  *
      *                                                  *
      ****************************************************/
-    for(ElementEditorTypes::Rule &rule : m_rules){
+    for(ElementEditorTypes::PropertyRule &rule : m_property_rules){
 
-        if(rule.propertyRelated){
+        /* Find dependent element */
+        QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
 
-            /* Find dependent element */
-            QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
+        if(!dependence){
+            qCInfo(logC, "%s - Object %s not found",
+                   parent()->objectName().toStdString().c_str(),
+                   rule.dependence.toStdString().c_str());
+            continue;
+        }
 
-            if(!dependence){
-                qCInfo(logC, "%s - Object %s not found",
-                       parent()->objectName().toStdString().c_str(),
-                       rule.dependence.toStdString().c_str());
-                continue;
-            }
+        bool bConditionFulfilled = false;
 
-            bool bConditionFulfilled = false;
-
-            /* Check if rule is property based */
-
-
-            /* Get first element of list = name of property */
-            /* (dependentValues of property based rules contain always only one value) */
-            //QLatin1String property(rule.dependentValues.first().toLatin1(),
-            //                       rule.dependentValues.first().size());
-
-            //qCInfo(logC, "Applying rule for %s - %s", rule.affectedElement->objectName().toStdString().c_str(), rule.dependentValues.first().toStdString().c_str());
-            //switch (hashEditorProperty(property)) {
-            switch (hashEditorProperty(rule.dependentValues.first())) {
+        switch (hashEditorProperty(rule.property)) {
 
             case ElementEditorTypes::Visibility: {
                 //qCInfo(logC, "Applying rule for %s - %s", rule.affectedElement->objectName().toStdString().c_str(), "CHECK");
@@ -445,7 +435,7 @@ void Elementeditor::checkRulesAndRegExp()
             rule.fullfilled = bConditionFulfilled or rule.fullfilled;
             /* Loop can be continued when it was a property related rule */
             continue;
-        }
+
     } // rule for-loop
 
 
@@ -455,7 +445,7 @@ void Elementeditor::checkRulesAndRegExp()
      *                                                  *
      ****************************************************/
 
-    for(const ElementEditorTypes::Rule &rule : qAsConst(m_rules)){
+    for(const ElementEditorTypes::PropertyRule &rule : qAsConst(m_property_rules)){
         rule.affectedElement->setVisible(rule.fullfilled);
     }
 
@@ -521,7 +511,7 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
                 s_dependentValues.append(dependency.toString());
             }
 
-            m_rules.append({affectedElement, dependentObjName, false, s_dependentValues, false});
+            m_value_rules.append({affectedElement, dependentObjName, s_dependentValues, false});
         }
 
 
@@ -529,10 +519,7 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
         if(!dependentProp.isUndefined()){
             QString sProperty = dependentProp.toString();
 
-            QStringList  s_dependentValues;
-            s_dependentValues.append(sProperty);
-
-            m_rules.append({affectedElement, dependentObjName, true, s_dependentValues, false});
+            m_property_rules.append({affectedElement, dependentObjName, sProperty, false});
         }
 
     }

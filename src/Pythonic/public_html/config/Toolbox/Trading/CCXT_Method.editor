@@ -1,0 +1,81 @@
+[ 
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "BaseApi",
+	    "Title" : "Choose API type:",
+	    "Items" : [	"Public",
+			  		"Private"
+				  ]
+    },
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "Public Methods",
+	    "Title" : "Choose method:",
+	    "Items" : [	"load markets",
+			  		"fetch markets",
+                    "fetch currencies",
+                    "fetch ticker",
+                    "fetch tickers",
+                    "fetch orderbook",
+                    "fetch OHLCV",
+                    "fetch status",
+                    "fetch trades"
+				  ],
+        "Dependency"  : [
+                { 
+                    "Dependence" : "BaseApi",
+                    "DependentValue" : [
+                                        "Public"
+                                    ]
+                }
+            ]
+    },
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "Private Methods",
+	    "Title" : "Choose method:",
+	    "Items" : [	"fetch balance",
+			  		"create order",
+                    "cancel order",
+                    "fetch order",
+                    "fetch orders",
+                    "fetch open orders",
+                    "fetch closed orders",
+                    "fetch my trades",
+                    "deposit",
+                    "withdraw"
+				  ],
+        "Dependency"  : [
+                { 
+                    "Dependence" : "BaseApi",
+                    "DependentValue" : [
+                                        "Private"
+                                    ]
+                }
+            ]
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "SymbolPublic",
+        "Title"       : "Symbol",
+	    "Defaulttext" : "ETH/BTC",                      
+	    "Dependency"  : [
+				          { 
+                            "Dependence" : "Public Methods",
+                            "DependentProperty" : "Visibility"
+                          },
+                          { "Dependence" : "Public Methods",
+ 			               	"DependentValue" : 	[
+					       	       				"fetch trades"
+                                          		]
+                          },
+                          { 
+                            "Dependence" : "Private Methods",
+ 			               	"DependentValue" : 	[
+					       	       				"withdraw"
+                                          		]
+                          }
+			      		],
+        "RegExp"     : "^([01]?[0-9]|2[0-3]):[0-5][0-9]" 
+    }
+]

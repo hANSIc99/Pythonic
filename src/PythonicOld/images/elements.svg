@@ -1447,8 +1447,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.76"
-     inkscape:cx="17.770048"
-     inkscape:cy="907.66468"
+     inkscape:cx="40.74547"
+     inkscape:cy="734.43451"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -2856,12 +2856,12 @@
          id="g1282" />
     </g>
     <rect
-       style="display:inline;fill:none;stroke:#000000;stroke-width:3.42345643;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="display:inline;fill:none;stroke:#000000;stroke-width:3.42346;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4213-29-9-3"
        width="135.29083"
        height="66.248276"
-       x="57.354595"
-       y="520.8338"
+       x="81.781281"
+       y="477.94833"
        ry="22.160515"
        inkscape:export-xdpi="103.81051"
        inkscape:export-ydpi="103.81051" />
@@ -3360,5 +3360,69 @@
        inkscape:export-xdpi="112"
        inkscape:export-ydpi="112"
        inkscape:export-filename="/home/stephan/Bilder/ccxt.png" />
+    <rect
+       style="display:inline;fill:none;stroke:#000000;stroke-width:2.25414;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4213-29-9-3-3-67-3-3-6"
+       width="110.24586"
+       height="35.245861"
+       x="25.162975"
+       y="631.64569"
+       ry="11.789985"
+       inkscape:export-xdpi="112"
+       inkscape:export-ydpi="112"
+       inkscape:export-filename="/home/stephan/Bilder/ccxt.png" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.9375"
+       x="78.148674"
+       y="662.85651"
+       id="text1783"
+       inkscape:export-filename="/home/stephan/Bilder/ccxt.png"
+       inkscape:export-xdpi="112"
+       inkscape:export-ydpi="112"><tspan
+         sodipodi:role="line"
+         id="tspan1781"
+         x="78.148674"
+         y="662.85651"
+         style="font-size:20px;stroke-width:0.9375">CCXT</tspan></text>
+    <rect
+       style="display:inline;fill:none;stroke:#000000;stroke-width:2.25414;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4213-29-9-3-3-67-3-3-6-2"
+       width="110.24586"
+       height="35.245861"
+       x="28.151039"
+       y="574.3009"
+       ry="11.789985"
+       inkscape:export-xdpi="112"
+       inkscape:export-ydpi="112"
+       inkscape:export-filename="/home/stephan/Bilder/ccxt_method.png" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20px;line-height:1.25;font-family:sans-serif;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.9375"
+       x="81.136742"
+       y="605.51172"
+       id="text1783-6"
+       inkscape:export-filename="/home/stephan/Bilder/ccxt_method.png"
+       inkscape:export-xdpi="112"
+       inkscape:export-ydpi="112"><tspan
+         sodipodi:role="line"
+         id="tspan1781-1"
+         x="81.136742"
+         y="605.51172"
+         style="font-size:20px;stroke-width:0.9375">CCXT</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:37.5px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.9375"
+       x="52.975933"
+       y="604.0058"
+       id="text1808"
+       inkscape:export-filename="/home/stephan/Bilder/ccxt_method.png"
+       inkscape:export-xdpi="112"
+       inkscape:export-ydpi="112"><tspan
+         sodipodi:role="line"
+         id="tspan1806"
+         x="52.975933"
+         y="604.0058"
+         style="font-size:12.5px;stroke-width:0.9375">{...}</tspan></text>
   </g>
 </svg>
