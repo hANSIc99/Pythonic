@@ -1,18 +1,7 @@
-1)
-It is not possible to apply the Version AND the Id to an executeables filename (*.json description) due to
-the RegExp-Parser does not recognize when there are subsequent 'BASICDATA_xy'-pattern.
-
-WorkItem: Improve the regular expression
-helper.cpp
-
-
-3)
+General:
 Check if the 'inline'-keyword can be applied to some loops
 (page 146 C++ Der Programmierer)
 
-
-5)
-Add debugging capabilities to Docker image
-
-DataClasses
-Check if DataClasses can be used (elementtypes.py)
+Elementeditor:
+Add the possibility to pass arbitrary number of keyword arguments or
+to build a dictionary from within the editor
