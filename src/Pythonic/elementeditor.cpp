@@ -133,6 +133,11 @@ void Elementeditor::openEditor(const QJsonObject config)
                 if(edit) edit->m_lineedit.setText(elementConfig[QStringLiteral("Data")].toString());
                 break;
             }
+            case ElementEditorTypes::LineEdit2: {
+                LineEdit2 *edit = m_specificConfig.findChild<LineEdit2*>(name);
+                if(edit) edit->m_lineedit.setText(elementConfig[QStringLiteral("Data")].toString());
+                break;
+            }
             case ElementEditorTypes::CheckBox: {
                 CheckBox *checkbox = m_specificConfig.findChild<CheckBox*>(name);
                 if(checkbox) checkbox->setChecked(elementConfig[QStringLiteral("Data")].toBool());
@@ -179,10 +184,14 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
         }
 
         case ElementEditorTypes::LineEdit: {
-            addLineEdit(unit);
+            addLineEdit(unit, ElementEditorTypes::Type::LineEdit);
             break;
         }
 
+        case ElementEditorTypes::LineEdit2: {
+            addLineEdit(unit, ElementEditorTypes::Type::LineEdit2);
+            break;
+        }
         case ElementEditorTypes::CheckBox: {
             addCheckBox(unit);
             break;
@@ -222,6 +231,7 @@ ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
 {
     if(inString == QStringLiteral("ComboBox")) return ElementEditorTypes::ComboBox;
     if(inString == QStringLiteral("LineEdit")) return ElementEditorTypes::LineEdit;
+    if(inString == QStringLiteral("LineEdit2")) return ElementEditorTypes::LineEdit2;
     if(inString == QStringLiteral("CheckBox")) return ElementEditorTypes::CheckBox;
     if(inString == QStringLiteral("Text"))     return ElementEditorTypes::Text;
     if(inString == QStringLiteral("HelpText")) return ElementEditorTypes::HelpText;
@@ -572,6 +582,7 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
    addRules(dropDownJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(dropdown));
 }
 
+#if 0
 void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
@@ -607,6 +618,61 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
         connect(
             &lineedit->m_lineedit, &QLineEdit::textChanged,
             lineedit, &LineEdit::validateInput);
+    }
+
+
+    /* Adding condition (if given) */
+    addRules(lineeditJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(lineedit));
+}
+#endif
+
+void Elementeditor::addLineEdit(QJsonObject &lineeditJSON, ElementEditorTypes::Type type)
+{
+    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+    LineEditBase* lineedit = NULL;
+
+    if(type == ElementEditorTypes::Type::LineEdit){
+
+        lineedit = new LineEdit(&m_specificConfig);
+    } else {
+        lineedit = new LineEdit2(&m_specificConfig);
+    }
+
+    lineedit->setObjectName(lineeditJSON[QStringLiteral("Name")].toString());
+    m_specificCfgLayout.addWidget(lineedit);
+
+    /* Adding title (if one is given) */
+    QString title = lineeditJSON[QStringLiteral("Title")].toString();
+    if(!title.isEmpty()){
+        //QLabel *label = new QLabel(title, &m_specificConfig);
+        //m_specificCfgLayout.addWidget(label);
+        lineedit->m_title.setText(title);
+    }
+
+    /* Adding default text (if given) */
+    QString defaultText = lineeditJSON[QStringLiteral("Defaulttext")].toString();
+    if(!defaultText.isEmpty()){
+        lineedit->m_lineedit.setText(defaultText);
+    }
+
+    /* Adding RegExp (if given) */
+
+    QString regExpString = lineeditJSON[QStringLiteral("RegExp")].toString();
+
+    if(!regExpString.isEmpty()){
+
+        //LineEdit2* myLinedit = new LineEdit2();
+        //myLinedit->m_lineedit;
+        lineedit->m_regExp.setPattern(regExpString);
+
+        QLineEdit* tmpLinedit = &lineedit->m_lineedit;
+
+        connect(
+
+            tmpLinedit, &QLineEdit::textChanged,
+            lineedit, &LineEdit::validateInput);
+
     }
 
 

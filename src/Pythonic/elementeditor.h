@@ -62,6 +62,7 @@ namespace ElementEditorTypes {
     enum Type {
         ComboBox,
         LineEdit,
+        LineEdit2,
         CheckBox,
         Text,
         HelpText,
@@ -111,27 +112,16 @@ public slots:
 };
 
 
-class LineEdit : public QWidget{
+
+
+class LineEditBase : public QWidget{
     Q_OBJECT
 public:
-    explicit LineEdit(QWidget *parent = 0)
+    explicit LineEditBase(QWidget *parent = 0)
         : QWidget(parent){
-
-        setLayout(&m_outerLayout);
-        m_innerWidget.setLayout(&m_innerLayout);
-
-        m_innerLayout.addWidget(&m_title);
-        m_innerLayout.addWidget(&m_lineedit);
-
-        m_outerLayout.addWidget(&m_innerWidget);
-        m_outerLayout.addWidget(&m_regExpIndicator);
         m_regExpIndicator.setStyleSheet(QStringLiteral("QLabel { color : red; }"));
-        //m_lineedit.setValidator(&m_regExp);
     };
 
-    QWidget             m_innerWidget;
-    QVBoxLayout         m_outerLayout;
-    QHBoxLayout         m_innerLayout;
     QLabel              m_title;
     QLineEdit           m_lineedit;
     QLabel              m_regExpIndicator;
@@ -162,6 +152,47 @@ public slots:
         }
     }
 
+};
+
+
+class LineEdit : public LineEditBase{
+    Q_OBJECT
+public:
+    explicit LineEdit(QWidget *parent = 0)
+        : LineEditBase(parent){
+
+        setLayout(&m_outerLayout);
+        m_innerWidget.setLayout(&m_innerLayout);
+
+        m_innerLayout.addWidget(&m_title);
+        m_innerLayout.addWidget(&m_lineedit);
+
+        m_outerLayout.addWidget(&m_innerWidget);
+        m_outerLayout.addWidget(&m_regExpIndicator);
+    };
+
+    QWidget             m_innerWidget;
+    QVBoxLayout         m_outerLayout;
+    QHBoxLayout         m_innerLayout;
+
+};
+
+
+class LineEdit2 : public LineEditBase{
+    Q_OBJECT
+public:
+    explicit LineEdit2(QWidget *parent = 0)
+        : LineEditBase(parent){
+
+        setLayout(&m_outerLayout);
+
+        m_outerLayout.addWidget(&m_title);
+        m_outerLayout.addWidget(&m_lineedit);
+        m_outerLayout.addWidget(&m_regExpIndicator);
+
+    };
+
+    QVBoxLayout         m_outerLayout;
 };
 
 
@@ -225,7 +256,7 @@ private:
 
     void            addComboBox(QJsonObject &dropDownJSON);
 
-    void            addLineEdit(QJsonObject &lineeditJSON);
+    void            addLineEdit(QJsonObject &lineeditJSON, ElementEditorTypes::Type type);
 
     void            addCheckBox(QJsonObject &checkboxJSON);
 

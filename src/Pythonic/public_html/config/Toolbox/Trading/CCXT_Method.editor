@@ -231,6 +231,12 @@
                                                     ]
                             },
                             { 
+                                "Dependence" : "Private Methods",
+                                "DependentValue" : 	[
+                                                    "create order"
+                                                    ]
+                            },
+                            { 
                                 "Dependence" : "Order Types",
                                 "DependentValue" : 	[
                                                     "Limit",
@@ -257,6 +263,33 @@
                                 "Dependence" : "Private Methods",
                                 "DependentValue" : 	[
                                                     "withdraw"
+                                                    ]
+                            }
+			      		]
+    },
+    {
+        "Type"	    : "LineEdit2",
+	    "Name"        : "Parameter",
+        "Title"       : "Additional parameter (optional):",
+	    "Defaulttext" : "{ 'stopPx': 6000.0 }",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Private"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Private Methods",
+                                "DependentValue" : 	[
+                                                    "create order"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Order Types",
+                                "DependentValue" : 	[
+                                                    "Stop Loss",
+                                                    "Stop Loss Limit"
                                                     ]
                             }
 			      		]
