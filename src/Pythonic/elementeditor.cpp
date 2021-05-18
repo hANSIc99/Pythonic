@@ -634,9 +634,9 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON, ElementEditorTypes::T
 
     if(type == ElementEditorTypes::Type::LineEdit){
 
-        lineedit = new LineEdit(&m_specificConfig);
+        lineedit = new LineEdit(this);
     } else {
-        lineedit = new LineEdit2(&m_specificConfig);
+        lineedit = new LineEdit2(this);
     }
 
     lineedit->setObjectName(lineeditJSON[QStringLiteral("Name")].toString());

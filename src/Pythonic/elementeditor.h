@@ -122,6 +122,9 @@ public:
         m_regExpIndicator.setStyleSheet(QStringLiteral("QLabel { color : red; }"));
     };
 
+    //virtual ~LineEditBase();
+
+
     QLabel              m_title;
     QLineEdit           m_lineedit;
     QLabel              m_regExpIndicator;
@@ -170,6 +173,7 @@ public:
         m_outerLayout.addWidget(&m_innerWidget);
         m_outerLayout.addWidget(&m_regExpIndicator);
     };
+    ~LineEdit();
 
     QWidget             m_innerWidget;
     QVBoxLayout         m_outerLayout;
@@ -191,7 +195,8 @@ public:
         m_outerLayout.addWidget(&m_regExpIndicator);
 
     };
-
+    ~LineEdit2();
+    // https://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
     QVBoxLayout         m_outerLayout;
 };
 
