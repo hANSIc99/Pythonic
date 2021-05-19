@@ -38,7 +38,7 @@ class Function():
 
 class Record():
 
-    def __init__(self, data, message):
+    def __init__(self, data, message=None):
 
         self.data       = data
         self.message    = message # Log message string

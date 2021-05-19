@@ -75,7 +75,7 @@ class Element(Function):
 
         if methodName == 'create order' and orderType == 'Market':
 
-            methodName.replace(" ", "_")
+            methodName = methodName.replace(" ", "_")
 
             apiCall = {
                 'method' : methodName,
@@ -91,7 +91,7 @@ class Element(Function):
 
         elif methodName == 'create order' :
 
-            methodName.replace(" ", "_")
+            methodName = methodName.replace(" ", "_")
 
             apiCall = {
                 'method' : methodName,
@@ -105,16 +105,16 @@ class Element(Function):
                 }
             }
 
-        elif methodName == 'fetch orders' or 
-             methodName == 'fetch open orders' or 
-             methodName == 'fetch closed orders' or
-             methodName == 'fetch my trades' or 
-             methodName == 'fetch trades' or 
-             methodName == 'fetch order book' or 
-             methodName == 'fetch ticker' or 
+        elif methodName == 'fetch orders' or        \
+             methodName == 'fetch open orders' or   \
+             methodName == 'fetch closed orders' or \
+             methodName == 'fetch my trades' or     \
+             methodName == 'fetch trades' or        \
+             methodName == 'fetch order book' or    \
+             methodName == 'fetch ticker' or        \
              methodName == 'fetch tickers':
 
-            methodName.replace(" ", "_")
+            methodName = methodName.replace(" ", "_")
 
             apiCall = {
                 'method' : methodName,
@@ -123,7 +123,37 @@ class Element(Function):
                 }
             }
 
+        elif methodName == 'withdraw':
 
+            apiCall = {
+                'method' : methodName,
+                'kwargs' : {
+                    'code'      : symbol,
+                    'amount'    : amount,
+                    'address'   : address
+                }
+            }
 
-        recordDone = Record(None, 'Test')     
+        elif methodName == 'fetch ohlcv':
+
+            methodName = methodName.replace(" ", "_")
+
+            apiCall = {
+                'method' : methodName,
+                'kwargs' : {
+                    'symbol'    : symbol,
+                    'timeframe' : timeframe,
+                    'limit'     : limit
+                }
+            }
+
+        else:
+
+            methodName = methodName.replace(" ", "_")
+
+            apiCall = {
+                'method' : methodName
+            }
+
+        recordDone = Record(apiCall)     
         self.return_queue.put(recordDone)
