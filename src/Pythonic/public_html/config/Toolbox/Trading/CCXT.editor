@@ -1,14 +1,25 @@
 [ 
     {
         "Type"	      : "LineEdit",
-	    "Name"        : "Token",
-        "Title"       : "Token",
-	    "Defaulttext" : "",                      
-        "RegExp"     : "[0-9]{9}:[a-zA-Z0-9_-]{35}" 
+	    "Name"        : "ExchangeId",
+        "Title"       : "ExchangeId",
+	    "Defaulttext" : "kraken"
+    },
+    {
+        "Type"	      : "LineEdit2",
+	    "Name"        : "PubKey",
+        "Title"       : "Public Key",
+	    "Defaulttext" : ""
+    },
+    {
+        "Type"	      : "LineEdit2",
+	    "Name"        : "PrvKey",
+        "Title"       : "Private Key",
+	    "Defaulttext" : ""
     },
     {
     	"Type"  : "Text",
         "Name"  : "Helptext",
-	    "Text"  : "Documentation can be found <a href=\"https://github.com/hANSIc99/Pythonic/blob/master/DOKU.md\">here</a>"
+	    "Text"  : "Public- and private key are optional. Without them<br>only public API methods are available."
     }
 ]

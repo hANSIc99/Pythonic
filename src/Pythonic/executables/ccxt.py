@@ -1,4 +1,5 @@
 import time, queue
+import ccxt
 try:
     from element_types import Record, Function, ProcCMD, GuiCMD
 except ImportError:    
@@ -18,6 +19,8 @@ class Element(Function):
         #     REFERENCE IMPLEMENTATION      #
         #                                   #
         #####################################
+
+
         specificConfig = self.config.get('SpecificConfig')
 
         if not specificConfig:
@@ -26,4 +29,50 @@ class Element(Function):
             self.return_queue.put(recordDone)
             return
 
-        x = self.inputData
+
+        eId     = None
+        pubKey  = None
+        prvKey  = None
+
+
+        for attrs in specificConfig:
+            if attrs['Name'] == 'ExchangeId':
+                eId = attrs['Data']
+            if attrs['Name'] == 'PubKey':
+                pubKey = attrs['Data']
+            elif attrs['Name'] == 'PrvKey':
+                prvKey = attrs['Data']
+
+
+        exchangeClass = getattr(ccxt, eId)
+        exchange = exchangeClass({'enableRateLimit'   : True})
+
+        method = getattr(exchange, self.inputData['method'])
+
+        kwargs  = None
+        params  = None
+        
+        if not 'kwargs' in self.inputData:
+
+            data = method()
+
+        elif not 'params' in self.inputData:
+            
+            kwargs = self.inputData['kwargs']
+            data = method(**kwargs)
+
+        else: 
+
+            kwargs = self.inputData['kwargs']
+            params = self.inputData['params']
+            
+            data = method(**kwargs, params=params)
+
+
+           
+        recordDone = Record(data, '{}() successfull'.format(self.inputData['method']))     
+        self.return_queue.put(recordDone)
+
+
+
+        

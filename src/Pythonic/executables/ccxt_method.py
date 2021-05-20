@@ -41,7 +41,7 @@ class Element(Function):
         address     = None
         params      = None
 
-        for attrs in self.config['SpecificConfig']:
+        for attrs in specificConfig:
             if attrs['Name'] == 'BaseApi':
                 baseAPI = attrs['Data']
             if attrs['Name'] == 'Public Methods':
@@ -92,12 +92,12 @@ class Element(Function):
 
             apiCall = {
                 'method' : methodName,
+                'params' : params,
                 'kwargs' : {
                     'symbol'    : symbol,
                     'type'      : orderType,
                     'side'      : side,
-                    'amount'    : amount,
-                    'params'    : params
+                    'amount'    : amount
                 }
             }
 
@@ -108,13 +108,13 @@ class Element(Function):
 
             apiCall = {
                 'method' : methodName,
+                'params' : params,
                 'kwargs' : {
                     'symbol'    : symbol,
                     'type'      : orderType,
                     'side'      : side,
                     'amount'    : amount,
-                    'price'     : price,
-                    'params'    : params
+                    'price'     : price
                 }
             }
 
