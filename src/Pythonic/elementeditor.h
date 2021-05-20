@@ -114,21 +114,32 @@ public slots:
 
 
 
-class LineEditBase : public QWidget{
+
+
+class LineEdit : public QWidget{
     Q_OBJECT
 public:
-    explicit LineEditBase(QWidget *parent = 0)
+    explicit LineEdit(QWidget *parent = 0)
         : QWidget(parent){
-        m_regExpIndicator.setStyleSheet(QStringLiteral("QLabel { color : red; }"));
+
+        setLayout(&m_outerLayout);
+        m_innerWidget.setLayout(&m_innerLayout);
+
+        m_innerLayout.addWidget(&m_title);
+        m_innerLayout.addWidget(&m_lineedit);
+
+        m_outerLayout.addWidget(&m_innerWidget);
+        m_outerLayout.addWidget(&m_regExpIndicator);
     };
 
-    //virtual ~LineEditBase();
 
-
+    QWidget             m_innerWidget;
     QLabel              m_title;
     QLineEdit           m_lineedit;
     QLabel              m_regExpIndicator;
     QRegularExpression  m_regExp;
+    QVBoxLayout         m_outerLayout;
+    QHBoxLayout         m_innerLayout;
 
 public slots:
 
@@ -158,35 +169,12 @@ public slots:
 };
 
 
-class LineEdit : public LineEditBase{
+class LineEdit2 : public QWidget{
     Q_OBJECT
-public:
-    explicit LineEdit(QWidget *parent = 0)
-        : LineEditBase(parent){
 
-        setLayout(&m_outerLayout);
-        m_innerWidget.setLayout(&m_innerLayout);
-
-        m_innerLayout.addWidget(&m_title);
-        m_innerLayout.addWidget(&m_lineedit);
-
-        m_outerLayout.addWidget(&m_innerWidget);
-        m_outerLayout.addWidget(&m_regExpIndicator);
-    };
-    ~LineEdit();
-
-    QWidget             m_innerWidget;
-    QVBoxLayout         m_outerLayout;
-    QHBoxLayout         m_innerLayout;
-
-};
-
-
-class LineEdit2 : public LineEditBase{
-    Q_OBJECT
 public:
     explicit LineEdit2(QWidget *parent = 0)
-        : LineEditBase(parent){
+        : QWidget(parent){
 
         setLayout(&m_outerLayout);
 
@@ -195,9 +183,38 @@ public:
         m_outerLayout.addWidget(&m_regExpIndicator);
 
     };
-    ~LineEdit2();
-    // https://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
+
+
+    QLabel              m_title;
+    QLineEdit           m_lineedit;
+    QLabel              m_regExpIndicator;
+    QRegularExpression  m_regExp;
     QVBoxLayout         m_outerLayout;
+
+public slots:
+
+    void hideEvent(QHideEvent *) override
+    {
+        //emit visibilityChanged(false);
+        m_title.setVisible(false);
+        m_lineedit.setVisible(false);
+        m_regExpIndicator.setVisible(false);
+    }
+
+    void showEvent(QShowEvent *) override{
+        m_title.setVisible(true);
+        m_lineedit.setVisible(true);
+        m_regExpIndicator.setVisible(true);
+    }
+
+    void validateInput(const QString &text){
+        QRegularExpressionMatch match = m_regExp.match(text);
+        if(match.hasMatch()){
+            m_regExpIndicator.setText(QStringLiteral(""));
+        } else {
+            m_regExpIndicator.setText(QStringLiteral("Please provide acceptable input"));
+        }
+    }
 };
 
 
@@ -261,7 +278,9 @@ private:
 
     void            addComboBox(QJsonObject &dropDownJSON);
 
-    void            addLineEdit(QJsonObject &lineeditJSON, ElementEditorTypes::Type type);
+    void            addLineEdit(QJsonObject &lineeditJSON);
+
+    void            addLineEdit2(QJsonObject &lineeditJSON);
 
     void            addCheckBox(QJsonObject &checkboxJSON);
 

@@ -26,11 +26,14 @@ class Element(Function):
             self.return_queue.put(recordDone)
             return
 
-        
-        methodName  = None
+        baseAPI     = None
+        pubMethod   = None
+        prvMethod   = None
         orderType   = None
         side        = None
-        symbol      = None
+        pubSymbol   = None
+        prvSymbol   = None
+        symbols     = None
         timeframe   = None
         limit       = None     
         amount      = None
@@ -39,24 +42,26 @@ class Element(Function):
         params      = None
 
         for attrs in self.config['SpecificConfig']:
+            if attrs['Name'] == 'BaseApi':
+                baseAPI = attrs['Data']
             if attrs['Name'] == 'Public Methods':
-                methodName = attrs['Data']
+                pubMethod = attrs['Data']
             elif attrs['Name'] == 'Private Methods':
-                methodName = attrs['Data']
+                prvMethod = attrs['Data']
             elif attrs['Name'] == 'Order Types':
                 orderType = attrs['Data']
             elif attrs['Name'] == 'Side':
                 side = attrs['Data']
             elif attrs['Name'] == 'SymbolPublic':
-                symbol = attrs['Data']
+                pubSymbol = attrs['Data']
             elif attrs['Name'] == 'SymbolPrivate':
-                symbol = attrs['Data']
+                prvSymbol = attrs['Data']
             elif attrs['Name'] == 'Timeframe':
                 timeframe = attrs['Data']
             elif attrs['Name'] == 'LimitData':
                 limit = attrs['Data']
             elif attrs['Name'] == 'Tickers':
-                symbol = attrs['Data']
+                symbols = attrs['Data']
             elif attrs['Name'] == 'Amount':
                 amount = attrs['Data']
             elif attrs['Name'] == 'Price':
@@ -72,6 +77,14 @@ class Element(Function):
         #    after providing output data        #
         #                                       #
         #########################################
+
+        if baseAPI == 'Public':
+            methodName  = pubMethod
+            symbol      = pubSymbol
+        else:
+            methodName  = prvMethod
+            symbol      = prvSymbol
+
 
         if methodName == 'create order' and orderType == 'Market':
 
@@ -111,8 +124,8 @@ class Element(Function):
              methodName == 'fetch my trades' or     \
              methodName == 'fetch trades' or        \
              methodName == 'fetch order book' or    \
-             methodName == 'fetch ticker' or        \
-             methodName == 'fetch tickers':
+             methodName == 'fetch ticker':
+            
 
             methodName = methodName.replace(" ", "_")
 
@@ -120,6 +133,17 @@ class Element(Function):
                 'method' : methodName,
                 'kwargs' : {
                     'symbol'    : symbol
+                }
+            }
+
+        elif methodName == 'fetch tickers':
+
+            
+            methodName = methodName.replace(" ", "_")
+            apiCall = {
+                'method' : methodName,
+                'kwargs' : {
+                    'symbols'    : symbols
                 }
             }
 
@@ -134,7 +158,7 @@ class Element(Function):
                 }
             }
 
-        elif methodName == 'fetch ohlcv':
+        elif methodName == 'fetch OHLCV':
 
             methodName = methodName.replace(" ", "_")
 
