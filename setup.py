@@ -46,7 +46,8 @@ setuptools.setup(
             'PySide2',
             'eventlet>=0.27.0',
             'debugpy==1.2.1',
-            'python-telegram-bot==13.4.1'
+            'python-telegram-bot==13.4.1',
+            'ccxt>=1.37.59'
              ],
         classifiers = [
             'Programming Language :: Python :: 3.7',

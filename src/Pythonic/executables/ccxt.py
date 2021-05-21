@@ -45,7 +45,16 @@ class Element(Function):
 
 
         exchangeClass = getattr(ccxt, eId)
-        exchange = exchangeClass({'enableRateLimit'   : True})
+        if pubKey and prvKey:
+
+             exchange = exchangeClass( {
+                                        'apiKey'            : pubKey,
+                                        'secret'            : prvKey,
+                                        'enableRateLimit'   : True
+             })
+             
+        else:
+            exchange = exchangeClass( {'enableRateLimit'   : True})
 
         method = getattr(exchange, self.inputData['method'])
 

@@ -89,10 +89,9 @@ class Element(Function):
         if methodName == 'create order' and orderType == 'Market':
 
             methodName = methodName.replace(" ", "_")
-
+            
             apiCall = {
                 'method' : methodName,
-                'params' : params,
                 'kwargs' : {
                     'symbol'    : symbol,
                     'type'      : orderType,
@@ -101,6 +100,20 @@ class Element(Function):
                 }
             }
 
+        elif methodName == 'create order' and orderType == 'Limit':
+
+            methodName = methodName.replace(" ", "_")
+
+            apiCall = {
+                'method' : methodName,
+                'kwargs' : {
+                    'symbol'    : symbol,
+                    'type'      : orderType,
+                    'side'      : side,
+                    'amount'    : amount,
+                    'price'     : price
+                }
+            }
 
         elif methodName == 'create order' :
 
