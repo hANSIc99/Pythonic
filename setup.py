@@ -26,6 +26,7 @@ setuptools.setup(
              'public_html/static/ProcessPipe.png',
              'public_html/static/Telegram.png',
              'public_html/static/CCXT.png',
+             'public_html/static/CCXT_Method.png',
              'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
@@ -34,6 +35,7 @@ setuptools.setup(
              'public_html/static/*.data',
              'public_html/templates/*.html',
              'public_html/config/Toolbox/Basic/*',
+             'public_html/config/Toolbox/Trading/*',
              'public_html/config/Toolbox/Connectivity/Telegram.editor',
              'public_html/config/Toolbox/Connectivity/0Telegram.json'
              ]

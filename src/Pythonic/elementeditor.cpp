@@ -288,7 +288,7 @@ QJsonObject Elementeditor::genConfig()
     for(const LineEdit2* lineedit : lineedits2){
 
         QJsonObject lineeditJSON = {
-            { QStringLiteral("Type"),  QStringLiteral("LineEdit")},
+            { QStringLiteral("Type"),  QStringLiteral("LineEdit2")},
             { QStringLiteral("Name"),  lineedit->objectName()},
             { QStringLiteral("Data"),  lineedit->m_lineedit.text()}
 
