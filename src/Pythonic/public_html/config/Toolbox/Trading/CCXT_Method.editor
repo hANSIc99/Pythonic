@@ -1,0 +1,298 @@
+[ 
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "BaseApi",
+	    "Title" : "Choose API type:",
+	    "Items" : [	"Public",
+			  		"Private"
+				  ]
+    },
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "Public Methods",
+	    "Title" : "Choose method:",
+	    "Items" : [	"load markets",
+			  		"fetch markets",
+                    "fetch currencies",
+                    "fetch ticker",
+                    "fetch tickers",
+                    "fetch order book",
+                    "fetch OHLCV",
+                    "fetch status",
+                    "fetch trades"
+				  ],
+        "Dependency"  : [
+                { 
+                    "Dependence" : "BaseApi",
+                    "DependentValue" : [
+                                        "Public"
+                                    ]
+                }
+            ]
+    },
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "Private Methods",
+	    "Title" : "Choose method:",
+	    "Items" : [	"fetch balance",
+			  		"create order",
+                    "fetch orders",
+                    "fetch open orders",
+                    "fetch closed orders",
+                    "fetch my trades",
+                    "withdraw"
+				  ],
+        "Dependency"  : [
+                { 
+                    "Dependence" : "BaseApi",
+                    "DependentValue" : [
+                                        "Private"
+                                    ]
+                }
+            ]
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "SymbolPublic",
+        "Title"       : "Symbol",
+	    "Defaulttext" : "ETH/BTC",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Public"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Public Methods",
+                                "DependentValue" : 	[
+                                                    "fetch ticker",
+                                                    "fetch order book",
+                                                    "fetch OHLCV",
+                                                    "fetch trades"
+                                                    ]
+                            }
+			      		]
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "Timeframe",
+        "Title"       : "Timeframe",
+	    "Defaulttext" : "1m",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Public"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Public Methods",
+                                "DependentValue" : 	[
+                                                    "fetch OHLCV"
+                                                    ]
+                            }
+			      		]
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "LimitData",
+        "Title"       : "Limit",
+	    "Defaulttext" : "500",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Public"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Public Methods",
+                                "DependentValue" : 	[
+                                                    "fetch OHLCV"
+                                                    ]
+                            }
+			      		]
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "Tickers",
+        "Title"       : "Tickers",
+	    "Defaulttext" : "ETH/BTC XMR/BTC ADA/BNB",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Public"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Public Methods",
+                                "DependentValue" : 	[
+                                                    "fetch tickers"
+                                                    ]
+                            }
+			      		]
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "SymbolPrivate",
+        "Title"       : "Symbol",
+	    "Defaulttext" : "ETH/BTC",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Private"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Private Methods",
+                                "DependentValue" : 	[
+                                                    "create order",
+                                                    "fetch orders",
+                                                    "fetch open orders",
+                                                    "fetch closed orders",
+                                                    "fetch my trades",
+                                                    "withdraw"
+                                                    ]
+                            }
+			      		]
+    },
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "Order Types",
+	    "Title" : "Order type:",
+	    "Items" : [	"Market",
+			  		"Limit",
+                    "Stop Loss",
+                    "Stop Loss Limit"
+				  ],
+        "Dependency"  : [
+                { 
+                    "Dependence" : "BaseApi",
+                    "DependentValue" : 	[
+                                        "Private"
+                                        ]
+                },
+                { 
+                    "Dependence" : "Private Methods",
+                    "DependentValue" : [
+                                        "create order"
+                                    ]
+                }
+            ]
+    },
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "Side",
+	    "Title" : "Side:",
+	    "Items" : [	"Buy",
+			  		"Sell"
+				  ],
+        "Dependency"  : [
+                { 
+                    "Dependence" 		: "Order Types",
+                    "DependentProperty" : "Visibility"
+                }
+            ]
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "Amount",
+        "Title"       : "Amount:",
+	    "Defaulttext" : "123.456",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Private"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Private Methods",
+                                "DependentValue" : 	[
+                                                    "create order",
+                                                    "withdraw"
+                                                    ]
+                            }
+			      		],
+        "RegExp"     : "^([0-9]*[.])?[0-9]+" 
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "Price",
+        "Title"       : "Price:",
+	    "Defaulttext" : "123.456",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Private"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Private Methods",
+                                "DependentValue" : 	[
+                                                    "create order"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Order Types",
+                                "DependentValue" : 	[
+                                                    "Limit",
+                                                    "Stop Loss",
+                                                    "Stop Loss Limit"
+                                                    ]
+                            }
+			      		],
+        "RegExp"     : "^([0-9]*[.])?[0-9]+" 
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "Address",
+        "Title"       : "Address:",
+	    "Defaulttext" : "123xyz",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Private"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Private Methods",
+                                "DependentValue" : 	[
+                                                    "withdraw"
+                                                    ]
+                            }
+			      		]
+    },
+    {
+        "Type"	    : "LineEdit2",
+	    "Name"        : "Parameter",
+        "Title"       : "Additional parameter (optional):",
+	    "Defaulttext" : "{ 'stopPx': 6000.0 }",                      
+	    "Dependency"  : [
+                            { 
+                                "Dependence" : "BaseApi",
+                                "DependentValue" : 	[
+                                                    "Private"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Private Methods",
+                                "DependentValue" : 	[
+                                                    "create order"
+                                                    ]
+                            },
+                            { 
+                                "Dependence" : "Order Types",
+                                "DependentValue" : 	[
+                                                    "Stop Loss",
+                                                    "Stop Loss Limit"
+                                                    ]
+                            }
+			      		]
+    }
+]

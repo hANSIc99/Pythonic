@@ -21,6 +21,8 @@ const QLoggingCategory Elementeditor::logC{"Elementeditor"};
 constexpr QSize Elementeditor::m_delBtnSize;
 constexpr int Elementeditor::m_fontSize;
 
+
+
 Elementeditor::Elementeditor(QJsonObject basicData, QWidget *parent)
     : QDialog(parent)
     , m_basicData(basicData)
@@ -133,6 +135,11 @@ void Elementeditor::openEditor(const QJsonObject config)
                 if(edit) edit->m_lineedit.setText(elementConfig[QStringLiteral("Data")].toString());
                 break;
             }
+            case ElementEditorTypes::LineEdit2: {
+                LineEdit2 *edit = m_specificConfig.findChild<LineEdit2*>(name);
+                if(edit) edit->m_lineedit.setText(elementConfig[QStringLiteral("Data")].toString());
+                break;
+            }
             case ElementEditorTypes::CheckBox: {
                 CheckBox *checkbox = m_specificConfig.findChild<CheckBox*>(name);
                 if(checkbox) checkbox->setChecked(elementConfig[QStringLiteral("Data")].toBool());
@@ -183,6 +190,10 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
             break;
         }
 
+        case ElementEditorTypes::LineEdit2: {
+            addLineEdit2(unit);
+            break;
+        }
         case ElementEditorTypes::CheckBox: {
             addCheckBox(unit);
             break;
@@ -222,6 +233,7 @@ ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
 {
     if(inString == QStringLiteral("ComboBox")) return ElementEditorTypes::ComboBox;
     if(inString == QStringLiteral("LineEdit")) return ElementEditorTypes::LineEdit;
+    if(inString == QStringLiteral("LineEdit2")) return ElementEditorTypes::LineEdit2;
     if(inString == QStringLiteral("CheckBox")) return ElementEditorTypes::CheckBox;
     if(inString == QStringLiteral("Text"))     return ElementEditorTypes::Text;
     if(inString == QStringLiteral("HelpText")) return ElementEditorTypes::HelpText;
@@ -271,6 +283,21 @@ QJsonObject Elementeditor::genConfig()
 
     }
 
+    /* Check all LineEdits2 */
+    const QList<LineEdit2*> lineedits2 = m_specificConfig.findChildren<LineEdit2*>();
+    for(const LineEdit2* lineedit : lineedits2){
+
+        QJsonObject lineeditJSON = {
+            { QStringLiteral("Type"),  QStringLiteral("LineEdit2")},
+            { QStringLiteral("Name"),  lineedit->objectName()},
+            { QStringLiteral("Data"),  lineedit->m_lineedit.text()}
+
+        };
+
+        specificConfig.append(lineeditJSON);
+
+    }
+
     /* Check all CheckBoxes */
     const QList<CheckBox*> checkboxes = m_specificConfig.findChildren<CheckBox*>();
     for(const CheckBox* checkbox : checkboxes){
@@ -310,10 +337,13 @@ void Elementeditor::checkRulesAndRegExp()
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
-    // https://doc.qt.io/qt-5/qtglobal.html#qAsConst
-    for(const ElementEditorTypes::Rule &rule : qAsConst(m_rules)){
+    /****************************************************
+     *                                                  *
+     *  Check if value based condition is fullfilled    *
+     *                                                  *
+     ****************************************************/
 
-
+    for(ElementEditorTypes::ValueRule &rule : m_value_rules){
 
         /* Find dependent element */
         QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
@@ -325,42 +355,14 @@ void Elementeditor::checkRulesAndRegExp()
             continue;
         }
 
-
         bool bConditionFulfilled = false;
 
-        /* Check if rule is property based */
-
-        if(rule.propertyRelated){
-            /* Get first element of list = name of property */
-            /* (dependentValues of property based rules contain always only one value) */
-            //QLatin1String property(rule.dependentValues.first().toLatin1(),
-            //                       rule.dependentValues.first().size());
-
-            //qCInfo(logC, "Applying rule for %s - %s", rule.affectedElement->objectName().toStdString().c_str(), rule.dependentValues.first().toStdString().c_str());
-            //switch (hashEditorProperty(property)) {
-            switch (hashEditorProperty(rule.dependentValues.first())) {
-
-            case ElementEditorTypes::Visibility: {
-                //qCInfo(logC, "Applying rule for %s - %s", rule.affectedElement->objectName().toStdString().c_str(), "CHECK");
-                bConditionFulfilled = dependence->isVisible();
-                break;
-            }
-            default: {
-                break;
-            }
-            }
-            /* Apply rule to affected element */
-            //qCInfo(logC, "Applying rule for %s - %u", rule.affectedElement->objectName().toStdString().c_str(), bConditionFulfilled);
-            rule.affectedElement->setVisible(bConditionFulfilled);
-            /* Loop can be continued when it was a property related rule */
-            continue;
-        }
 
         /* Value based rule */
 
         /* Get type name of dependent element */
 
-        QLatin1String sType(dependence->metaObject()->className());
+        QString sType(dependence->metaObject()->className());
 
         /* Perform type dependent value query */
         switch (hashType(sType)) {
@@ -388,12 +390,97 @@ void Elementeditor::checkRulesAndRegExp()
         }
         }
 
-        /* Apply rule to affected element */
-        rule.affectedElement->setVisible(bConditionFulfilled);
-        //update();
-        //adjustSize();
+        /* Save evaluation result to map */
+
+        if(m_ruleProvidedElements.contains(rule.affectedElement)){
+            bool actualState = m_ruleProvidedElements.value(rule.affectedElement);
+             m_ruleProvidedElements.insert(rule.affectedElement, actualState and bConditionFulfilled);
+        }else{
+            m_ruleProvidedElements.insert(rule.affectedElement, bConditionFulfilled);
+        }
+
+
+    }
+
+
+
+    /****************************************************
+     *                                                  *
+     *       Apply value based condition  or not)       *
+     *                                                  *
+     ****************************************************/
+
+
+    m_ruleProvElmIt = m_ruleProvidedElements.constBegin();
+
+    while (m_ruleProvElmIt != m_ruleProvidedElements.constEnd()) {
+
+        m_ruleProvElmIt.key()->setVisible(m_ruleProvElmIt.value());
+
+        ++m_ruleProvElmIt;
+    }
+
+    m_ruleProvidedElements.clear();
+
+    /****************************************************
+     *                                                  *
+     * Check if property based condition is fullfilled  *
+     *                                                  *
+     ****************************************************/
+    for(ElementEditorTypes::PropertyRule &rule : m_property_rules){
+
+        /* Find dependent element */
+        QWidget *dependence = m_specificConfig.findChild<QWidget*>(rule.dependence);
+
+        if(!dependence){
+            qCInfo(logC, "%s - Object %s not found",
+                   parent()->objectName().toStdString().c_str(),
+                   rule.dependence.toStdString().c_str());
+            continue;
+        }
+
+        bool bConditionFulfilled = false;
+
+        switch (hashEditorProperty(rule.property)) {
+
+            case ElementEditorTypes::Visibility: {
+                //qCInfo(logC, "Applying rule for %s - %s", rule.affectedElement->objectName().toStdString().c_str(), "CHECK");
+                bConditionFulfilled = dependence->isVisible();
+                break;
+            }
+            default: {
+                break;
+            }
+            }
+
+            /* Save evaluation result to map */
+
+            if(m_ruleProvidedElements.contains(rule.affectedElement)){
+                bool actualState = m_ruleProvidedElements.value(rule.affectedElement);
+                 m_ruleProvidedElements.insert(rule.affectedElement, actualState and bConditionFulfilled);
+            }else{
+                m_ruleProvidedElements.insert(rule.affectedElement, bConditionFulfilled);
+            }
 
     } // rule for-loop
+
+
+    /****************************************************
+     *                                                  *
+     *         Apply property based condition           *
+     *                                                  *
+     ****************************************************/
+
+    m_ruleProvElmIt = m_ruleProvidedElements.constBegin();
+
+    while (m_ruleProvElmIt != m_ruleProvidedElements.constEnd()) {
+
+        m_ruleProvElmIt.key()->setVisible(m_ruleProvElmIt.value());
+
+        ++m_ruleProvElmIt;
+    }
+
+    m_ruleProvidedElements.clear();
 
     /****************************************************
      *                                                  *
@@ -424,7 +511,6 @@ void Elementeditor::checkRulesAndRegExp()
 
     }
 }
-
 
 void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
 {  
@@ -457,7 +543,7 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
                 s_dependentValues.append(dependency.toString());
             }
 
-            m_rules.append({affectedElement, dependentObjName, false, s_dependentValues});
+            m_value_rules.append({affectedElement, dependentObjName, s_dependentValues});
         }
 
 
@@ -465,10 +551,7 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
         if(!dependentProp.isUndefined()){
             QString sProperty = dependentProp.toString();
 
-            QStringList  s_dependentValues;
-            s_dependentValues.append(sProperty);
-
-            m_rules.append({affectedElement, dependentObjName, true, s_dependentValues});
+            m_property_rules.append({affectedElement, dependentObjName, sProperty});
         }
 
     }
@@ -519,9 +602,9 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
+    LineEdit* lineedit = new LineEdit(this);
 
 
-    LineEdit *lineedit = new LineEdit(&m_specificConfig);
     lineedit->setObjectName(lineeditJSON[QStringLiteral("Name")].toString());
     m_specificCfgLayout.addWidget(lineedit);
 
@@ -545,13 +628,66 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
 
     if(!regExpString.isEmpty()){
 
+        //LineEdit2* myLinedit = new LineEdit2();
+        //myLinedit->m_lineedit;
         lineedit->m_regExp.setPattern(regExpString);
 
+        QLineEdit* tmpLinedit = &lineedit->m_lineedit;
+
         connect(
-            &lineedit->m_lineedit, &QLineEdit::textChanged,
+
+            tmpLinedit, &QLineEdit::textChanged,
             lineedit, &LineEdit::validateInput);
+
     }
 
+
+    /* Adding condition (if given) */
+    addRules(lineeditJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(lineedit));
+}
+
+void Elementeditor::addLineEdit2(QJsonObject &lineeditJSON)
+{
+    qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+    LineEdit2* lineedit = new LineEdit2(this);
+
+
+    lineedit->setObjectName(lineeditJSON[QStringLiteral("Name")].toString());
+    m_specificCfgLayout.addWidget(lineedit);
+
+    /* Adding title (if one is given) */
+    QString title = lineeditJSON[QStringLiteral("Title")].toString();
+    if(!title.isEmpty()){
+        //QLabel *label = new QLabel(title, &m_specificConfig);
+        //m_specificCfgLayout.addWidget(label);
+        lineedit->m_title.setText(title);
+    }
+
+    /* Adding default text (if given) */
+    QString defaultText = lineeditJSON[QStringLiteral("Defaulttext")].toString();
+    if(!defaultText.isEmpty()){
+        lineedit->m_lineedit.setText(defaultText);
+    }
+
+    /* Adding RegExp (if given) */
+
+    QString regExpString = lineeditJSON[QStringLiteral("RegExp")].toString();
+
+    if(!regExpString.isEmpty()){
+
+        //LineEdit2* myLinedit = new LineEdit2();
+        //myLinedit->m_lineedit;
+        lineedit->m_regExp.setPattern(regExpString);
+
+        QLineEdit* tmpLinedit = &lineedit->m_lineedit;
+
+        connect(
+
+            tmpLinedit, &QLineEdit::textChanged,
+            lineedit, &LineEdit2::validateInput);
+
+    }
 
     /* Adding condition (if given) */
     addRules(lineeditJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(lineedit));

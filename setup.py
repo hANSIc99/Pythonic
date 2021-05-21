@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 setuptools.setup(
         name = 'Pythonic',
-        version = '1.04.01',
+        version = '1.05',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -25,6 +25,8 @@ setuptools.setup(
              'public_html/static/GenericProcess.png',
              'public_html/static/ProcessPipe.png',
              'public_html/static/Telegram.png',
+             'public_html/static/CCXT.png',
+             'public_html/static/CCXT_Method.png',
              'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
@@ -33,6 +35,7 @@ setuptools.setup(
              'public_html/static/*.data',
              'public_html/templates/*.html',
              'public_html/config/Toolbox/Basic/*',
+             'public_html/config/Toolbox/Trading/*',
              'public_html/config/Toolbox/Connectivity/Telegram.editor',
              'public_html/config/Toolbox/Connectivity/0Telegram.json'
              ]
@@ -45,7 +48,8 @@ setuptools.setup(
             'PySide2',
             'eventlet>=0.27.0',
             'debugpy==1.2.1',
-            'python-telegram-bot==13.4.1'
+            'python-telegram-bot==13.4.1',
+            'ccxt>=1.37.59'
              ],
         classifiers = [
             'Programming Language :: Python :: 3.7',

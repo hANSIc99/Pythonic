@@ -1,3 +1,8 @@
+1.5
+
+    Elementeditor: Visibility rules for elements are now evaluated as AND
+    CCXT Crypto trading library added 
+
 1.4.1
 
     Bug in Code Server configuration fixed (Docker only)
