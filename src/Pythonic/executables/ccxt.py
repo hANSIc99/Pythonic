@@ -52,7 +52,7 @@ class Element(Function):
                                         'secret'            : prvKey,
                                         'enableRateLimit'   : True
              })
-             
+
         else:
             exchange = exchangeClass( {'enableRateLimit'   : True})
 
@@ -74,9 +74,11 @@ class Element(Function):
 
             kwargs = self.inputData['kwargs']
             params = self.inputData['params']
-            
-            data = method(**kwargs, params=params)
 
+            if params != '':
+                data = method(**kwargs, params=params)
+            else:
+                data = method(**kwargs)
 
            
         recordDone = Record(data, '{}() successfull'.format(self.inputData['method']))     
