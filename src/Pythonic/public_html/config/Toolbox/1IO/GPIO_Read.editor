@@ -11,5 +11,18 @@
 				]
 			}
 		]
+    },
+	{
+        "Type"  	: "HelpImage",
+        "Name"  	: "RPB4IO",
+	    "Filename"  : "gpio.png",
+		"Dependency" : [
+			{
+				"Dependence"		: "Mode",
+				"DependentValue"	: [
+										"On every full interval"
+				]
+			}
+		]
     }
 ]

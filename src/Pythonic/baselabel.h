@@ -110,7 +110,10 @@ public:
 
         if (m_pixMap.load(m_relPath + imagePath)){
 
-            m_pixMap = m_pixMap.scaled(m_size);
+            if(m_size.isValid()){
+                m_pixMap = m_pixMap.scaled(m_size);
+            }
+
             setPixmap(m_pixMap);
 
         } else {
@@ -125,7 +128,9 @@ public:
 
         if (m_pixMap.load(m_relPath + imagePath)){
 
-            m_pixMap = m_pixMap.scaled(m_size);
+            if(m_size.isValid()){
+                m_pixMap = m_pixMap.scaled(m_size);
+            }
             setPixmap(m_pixMap);
 
         } else {

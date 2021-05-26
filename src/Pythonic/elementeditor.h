@@ -66,6 +66,7 @@ namespace ElementEditorTypes {
         CheckBox,
         Text,
         HelpText,
+        HelpImage,
         NoType
     };
 
@@ -276,17 +277,19 @@ private:
 
     void            addRules(const QJsonValue rules, QWidget *affectedElement);
 
-    void            addComboBox(QJsonObject &dropDownJSON);
+    void            addComboBox(const QJsonObject &dropDownJSON);
 
-    void            addLineEdit(QJsonObject &lineeditJSON);
+    void            addLineEdit(const QJsonObject &lineeditJSON);
 
-    void            addLineEdit2(QJsonObject &lineeditJSON);
+    void            addLineEdit2(const QJsonObject &lineeditJSON);
 
-    void            addCheckBox(QJsonObject &checkboxJSON);
+    void            addCheckBox(const QJsonObject &checkboxJSON);
 
-    void            addText(QJsonObject &textJSON);
+    void            addText(const QJsonObject &textJSON);
 
-    void            addHelpText(QJsonObject &textJSON);
+    void            addHelpText(const QJsonObject &textJSON);
+
+    void            addHelpImage(const QJsonObject &imgJSON);
 
     QHBoxLayout     m_mainLayout;
 

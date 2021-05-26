@@ -207,6 +207,10 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
             addHelpText(unit);
             break;
         }
+        case ElementEditorTypes::HelpImage: {
+            addHelpImage(unit);
+            break;
+        }
         default: {
             break;
         }
@@ -231,12 +235,13 @@ void Elementeditor::accept()
 
 ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
 {
-    if(inString == QStringLiteral("ComboBox")) return ElementEditorTypes::ComboBox;
-    if(inString == QStringLiteral("LineEdit")) return ElementEditorTypes::LineEdit;
+    if(inString == QStringLiteral("ComboBox"))  return ElementEditorTypes::ComboBox;
+    if(inString == QStringLiteral("LineEdit"))  return ElementEditorTypes::LineEdit;
     if(inString == QStringLiteral("LineEdit2")) return ElementEditorTypes::LineEdit2;
-    if(inString == QStringLiteral("CheckBox")) return ElementEditorTypes::CheckBox;
-    if(inString == QStringLiteral("Text"))     return ElementEditorTypes::Text;
-    if(inString == QStringLiteral("HelpText")) return ElementEditorTypes::HelpText;
+    if(inString == QStringLiteral("CheckBox"))  return ElementEditorTypes::CheckBox;
+    if(inString == QStringLiteral("Text"))      return ElementEditorTypes::Text;
+    if(inString == QStringLiteral("HelpText"))  return ElementEditorTypes::HelpText;
+    if(inString == QStringLiteral("HelpImage")) return ElementEditorTypes::HelpImage;
     return ElementEditorTypes::NoType;
 }
 
@@ -558,7 +563,7 @@ void Elementeditor::addRules(const QJsonValue rules, QWidget *affectedElement)
 
 }
 
-void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
+void Elementeditor::addComboBox(const QJsonObject &dropDownJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -598,7 +603,7 @@ void Elementeditor::addComboBox(QJsonObject &dropDownJSON)
    addRules(dropDownJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(dropdown));
 }
 
-void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
+void Elementeditor::addLineEdit(const QJsonObject &lineeditJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -646,7 +651,7 @@ void Elementeditor::addLineEdit(QJsonObject &lineeditJSON)
     addRules(lineeditJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(lineedit));
 }
 
-void Elementeditor::addLineEdit2(QJsonObject &lineeditJSON)
+void Elementeditor::addLineEdit2(const QJsonObject &lineeditJSON)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -693,7 +698,7 @@ void Elementeditor::addLineEdit2(QJsonObject &lineeditJSON)
     addRules(lineeditJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(lineedit));
 }
 
-void Elementeditor::addCheckBox(QJsonObject &checkboxJSON)
+void Elementeditor::addCheckBox(const QJsonObject &checkboxJSON)
 {
     qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -704,7 +709,7 @@ void Elementeditor::addCheckBox(QJsonObject &checkboxJSON)
     addRules(checkboxJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(checkbox));
 }
 
-void Elementeditor::addText(QJsonObject &textJSON)
+void Elementeditor::addText(const QJsonObject &textJSON)
 {
     qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -720,7 +725,7 @@ void Elementeditor::addText(QJsonObject &textJSON)
     addRules(textJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(text));
 }
 
-void Elementeditor::addHelpText(QJsonObject &textJSON)
+void Elementeditor::addHelpText(const QJsonObject &textJSON)
 {
     qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -732,5 +737,16 @@ void Elementeditor::addHelpText(QJsonObject &textJSON)
     m_helpTextLayout.addWidget(text);
 
     addRules(textJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(text));
+}
+
+void Elementeditor::addHelpImage(const QJsonObject &imgJSON)
+{
+    qCDebug(logC, "called %s", parent()->objectName().toStdString().c_str());
+
+    BaseLabel *helpImg = new BaseLabel( imgJSON[QStringLiteral("Filename")].toString(),
+                                        QSize(),
+                                        &m_specificConfig);
+
+    m_helpTextLayout.addWidget(helpImg);
 }
 
