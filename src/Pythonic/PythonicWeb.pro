@@ -7,6 +7,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++11
 CONFIG += wasm
 
+INCLUDEPATH += "/home/stephan/Dokumente/emsdk/upstream/emscripten/system/include"
+
 wasm {
 DEFINES += WASM
 

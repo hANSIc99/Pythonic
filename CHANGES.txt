@@ -1,3 +1,8 @@
+1.6
+
+    Websocket can now connect to any host
+    Raspberry PI I/O element added
+
 1.5
 
     Elementeditor: Visibility rules for elements are now evaluated as AND

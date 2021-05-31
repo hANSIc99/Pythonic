@@ -28,14 +28,9 @@
 #include <QPushButton>
 #include <QLoggingCategory>
 
-// ToDo
-/*
 #ifdef WASM
-    setWindowTitle(QStringLiteral("Pythonic - WebAssembly"));
-#else
-    setWindowTitle(QStringLiteral("Pythonic"));
+#include "emscripten/val.h"
 #endif
-*/
 
 
 class BaseLabelDaemon : public QLabel
@@ -49,7 +44,17 @@ public:
         connect(&m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
         SLOT (fileDownloaded(QNetworkReply*)));
 
-        QNetworkRequest request(m_relUrl + imagePath);
+        //Qstring host =
+        #ifdef WASM
+            emscripten::val location = emscripten::val::global("location");
+            QString host = QString::fromStdString(location["host"].as<std::string>());
+
+        #else
+
+        QString host = QStringLiteral("localhost:7000");
+        #endif
+
+        QNetworkRequest request(m_urlSuffix + host + QStringLiteral("/") + imagePath);
         m_WebCtrl.get(request);
         qCDebug(logC, "called - %s", imagePath.toStdString().c_str());
     };
@@ -94,7 +99,7 @@ private:
     QByteArray              m_DownloadedData;
     QSize                   m_size;
 
-    const static QString m_relUrl;
+    const static QString m_urlSuffix;
     const static QLoggingCategory logC;
 };
 
