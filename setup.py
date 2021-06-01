@@ -3,8 +3,8 @@ import setuptools
 with open('README.whl', 'r') as fh:
     long_description = fh.read()
 
+
 setuptools.setup(
-        name = 'Pythonic',
         version = '1.06',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
@@ -44,13 +44,6 @@ setuptools.setup(
             'console_scripts' : ['Pythonic = Pythonic.script:run']
             },
         python_requires = '>=3.7',
-        install_requires = [
-            'PySide2',
-            'eventlet>=0.27.0',
-            'debugpy==1.2.1',
-            'python-telegram-bot==13.4.1',
-            'ccxt>=1.37.59'
-             ],
         classifiers = [
             'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',
