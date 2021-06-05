@@ -60,12 +60,12 @@ Open a command shell and simply type `Pythonic`.
 
 Open your favorite WebAssembly compatible web browser and navigate to...
 
-- [http://1270.0.01:7000/](http://1270.0.01:7000/) ... to open the GUI
-- [http://1270.0.01:7000/log](http://1270.0.01:7000/log) ... to get an overview of available log files
-- [http://1270.0.01:7000/2021_03_15.txt](http://1270.0.01:7000/2021_03_15.txt) ... to open the actual log file of 15. March 2021 (requested date must be available)
-- [http://1270.0.01:7000/generic_python_73594528.py](http://1270.0.01:7000/generic_python_73594528.py) ... to download a specific *\*.py*-file
-- [http://1270.0.01:7000/current_config.json](http://1270.0.01:7000/current_config.json) ... to download the grid configuration file
-- [http://1270.0.01:8000/](http://1270.0.01:8000/) ... to open code server (VS Code in browser - **container only**)
+- [http://127.0.0.1:7000//](http://127.0.0.1:7000/) ... to open the GUI
+- [http://127.0.0.1:7000/log](http://127.0.0.1:7000/log) ... to get an overview of available log files
+- [http://127.0.0.1:7000/2021_03_15.txt](http://127.0.0.1:7000/2021_03_15.txt) ... to open the actual log file of 15. March 2021 (requested date must be available)
+- [http://127.0.0.1:7000/generic_python_73594528.py](http://127.0.0.1:7000/generic_python_73594528.py) ... to download a specific *\*.py*-file
+- [http://1270.0.01:7000/current_config.json](http://127.0.0.1:7000/current_config.json) ... to download the grid configuration file
+- [http://127.0.0.1:8000/](127.0.0.1:8000/) ... to open code server (VS Code in browser - **container only**)
 
 ## Editing elements
 
