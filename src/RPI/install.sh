@@ -23,6 +23,9 @@
 ##############################################
 
 
+apt-get install -y python3-pip
+sudo -u pythonic python3 -m pip install pylint
+
 if [ -f "ms-python-release.vsix" ]; then
     echo "ms-python-release.vsix exists."
 else 
@@ -61,7 +64,6 @@ sudo -u pythonic bash -c 'cd /home/pythonic/extensions; rm extension.vsixmanifes
 
 sudo -u pythonic curl -fsSL https://github.com/hANSIc99/Pythonic/raw/dev/dist/PythonicRPI-1.6.tar.gz -o PythonicRPI.tar.gz
 
-apt-get install -y python3-pip
 
 sudo -u pythonic python3 -m pip install PythonicRPI.tar.gz
 

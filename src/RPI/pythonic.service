@@ -4,4 +4,4 @@ Description=Python automation framework
 [Service]
 Type=simple
 User=pythonic
-ExecStart=/usr/bin/python3 /home/pythonic/.local/lib/python3.7/site-packages/Pythonic/main.py 
+ExecStart=/usr/bin/python3 /home/pythonic/.local/lib/python3.7/site-packages/Pythonic/script.py 
