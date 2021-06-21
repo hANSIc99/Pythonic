@@ -1,0 +1,7 @@
+bind-addr: 0.0.0.0:8000
+auth: none
+cert: false
+user-data-dir: /root
+extensions-dir: /root/extension
+disable-update-check: true
+disable-telemetry: true
