@@ -39,13 +39,11 @@ fi
 sudo -u pythonic mkdir -p /home/pythonic/.config/code-server
 sudo -u pythonic mkdir -p /home/pythonic/.local/share/code-server
 sudo -u pythonic mkdir -p /home/pythonic/extensions
-
 sudo -u pythonic curl -fsSL https://code-server.dev/install.sh | sh
 
 sudo -u pythonic curl https://raw.githubusercontent.com/hANSIc99/Pythonic/master/src/code-server/settings.json -o ~/.local/share/code-server/settings.json
 
 sudo -u pythonic curl https://raw.githubusercontent.com/hANSIc99/Pythonic/dev/src/RPI/config.yaml -o ~/.config/code-server/config.yaml
-
 sudo -u pythonic bash -c 'cd /home/pythonic/extensions; bsdtar -xvf ~/ms-python-release.vsix'
 sudo -u pythonic bash -c 'cd /home/pythonic/extensions; mv extension ms-python.python-vscode-2.0.3'
 
@@ -70,3 +68,12 @@ sudo -u pythonic python3 -m pip install PythonicRPI.tar.gz
 
 apt-get install -y python3-pyside2.qtcore
 
+
+##############################################
+#                                            #
+#           SystemD Configuration            #
+#                                            #
+##############################################
+
+curl https://raw.githubusercontent.com/hANSIc99/Pythonic/dev/src/RPI/pythonic.service -o /etc/systemd/system/pythonic.service
+curl https://raw.githubusercontent.com/hANSIc99/Pythonic/dev/src/RPI/code-server.service -o /etc/systemd/system/code-server.service
