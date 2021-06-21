@@ -1,0 +1,7 @@
+[Unit]
+Description=Web based IDE
+
+[Service]
+Type=simple
+User=pythonic
+ExecStart=/usr/bin/code-server /home/pythonic/executables
