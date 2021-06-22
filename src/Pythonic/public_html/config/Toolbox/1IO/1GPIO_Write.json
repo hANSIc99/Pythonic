@@ -1,6 +1,6 @@
 {
     "Socket"           : true,
-    "Plug"             : true,
+    "Plug"             : false,
     "Typename"         : "GPIO_Write",
     "Iconname"         : "GPIO_Write",
     "Filename"         : "gpio_write_BASICDATA_Id",
