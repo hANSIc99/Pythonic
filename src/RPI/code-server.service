@@ -5,3 +5,6 @@ Description=Web based IDE
 Type=simple
 User=pythonic
 ExecStart=/usr/bin/code-server /home/pythonic/Pythonic/executables
+
+[Install]
+WantedBy=network-online.target

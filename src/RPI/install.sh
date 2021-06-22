@@ -79,3 +79,6 @@ apt-get install -y python3-pyside2.qtcore
 
 curl https://raw.githubusercontent.com/hANSIc99/Pythonic/dev/src/RPI/pythonic.service -o /etc/systemd/system/pythonic.service
 curl https://raw.githubusercontent.com/hANSIc99/Pythonic/dev/src/RPI/code-server.service -o /etc/systemd/system/code-server.service
+
+systemctl enable pythonic.service
+systemctl enable code-server.service
