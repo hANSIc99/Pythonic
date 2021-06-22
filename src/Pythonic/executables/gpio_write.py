@@ -31,6 +31,7 @@ class Element(Function):
         mainMode   = None
         subMode    = None
         gpioWorker = None
+        cmd        = None
 
         self.gpio       = None
         self.initFlag   = False
@@ -86,17 +87,15 @@ class Element(Function):
             if isinstance(cmd, ProcCMD):
                 if cmd.bStop:
                     # Stop command received, exit
+                    self.gpio.close()
                     return
                 else:
                     # Example Code: Send number of received data packets to GUI
 
                     #if sub_mode
 
-                    gpioWorker(cmd)
-
-
-                    guitext = GuiCMD('Data received: {}'.format(str(cmd)))
-                    self.return_queue.put(guitext)
+                    #guitext = GuiCMD('Data received: {}'.format(str(cmd)))
+                    #self.return_queue.put(guitext)
 
                     
                     # Send only a message
@@ -106,16 +105,26 @@ class Element(Function):
                     cmd = None
 
 
+            gpioWorker(cmd)
+
+
     def ledWorkerToggle(self, cmd = None):
         return
 
     def ledWorkerCtrl(self, cmd = None):
-        return
+
+        if cmd is None:
+            return
+
+        if cmd.data:
+            self.gpio.on()
+        else:
+            self.gpio.off()
 
     def ledWorkerBlink(self, cmd = None):
         
-        if not initFlag:
-            initFlag = True
+        if not self.initFlag:
+            self.initFlag = True
             self.gpio.blink()
 
 
