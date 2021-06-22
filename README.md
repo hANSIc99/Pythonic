@@ -50,7 +50,7 @@ Open your favorite WebAssembly compatible web browser and navigate to...
 - [http://1270.0.01:7000/generic_python_73594528.py](http://127.0.0.1:7000/generic_python_73594528.py) ... to download a specific *\*.py*-file
 - [http://1270.0.01:7000/current_config.json](http://127.0.0.1:7000/current_config.json) ... to download the grid configuration file
 - [http://1270.0.01:8000/](http://127.0.0.01:8000/) ... to open code server (VS Code in browser - **container and Raspberry Pi only**)
-  [http://1270.0.01:8000/](http://127.0.0.01:8000/) ... to open Cockpit system manager (**Raspberry Pi image only**)
+- [http://1270.0.01:9090/](http://127.0.0.01:9090/) ... to open Cockpit system manager (**Raspberry Pi image only**)
 
 ## Editing elements
 
