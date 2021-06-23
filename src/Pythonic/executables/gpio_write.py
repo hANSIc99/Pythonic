@@ -45,8 +45,6 @@ class Element(Function):
                 subMode = attrs['Data']
 
 
-
-
         #####################################
         #                                   #
         #     Start of the infinite loop    #
@@ -54,24 +52,35 @@ class Element(Function):
         #####################################
 
 
-
-
         if mainMode == 'LED':
 
-            self.gpio = LED(gpioName)
+            self.gpio = LED(gpioName, initial_value=False)
 
             if subMode == 'Toggle on input':
 
                 gpioWorker = self.ledWorkerToggle
+                self.gpio.toggle()
+                self.logLEDstate()
 
             elif subMode == 'Control on Input':
 
                 gpioWorker = self.ledWorkerCtrl
+                # set initial state
+                if self.inputData is not None:
+                    if self.inputData:
+                        self.gpio.on()
+                    else:
+                        self.gpio.off()
+
+                    self.logLEDstate()
 
             elif subMode == 'Blink':
-                gpioWorker = self.ledWorkerBlink
+                def a(cmd = None): pass
+                gpioWorker = a # assign an empty function
+                self.gpio.blink()
+                recordDone = Record(None, 'Start LED Blink Mode on GPIO{}'.format(self.gpio.pin.number))     
+                self.return_queue.put(recordDone) 
         
-
 
         # The example executes an infinite loop till it's receives a stop command
         while(True):
@@ -80,6 +89,7 @@ class Element(Function):
 
             try:
                 # Block for 1 second and wait for incoming commands 
+                cmd = None
                 cmd = self.cmd_queue.get(block=True, timeout=1)
             except queue.Empty:
                 pass
@@ -87,29 +97,25 @@ class Element(Function):
             if isinstance(cmd, ProcCMD):
                 if cmd.bStop:
                     # Stop command received, exit
+                    recordDone = Record(None, 'GPIO{} closed'.format(self.gpio.pin.number))     
+                    self.return_queue.put(recordDone) 
                     self.gpio.close()
                     return
-                else:
-                    # Example Code: Send number of received data packets to GUI
-
-                    #if sub_mode
-
-                    #guitext = GuiCMD('Data received: {}'.format(str(cmd)))
-                    #self.return_queue.put(guitext)
-
-                    
-                    # Send only a message
-                    recordDone = Record(None, 'Command received')     
-                    self.return_queue.put(recordDone)
-                    
-                    cmd = None
-
 
             gpioWorker(cmd)
 
+    def logLEDstate(self):
+        recordDone = Record(None, 'Switch LED on GPIO{} to {}'.format(self.gpio.pin.number, self.gpio.is_active))     
+        self.return_queue.put(recordDone) 
 
     def ledWorkerToggle(self, cmd = None):
-        return
+
+        if cmd is None:
+            return
+
+        self.gpio.toggle()
+        self.logLEDstate()
+
 
     def ledWorkerCtrl(self, cmd = None):
 
@@ -121,10 +127,5 @@ class Element(Function):
         else:
             self.gpio.off()
 
-    def ledWorkerBlink(self, cmd = None):
-        
-        if not self.initFlag:
-            self.initFlag = True
-            self.gpio.blink()
-
+        self.logLEDstate()
 
