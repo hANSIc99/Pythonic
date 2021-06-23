@@ -15,8 +15,8 @@
     },
     {
               "Type"       : "ComboBox",
-              "Name"       : "SubMode",
-              "Title"      : "Choose timebase",
+              "Name"       : "SubModeLED",
+              "Title"      : "Choose LED mode",
               "Items"      : [
                              "Toggle on input",
                              "Control on Input",
@@ -30,6 +30,42 @@
 						]		
 			         }
 			     ]
+    },
+    {
+        "Type"       : "ComboBox",
+        "Name"       : "SubModePWMLED",
+        "Title"      : "Choose timebase",
+        "Items"      : [
+                       "Control on Input",
+                       "Pulse"
+                       ],
+        "Dependency" : [
+           {
+                "Dependence"         : "MainMode",
+                "DependentValue" : 	[
+                  "PWMLED"
+                  ]		
+               }
+           ]
+    },
+    {
+    	"Type"  : "Text",
+        "Name"  : "PWMHelptext",
+	    "Text"  : "1.0 = Max brightness, 0.0 = Min. brightness",
+        "Dependency" : [
+                {
+                "Dependence"         : "MainMode",
+                "DependentValue" : 	[
+                    "PWMLED"
+                    ]		
+                },
+                {
+                "Dependence"         : "SubModePWMLED",
+                "DependentValue" : 	[
+                    "Control on Input"
+                    ]		
+                 }
+             ]
     },
 	{
         "Type"  	: "HelpImage",

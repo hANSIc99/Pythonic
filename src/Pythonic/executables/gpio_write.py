@@ -4,7 +4,7 @@ try:
 except ImportError:    
     from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD
     
-from gpiozero import LED
+from gpiozero import LED, PWMLED
 
 class Element(Function):
 
@@ -22,16 +22,15 @@ class Element(Function):
         specificConfig = self.config.get('SpecificConfig')
 
         if not specificConfig:
-
-            recordDone = Record(None, message='Trigger: {:04d}'.format(self.config['Identifier']))
-            self.return_queue.put(recordDone)
+            self.return_queue.put(Record(None, message='Trigger: {:04d}'.format(self.config['Identifier'])))
             return
 
-        gpioName   = None
-        mainMode   = None
-        subMode    = None
-        gpioWorker = None
-        cmd        = None
+        gpioName        = None
+        mainMode        = None
+        subModeLED      = None
+        subModePWMLED   = None
+        gpioWorker      = None
+        cmd             = None
 
         self.gpio       = None
         self.initFlag   = False
@@ -41,28 +40,25 @@ class Element(Function):
                 gpioName = attrs['Data']
             if attrs['Name'] == 'MainMode':
                 mainMode = attrs['Data']
-            elif attrs['Name'] == 'SubMode':
-                subMode = attrs['Data']
+            elif attrs['Name'] == 'SubModeLED':
+                subModeLED = attrs['Data']
+            elif attrs['Name'] == 'SubModePWMLED':
+                subModePWMLED = attrs['Data']
 
 
-        #####################################
-        #                                   #
-        #     Start of the infinite loop    #
-        #                                   #
-        #####################################
 
 
         if mainMode == 'LED':
 
             self.gpio = LED(gpioName, initial_value=False)
 
-            if subMode == 'Toggle on input':
+            if subModeLED == 'Toggle on input':
 
                 gpioWorker = self.ledWorkerToggle
                 self.gpio.toggle()
                 self.logLEDstate()
 
-            elif subMode == 'Control on Input':
+            elif subModeLED == 'Control on Input':
 
                 gpioWorker = self.ledWorkerCtrl
                 # set initial state
@@ -74,15 +70,38 @@ class Element(Function):
 
                     self.logLEDstate()
 
-            elif subMode == 'Blink':
+            elif subModeLED == 'Blink':
                 def a(cmd = None): pass
                 gpioWorker = a # assign an empty function
                 self.gpio.blink()
-                recordDone = Record(None, 'Start LED Blink Mode on GPIO{}'.format(self.gpio.pin.number))     
-                self.return_queue.put(recordDone) 
-        
+                self.return_queue.put(Record(None, 'Start LED Blink Mode on GPIO{}'.format(self.gpio.pin.number))) 
 
-        # The example executes an infinite loop till it's receives a stop command
+
+
+        elif mainMode == 'PWMLED': 
+
+            self.gpio = PWMLED(gpioName, initial_value=False)
+
+            if subModePWMLED == 'Control on Input':
+
+                gpioWorker = self.pwmLedWorkerCtrl
+
+                if self.inputData is not None:
+                    self.gpio.value = self.inputData
+                    self.return_queue.put(Record(None, 'PWMLED: Set brightness on GPIO{} to {:.2f}'.format(self.gpio.pin.number, self.inputData))) 
+
+            elif subModePWMLED == 'Pulse':
+                def a(cmd = None): pass
+                gpioWorker = a # assign an empty function
+                self.gpio.pulse()
+                self.return_queue.put(Record(None, 'Start PWMLED Pulse Mode on GPIO{}'.format(self.gpio.pin.number))) 
+
+        #####################################
+        #                                   #
+        #     Start of the infinite loop    #
+        #                                   #
+        #####################################
+
         while(True):
 
             # Example code: Do something
@@ -96,17 +115,15 @@ class Element(Function):
 
             if isinstance(cmd, ProcCMD):
                 if cmd.bStop:
-                    # Stop command received, exit
-                    recordDone = Record(None, 'GPIO{} closed'.format(self.gpio.pin.number))     
-                    self.return_queue.put(recordDone) 
+                    # Stop command received, exit 
+                    self.return_queue.put(Record(None, 'GPIO{} closed'.format(self.gpio.pin.number))) 
                     self.gpio.close()
                     return
 
             gpioWorker(cmd)
 
-    def logLEDstate(self):
-        recordDone = Record(None, 'Switch LED on GPIO{} to {}'.format(self.gpio.pin.number, self.gpio.is_active))     
-        self.return_queue.put(recordDone) 
+    def logLEDstate(self):   
+        self.return_queue.put(Record(None, 'Switch LED on GPIO{} to {}'.format(self.gpio.pin.number, self.gpio.is_active))) 
 
     def ledWorkerToggle(self, cmd = None):
 
@@ -128,4 +145,16 @@ class Element(Function):
             self.gpio.off()
 
         self.logLEDstate()
+
+    def pwmLedWorkerCtrl(self, cmd = None):
+
+        if cmd is None:
+            return
+        try:
+            self.gpio.value = cmd.data
+        except Exception:
+            self.gpio.close()
+            raise
+        self.return_queue.put(Record(None, 'PWMLED: Set brightness on GPIO{} to {:.2f}'.format(self.gpio.pin.number, cmd.data)) ) 
+
 
