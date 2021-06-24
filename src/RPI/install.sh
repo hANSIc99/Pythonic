@@ -86,6 +86,9 @@ sudo -u pythonic bash -c 'cd /home/pythonic/extensions; rm extension.vsixmanifes
 
 #### CODE-SERVER CONFIGURATION ####
 
+chown -r pythonic:pythonic .config/
+sudo -u pythonic mkdir -p /home/pythonic/.config/code-server
+
 sudo -u pythonic curl https://raw.githubusercontent.com/hANSIc99/Pythonic/master/src/code-server/settings.json -o ~/.local/share/code-server/settings.json
 sudo -u pythonic curl https://raw.githubusercontent.com/hANSIc99/Pythonic/dev/src/RPI/config.yaml -o ~/.config/code-server/config.yaml
 
