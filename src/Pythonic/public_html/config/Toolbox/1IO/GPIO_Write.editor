@@ -34,7 +34,7 @@
     {
         "Type"       : "ComboBox",
         "Name"       : "SubModePWMLED",
-        "Title"      : "Choose timebase",
+        "Title"      : "Choose PWMLED mode",
         "Items"      : [
                        "Control on Input",
                        "Pulse"

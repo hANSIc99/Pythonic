@@ -1,5 +1,5 @@
 {
-    "Socket"           : true,
+    "Socket"           : false,
     "Plug"             : true,
     "Typename"         : "GPIO_Read",
     "Iconname"         : "GPIO_Read",

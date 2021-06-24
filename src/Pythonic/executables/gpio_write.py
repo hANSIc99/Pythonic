@@ -156,5 +156,3 @@ class Element(Function):
             self.gpio.close()
             raise
         self.return_queue.put(Record(None, 'PWMLED: Set brightness on GPIO{} to {:.2f}'.format(self.gpio.pin.number, cmd.data)) ) 
-
-

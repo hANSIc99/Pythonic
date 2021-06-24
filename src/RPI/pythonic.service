@@ -4,7 +4,8 @@ Description=Python automation framework
 [Service]
 Type=simple
 User=pythonic
-ExecStart=/usr/bin/python3 /home/pythonic/.local/lib/python3.7/site-packages/Pythonic/script.py 
+WorkingDirectory=/home/pythonic/.local/lib/python3.7/site-packages/Pythonic
+ExecStart=/usr/bin/python3 -m debugpy --listen 5678 main.py
 
 [Install]
 WantedBy=network-online.target
