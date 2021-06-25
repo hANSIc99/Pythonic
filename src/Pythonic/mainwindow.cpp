@@ -74,6 +74,16 @@ MainWindow::MainWindow(QWidget *parent)
                 this, &MainWindow::saveConfig);
     }
 
+    /* Create Websockets */
+
+    #ifdef WASM
+        emscripten::val location = emscripten::val::global("location");
+        m_host = QString::fromStdString(location["host"].as<std::string>());
+    #endif
+
+    m_wsCtrl = new Websocket(QStringLiteral("ws://") + m_host + QStringLiteral("/ctrl"), this);
+    m_wsRcv = new Websocket("ws://" + m_host + "/rcv", this);
+
     /* Setup Bottom Area */
 
     m_bottomArea.addWidget(&m_toolBox);
@@ -168,7 +178,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* Receive-Websocket connection */
 
-    connect(&m_wsRcv, &QWebSocket::textMessageReceived,
+    connect(m_wsRcv, &QWebSocket::textMessageReceived,
             this, &MainWindow::wsRcv);
 
     /* Signals & Slots : Miscellaneous */
@@ -178,13 +188,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateCurrentWorkingArea,
             &m_toolBox, &Toolbox::setCurrentWorkingArea);
 
-    connect(&m_wsCtrl, &QWebSocket::connected,
+    connect(m_wsCtrl, &QWebSocket::connected,
             this, &MainWindow::connectionEstablished);
 
-    connect(&m_wsRcv, &QWebSocket::connected,
+    connect(m_wsRcv, &QWebSocket::connected,
             this, &MainWindow::connectionEstablished);
 
-    connect(&m_wsRcv, &QWebSocket::disconnected,
+    connect(m_wsRcv, &QWebSocket::disconnected,
             &m_heartBeatText,
             [=] {
         m_heartBeatText.setText(QStringLiteral("No connection to daemon!"));
@@ -197,14 +207,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* Set current working area on initialization */
     setCurrentWorkingArea(m_workingTabs.currentIndex());
+
 }
 
 MainWindow::~MainWindow()
 {
-    m_wsRcv.disconnect();
-    m_wsCtrl.disconnect();
+    m_wsRcv->disconnect();
+    m_wsCtrl->disconnect();
     m_wsUploadFile.disconnect();
-
 }
 
 void MainWindow::logMessage(const QString msg, const LogLvl lvl)
@@ -232,13 +242,13 @@ void MainWindow::logMessage(const QString msg, const LogLvl lvl)
     logObj["msg"] = msg;
     */
 
-    m_wsCtrl.send(logObj);
+    m_wsCtrl->send(logObj);
 }
 
 void MainWindow::wsCtrl(const QJsonObject cmd)
 {
     qCInfo(logC, "called");
-    m_wsCtrl.send(cmd);
+    m_wsCtrl->send(cmd);
 }
 
 void MainWindow::saveConfig()
@@ -418,22 +428,20 @@ void MainWindow::reconnect()
 {
     qCInfo(logC, "called");
 
-    QAbstractSocket::SocketState ctrlState = m_wsCtrl.state();
-    QAbstractSocket::SocketState rcvState  = m_wsRcv.state();
+    QAbstractSocket::SocketState ctrlState = m_wsCtrl->state();
+    QAbstractSocket::SocketState rcvState  = m_wsRcv->state();
 
     if(ctrlState != QAbstractSocket::SocketState::ConnectedState){
-        m_wsCtrl.open(QUrl(QStringLiteral("ws://localhost:7000/ctrl")));
+        m_wsCtrl->open(QUrl(QStringLiteral("ws://") + m_host + QStringLiteral("/ctrl")));
     }
 
     if(rcvState != QAbstractSocket::SocketState::ConnectedState){
-        m_wsRcv.open(QUrl(QStringLiteral("ws://localhost:7000/rcv")));
-
+        m_wsRcv->open(QUrl(QStringLiteral("ws://") + m_host + QStringLiteral("/rcv")));
     }
     //queryElementStates();
     DelayedInitCommand<MainWindow> elementRunningStates = { &MainWindow::queryElementStates, INIT_ELEMENTSTATES_DELAY};
     m_delayedInitializations.append(elementRunningStates);
 }
-
 
 void MainWindow::setCurrentWorkingArea(const int tabIndex)
 {
@@ -512,7 +520,6 @@ void MainWindow::testSlot(bool checked)
     qCInfo(logC, "called");
     logMessage("test123", LogLvl::CRITICAL);
 }
-
 
 void MainWindow::loadSavedConfig(const QJsonObject &config)
 {
@@ -686,8 +693,8 @@ void MainWindow::queryElementStates()
 void MainWindow::connectionEstablished()
 {
     qCDebug(logC, "called");
-    QAbstractSocket::SocketState ctrlState = m_wsCtrl.state();
-    QAbstractSocket::SocketState rcvState  = m_wsRcv.state();
+    QAbstractSocket::SocketState ctrlState = m_wsCtrl->state();
+    QAbstractSocket::SocketState rcvState  = m_wsRcv->state();
     if(ctrlState == QAbstractSocket::SocketState::ConnectedState &&
        rcvState == QAbstractSocket::SocketState::ConnectedState){
         qCDebug(logC, "WebSockets connected");
@@ -710,13 +717,10 @@ void MainWindow::uploadConfig()
         wrkArea->clearAllElements();
     }
 
+    update();
 
-    QString s_homePath = QDir::homePath();
 
-    //QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
-
-    QUrl ws_url(QStringLiteral("ws://localhost:7000/config"));
-    m_wsUploadFile.open(ws_url);
+    m_wsUploadFile.open(QStringLiteral("ws://") + m_host + QStringLiteral("/config"));
 
     auto fileOpenCompleted = [this](const QString &filePath, const QByteArray &fileContent) {
 
@@ -743,11 +747,10 @@ void MainWindow::uploadExecutable()
 {
     qCDebug(logC, "Called");
 
-    QString s_homePath = QDir::homePath();
+    //QString s_homePath = QDir::homePath();
 
-    //QUrl ws_url(QStringLiteral("ws://localhost:7000/data"));
 
-    QUrl ws_url(QStringLiteral("ws://localhost:7000/executable"));
+    QUrl ws_url(QStringLiteral("ws://") + m_host + QStringLiteral("/executable"));
     m_wsUploadFile.open(ws_url);
 
     auto fileOpenCompleted = [this](const QString &filePath, const QByteArray &fileContent) {

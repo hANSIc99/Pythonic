@@ -33,6 +33,11 @@ podman tag pythonicautomation/pythonic:<old-tag> pythonicautomation/pythonic:<ne
 # pull image
 podman pull pythonicautomation/pythonic
 
+# chagne tag
+podman tag pythonicautomation/pythonic:1.5 pythonicautomation/pythonic:latest
+
+#import image from file
+
 
 ##############################################################
 #                                                            #

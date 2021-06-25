@@ -47,9 +47,11 @@
 #include "messagearea.h"
 #include "wall_of_fame.h"
 
+#ifdef WASM
+#include "emscripten/val.h"
+#endif
 
 #define N_WORKING_GRIDS 3
-
 #define INIT_ELEMENTSTATES_DELAY    5
 
 
@@ -88,8 +90,8 @@ public:
       */
     ~ MainWindow();
 
-    Websocket   m_wsCtrl{"ws://localhost:7000/ctrl", this};
-    Websocket   m_wsRcv{"ws://localhost:7000/rcv", this};
+    Websocket     *m_wsCtrl;
+    Websocket     *m_wsRcv;
 
 signals:
     void updateCurrentWorkingArea(WorkingArea* currentWokringArea);
@@ -156,6 +158,9 @@ private:
 
     //! Websocket is only active when config or executable is uploaded
     QWebSocket              m_wsUploadFile;
+
+    //! Connection data of the hosting computer
+    QString                 m_host{"localhost:7000"};
 
     //! Incremented by heartbeat
     quint32                 m_refTimer;

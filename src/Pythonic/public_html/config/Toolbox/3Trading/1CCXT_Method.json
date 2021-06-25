@@ -1,0 +1,25 @@
+{
+    "Socket"           : true,
+    "Plug"             : true,
+    "Typename"         : "CCXT_Method",
+    "Iconname"         : "CCXT_Method",
+    "Filename"         : "ccxt_method_BASICDATA_Id",
+    "Version"          : {
+                             "Major" : 0,
+                             "Minor" : 1
+                         },
+    "PythonicVersion" :  {
+                             "Major" : 1,
+                             "Minor" : 5
+                         },
+    "Author"          : "Stephan Avenwedde",
+    "License"         : "GPLv3",
+    "ConstructorCMD_Unix"  : "cp -u executables/ccxt_method.py ~/Pythonic/executables/ccxt_method_BASICDATA_Id.py",
+    "DestructorCMD_Unix"   : "rm ~/Pythonic/executables/ccxt_method_BASICDATA_Id.py",
+    "ConstructorCMD_Win32"  : "copy executables\\ccxt_method.py %HOMEPATH%\\Pythonic\\executables\\ccxt_method_BASICDATA_Id.py",
+    "DestructorCMD_Win32"   : "del %HOMEPATH%\\Pythonic\\executables\\ccxt_method_BASICDATA_Id.py",
+    "HighlightState"  : true,
+    "AllowStream"     : true
+
+}
+

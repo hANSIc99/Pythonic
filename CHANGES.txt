@@ -1,3 +1,22 @@
+1.6
+
+    Websocket can now connect to any host
+    Raspberry PI I/O element added
+
+1.5
+
+    Elementeditor: Visibility rules for elements are now evaluated as AND
+    CCXT Crypto trading library added 
+
+1.4.1
+
+    Bug in Code Server configuration fixed (Docker only)
+    Pythonic: Patreons updated
+
+1.4
+
+    PySide2 version detached to enable Python3.9 support
+
 1.3
 
     Scheduler for manual trigger added

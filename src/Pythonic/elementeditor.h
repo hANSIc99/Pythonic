@@ -39,19 +39,34 @@
 
 namespace ElementEditorTypes {
 
-    struct Rule {
+    /* TBD: Should work with C++ 17 */
+    struct BaseRule {
         QWidget               *affectedElement;
         QString               dependence;
-        bool                  propertyRelated;
+        bool                  fullfilled;
+    };
+
+
+    struct ValueRule {
+        QWidget               *affectedElement;
+        QString               dependence;
         QList<QString>        dependentValues;
+    };
+
+    struct PropertyRule {
+        QWidget               *affectedElement;
+        QString               dependence;
+        QString               property;
     };
 
     enum Type {
         ComboBox,
         LineEdit,
+        LineEdit2,
         CheckBox,
         Text,
         HelpText,
+        HelpImage,
         NoType
     };
 
@@ -98,6 +113,10 @@ public slots:
 };
 
 
+
+
+
+
 class LineEdit : public QWidget{
     Q_OBJECT
 public:
@@ -112,17 +131,16 @@ public:
 
         m_outerLayout.addWidget(&m_innerWidget);
         m_outerLayout.addWidget(&m_regExpIndicator);
-        m_regExpIndicator.setStyleSheet(QStringLiteral("QLabel { color : red; }"));
-        //m_lineedit.setValidator(&m_regExp);
     };
 
+
     QWidget             m_innerWidget;
-    QVBoxLayout         m_outerLayout;
-    QHBoxLayout         m_innerLayout;
     QLabel              m_title;
     QLineEdit           m_lineedit;
     QLabel              m_regExpIndicator;
     QRegularExpression  m_regExp;
+    QVBoxLayout         m_outerLayout;
+    QHBoxLayout         m_innerLayout;
 
 public slots:
 
@@ -149,6 +167,55 @@ public slots:
         }
     }
 
+};
+
+
+class LineEdit2 : public QWidget{
+    Q_OBJECT
+
+public:
+    explicit LineEdit2(QWidget *parent = 0)
+        : QWidget(parent){
+
+        setLayout(&m_outerLayout);
+
+        m_outerLayout.addWidget(&m_title);
+        m_outerLayout.addWidget(&m_lineedit);
+        m_outerLayout.addWidget(&m_regExpIndicator);
+
+    };
+
+
+    QLabel              m_title;
+    QLineEdit           m_lineedit;
+    QLabel              m_regExpIndicator;
+    QRegularExpression  m_regExp;
+    QVBoxLayout         m_outerLayout;
+
+public slots:
+
+    void hideEvent(QHideEvent *) override
+    {
+        //emit visibilityChanged(false);
+        m_title.setVisible(false);
+        m_lineedit.setVisible(false);
+        m_regExpIndicator.setVisible(false);
+    }
+
+    void showEvent(QShowEvent *) override{
+        m_title.setVisible(true);
+        m_lineedit.setVisible(true);
+        m_regExpIndicator.setVisible(true);
+    }
+
+    void validateInput(const QString &text){
+        QRegularExpressionMatch match = m_regExp.match(text);
+        if(match.hasMatch()){
+            m_regExpIndicator.setText(QStringLiteral(""));
+        } else {
+            m_regExpIndicator.setText(QStringLiteral("Please provide acceptable input"));
+        }
+    }
 };
 
 
@@ -210,15 +277,19 @@ private:
 
     void            addRules(const QJsonValue rules, QWidget *affectedElement);
 
-    void            addComboBox(QJsonObject &dropDownJSON);
+    void            addComboBox(const QJsonObject &dropDownJSON);
 
-    void            addLineEdit(QJsonObject &lineeditJSON);
+    void            addLineEdit(const QJsonObject &lineeditJSON);
 
-    void            addCheckBox(QJsonObject &checkboxJSON);
+    void            addLineEdit2(const QJsonObject &lineeditJSON);
 
-    void            addText(QJsonObject &textJSON);
+    void            addCheckBox(const QJsonObject &checkboxJSON);
 
-    void            addHelpText(QJsonObject &textJSON);
+    void            addText(const QJsonObject &textJSON);
+
+    void            addHelpText(const QJsonObject &textJSON);
+
+    void            addHelpImage(const QJsonObject &imgJSON);
 
     QHBoxLayout     m_mainLayout;
 
@@ -243,8 +314,11 @@ private:
     QPushButton     m_saveButton;
 
 
-    QList<ElementEditorTypes::Rule> m_rules;
+    QList<ElementEditorTypes::ValueRule>    m_value_rules;
+    QList<ElementEditorTypes::PropertyRule> m_property_rules;
 
+    QHash<QWidget*, bool>                   m_ruleProvidedElements;
+    QHash<QWidget*, bool>::const_iterator   m_ruleProvElmIt;
 };
 
 #endif // ELEMENTEDITOR_H

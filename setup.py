@@ -3,9 +3,9 @@ import setuptools
 with open('README.whl', 'r') as fh:
     long_description = fh.read()
 
+
 setuptools.setup(
-        name = 'Pythonic',
-        version = '1.03',
+        version = '1.06',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -25,6 +25,8 @@ setuptools.setup(
              'public_html/static/GenericProcess.png',
              'public_html/static/ProcessPipe.png',
              'public_html/static/Telegram.png',
+             'public_html/static/CCXT.png',
+             'public_html/static/CCXT_Method.png',
              'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
@@ -33,6 +35,7 @@ setuptools.setup(
              'public_html/static/*.data',
              'public_html/templates/*.html',
              'public_html/config/Toolbox/Basic/*',
+             'public_html/config/Toolbox/Trading/*',
              'public_html/config/Toolbox/Connectivity/Telegram.editor',
              'public_html/config/Toolbox/Connectivity/0Telegram.json'
              ]
@@ -41,12 +44,6 @@ setuptools.setup(
             'console_scripts' : ['Pythonic = Pythonic.script:run']
             },
         python_requires = '>=3.7',
-        install_requires = [
-            'PySide2==5.14.2.3',
-            'eventlet>=0.27.0',
-            'debugpy==1.2.1',
-            'python-telegram-bot==13.4.1'
-             ],
         classifiers = [
             'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',

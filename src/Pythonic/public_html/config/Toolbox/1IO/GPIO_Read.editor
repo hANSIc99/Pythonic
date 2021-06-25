@@ -1,0 +1,21 @@
+[
+	{
+        "Type"	      : "LineEdit",
+	    "Name"        : "GPIO",
+        "Title"       : "Choose GPIO by name",
+	    "Defaulttext" : "GPIO4"
+    },
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "MainMode",
+	    "Title" : "Choose GPIO mode",
+	    "Items" : [	"Fire when released",
+			  		"Fire when pressed"
+				  ]
+    },
+	{
+        "Type"  	: "HelpImage",
+        "Name"  	: "RPB4IO",
+	    "Filename"  : "gpio.png"
+    }
+]

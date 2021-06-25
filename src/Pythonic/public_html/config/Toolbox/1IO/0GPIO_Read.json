@@ -1,0 +1,25 @@
+{
+    "Socket"           : false,
+    "Plug"             : true,
+    "Typename"         : "GPIO_Read",
+    "Iconname"         : "GPIO_Read",
+    "Filename"         : "gpio_read_BASICDATA_Id",
+    "Version"          : {
+                             "Major" : 0,
+                             "Minor" : 1
+                         },
+    "PythonicVersion" :  {
+                             "Major" : 1,
+                             "Minor" : 6
+                         },
+    "Author"          : "Stephan Avenwedde",
+    "License"         : "GPLv3",
+    "ConstructorCMD_Unix"  : "cp -u executables/gpio_read.py ~/Pythonic/executables/gpio_read_BASICDATA_Id.py",
+    "DestructorCMD_Unix"   : "rm ~/Pythonic/executables/gpio_read_BASICDATA_Id.py",
+    "ConstructorCMD_Win32"  : "copy executables\\gpio_read.py %HOMEPATH%\\Pythonic\\executables\\gpio_read_BASICDATA_Id.py",
+    "DestructorCMD_Win32"   : "del %HOMEPATH%\\Pythonic\\executables\\gpio_read_BASICDATA_Id.py",
+    "HighlightState"  : true,
+    "AllowStream"     : true
+
+}
+
