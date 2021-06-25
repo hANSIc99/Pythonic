@@ -27,6 +27,9 @@ podman login -u pythonicautomation https://index.docker.io/v1/
 # push image
 podman push pythonicautomation/pythonic:<tag>
 
+# re-tag image
+podman tag pythonicautomation/pythonic:<old-tag> pythonicautomation/pythonic:<new-tag>
+
 # pull image
 podman pull pythonicautomation/pythonic
 
