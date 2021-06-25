@@ -19,7 +19,7 @@ podman images
 # Ports are exposed to 0.0.0.0 by default
 # To restrict this exportse to 127.0.0.1:7000:7000
 
-podman run -d --name Pythonic -p 7000:7000 -p 8000:8000 pythonic
+podman run -d --name Pythonic -p 7000:7000 -p 8000:8000 pythonic:<tag>
 
 # login to remote repository
 podman login -u pythonicautomation https://index.docker.io/v1/
