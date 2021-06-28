@@ -6,6 +6,8 @@ from pathlib import Path
 from Pythonic.web_daemon import MainWorker
 from PySide2.QtCore import QCoreApplication, QTimer
 
+
+debugpy.configure({"subProcess": True})
 debugpy.listen(5678)
 
 

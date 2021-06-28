@@ -18,7 +18,7 @@
 #include "baselabel.h"
 
 const QLoggingCategory BaseLabelDaemon::logC{"BaseLabelDaemon"};
-const QString BaseLabelDaemon::m_relUrl{"http://localhost:7000/"};
+const QString BaseLabelDaemon::m_urlSuffix{"http://"};
 
 const QLoggingCategory BaseLabel::logC{"BaseLabel"};
 const QString BaseLabel::m_relPath{"public_html/static/"};

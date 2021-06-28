@@ -178,6 +178,7 @@ class ToolboxLoader(QThread):
         
         #toolDirs = [ f for f in os.scandir(os.path.join(self.cwd + self.www_config + '/Toolbox/')) if f.is_dir() ]
         toolDirs = [ f for f in os.scandir(self.toolBoxPath) if f.is_dir() ]
+
         elements = [(d, f) for d in toolDirs for f in os.listdir(d.path) if f.endswith('.json')]
         elements.sort(key=lambda record: record[1]) # sort elements alphabetical
         elements.sort(key=lambda record: record[0].name) # sort groups alphabetical
@@ -190,7 +191,7 @@ class ToolboxLoader(QThread):
             with open(filepath, 'r') as file:
                 e = json.load(file)
 
-            element = { 'assignment' : d.name,
+            element = { 'assignment' : d.name[1:],
                         'config' : e}
 
             elementsJSON.append(element)

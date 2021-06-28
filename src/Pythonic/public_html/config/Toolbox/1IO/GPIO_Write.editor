@@ -1,0 +1,75 @@
+[
+	{
+        "Type"	      : "LineEdit",
+	    "Name"        : "GPIO",
+        "Title"       : "Choose GPIO by name",
+	    "Defaulttext" : "GPIO4"
+    },
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "MainMode",
+	    "Title" : "Choose GPIO mode",
+	    "Items" : [	"LED",
+			  		"PWMLED"
+				  ]
+    },
+    {
+              "Type"       : "ComboBox",
+              "Name"       : "SubModeLED",
+              "Title"      : "Choose LED mode",
+              "Items"      : [
+                             "Toggle on input",
+                             "Control on Input",
+                             "Blink"
+                             ],
+              "Dependency" : [
+				 {
+				      "Dependence"         : "MainMode",
+					  "DependentValue" : 	[
+						"LED"
+						]		
+			         }
+			     ]
+    },
+    {
+        "Type"       : "ComboBox",
+        "Name"       : "SubModePWMLED",
+        "Title"      : "Choose PWMLED mode",
+        "Items"      : [
+                       "Control on Input",
+                       "Pulse"
+                       ],
+        "Dependency" : [
+           {
+                "Dependence"         : "MainMode",
+                "DependentValue" : 	[
+                  "PWMLED"
+                  ]		
+               }
+           ]
+    },
+    {
+    	"Type"  : "Text",
+        "Name"  : "PWMHelptext",
+	    "Text"  : "1.0 = Max brightness, 0.0 = Min. brightness",
+        "Dependency" : [
+                {
+                "Dependence"         : "MainMode",
+                "DependentValue" : 	[
+                    "PWMLED"
+                    ]		
+                },
+                {
+                "Dependence"         : "SubModePWMLED",
+                "DependentValue" : 	[
+                    "Control on Input"
+                    ]		
+                 }
+             ]
+    },
+	{
+        "Type"  	: "HelpImage",
+        "Name"  	: "RPB4IO",
+	    "Filename"  : "gpio.png"
+    }
+]

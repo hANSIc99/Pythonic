@@ -8,7 +8,9 @@
 [<img src="https://img.shields.io/github/last-commit/hANSIc99/Pythonic.svg">](https://github.com/hANSIc99/Pythonic)
 [<img src="https://img.shields.io/badge/platform-Windows%20Linux%20Mac-blueviolet.svg">](https://github.com/hANSIc99/Pythonic)
 
+
 <p align="center"><img src="screenshot-6.PNG" alt="Pythonic" "></p>
+
 
 ## Installation 
 
@@ -60,12 +62,15 @@ Open a command shell and simply type `Pythonic`.
 
 Open your favorite WebAssembly compatible web browser and navigate to...
 
-- [http://127.0.0.1:7000//](http://127.0.0.1:7000/) ... to open the GUI
-- [http://127.0.0.1:7000/log](http://127.0.0.1:7000/log) ... to get an overview of available log files
-- [http://127.0.0.1:7000/2021_03_15.txt](http://127.0.0.1:7000/2021_03_15.txt) ... to open the actual log file of 15. March 2021 (requested date must be available)
-- [http://127.0.0.1:7000/generic_python_73594528.py](http://127.0.0.1:7000/generic_python_73594528.py) ... to download a specific *\*.py*-file
+
+- [http://1270.0.01:7000/](http://127.0.0.1:7000/) ... to open the GUI
+- [http://1270.0.01:7000/log](http://127.0.0.1:7000/log) ... to get an overview of available log files
+- [http://1270.0.01:7000/2021_03_15.txt](http://127.0.0.1:7000/2021_03_15.txt) ... to open the actual log file of 15. March 2021 (requested date must be available)
+- [http://1270.0.01:7000/generic_python_73594528.py](http://127.0.0.1:7000/generic_python_73594528.py) ... to download a specific *\*.py*-file
 - [http://1270.0.01:7000/current_config.json](http://127.0.0.1:7000/current_config.json) ... to download the grid configuration file
-- [http://127.0.0.1:8000/](127.0.0.1:8000/) ... to open code server (VS Code in browser - **container only**)
+- [http://1270.0.01:8000/](http://127.0.0.01:8000/) ... to open code server (VS Code in browser - **container and Raspberry Pi only**)
+- [http://1270.0.01:9090/](http://127.0.0.01:9090/) ... to open Cockpit system manager (**Raspberry Pi image only**)
+
 
 ## Editing elements
 

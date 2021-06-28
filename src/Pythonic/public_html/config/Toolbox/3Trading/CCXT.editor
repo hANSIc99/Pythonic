@@ -1,0 +1,25 @@
+[ 
+    {
+        "Type"	      : "LineEdit",
+	    "Name"        : "ExchangeId",
+        "Title"       : "ExchangeId",
+	    "Defaulttext" : "kraken"
+    },
+    {
+        "Type"	      : "LineEdit2",
+	    "Name"        : "PubKey",
+        "Title"       : "Public Key",
+	    "Defaulttext" : ""
+    },
+    {
+        "Type"	      : "LineEdit2",
+	    "Name"        : "PrvKey",
+        "Title"       : "Private Key",
+	    "Defaulttext" : ""
+    },
+    {
+    	"Type"  : "Text",
+        "Name"  : "Helptext",
+	    "Text"  : "Public- and private key are optional. Without them<br>only public API methods are available."
+    }
+]

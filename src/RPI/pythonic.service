@@ -1,0 +1,11 @@
+[Unit]
+Description=Python automation framework
+
+[Service]
+Type=simple
+User=pythonic
+WorkingDirectory=/home/pythonic/.local/lib/python3.7/site-packages/Pythonic
+ExecStart=/usr/bin/python3 -m debugpy --listen 5678 main.py
+
+[Install]
+WantedBy=network-online.target

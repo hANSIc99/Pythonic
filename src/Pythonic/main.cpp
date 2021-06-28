@@ -25,7 +25,6 @@
  * Signals Slots: Info
  */
 
-
 int main(int argc, char *argv[])
 {
     // https://doc.qt.io/qt-5/qtglobal.html#qSetMessagePattern

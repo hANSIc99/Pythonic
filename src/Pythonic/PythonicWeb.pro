@@ -5,7 +5,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #TARGET="PythonicWeb_1.1"
 CONFIG += c++11
-#CONFIG += wasm
+CONFIG += wasm
+
+INCLUDEPATH += "/home/stephan/Dokumente/emsdk/upstream/emscripten/system/include"
 
 wasm {
 DEFINES += WASM
@@ -30,6 +32,7 @@ QMAKE_LFLAGS += --preload-file public_html/static/message.png
 QMAKE_LFLAGS += --preload-file public_html/static/kill.png
 QMAKE_LFLAGS += --preload-file public_html/static/horizontal.png
 QMAKE_LFLAGS += --preload-file public_html/static/wall_of_fame.png
+QMAKE_LFLAGS += --preload-file public_html/static/gpio.png
 }
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

@@ -16,6 +16,7 @@ exchange = exchangeClass({
 """
 exchange = exchangeClass({'enableRateLimit'   : True})
 exchange = ccxt.binance()
+
 #tickers = exchange.fetch_tickers() # keine argumente
 #if exchange.has['fetchOHLCV']: #https://github.com/ccxt/ccxt/wiki/Manual#ohlcv-candlestick-charts
 #def myfunc2(*args, **kwargs): hier mit arbeiten

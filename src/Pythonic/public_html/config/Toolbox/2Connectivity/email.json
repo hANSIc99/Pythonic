@@ -1,0 +1,18 @@
+{
+    "Socket"           : true,
+    "Plug"             : true,
+    "Typename"         : "E-Mail",
+    "Iconname"         : "BaseElement",
+    "Filename"         : "email",
+    "Version"          : {
+                             "Major" : 0,
+                             "Minor" : 1
+                         },
+    "PythonicVersion" :  {
+                             "Major" : 0,
+                             "Minor" : 1
+                         },
+    "Author"          : "Stephan Avenwedde",
+    "License"         : "GPLv3"
+}
+
