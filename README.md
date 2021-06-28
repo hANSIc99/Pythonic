@@ -8,12 +8,30 @@
 [<img src="https://img.shields.io/github/last-commit/hANSIc99/Pythonic.svg">](https://github.com/hANSIc99/Pythonic)
 [<img src="https://img.shields.io/badge/platform-Windows%20Linux%20Mac-blueviolet.svg">](https://github.com/hANSIc99/Pythonic)
 
-<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/dev/screenshots/screenshot-7.PNG" alt="Pythonic" "></p>
+
+<p align="center"><img src="screenshot-6.PNG" alt="Pythonic" "></p>
+
 
 ## Installation 
 
 You can run Pythonic natively on your Linux, Mac or Windows system
 or as a container.
+
+## Container based installation
+
+Pythonic is available as container image which can be run by [Podman](https://podman.io/) or [Docker](https://www.docker.com/).
+
+#### 1. Pull the image from the server
+
+`podman pull pythonicautomation/pythonic`
+
+`docker pull pythonicautomation/pythonic`
+
+#### 2. Create a container
+
+`podman run -d -p 7000:7000 -p 8000:8000 pythonic`
+
+`docker run -d -p 7000:7000 -p 8000:8000 pythonicautomation/pythonic`
 
 ## Native Installation
 
