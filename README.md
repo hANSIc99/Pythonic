@@ -67,10 +67,7 @@ The credentials for login at Cockpit are:
 
 - Username: **pythonic**
 - Password: **guetersloh**
-  
-  
-  
-  
+
 ## Endpoints
 
 Open your favorite WebAssembly compatible web browser and navigate to...
@@ -89,5 +86,9 @@ Open your favorite WebAssembly compatible web browser and navigate to...
 
 On Windows, when you drop an element to the working areay, the related *\*.py*-file gets copied
 to `%HOMEPATH%\Pythonic\executables`. On Linux or Mac you can find them under `~/Pythonic/executables`.
+
+## Donations
+ 
+ADA (Cardano): `addr1qxnm2s3ssdvxpjjwtlk8qy3j3q2e88te2garpnr3xng30hsglw2g08mvfnx3f7syetya0navr2qkyjlmlhfkzhx085equafjam`
 
 ## [Become a Patron!](https://www.patreon.com/pythonicautomation?fan_landing=true)
