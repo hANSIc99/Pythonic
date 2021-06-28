@@ -9,13 +9,13 @@
 [<img src="https://img.shields.io/badge/platform-Windows%20Linux%20Mac-blueviolet.svg">](https://github.com/hANSIc99/Pythonic)
 
 
-<p align="center"><img src="screenshot-6.PNG" alt="Pythonic" "></p>
+<p align="center"><img src="screenshots/screenshot-7.PNG" alt="Pythonic" "></p>
 
 
 ## Installation 
 
-You can run Pythonic natively on your Linux, Mac or Windows system
-or as a container.
+You can run Pythonic natively on your Linux, Mac or Windows system,
+or as a container or on your Raspberry PI.
 
 ## Container based installation
 
@@ -58,6 +58,19 @@ if part of the `Path` environemnt variable.
 
 Open a command shell and simply type `Pythonic`.
 
+ 
+## Raspberry PI Image
+  
+The image is available at [sourceforge.net](https://sourceforge.net/projects/pythonicrpi/)
+
+The credentials for login at Cockpit are:
+
+- Username: **pythonic**
+- Password: **guetersloh**
+  
+  
+  
+  
 ## Endpoints
 
 Open your favorite WebAssembly compatible web browser and navigate to...
