@@ -1,4 +1,4 @@
-<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/gui_new/src/Pythonic/public_html/static/horizontal.png" alt="Pythonic" height="120px"></p>
+<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/dev/src/Pythonic/public_html/static/horizontal.png" alt="Pythonic" height="120px"></p>
 
 ## Graphical Python programming for trading and automation
 
