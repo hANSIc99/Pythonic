@@ -58,6 +58,17 @@ git push origin v1.2
 # upload package
 python3 -m twine upload dist/
 
+
+##############################################################
+#                                                            #
+#                           IMAGE                            #
+#                                                            #
+##############################################################
+
+dd if=/home/stephan/Pythonic-1.6.img of=/dev/sdc conv=fsync bs=32M
+
+scp Pythonic-1.6.zip hansic99@frs.sourceforge.net:/home/frs/project/pythonicrpi/
+
 ##############################################################
 #                                                            #
 #                            MISC                            #
