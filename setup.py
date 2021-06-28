@@ -34,10 +34,10 @@ setuptools.setup(
              'public_html/static/*.wasm',
              'public_html/static/*.data',
              'public_html/templates/*.html',
-             'public_html/config/Toolbox/Basic/*',
-             'public_html/config/Toolbox/Trading/*',
-             'public_html/config/Toolbox/Connectivity/Telegram.editor',
-             'public_html/config/Toolbox/Connectivity/0Telegram.json'
+             'public_html/config/Toolbox/0Basic/*',
+             'public_html/config/Toolbox/2Connectivity/Telegram.editor',
+             'public_html/config/Toolbox/2Connectivity/0Telegram.json',
+             'public_html/config/Toolbox/3Trading/*'
              ]
         },
         entry_points = {
