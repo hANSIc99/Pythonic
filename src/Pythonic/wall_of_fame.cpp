@@ -34,7 +34,7 @@ WallOfFame::WallOfFame(QWidget *parent) : QDialog(parent)
 
     /* Add names */
 
-    m_listOfNames.addItem(QStringLiteral("Paweł Pastuszko"));
+    //m_listOfNames.addItem(QStringLiteral("Paweł Pastuszko"));
     m_listOfNames.addItem(QStringLiteral("Your Name"));
 
     m_okBtn.setText(QStringLiteral("Ok"));

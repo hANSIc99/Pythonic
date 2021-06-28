@@ -47,7 +47,7 @@ class Websocket : public QWebSocket
     Q_OBJECT
 public:
     explicit Websocket(QString url, QObject *parent = nullptr)
-        : QWebSocket(QString("http://localhost"),QWebSocketProtocol::Version13, parent)
+        : QWebSocket(QString(), QWebSocketProtocol::Version13, parent)
         , m_url(url)
     {
         qCDebug(logC, "called");

@@ -59,6 +59,8 @@ RUN dnf -y install procps
 #                                 #
 ###################################
 
+RUN /usr/bin/python3 -m pip install --upgrade pip
+
 RUN /usr/bin/python3 -m pip install supervisor==4.2.1
 RUN /usr/bin/python3 -m pip install astroid==2.5.2
 RUN /usr/bin/python3 -m pip install isort==5.8.0
@@ -75,11 +77,11 @@ RUN /usr/bin/python3 -m pip install pylint==2.7.4
 ###################################
 
 
-COPY dist/Pythonic-1.5.tar.gz /
+COPY dist/Pythonic-1.6.tar.gz /
 
-RUN /usr/bin/python3 -m pip install /Pythonic-1.5.tar.gz
+RUN /usr/bin/python3 -m pip install /Pythonic-1.6.tar.gz
 
-RUN rm Pythonic-1.5.tar.gz
+RUN rm Pythonic-1.6.tar.gz
 	
 ###################################
 #                                 #

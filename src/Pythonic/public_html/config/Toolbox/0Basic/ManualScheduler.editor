@@ -1,0 +1,213 @@
+[
+    {
+	    "Type"  : "ComboBox",
+        "Name"  : "Mode",
+	    "Title" : "Choose the scheduler mode",
+	    "Items" : [	"Single fire",
+					"Single fire, delayed",
+			  		"Interval",
+			  		"Interval between times",
+			  		"At specific time",
+			  		"On every full interval",
+			  		"Full interval between times"
+				  ]
+    },
+    {
+        "Type"	      : "LineEdit",
+	    "Name"        : "Intervalinput",
+        "Title"       : "Every",
+	    "Defaulttext" : "5",                      
+	    "Dependency"  : [
+			             { 
+                        	"Dependence" : "Mode",
+ 			        	    "DependentValue" : [
+												"Single fire, delayed",
+					        	               	"Interval",
+					       	    			   	"Interval between times",
+						               			"On every full interval",
+                   					       		"Full interval between times"
+                                          		]
+                         }
+			      		],
+
+        "RegExp"     : "^[1-9]\\d*$" 
+    },
+    {
+              "Type"       : "ComboBox",
+              "Name"       : "Timebase",
+              "Title"      : "Choose timebase",
+              "Items"      : [
+                             "Seconds",
+                             "Minutes",
+                             "Hours"
+                             ],
+              "Dependency" : [
+				 {
+				      "Dependence"         : "Intervalinput",
+				      "DependentProperty"  : "Visibility"
+			         }
+			     ]
+    },
+    {
+        "Type"	    : "LineEdit",
+	    "Name"        : "StartTime",
+        "Title"       : "Start at:",
+	    "Defaulttext" : "10:00",                      
+	    "Dependency"  : [
+				          { 
+                            "Dependence" : "Mode",
+ 			               	"DependentValue" : 	[
+					       	       				"Interval between times",
+                   					       		"Full interval between times"
+                                          		]
+                          }
+			      		],
+        "RegExp"     : "^([01]?[0-9]|2[0-3]):[0-5][0-9]" 
+    },
+    {
+    	"Type"	    : "LineEdit",
+	    "Name"        : "EndTime",
+        "Title"       : "End at: ",
+	    "Defaulttext" : "13:00",                      
+	    "Dependency"  : [
+			          		{ 
+                            	"Dependence" 		: "StartTime",
+ 			               		"DependentProperty" : "Visibility"
+                            }
+			      		],
+        "RegExp"     : "^([01]?[0-9]|2[0-3]):[0-5][0-9]" 
+	},
+	{
+    	"Type"	    : "LineEdit",
+	    "Name"        : "SpecificTime",
+        "Title"       : "At: ",
+	    "Defaulttext" : "13:00",                      
+	    "Dependency"  : [
+							{ 
+								"Dependence" 		: "Mode",
+								"DependentValue"	: [
+														"At specific time"
+								]
+							}
+			      		],
+        "RegExp"     : "^([01]?[0-9]|2[0-3]):[0-5][0-9]" 
+	},
+	{
+    	"Type"	    : "CheckBox",
+	    "Name"        : "Monday",
+        "Title"       : "Monday",                   
+	    "Dependency"  : [
+			          		{ 
+                            	"Dependence" 		: "Mode",
+ 			               		"DependentValue"	: [
+														"Interval between times",
+														"At specific time",
+														"Full interval between times"
+									]
+                            }
+			      		]
+	},
+	{
+    	"Type"	    : "CheckBox",
+	    "Name"        : "Tuesday",
+        "Title"       : "Tuesday",                   
+	    "Dependency"  : [
+			          		{ 
+                            	"Dependence" 		: "Mode",
+ 			               		"DependentValue"	: [
+														"Interval between times",
+														"At specific time",
+														"Full interval between times"
+									]
+                            }
+			      		]
+	},
+	{
+    	"Type"	    : "CheckBox",
+	    "Name"        : "Wednesday",
+        "Title"       : "Wednesday",                   
+	    "Dependency"  : [
+			          		{ 
+                            	"Dependence" 		: "Mode",
+ 			               		"DependentValue"	: [
+														"Interval between times",
+														"At specific time",
+														"Full interval between times"
+									]
+                            }
+			      		]
+	},
+	{
+    	"Type"	    : "CheckBox",
+	    "Name"        : "Thursday",
+        "Title"       : "Thursday",                   
+	    "Dependency"  : [
+			          		{ 
+                            	"Dependence" 		: "Mode",
+ 			               		"DependentValue"	: [
+														"Interval between times",
+														"At specific time",
+														"Full interval between times"
+									]
+                            }
+			      		]
+	},
+	{
+    	"Type"	    : "CheckBox",
+	    "Name"        : "Friday",
+        "Title"       : "Friday",                   
+	    "Dependency"  : [
+			          		{ 
+                            	"Dependence" 		: "Mode",
+ 			               		"DependentValue"	: [
+														"Interval between times",
+														"At specific time",
+														"Full interval between times"
+									]
+                            }
+			      		]
+	},
+	{
+    	"Type"	    : "CheckBox",
+	    "Name"        : "Saturday",
+        "Title"       : "Saturday",                   
+	    "Dependency"  : [
+			          		{ 
+                            	"Dependence" 		: "Mode",
+ 			               		"DependentValue"	: [
+														"Interval between times",
+														"At specific time",
+														"Full interval between times"
+									]
+                            }
+			      		]
+	},
+	{
+    	"Type"	    : "CheckBox",
+	    "Name"        : "Sunday",
+        "Title"       : "Sunday",                   
+	    "Dependency"  : [
+			          		{ 
+                            	"Dependence" 		: "Mode",
+ 			               		"DependentValue"	: [
+														"Interval between times",
+														"At specific time",
+														"Full interval between times"
+									]
+                            }
+			      		]
+    },
+	{
+        "Type"  : "HelpText",
+        "Name"  : "HelpText1",
+	    "Text"  : "Trigger subsequent elements on full<br>time intervals, e.g. every 5 minutes:<br><br>14:05<br>14:10<br>14:15<br>...",
+		"Dependency" : [
+			{
+				"Dependence"		: "Mode",
+				"DependentValue"	: [
+										"On every full interval"
+				]
+			}
+		]
+    }
+]
