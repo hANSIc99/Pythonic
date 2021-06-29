@@ -158,7 +158,7 @@ class SetPersist(set):
             with open(self.filename, 'rb') as f:
 
                 data = pickle.load(f)
-                super().extend(data)
+                super().update(data)
 
 
 
