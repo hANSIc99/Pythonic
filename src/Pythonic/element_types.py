@@ -97,7 +97,7 @@ def storePersist(func):
 class ListPersist(list):
 
     def __init__(self, name: str) -> None:
-        # BAUSTELLE
+
         self.filename = Path.home() / 'Pythonic' / 'executables' / '{}.obj'.format(name)
 
         if self.filename.exists():
@@ -141,6 +141,54 @@ class ListPersist(list):
     @storePersist
     def pop(self, __index: int):
         return super().pop(__index=__index)
+
+    @storePersist
+    def clear(self) -> None:
+        return super().clear()
+
+
+class SetPersist(set):
+
+    def __init__(self, name: str) -> None:
+
+        self.filename = Path.home() / 'Pythonic' / 'executables' / '{}.obj'.format(name)
+
+        if self.filename.exists():
+
+            with open(self.filename, 'rb') as f:
+
+                data = pickle.load(f)
+                super().extend(data)
+
+
+
+    def reload(self):
+
+        if self.filename.exists():
+
+            with open(self.filename, 'rb') as f:
+
+                data = pickle.load(f)
+                super().clear()
+                super().extend(data)
+                return True
+
+        else:
+            return False
+
+
+
+    @storePersist
+    def add(self, __object) -> None:
+        return super().add(__object)
+
+    @storePersist
+    def discard(self, __object) -> None:
+        return super().discard(__object)
+
+    @storePersist
+    def pop(self) -> None:
+        return super().pop()
 
     @storePersist
     def clear(self) -> None:
