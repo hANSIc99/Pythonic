@@ -14,8 +14,7 @@
 
 ## Installation 
 
-You can run Pythonic natively on your Linux, Mac or Windows system,
-or as a container or on your Raspberry PI.
+You can run Pythonic natively on any platform, as a container or on your Raspberry PI.
 
 ## Container based installation
 
