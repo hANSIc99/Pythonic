@@ -88,8 +88,10 @@ to `%HOMEPATH%\Pythonic\executables`. On Linux or Mac you can find them under `~
 
 ## Donations
  
-ADA (Cardano): `addr1qxnm2s3ssdvxpjjwtlk8qy3j3q2e88te2garpnr3xng30hsglw2g08mvfnx3f7syetya0navr2qkyjlmlhfkzhx085equafjam`
+ADA (Cardano):
+`addr1qxnm2s3ssdvxpjjwtlk8qy3j3q2e88te2garpnr3xng30hsglw2g08mvfnx3f7syetya0navr2qkyjlmlhfkzhx085equafjam`
 
-XMR (Monero): `46EdjaZQ1og7oaSrPg7kNrdzCSpUhvtViSuMyVq16APaKTjizTGwe6FGg1vKqv4DS84CttqNsRVamKH9MP19cAfL7VagwWZ`
+XMR (Monero):
+ `46EdjaZQ1og7oaSrPg7kNrdzCSpUhvtViSuMyVq16APaKTjizTGwe6FGg1vKqv4DS84CttqNsRVamKH9MP19cAfL7VagwWZ`
 
 ## [Become a Patron!](https://www.patreon.com/pythonicautomation?fan_landing=true)
