@@ -1,3 +1,7 @@
+1.7
+
+    Added SetPersist type
+
 1.6
 
     Websocket can now connect to any host
