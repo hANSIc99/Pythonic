@@ -36,11 +36,22 @@ class Element(Function):
         specificConfig  = self.config.get('SpecificConfig')
         chat_ids        = SetPersist('chat_ids')
 
+        def getTargetState(no: int, btn: bool):
+
+            btnText = 'Switch GPIO4 {}'.format(GPIO_State(not btn).name)
+            cbData  = '{}{}'.format(no, GPIO_State(not btn).name)
+            return btnText, cbData
+
         self.gpio4_state     = GPIO_State.Off.value
         self.gpio5_state     = GPIO_State.Off.value
-        self.gpio4_button    = KeyboardButton(text='Switch GPIO4 {}'.format(GPIO_State(not self.gpio4_state).name, callback_data=4))
-        self.gpio5_button    = KeyboardButton(text='Switch GPIO5 {}'.format(GPIO_State(not self.gpio5_state).name, callback_data=5))
-        self.keyboard        = ReplyKeyboardMarkup.from_column([self.gpio4_button, self.gpio5_button], one_time_keyboard=True)
+        
+        btnText, cbData = getTargetState(4, self.gpio4_state)
+        self.gpio4_button    = InlineKeyboardButton(text=btnText, callback_data=cbData)
+
+        btnText, cbData = getTargetState(5, self.gpio5_state)
+        self.gpio5_button    = InlineKeyboardButton(text=btnText, callback_data=cbData)
+
+        self.keyboard        = InlineKeyboardMarkup.from_column([self.gpio4_button, self.gpio5_button])
 
         if not specificConfig:
 
@@ -59,6 +70,8 @@ class Element(Function):
         updater = Updater(token=self.config['SpecificConfig'][0]['Data'], use_context=True)
 
         dispatcher = updater.dispatcher
+
+
 
 
         def start(update: Update, context: CallbackContext):
@@ -81,31 +94,35 @@ class Element(Function):
             self.return_queue.put(record)
 
 
-        """
+        
         def callback(update: Update, context: CallbackContext):
-            callback_type = update.callback_query.data
+            
+            gpio_number = int(update.callback_query.data[0])
+            gpio_state = update.callback_query.data[1:]
+            gpio_state = GPIO_State[gpio_state].value
 
-            if callback_type == '4':
+
+            if gpio_number == '4':
                 self.gpio4_state = not self.gpio4_state
                 context.bot.sendMessage(update.effective_chat.id, 'Set GPIO 4 to {}'.format(GPIO_State(self.gpio4_state).name), reply_markup=self.keyboard)
                 return
-            elif callback_type == '5':
+            elif gpio_number == '5':
                 self.gpio5_state = not self.gpio5_state
                 context.bot.sendMessage(update.effective_chat.id, 'Set GPIO 5 to {}'.format(GPIO_State(self.gpio5_state).name), reply_markup=self.keyboard)
                 return
             else:
                 context.bot.sendMessage(update.effective_chat.id, 'Unknown GPIO type in callback - doing nothing')
-        """
+        
 
         start_handler       = CommandHandler('start', start)
         message_handler     = MessageHandler(Filters.text &~ Filters.command, message)
         unknown_cmd_handler = MessageHandler(Filters.command, unknown)
-        #callback_handler    = CallbackQueryHandler(callback)
+        callback_handler    = CallbackQueryHandler(callback)
 
         dispatcher.add_handler(start_handler)
         dispatcher.add_handler(message_handler) # muss als letztes hinzugefügt werden
         dispatcher.add_handler(unknown_cmd_handler)
-        #dispatcher.add_handler(callback_handler)
+        dispatcher.add_handler(callback_handler)
         
 
         updater.start_polling()
