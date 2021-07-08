@@ -124,7 +124,7 @@ class Element(Function):
         callback_handler    = CallbackQueryHandler(callback)
 
         dispatcher.add_handler(start_handler)
-        dispatcher.add_handler(message_handler) # muss als letztes hinzugefügt werden
+        #dispatcher.add_handler(message_handler) # not necessary
         dispatcher.add_handler(unknown_cmd_handler)
         dispatcher.add_handler(callback_handler)
         
