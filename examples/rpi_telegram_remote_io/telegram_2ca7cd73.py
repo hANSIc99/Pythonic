@@ -38,7 +38,7 @@ class Element(Function):
 
         def getTargetState(no: int, btn: bool):
 
-            btnText = 'Switch GPIO4 {}'.format(GPIO_State(not btn).name)
+            btnText = 'Switch GPIO {} {}'.format(no, GPIO_State(not btn).name)
             cbData  = '{}{}'.format(no, GPIO_State(not btn).name)
             return btnText, cbData
 
@@ -88,8 +88,6 @@ class Element(Function):
 
             msg = update.message.text
 
-            #guitext = GuiCMD('Message received from: {}, MsgId.: {:d}'.format(update.message.from_user.first_name, update.message.message_id))
-            #self.return_queue.put(guitext)
             record = Record(update.message, 'Message received from: {}, MsgId.: {:d}'.format(update.message.from_user.first_name, update.message.message_id))
             self.return_queue.put(record)
 
@@ -98,20 +96,26 @@ class Element(Function):
         def callback(update: Update, context: CallbackContext):
             
             gpio_number = int(update.callback_query.data[0])
+
             gpio_state = update.callback_query.data[1:]
             gpio_state = GPIO_State[gpio_state].value
 
+            btnText, cbData = getTargetState(gpio_number, gpio_state)
 
-            if gpio_number == '4':
-                self.gpio4_state = not self.gpio4_state
-                context.bot.sendMessage(update.effective_chat.id, 'Set GPIO 4 to {}'.format(GPIO_State(self.gpio4_state).name), reply_markup=self.keyboard)
-                return
-            elif gpio_number == '5':
-                self.gpio5_state = not self.gpio5_state
-                context.bot.sendMessage(update.effective_chat.id, 'Set GPIO 5 to {}'.format(GPIO_State(self.gpio5_state).name), reply_markup=self.keyboard)
-                return
+            if gpio_number == 4:      
+                self.gpio4_state    = gpio_state        
+                self.gpio4_button   = InlineKeyboardButton(text=btnText, callback_data=cbData)
+            elif gpio_number == 5:
+                self.gpio5_state    = gpio_state
+                self.gpio5_button   = InlineKeyboardButton(text=btnText, callback_data=cbData)
             else:
                 context.bot.sendMessage(update.effective_chat.id, 'Unknown GPIO type in callback - doing nothing')
+                return
+
+            txt             = 'GPIO {} set to {}'.format(gpio_number, GPIO_State(gpio_state).name)
+            self.keyboard   = InlineKeyboardMarkup.from_column([self.gpio4_button, self.gpio5_button])
+
+            context.bot.sendMessage(update.effective_chat.id, txt, reply_markup=self.keyboard)
         
 
         start_handler       = CommandHandler('start', start)
@@ -152,7 +156,6 @@ class Element(Function):
                         chat_ids.discard(chat_id)
                         logging.warning('ChatId removed')
                     
-
 
             cmd = None
 
