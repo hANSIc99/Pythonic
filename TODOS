@@ -1,7 +1,12 @@
 General:
+
 Check if the 'inline'-keyword can be applied to some loops
 (page 146 C++ Der Programmierer)
+
+Use dispatch tables instead of switch-case / if elif pattern
 
 Elementeditor:
 Add the possibility to pass arbitrary number of keyword arguments or
 to build a dictionary from within the editor
+
+
