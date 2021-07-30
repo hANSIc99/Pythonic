@@ -18,4 +18,4 @@ python3 setup.py sdist
 #src/code-server/download.sh
 
 # BUILD CONTAINER IMAGE
-#podman build -t pythonicautomation/pythonic:1.6 .
+#podman build -t pythonicautomation/pythonic:1.7 .

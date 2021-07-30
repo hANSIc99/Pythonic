@@ -17,7 +17,7 @@
 #Type  CIName                           Version            License                 
 #      Pythonic
 #          INCLUDED PACKAGES
-#           IMG     Fedora              33                 GPL                           
+#           IMG     Fedora              31                 GPL                           
 #           BIN     Supervisor          3.2.0              Custom license          
 #           BIN     ms-python           2020.10.332292344
 #
@@ -77,11 +77,11 @@ RUN /usr/bin/python3 -m pip install pylint==2.7.4
 ###################################
 
 
-COPY dist/Pythonic-1.6.tar.gz /
+COPY dist/Pythonic-1.7.tar.gz /
 
-RUN /usr/bin/python3 -m pip install /Pythonic-1.6.tar.gz
+RUN /usr/bin/python3 -m pip install /Pythonic-1.7.tar.gz
 
-RUN rm Pythonic-1.6.tar.gz
+RUN rm Pythonic-1.7.tar.gz
 	
 ###################################
 #                                 #

@@ -3,9 +3,9 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, Filters
 
 try:
-    from element_types import Record, Function, ProcCMD, GuiCMD, ListPersist
+    from element_types import Record, Function, ProcCMD, GuiCMD, SetPersist
 except ImportError:    
-    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD, ListPersist
+    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD, SetPersist
 
 try:
     from element_types import Record, Function, ProcCMD, GuiCMD
@@ -28,7 +28,7 @@ class Element(Function):
 
         cmd = None
         specificConfig = self.config.get('SpecificConfig')
-        chat_ids = ListPersist('chat_ids')
+        chat_ids = SetPersist('chat_ids')
 
         if not specificConfig:
 
@@ -51,7 +51,7 @@ class Element(Function):
 
         def start(update: Update, context: CallbackContext):
             
-            chat_ids.append(update.message.chat_id) 
+            chat_ids.add(update.message.chat_id) 
             context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, this chat ID is now registered for communication.")
 
 
@@ -97,7 +97,7 @@ class Element(Function):
                         dispatcher.bot.send_message(chat_id=chat_id, text=str(cmd.data))
                     except Exception as e:
                         logging.error(e)
-                        chat_ids.remove(chat_id)
+                        chat_ids.discard(chat_id)
                         logging.warning('ChatId removed')
                     
 

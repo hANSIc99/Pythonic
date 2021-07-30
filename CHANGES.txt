@@ -1,3 +1,8 @@
+1.7
+
+    Added SetPersist type
+    Modified Telegram element to use SetPersist type
+
 1.6
 
     Websocket can now connect to any host
