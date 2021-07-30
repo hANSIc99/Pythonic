@@ -1,6 +1,7 @@
 1.7
 
     Added SetPersist type
+    Modified Telegram element to use SetPersist type
 
 1.6
 
