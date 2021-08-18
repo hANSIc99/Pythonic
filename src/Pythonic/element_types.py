@@ -32,6 +32,7 @@ class Function():
             result = self.execute()
         except Exception as e:
             self.logger.error(e)
+            # signalize exception on GUI
             result = e
 
         return result

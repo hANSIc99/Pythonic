@@ -1,3 +1,9 @@
+1.8
+
+    CCXT: Fixed bug querying OHLCV data
+    CCXT Methods: Fixed bug when applying data limit querying OHLCV
+
+
 1.7
 
     Added SetPersist type
