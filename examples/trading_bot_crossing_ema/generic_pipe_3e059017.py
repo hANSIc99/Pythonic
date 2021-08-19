@@ -13,31 +13,28 @@ class Element(Function):
 
 
     def execute(self):
-
         df_in = pd.DataFrame(self.inputData, columns=['close_time', 'open', 'high', 'low', 'close', 'volume'])
-
-        df_in['close_time'] = df_in['close_time'].floordiv(1000)
-
+        df_in['close_time'] = df_in['close_time'].floordiv(1000) # remove milliseconds from timestamp
 
         file_path = Path.home() / 'Pythonic' / 'executables' / 'ADAUSD_5m.df'
 
-        
         try:
+            # load existing dataframe
             df = pd.read_pickle(file_path)
-
+            # count existing rows
             n_row_cnt = df.shape[0]
+            # concat latest OHLCV data
             df = pd.concat([df,df_in], ignore_index=True).drop_duplicates(['close_time'])
             df.reset_index(drop=True, inplace=True)
+            # calculate number of new rows
             n_new_rows = df.shape[0] - n_row_cnt
             log_txt = '{}: {} new rows written'.format(file_path, n_new_rows)
+
         except Exception as e:
             log_txt = 'File error - writing new one'
-            df = df_in
+            df = df_in 
 
         df.to_pickle(file_path)
-        
 
-
-        logInfo = Record(None, log_txt)   
+        logInfo = Record(None, log_txt)
         self.return_queue.put(logInfo)
-        
