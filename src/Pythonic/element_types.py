@@ -1,6 +1,6 @@
 import logging, pickle
 from pathlib import Path
-
+from typing import Optional
 
 class Function():
 
@@ -39,9 +39,9 @@ class Function():
 
 class Record():
 
-    def __init__(self, data, message=None):
+    def __init__(self, data : any, message : Optional[str] = None) -> None:
 
-        self.data       = data
+        self.data       = data # Will be passed to subsequent elements, even it is None
         self.message    = message # Log message string
 
 
