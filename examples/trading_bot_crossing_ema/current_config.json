@@ -1,5 +1,384 @@
 [
     {
+        "AllowStream": true,
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [
+            1592337045
+        ],
+        "Config": {
+            "GeneralConfig": {
+                "Autostart": false,
+                "Debug": false,
+                "Logging": false,
+                "MP": false
+            },
+            "SpecificConfig": [
+                {
+                    "Data": "Single fire",
+                    "Index": 0,
+                    "Name": "Mode",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "Minutes",
+                    "Index": 1,
+                    "Name": "Timebase",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "5",
+                    "Name": "Intervalinput",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "10:00",
+                    "Name": "StartTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "EndTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "SpecificTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": false,
+                    "Name": "Monday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Tuesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Wednesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Thursday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Friday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Saturday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Sunday",
+                    "Type": "CheckBox"
+                }
+            ]
+        },
+        "ConstructorCMD_Unix": "cp -u executables/manual_scheduler.py ~/Pythonic/executables/manual_scheduler_BASICDATA_Id.py",
+        "ConstructorCMD_Win32": "copy executables\\manual_scheduler.py %HOMEPATH%\\Pythonic\\executables\\manual_scheduler_BASICDATA_Id.py",
+        "DestructorCMD_Unix": "rm ~/Pythonic/executables/manual_scheduler_BASICDATA_Id.py",
+        "DestructorCMD_Win32": "del %HOMEPATH%\\Pythonic\\executables\\manual_scheduler_BASICDATA_Id.py",
+        "Filename": "manual_scheduler_1518ec21",
+        "HighlightState": true,
+        "Iconname": "ManualScheduler",
+        "Id": 353954849,
+        "License": "GPLv3",
+        "ObjectName": "BotScheduler - 0x1518ec21",
+        "Parents": [],
+        "Plug": true,
+        "Position": {
+            "x": 34,
+            "y": 35
+        },
+        "PythonicVersion": {
+            "Major": 1,
+            "Minor": 3
+        },
+        "Socket": false,
+        "Typename": "ManualScheduler",
+        "Version": {
+            "Major": 0,
+            "Minor": 1
+        }
+    },
+    {
+        "AllowStream": true,
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [
+            702529929
+        ],
+        "Config": {
+            "GeneralConfig": {
+                "Autostart": false,
+                "Debug": false,
+                "Logging": false,
+                "MP": false
+            },
+            "SpecificConfig": [
+                {
+                    "Data": "Delay",
+                    "Index": 0,
+                    "Name": "Mode",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "Seconds",
+                    "Index": 0,
+                    "Name": "Timebase",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "30",
+                    "Name": "Intervalinput",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "10:00",
+                    "Name": "StartTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "EndTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "SpecificTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": false,
+                    "Name": "Monday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Tuesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Wednesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Thursday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Friday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Saturday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Sunday",
+                    "Type": "CheckBox"
+                }
+            ]
+        },
+        "ConstructorCMD_Unix": "cp -u executables/scheduler.py ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
+        "ConstructorCMD_Win32": "copy executables\\scheduler.py %HOMEPATH%\\Pythonic\\executables\\scheduler_BASICDATA_Id.py",
+        "DestructorCMD_Unix": "rm ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
+        "DestructorCMD_Win32": "del %HOMEPATH%\\Pythonic\\executables\\scheduler_BASICDATA_Id.py",
+        "Filename": "scheduler_5ee92295",
+        "HighlightState": true,
+        "Iconname": "Scheduler",
+        "Id": 1592337045,
+        "License": "GPLv3",
+        "ObjectName": "Delay - 0x5ee92295",
+        "Parents": [
+            353954849
+        ],
+        "Plug": true,
+        "Position": {
+            "x": 105,
+            "y": 164
+        },
+        "PythonicVersion": {
+            "Major": 0,
+            "Minor": 1
+        },
+        "Socket": true,
+        "Typename": "Scheduler",
+        "Version": {
+            "Major": 0,
+            "Minor": 1
+        }
+    },
+    {
+        "AllowStream": false,
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [],
+        "Config": {
+            "GeneralConfig": {
+                "Autostart": false,
+                "Debug": false,
+                "Logging": false,
+                "MP": false
+            },
+            "SpecificConfig": []
+        },
+        "ConstructorCMD_Unix": "cp -u executables/generic_pipe.py ~/Pythonic/executables/generic_pipe_BASICDATA_Id.py",
+        "ConstructorCMD_Win32": "copy executables\\generic_pipe.py %HOMEPATH%\\Pythonic\\executables\\generic_pipe_BASICDATA_Id.py",
+        "DestructorCMD_Unix": "rm ~/Pythonic/executables/generic_pipe_BASICDATA_Id.py",
+        "DestructorCMD_Win32": "del %HOMEPATH%\\Pythonic\\executables\\generic_pipe_BASICDATA_Id.py",
+        "Filename": "generic_pipe_29dfc189",
+        "HighlightState": false,
+        "Iconname": "GenericPipe",
+        "Id": 702529929,
+        "License": "GPLv3",
+        "ObjectName": "Evaluation - 0x29dfc189",
+        "Parents": [
+            1592337045,
+            1805402603
+        ],
+        "Plug": true,
+        "Position": {
+            "x": 173,
+            "y": 315
+        },
+        "PythonicVersion": {
+            "Major": 1,
+            "Minor": 2
+        },
+        "Socket": true,
+        "Typename": "GenericPipe",
+        "Version": {
+            "Major": 0,
+            "Minor": 1
+        }
+    },
+    {
+        "AllowStream": true,
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [
+            702529929
+        ],
+        "Config": {
+            "GeneralConfig": {
+                "Autostart": false,
+                "Debug": false,
+                "Logging": false,
+                "MP": false
+            },
+            "SpecificConfig": [
+                {
+                    "Data": "Single fire",
+                    "Index": 0,
+                    "Name": "Mode",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "Seconds",
+                    "Index": 0,
+                    "Name": "Timebase",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "5",
+                    "Name": "Intervalinput",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "10:00",
+                    "Name": "StartTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "EndTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "SpecificTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": false,
+                    "Name": "Monday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Tuesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Wednesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Thursday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Friday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Saturday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Sunday",
+                    "Type": "CheckBox"
+                }
+            ]
+        },
+        "ConstructorCMD_Unix": "cp -u executables/manual_scheduler.py ~/Pythonic/executables/manual_scheduler_BASICDATA_Id.py",
+        "ConstructorCMD_Win32": "copy executables\\manual_scheduler.py %HOMEPATH%\\Pythonic\\executables\\manual_scheduler_BASICDATA_Id.py",
+        "DestructorCMD_Unix": "rm ~/Pythonic/executables/manual_scheduler_BASICDATA_Id.py",
+        "DestructorCMD_Win32": "del %HOMEPATH%\\Pythonic\\executables\\manual_scheduler_BASICDATA_Id.py",
+        "Filename": "manual_scheduler_6b9c41eb",
+        "HighlightState": true,
+        "Iconname": "ManualScheduler",
+        "Id": 1805402603,
+        "License": "GPLv3",
+        "ObjectName": "ManualScheduler - 0x6b9c41eb",
+        "Parents": [],
+        "Plug": true,
+        "Position": {
+            "x": 450,
+            "y": 192
+        },
+        "PythonicVersion": {
+            "Major": 1,
+            "Minor": 3
+        },
+        "Socket": false,
+        "Typename": "ManualScheduler",
+        "Version": {
+            "Major": 0,
+            "Minor": 1
+        }
+    },
+    {
         "AllowStream": false,
         "AreaNo": 1,
         "Author": "Stephan Avenwedde",
