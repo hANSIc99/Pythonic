@@ -1,4 +1,5 @@
 import time, queue
+from enum import Enum
 import pandas as pd
 from pathlib import Path
 from dataclasses import dataclass
@@ -10,66 +11,106 @@ except ImportError:
 
 @dataclass
 class OrderRecord:
-
-    orderType:          bool
-    price:              float
-    exchangeReturnCode: str
+    orderType:          bool  # True = Buy, False = Sell
+    price:              float # close price
     profit:             float # profit in percent
     profitCumulative:   float # cumulative profit in percent
 
-    
+
+class OrderType(Enum): 
+    Buy  = True
+    Sell = False
+
+
 class Element(Function):
-
-   
-
 
     def __init__(self, id, config, inputData, return_queue, cmd_queue):
         super().__init__(id, config, inputData, return_queue, cmd_queue)
 
-
     def execute(self):
 
-
-        #####################################
-        #                                   #
-        #             LOAD DATA             #
-        #                                   #
-        #####################################
-
-        bBought     = False
-        trackRecord = ListPersist('track_record')
-
-        try:
-            last = trackRecord[-1]
-
-        except IndexError:
-            bBought = False
-        
-        
-        newOrder = OrderRecord(
-            orderType=False,
-            price=0.0,
-            exchangeReturnCode='test',
-            profit=0.0,
-            profitCumulative=0.5)
-        
-        trackRecord.append(newOrder)
+        ### Load data ###
 
         file_path = Path.home() / 'Pythonic' / 'executables' / 'ADAUSD_5m.df'
 
         # only the last 21 columsn are considered
-        ohlcv = pd.read_pickle(file_path)[-5:]
+        self.ohlcv = pd.read_pickle(file_path)[-21:]
 
-        ohlcv['ema-10'] = ohlcv['close'].ewm(span = 10, adjust=False).mean()
-        ohlcv['ema-21'] = ohlcv['close'].ewm(span = 21, adjust=False).mean()
-        ohlcv['condition'] = ohlcv['ema-10'] > ohlcv['ema-21']
+        self.bBought             = False
+        self.lastPrice           = 0.0
+        self.profit              = 0.0
+        self.profitCumulative    = 0.0   
+        self.price               = self.ohlcv['close'].iloc[-1]
         
-        #########################################
-        #                                       #
-        #    The execution exits immediately    #
-        #    after providing output data        #
-        #                                       #
-        #########################################
+        # switches for simulation
 
-        #recordDone = Record(output, 'Sending value of cnt: {}'.format(output))     
-        #self.return_queue.put(recordDone)
+        self.bForceBuy  = False
+        self.bForceSell = False
+        
+
+        # load trade history from file
+        self.trackRecord = ListPersist('track_record')
+
+        try:
+            lastOrder = self.trackRecord[-1]
+
+            self.bBought          = lastOrder.orderType
+            self.lastPrice        = lastOrder.price
+            self.profitCumulative = lastOrder.profitCumulative
+
+        except IndexError:
+            pass
+        
+        ### Calculate indicators ###
+
+        self.ohlcv['ema-10'] = self.ohlcv['close'].ewm(span = 10, adjust=False).mean()
+        self.ohlcv['ema-21'] = self.ohlcv['close'].ewm(span = 21, adjust=False).mean()
+        self.ohlcv['condition'] = self.ohlcv['ema-10'] > self.ohlcv['ema-21']
+        
+        ### Check for Buy- / Sell-condition ###
+        tradeCondition = self.ohlcv['condition'].iloc[-1] != self.ohlcv['condition'].iloc[-2]
+
+        if tradeCondition or self.bForceBuy or self.bForceSell:
+
+            orderType = self.ohlcv['condition'].iloc[-1] # True = BUY, False = SELL
+
+            if orderType and not self.bBought or self.bForceBuy: # place a buy order
+                
+                msg         = 'Placing a  Buy-order'
+                newOrder    = self.createOrder(True)
+
+            elif not orderType and self.bBought or self.bForceSell: # place a sell order
+
+                msg = 'Placing a  Sell-order'
+
+                sellPrice   = self.price
+                buyPrice    = self.lastPrice
+
+                self.profit = (sellPrice * 100) / buyPrice - 100
+                self.profitCumulative += self.profit
+
+                newOrder = self.createOrder(False)
+
+            else: # Something went wrong
+                msg         = 'Warning: Condition for {}-order met but bBought is {}'.format(
+                    OrderType(orderType).name, self.bBought)
+
+                newOrder    = None
+            
+
+            recordDone = Record(newOrder, msg)     
+            self.return_queue.put(recordDone)
+
+
+    def createOrder(self, orderType: bool) -> OrderRecord:
+        
+        newOrder = OrderRecord(
+                orderType=orderType,
+                price=self.price,
+                profit=self.profit,
+                profitCumulative=self.profitCumulative
+            )
+        
+        self.trackRecord.append(newOrder)
+
+        return newOrder
