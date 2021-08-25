@@ -15,8 +15,8 @@
             },
             "SpecificConfig": [
                 {
-                    "Data": "Single fire",
-                    "Index": 0,
+                    "Data": "On every full interval",
+                    "Index": 5,
                     "Name": "Mode",
                     "Type": "ComboBox"
                 },
@@ -231,8 +231,8 @@
         "Config": {
             "GeneralConfig": {
                 "Autostart": false,
-                "Debug": false,
-                "Logging": false,
+                "Debug": true,
+                "Logging": true,
                 "MP": false
             },
             "SpecificConfig": []
@@ -248,13 +248,12 @@
         "License": "GPLv3",
         "ObjectName": "Evaluation - 0x29dfc189",
         "Parents": [
-            1592337045,
-            1805402603
+            1592337045
         ],
         "Plug": true,
         "Position": {
-            "x": 173,
-            "y": 315
+            "x": 181,
+            "y": 311
         },
         "PythonicVersion": {
             "Major": 1,
@@ -262,117 +261,6 @@
         },
         "Socket": true,
         "Typename": "GenericPipe",
-        "Version": {
-            "Major": 0,
-            "Minor": 1
-        }
-    },
-    {
-        "AllowStream": true,
-        "AreaNo": 0,
-        "Author": "Stephan Avenwedde",
-        "Childs": [
-            702529929
-        ],
-        "Config": {
-            "GeneralConfig": {
-                "Autostart": false,
-                "Debug": false,
-                "Logging": false,
-                "MP": false
-            },
-            "SpecificConfig": [
-                {
-                    "Data": "Single fire",
-                    "Index": 0,
-                    "Name": "Mode",
-                    "Type": "ComboBox"
-                },
-                {
-                    "Data": "Seconds",
-                    "Index": 0,
-                    "Name": "Timebase",
-                    "Type": "ComboBox"
-                },
-                {
-                    "Data": "5",
-                    "Name": "Intervalinput",
-                    "Type": "LineEdit"
-                },
-                {
-                    "Data": "10:00",
-                    "Name": "StartTime",
-                    "Type": "LineEdit"
-                },
-                {
-                    "Data": "13:00",
-                    "Name": "EndTime",
-                    "Type": "LineEdit"
-                },
-                {
-                    "Data": "13:00",
-                    "Name": "SpecificTime",
-                    "Type": "LineEdit"
-                },
-                {
-                    "Data": false,
-                    "Name": "Monday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Tuesday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Wednesday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Thursday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Friday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Saturday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Sunday",
-                    "Type": "CheckBox"
-                }
-            ]
-        },
-        "ConstructorCMD_Unix": "cp -u executables/manual_scheduler.py ~/Pythonic/executables/manual_scheduler_BASICDATA_Id.py",
-        "ConstructorCMD_Win32": "copy executables\\manual_scheduler.py %HOMEPATH%\\Pythonic\\executables\\manual_scheduler_BASICDATA_Id.py",
-        "DestructorCMD_Unix": "rm ~/Pythonic/executables/manual_scheduler_BASICDATA_Id.py",
-        "DestructorCMD_Win32": "del %HOMEPATH%\\Pythonic\\executables\\manual_scheduler_BASICDATA_Id.py",
-        "Filename": "manual_scheduler_6b9c41eb",
-        "HighlightState": true,
-        "Iconname": "ManualScheduler",
-        "Id": 1805402603,
-        "License": "GPLv3",
-        "ObjectName": "ManualScheduler - 0x6b9c41eb",
-        "Parents": [],
-        "Plug": true,
-        "Position": {
-            "x": 450,
-            "y": 192
-        },
-        "PythonicVersion": {
-            "Major": 1,
-            "Minor": 3
-        },
-        "Socket": false,
-        "Typename": "ManualScheduler",
         "Version": {
             "Major": 0,
             "Minor": 1
@@ -430,7 +318,7 @@
         ],
         "Config": {
             "GeneralConfig": {
-                "Autostart": true,
+                "Autostart": false,
                 "Debug": false,
                 "Logging": false,
                 "MP": false
@@ -588,7 +476,7 @@
                     "Type": "LineEdit"
                 },
                 {
-                    "Data": "1",
+                    "Data": "1000",
                     "Name": "LimitData",
                     "Type": "LineEdit"
                 },
