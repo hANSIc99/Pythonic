@@ -92,7 +92,7 @@
         "Iconname": "ManualScheduler",
         "Id": 353954849,
         "License": "GPLv3",
-        "ObjectName": "BotScheduler - 0x1518ec21",
+        "ObjectName": "BotScheduler",
         "Parents": [],
         "Plug": true,
         "Position": {
@@ -203,14 +203,14 @@
         "Iconname": "Scheduler",
         "Id": 1592337045,
         "License": "GPLv3",
-        "ObjectName": "Delay - 0x5ee92295",
+        "ObjectName": "Delay",
         "Parents": [
             353954849
         ],
         "Plug": true,
         "Position": {
-            "x": 105,
-            "y": 164
+            "x": 110,
+            "y": 128
         },
         "PythonicVersion": {
             "Major": 0,
@@ -246,14 +246,14 @@
         "Iconname": "GenericPipe",
         "Id": 702529929,
         "License": "GPLv3",
-        "ObjectName": "Evaluation - 0x29dfc189",
+        "ObjectName": "Evaluation",
         "Parents": [
             1592337045
         ],
         "Plug": true,
         "Position": {
-            "x": 181,
-            "y": 311
+            "x": 168,
+            "y": 234
         },
         "PythonicVersion": {
             "Major": 1,
@@ -476,7 +476,7 @@
                     "Type": "LineEdit"
                 },
                 {
-                    "Data": "1000",
+                    "Data": "1",
                     "Name": "LimitData",
                     "Type": "LineEdit"
                 },
