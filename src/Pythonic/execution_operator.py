@@ -193,7 +193,7 @@ class OperatorElementOpDone(QRunnable):
 
         cfgElement = [x for x in self.currentConfig if x['Id'] == self.id][0]
 
-        if cfgElement['Config']['GeneralConfig']['Logging'] and self.record.message:
+        if cfgElement['Config']['GeneralConfig']['Logging'] and self.record.message: # Log Message enabled
             logging.info('{} - {}'.format(cfgElement['ObjectName'], self.record.message))
 
             data = {
@@ -213,7 +213,7 @@ class OperatorElementOpDone(QRunnable):
             self.operator.emitCommand(cmd)
 
 
-        if cfgElement['Config']['GeneralConfig']['Debug'] :
+        if cfgElement['Config']['GeneralConfig']['Debug'] : # Log Output enabled
 
             data = {
                 'Id'        : cfgElement['Id'],

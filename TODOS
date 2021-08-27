@@ -1,5 +1,9 @@
 General:
 
+CCXT Method: Remove large if-else areas for parsing config
+
+Python: Add type hints
+
 Check if the 'inline'-keyword can be applied to some loops
 (page 146 C++ Der Programmierer)
 
@@ -9,4 +13,9 @@ Elementeditor:
 Add the possibility to pass arbitrary number of keyword arguments or
 to build a dictionary from within the editor
 
+
+element_types.py 
+execute_ex() : 
+ - Signaliye an exception in the GUI
+ - Remove return value as it is not processed
 

@@ -173,14 +173,14 @@ class Element(Function):
 
         elif methodName == 'fetch OHLCV':
 
-            methodName = methodName.replace(" ", "_")
+            methodName = methodName.replace(" ", "_").lower()
 
             apiCall = {
                 'method' : methodName,
                 'kwargs' : {
                     'symbol'    : symbol,
                     'timeframe' : timeframe,
-                    'limit'     : limit
+                    'limit'     : int(limit)
                 }
             }
 
