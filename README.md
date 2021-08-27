@@ -1,4 +1,4 @@
-<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/gui_new/src/Pythonic/public_html/static/horizontal.png" alt="Pythonic" height="120px"></p>
+<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/dev/src/Pythonic/public_html/static/horizontal.png" alt="Pythonic" height="120px"></p>
 
 ## Graphical Python programming for trading and automation
 
@@ -9,13 +9,12 @@
 [<img src="https://img.shields.io/badge/platform-Windows%20Linux%20Mac-blueviolet.svg">](https://github.com/hANSIc99/Pythonic)
 
 
-<p align="center"><img src="screenshot-6.PNG" alt="Pythonic" "></p>
+<p align="center"><img src="screenshots/screenshot-7.PNG" alt="Pythonic" "></p>
 
 
 ## Installation 
 
-You can run Pythonic natively on your Linux, Mac or Windows system
-or as a container.
+You can run Pythonic natively on any platform, as a container or on your Raspberry PI.
 
 ## Container based installation
 
@@ -58,9 +57,20 @@ if part of the `Path` environemnt variable.
 
 Open a command shell and simply type `Pythonic`.
 
+ 
+## Raspberry PI Image
+  
+The image is available at [sourceforge.net](https://sourceforge.net/projects/pythonicrpi/)
+
+The credentials for login at Cockpit are:
+
+- Username: **pythonic**
+- Password: **guetersloh**
+
 ## Endpoints
 
 Open your favorite WebAssembly compatible web browser and navigate to...
+
 
 - [http://127.0.0.1:7000/](http://127.0.0.1:7000/) ... to open the GUI
 - [http://127.0.0.1:7000/log](http://127.0.0.1:7000/log) ... to get an overview of available log files
@@ -70,9 +80,19 @@ Open your favorite WebAssembly compatible web browser and navigate to...
 - [http://127.0.0.1:8000/](http://127.0.0.01:8000/) ... to open code server (VS Code in browser - **container and Raspberry Pi only**)
 - [http://127.0.0.1:9090/](http://127.0.0.01:9090/) ... to open Cockpit system manager (**Raspberry Pi image only**)
 
+
+
 ## Editing elements
 
 On Windows, when you drop an element to the working areay, the related *\*.py*-file gets copied
 to `%HOMEPATH%\Pythonic\executables`. On Linux or Mac you can find them under `~/Pythonic/executables`.
+
+## Donations
+ 
+ADA (Cardano):
+`addr1qxnm2s3ssdvxpjjwtlk8qy3j3q2e88te2garpnr3xng30hsglw2g08mvfnx3f7syetya0navr2qkyjlmlhfkzhx085equafjam`
+
+XMR (Monero):
+ `46EdjaZQ1og7oaSrPg7kNrdzCSpUhvtViSuMyVq16APaKTjizTGwe6FGg1vKqv4DS84CttqNsRVamKH9MP19cAfL7VagwWZ`
 
 ## [Become a Patron!](https://www.patreon.com/pythonicautomation?fan_landing=true)
