@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 
 setuptools.setup(
-        version = '1.07',
+        version = '1.08',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
