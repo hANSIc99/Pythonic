@@ -24,6 +24,9 @@ podman run -d --name Pythonic -p 7000:7000 -p 8000:8000 pythonic:<tag>
 # login to remote repository
 podman login -u pythonicautomation https://index.docker.io/v1/
 
+# re-tag image
+podman image tag pythonic:1.8 pythonicautomation:1.8
+
 # push image
 podman push pythonicautomation/pythonic:<tag>
 
@@ -68,6 +71,19 @@ python3 -m twine upload dist/
 dd if=/home/stephan/Pythonic-1.6.img of=/dev/sdc conv=fsync bs=32M
 
 scp Pythonic-1.6.zip hansic99@frs.sourceforge.net:/home/frs/project/pythonicrpi/
+
+##############################################################
+#                                                            #
+#                           DEBIAN                           #
+#                                                            #
+##############################################################
+
+#clean all log files
+find /var/log -type f -delete
+
+# remove everytring in
+/var/tmp
+/tmp
 
 ##############################################################
 #                                                            #
