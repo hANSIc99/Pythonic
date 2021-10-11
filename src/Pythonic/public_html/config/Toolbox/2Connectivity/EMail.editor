@@ -1,0 +1,31 @@
+[
+    {
+        "Type"	      : "LineEdit2",
+	    "Name"        : "Sender",
+        "Title"       : "Sender address:",
+	    "Defaulttext" : "user@example.com",                      
+        "RegExp"     : "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])" 
+    },
+    {
+        "Type"	      : "LineEdit",
+	    "Name"        : "Password",
+        "Title"       : "Password"        
+    },
+    {
+        "Type"	      : "LineEdit",
+	    "Name"        : "URL",
+        "Title"       : "Server URL",
+        "Defaulttext" : "smtp.gmail.com",
+        "RegExp"     : "(https?:\/\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\/\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})"   
+    },
+    {
+    	"Type"  : "Text",
+        "Name"  : "Helptext",
+	    "Text"  : "Documentation can be found <a href=\"https://github.com/hANSIc99/Pythonic/blob/master/DOKU.md\">here</a>"
+    },
+    {
+        "Type"  : "HelpText",
+        "Name"  : "HelpText1",
+	    "Text"  : "The E-Mail element expects an dictionary in the following format:\n\n{\n\t'recipient' : 'user@example.com'\n\t'subject' : 'Hello',\n\t'message' : 'world',\n\t'data' : data\n\t'filename' : 'test.bin'\n}\n\nIf several files are to be sent as attachment,\nthe keys data and filename must be of type list."
+    }
+]

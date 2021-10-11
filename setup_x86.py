@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 
 setuptools.setup(
-        version = '1.08',
+        version = '1.09',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -37,6 +37,8 @@ setuptools.setup(
              'public_html/config/Toolbox/0Basic/*',
              'public_html/config/Toolbox/2Connectivity/Telegram.editor',
              'public_html/config/Toolbox/2Connectivity/0Telegram.json',
+             'public_html/config/Toolbox/2Connectivity/EMail.editor',
+             'public_html/config/Toolbox/2Connectivity/1EMail.json',
              'public_html/config/Toolbox/3Trading/*'
              ]
         },

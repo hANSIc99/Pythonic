@@ -47,15 +47,16 @@ class ProcessHandler(QRunnable):
             self.cmd_queue    = queue.Queue()
 
         try:
-
             # This affects only first invocation
             module = __import__(self.element['Filename'])
+
             #logging.warning("Load module first time")
-            
+
             # Reload to execute possible changes
             module = reload(module) 
 
             elementCls = getattr(module, 'Element')
+            logging.debug('ProcessHandler::run() X5 -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
 
         except Exception as e:
             logging.warning('ProcessHandler::run() - Error loading file - id: 0x{:08x}, ident: {:04d} - {} Error: {}'.format(
