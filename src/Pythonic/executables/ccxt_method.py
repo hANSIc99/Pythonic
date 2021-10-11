@@ -44,7 +44,7 @@ class Element(Function):
         for attrs in specificConfig:
             if attrs['Name'] == 'BaseApi':
                 baseAPI = attrs['Data']
-            if attrs['Name'] == 'Public Methods':
+            elif attrs['Name'] == 'Public Methods':
                 pubMethod = attrs['Data']
             elif attrs['Name'] == 'Private Methods':
                 prvMethod = attrs['Data']
