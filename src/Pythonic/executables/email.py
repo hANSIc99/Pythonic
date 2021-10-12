@@ -32,7 +32,7 @@ class Element(Function):
         password    = None
         url         = None
         
-        recipient   = None
+        recipients   = None
         subject     = None
         message     = None
 
@@ -61,7 +61,7 @@ class Element(Function):
                 self.return_queue.put(recordDone)
                 return
 
-            recipient   = self.inputData['recipient']
+            recipients  = self.inputData['recipient'].split(' ')
             subject     = self.inputData['subject']
             message     = self.inputData['message']
 
@@ -83,7 +83,7 @@ class Element(Function):
         msg = EmailMessage()
         msg['Subject']  = subject
         msg['From']     = sender
-        msg['To']       = recipient
+        msg['To']       = ', '.join(recipients)
         msg.set_default_type('text/plain')
         msg.set_content(message)
 

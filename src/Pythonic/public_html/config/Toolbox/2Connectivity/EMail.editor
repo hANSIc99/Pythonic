@@ -21,6 +21,6 @@
     {
         "Type"  : "HelpText",
         "Name"  : "HelpText1",
-	    "Text"  : "The E-Mail element expects an dictionary in the following format:\n\n{\n\t'recipient' : 'user@example.com'\n\t'subject' : 'Hello',\n\t'message' : 'world',\n\t'attachment' : [\n\t\t{'filename' : 'file_A.txt', data : data_A},\n\t\t{'filename' : 'file_B.bin', data : data_B}\n\t]\n}\n\nThe key attachment can be omitted of no attachment is to be send."
+	    "Text"  : "The E-Mail element expects an dictionary in the following format:<br><br>{<br>&nbsp;&nbsp;'recipient' : 'userA@example.com userB@example.com'<br>&nbsp;&nbsp;'subject' : 'Hello',<br>&nbsp;&nbsp;'message' : 'world',<br>&nbsp;&nbsp;'attachment' : [<br>&nbsp;&nbsp;&nbsp;&nbsp;{'filename' : 'file_A.txt', data : data_A},<br>&nbsp;&nbsp;&nbsp;&nbsp;{'filename' : 'file_B.bin', data : data_B}<br>&nbsp;&nbsp;]<br>}<br><br>The key <b>attachment</b> can be omitted of no attachment is to be send.<br>Separate several recipients by space."
     }
 ]
