@@ -1,4 +1,4 @@
-import time, queue
+import time, queue, pickle, ssl, smtplib
 try:
     from element_types import Record, Function, ProcCMD, GuiCMD
 except ImportError:    
@@ -32,11 +32,11 @@ class Element(Function):
         password    = None
         url         = None
         
-        recipients   = None
+        recipients  = None
         subject     = None
         message     = None
 
-        attachment  = None
+        attachments = None
 
 
         for attrs in specificConfig:
@@ -61,17 +61,15 @@ class Element(Function):
                 self.return_queue.put(recordDone)
                 return
 
-            recipients  = self.inputData['recipient'].split(' ')
+            recipients  = self.inputData['recipient']
             subject     = self.inputData['subject']
             message     = self.inputData['message']
 
             # optional: check for attachment(s)
             if 'attachment' in self.inputData and isinstance(self.inputData['attachment'], list):
 
-                attachment = self.inputData['attachment']
+                attachments = self.inputData['attachment']
 
-
-            #isinstance(tets)
 
         else:
             recordDone = Record(None, message='Config missing')
@@ -83,9 +81,27 @@ class Element(Function):
         msg = EmailMessage()
         msg['Subject']  = subject
         msg['From']     = sender
-        msg['To']       = ', '.join(recipients)
+        msg['To']       = recipients
         msg.set_default_type('text/plain')
         msg.set_content(message)
+
+        for attachment in attachments:
+            if not 'filename' in attachment and not isinstance(attachment['filename'], str):
+                continue
+            if not 'data' in attachment:
+                continue
+
+            # attach data as text
+            if isinstance(attachment, str):
+                msg.add_attachment(attachment['data'], 'text/plain', filename=attachment['filename'])
+
+            else: # attach data is binary object
+                msg.add_attachment(pickle.dumps(attachment['data']), maintype='application', subtype='octet-stream',
+                    filename=attachment['filename'])
+
+
+
+        context = ssl.create_default_context()
 
         #########################################
         #                                       #

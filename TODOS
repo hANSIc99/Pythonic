@@ -13,9 +13,10 @@ Elementeditor:
 Add the possibility to pass arbitrary number of keyword arguments or
 to build a dictionary from within the editor
 
+Add a passwort input text element
 
 element_types.py 
 execute_ex() : 
- - Signaliye an exception in the GUI
+ - Signalize an exception in the GUI
  - Remove return value as it is not processed
 
