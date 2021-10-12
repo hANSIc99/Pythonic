@@ -19,13 +19,8 @@
         "RegExp"     : "(https?:\/\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\/\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})"   
     },
     {
-    	"Type"  : "Text",
-        "Name"  : "Helptext",
-	    "Text"  : "Documentation can be found <a href=\"https://github.com/hANSIc99/Pythonic/blob/master/DOKU.md\">here</a>"
-    },
-    {
         "Type"  : "HelpText",
         "Name"  : "HelpText1",
-	    "Text"  : "The E-Mail element expects an dictionary in the following format:\n\n{\n\t'recipient' : 'user@example.com'\n\t'subject' : 'Hello',\n\t'message' : 'world',\n\t'data' : data\n\t'filename' : 'test.bin'\n}\n\nIf several files are to be sent as attachment,\nthe keys data and filename must be of type list."
+	    "Text"  : "The E-Mail element expects an dictionary in the following format:\n\n{\n\t'recipient' : 'user@example.com'\n\t'subject' : 'Hello',\n\t'message' : 'world',\n\t'attachment' : [\n\t\t{'filename' : 'file_A.txt', data : data_A},\n\t\t{'filename' : 'file_B.bin', data : data_B}\n\t]\n}\n\nThe key attachment can be omitted of no attachment is to be send."
     }
 ]
