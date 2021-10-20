@@ -10,9 +10,9 @@ from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QRunnable, QT
 
 
 try:
-    from element_types import Record, ProcCMD, GuiCMD
+    from element_types import Record, ProcCMD, GuiCMD, GuiException
 except ImportError:    
-    from Pythonic.element_types import Record, ProcCMD, GuiCMD
+    from Pythonic.element_types import Record, ProcCMD, GuiCMD, GuiException
 
 
 
@@ -514,6 +514,20 @@ class Operator(QObject):
                 'cmd'       : 'ElementText',
                 'address'   : address,
                 'data'      : record.text
+            }
+            self.command.emit(cmd)
+            return
+
+        if isinstance(record, GuiException):
+
+            address = {
+                'target'    : 'Element',  
+                'id'        : id,
+                'area'      : area            
+            }
+            cmd = { 
+                'cmd'       : 'ElementException',
+                'address'   : address
             }
             self.command.emit(cmd)
             return

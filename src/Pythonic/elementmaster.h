@@ -132,6 +132,7 @@ namespace ElementMasterCmd {
         ElementEditorConfig,
         UpdateElementStatus,
         ElementText,
+        ElementException,
         Test,
         NoCmd
     };
@@ -152,6 +153,12 @@ class ElementMaster : public QWidget
     static constexpr    QSizePolicy m_sizePolicy{QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum};
     static const        QLoggingCategory  logC;
     static              ElementMasterCmd::Command hashCmd(QString const &inString);
+
+    void                ShowText(const QString &inString);
+    void                HideText();
+
+    void                ShowException(const QString &ts);
+    void                HideException();
 
 public:
 
@@ -178,6 +185,8 @@ public:
     bool                    m_parentConnected{false};
     //! Indicates if the element has a child element
     bool                    m_childConnected{false};
+    //! Indicates if the element shows an exception message
+    bool                    m_hasException{false};
 
     QSet<ElementMaster*>    m_parents;
     QSet<ElementMaster*>    m_childs;
