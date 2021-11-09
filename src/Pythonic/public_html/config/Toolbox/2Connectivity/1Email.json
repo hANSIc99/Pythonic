@@ -1,6 +1,6 @@
 {
     "Socket"           : true,
-    "Plug"             : true,
+    "Plug"             : false,
     "Typename"         : "EMail",
     "Iconname"         : "Email",
     "Filename"         : "email_BASICDATA_Id",

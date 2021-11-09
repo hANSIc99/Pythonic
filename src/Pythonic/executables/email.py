@@ -31,6 +31,7 @@ class Element(Function):
         sender      = None
         password    = None
         url         = None
+        port        = None
         
         recipients  = None
         subject     = None
@@ -46,15 +47,19 @@ class Element(Function):
                 password = attrs['Data']
             elif attrs['Name'] == 'URL':
                 url = attrs['Data']
+            elif attrs['Name'] == 'Port':
+                port = int(attrs['Data'])
 
         if not sender:
-            raise Exception("Sender missing in configuration")
+            raise Exception('Sender missing in configuration')
 
         if not password:
-            raise Exception("Password missing in configuration")
+            raise Exception('Password missing in configuration')
 
         if not url:
-            raise Exception("URL missing in configuration")
+            raise Exception('URL missing in configuration')
+        if not port:
+            raise Exception('Port missing in configuration')
 
 
         if isinstance(self.inputData, dict):
@@ -114,15 +119,7 @@ class Element(Function):
 
         context = ssl.create_default_context()
 
-        with smtplib.SMTP_SSL(url, server_port, context=context) as server:
+        with smtplib.SMTP_SSL(url, port, context=context) as server:
+            server.set_debuglevel(1)
             server.login(sender, password)
             server.send_message(msg)
-        #########################################
-        #                                       #
-        #    The execution exits immediately    #
-        #    after providing output data        #
-        #                                       #
-        #########################################
-
-        #recordDone = Record(output, 'Sending value of cnt: {}'.format(output))     
-        #self.return_queue.put(recordDone)
