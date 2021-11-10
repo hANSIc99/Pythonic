@@ -33,7 +33,7 @@ class Function():
         except Exception as e:
             guiexc = GuiException()
             self.return_queue.put(guiexc)
-            self.logger.error(e)
+            self.logger.error(repr(e))
             # signalize exception on GUI
 
 

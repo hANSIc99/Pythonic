@@ -102,7 +102,9 @@ class Element(Function):
 
         if attachments:
             for attachment in attachments:
-                if not 'filename' in attachment and not isinstance(attachment['filename'], str):
+                if not 'filename' in attachment: # and not isinstance(attachment['filename'], str):
+                    continue
+                if not isinstance(attachment['filename'], str):
                     continue
                 if not 'data' in attachment:
                     continue
@@ -120,6 +122,5 @@ class Element(Function):
         context = ssl.create_default_context()
 
         with smtplib.SMTP_SSL(url, port, context=context) as server:
-            server.set_debuglevel(1)
             server.login(sender, password)
             server.send_message(msg)
