@@ -27,6 +27,7 @@ setuptools.setup(
              'public_html/static/GPIO_Read.png',
              'public_html/static/GPIO_Write.png',
              'public_html/static/Telegram.png',
+             'public_html/static/Email.png',
              'public_html/static/CCXT.png',
              'public_html/static/CCXT_Method.png',
              'public_html/static/python.ico',

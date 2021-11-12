@@ -25,6 +25,7 @@ setuptools.setup(
              'public_html/static/GenericProcess.png',
              'public_html/static/ProcessPipe.png',
              'public_html/static/Telegram.png',
+             'public_html/static/Email.png',
              'public_html/static/CCXT.png',
              'public_html/static/CCXT_Method.png',
              'public_html/static/python.ico',
