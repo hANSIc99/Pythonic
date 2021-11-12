@@ -1,0 +1,33 @@
+[
+    {
+        "Type"	      : "LineEdit2",
+	    "Name"        : "Sender",
+        "Title"       : "Sender address:",
+	    "Defaulttext" : "user@example.com",                      
+        "RegExp"     : "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])" 
+    },
+    {
+        "Type"	      : "PwEdit2",
+	    "Name"        : "Password",
+        "Title"       : "Password"        
+    },
+    {
+        "Type"	      : "LineEdit2",
+	    "Name"        : "URL",
+        "Title"       : "Server URL",
+        "Defaulttext" : "smtp.gmail.com",
+        "RegExp"     : "^\\w+\\.\\w+\\.[a-zA-z]{1,3}$"   
+    },
+    {
+        "Type"	      : "LineEdit",
+	    "Name"        : "Port",
+        "Title"       : "Port",
+        "Defaulttext" : "465",
+        "RegExp"     : "([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9])"  
+    },
+    {
+        "Type"  : "HelpText",
+        "Name"  : "HelpText1",
+	    "Text"  : "The E-Mail element expects an dictionary in the following format:<br><br>{<br>&nbsp;&nbsp;'recipient' : 'userA@xyz.com, userB@xyz.com'<br>&nbsp;&nbsp;'subject' : 'Hello',<br>&nbsp;&nbsp;'message' : 'world',<br>&nbsp;&nbsp;'attachment' : [<br>&nbsp;&nbsp;&nbsp;&nbsp;{'filename' : 'file_A.txt', data : data_A},<br>&nbsp;&nbsp;&nbsp;&nbsp;{'filename' : 'file_B.bin', data : data_B}<br>&nbsp;&nbsp;]<br>}<br><br>The key <b>attachment</b> can be omitted of no attachment is to be send.<br>Separate several recipients by comma."
+    }
+]

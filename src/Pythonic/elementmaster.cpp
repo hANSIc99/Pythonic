@@ -55,8 +55,6 @@ ElementMaster::ElementMaster(const QJsonObject configuration,
 
     /* Create the basic data */
 
-    //m_hasSocket = m_config[QStringLiteral("Socket")].toBool();
-
     /* Create default general config if not defined */
 
     QJsonValue generalConfig = m_config.value(QStringLiteral("Config"));
@@ -303,7 +301,6 @@ void ElementMaster::fwrdWsCtrl(const QJsonObject cmd)
     };
     newCmd["address"] = address;
 
-
     emit wsCtrl(newCmd);
 }
 
@@ -312,8 +309,39 @@ ElementMasterCmd::Command ElementMaster::hashCmd(const QString &inString)
     if(inString == QStringLiteral("ElementEditorConfig")) return ElementMasterCmd::ElementEditorConfig;
     if(inString == QStringLiteral("UpdateElementStatus")) return ElementMasterCmd::UpdateElementStatus;
     if(inString == QStringLiteral("ElementText")) return ElementMasterCmd::ElementText;
+    if(inString == QStringLiteral("ElementException")) return ElementMasterCmd::ElementException;
     if(inString == QStringLiteral("Test")) return ElementMasterCmd::Test;
     return ElementMasterCmd::NoCmd;
+}
+
+void ElementMaster::ShowText(const QString &inString)
+{
+    if(!m_hasException){
+        m_textLabel.setStyleSheet(QStringLiteral("background-color: #ffffca; border: 1px solid black;"));
+        m_text.setVisible(true);
+        m_textLabel.setText(inString);
+    }
+}
+
+void ElementMaster::HideText()
+{
+    if(!m_hasException){
+        m_text.setVisible(false);
+    }
+}
+
+void ElementMaster::ShowException(const QString &ts)
+{
+    m_text.setVisible(true);
+    m_textLabel.setStyleSheet(QStringLiteral("background-color: #ff0000; color: #ffffff; border: 1px solid black;"));
+    m_textLabel.setText(ts + QStringLiteral("\nExecption occured, open log for details"));
+    m_hasException = true;
+}
+
+void ElementMaster::HideException()
+{
+    m_hasException = false;
+    m_text.setVisible(false);
 }
 
 void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
@@ -321,8 +349,6 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
 
     QJsonObject address = cmd[QStringLiteral("address")].toObject();
-    //QLatin1String strCmd(   cmd[QStringLiteral("cmd")].toString().toLatin1(),
-    //                        cmd[QStringLiteral("cmd")].toString().size());
 
     switch (hashCmd(cmd[QStringLiteral("cmd")].toString())) {
 
@@ -342,8 +368,12 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
     }
     case ElementMasterCmd::ElementText: {
         QString text = cmd[QStringLiteral("data")].toString();
-        m_text.setVisible(true);
-        m_textLabel.setText(text);
+        ShowText(text);
+        break;
+    }
+    case ElementMasterCmd::ElementException: {
+        QString ts = cmd[QStringLiteral("TS")].toString();
+        ShowException(ts);
         break;
     }
 
@@ -357,9 +387,11 @@ void ElementMaster::fwrdWsRcv(const QJsonObject cmd)
 void ElementMaster::openEditor()
 {
     qCInfo(logC, "called %s", objectName().toStdString().c_str());
+    HideException();
     /* A default general config is created in the constructor */
     /* The specific config contains nothing when this is called the first time */
     m_editor->openEditor(m_customConfig);
+
 }
 
 void ElementMaster::switchRunState(bool state)
@@ -372,7 +404,7 @@ void ElementMaster::switchRunState(bool state)
     } else {
         m_symbol.setStyleSheet(styleSheet());
         m_startBtn.togggleRunning(false);
-        m_text.setVisible(false);
+        HideText();
     }
 
     /* Element has a start button instead of a socket */

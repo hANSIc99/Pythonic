@@ -304,6 +304,7 @@ void MainWindow::wsRcv(const QString &message)
 
 
     if(target.toString() != QStringLiteral("MainWindow")){
+        jsonMsg.insert(QStringLiteral("TS"), m_datetimeText.text());
         fwrdWsRcv(jsonMsg);
         return;
     }
@@ -360,6 +361,11 @@ void MainWindow::wsRcv(const QString &message)
 
     break;
     }
+
+
+
+
+
     case Pythonic::Command::CurrentConfig: {
         qCDebug(logC, "CurrentConfig received");
         loadSavedConfig(jsonMsg);

@@ -10,9 +10,9 @@ from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QRunnable, QT
 
 
 try:
-    from element_types import Record, ProcCMD, GuiCMD
+    from element_types import Record, ProcCMD, GuiCMD, GuiException
 except ImportError:    
-    from Pythonic.element_types import Record, ProcCMD, GuiCMD
+    from Pythonic.element_types import Record, ProcCMD, GuiCMD, GuiException
 
 
 
@@ -47,15 +47,16 @@ class ProcessHandler(QRunnable):
             self.cmd_queue    = queue.Queue()
 
         try:
-
             # This affects only first invocation
             module = __import__(self.element['Filename'])
+
             #logging.warning("Load module first time")
-            
+
             # Reload to execute possible changes
             module = reload(module) 
 
             elementCls = getattr(module, 'Element')
+            logging.debug('ProcessHandler::run() X5 -id: 0x{:08x}, ident: {:04d}'.format(self.element['Id'], self.identifier))
 
         except Exception as e:
             logging.warning('ProcessHandler::run() - Error loading file - id: 0x{:08x}, ident: {:04d} - {} Error: {}'.format(
@@ -513,6 +514,20 @@ class Operator(QObject):
                 'cmd'       : 'ElementText',
                 'address'   : address,
                 'data'      : record.text
+            }
+            self.command.emit(cmd)
+            return
+
+        if isinstance(record, GuiException):
+
+            address = {
+                'target'    : 'Element',  
+                'id'        : id,
+                'area'      : area            
+            }
+            cmd = { 
+                'cmd'       : 'ElementException',
+                'address'   : address
             }
             self.command.emit(cmd)
             return

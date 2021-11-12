@@ -63,6 +63,7 @@ namespace ElementEditorTypes {
         ComboBox,
         LineEdit,
         LineEdit2,
+        PwEdit2,
         CheckBox,
         Text,
         HelpText,
@@ -281,7 +282,7 @@ private:
 
     void            addLineEdit(const QJsonObject &lineeditJSON);
 
-    void            addLineEdit2(const QJsonObject &lineeditJSON);
+    void            addLineEdit2(const QJsonObject &lineeditJSON, bool pw);
 
     void            addCheckBox(const QJsonObject &checkboxJSON);
 

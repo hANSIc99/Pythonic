@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 
 setuptools.setup(
-        version = '1.08',
+        version = '1.09',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -27,6 +27,7 @@ setuptools.setup(
              'public_html/static/GPIO_Read.png',
              'public_html/static/GPIO_Write.png',
              'public_html/static/Telegram.png',
+             'public_html/static/Email.png',
              'public_html/static/CCXT.png',
              'public_html/static/CCXT_Method.png',
              'public_html/static/python.ico',
@@ -40,6 +41,8 @@ setuptools.setup(
              'public_html/config/Toolbox/1IO/*',
              'public_html/config/Toolbox/2Connectivity/Telegram.editor',
              'public_html/config/Toolbox/2Connectivity/0Telegram.json',
+             'public_html/config/Toolbox/2Connectivity/EMail.editor',
+             'public_html/config/Toolbox/2Connectivity/1EMail.json',
              'public_html/config/Toolbox/3Trading/*'
              ]
         },

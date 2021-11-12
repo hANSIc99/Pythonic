@@ -191,9 +191,14 @@ void Elementeditor::loadEditorConfig(const QJsonArray config)
         }
 
         case ElementEditorTypes::LineEdit2: {
-            addLineEdit2(unit);
+            addLineEdit2(unit, false);
             break;
         }
+        case ElementEditorTypes::PwEdit2: {
+            addLineEdit2(unit, true);
+            break;
+        }
+
         case ElementEditorTypes::CheckBox: {
             addCheckBox(unit);
             break;
@@ -238,6 +243,7 @@ ElementEditorTypes::Type Elementeditor::hashType(const QString &inString)
     if(inString == QStringLiteral("ComboBox"))  return ElementEditorTypes::ComboBox;
     if(inString == QStringLiteral("LineEdit"))  return ElementEditorTypes::LineEdit;
     if(inString == QStringLiteral("LineEdit2")) return ElementEditorTypes::LineEdit2;
+    if(inString == QStringLiteral("PwEdit2"))   return ElementEditorTypes::PwEdit2;
     if(inString == QStringLiteral("CheckBox"))  return ElementEditorTypes::CheckBox;
     if(inString == QStringLiteral("Text"))      return ElementEditorTypes::Text;
     if(inString == QStringLiteral("HelpText"))  return ElementEditorTypes::HelpText;
@@ -651,7 +657,7 @@ void Elementeditor::addLineEdit(const QJsonObject &lineeditJSON)
     addRules(lineeditJSON.value(QStringLiteral("Dependency")), qobject_cast<QWidget*>(lineedit));
 }
 
-void Elementeditor::addLineEdit2(const QJsonObject &lineeditJSON)
+void Elementeditor::addLineEdit2(const QJsonObject &lineeditJSON, bool pw)
 {
     qCInfo(logC, "called %s", parent()->objectName().toStdString().c_str());
 
@@ -674,6 +680,12 @@ void Elementeditor::addLineEdit2(const QJsonObject &lineeditJSON)
     if(!defaultText.isEmpty()){
         lineedit->m_lineedit.setText(defaultText);
     }
+
+    /* Enabling echo mode for passwords */
+    if(pw){
+       lineedit->m_lineedit.setEchoMode(QLineEdit::Password);
+    }
+
 
     /* Adding RegExp (if given) */
 

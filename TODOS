@@ -1,5 +1,25 @@
 General:
 
+Documentation:
+    When an element returns None, subsequent
+    elements are still triggered
+
+    Exceptions:
+    Elements should throw an exception when configuration
+    data is missing or cannot be processed
+
+    Elements should try to handle all possible exceptions internally
+    and only throw unhandled exceptions
+
+    The result of a operation (if successfull or not) should
+    be forwarded to subsequent elements in order to react to
+    a possible unsuccesfull operation
+
+    When input data is required to perform some task and it
+    is missing, elements should pass this information to subsequent elements
+    and not throw an exception.d
+
+
 CCXT Method: Remove large if-else areas for parsing config
 
 Python: Add type hints
@@ -7,15 +27,9 @@ Python: Add type hints
 Check if the 'inline'-keyword can be applied to some loops
 (page 146 C++ Der Programmierer)
 
-Use dispatch tables instead of switch-case / if elif pattern
 
 Elementeditor:
 Add the possibility to pass arbitrary number of keyword arguments or
 to build a dictionary from within the editor
 
-
-element_types.py 
-execute_ex() : 
- - Signaliye an exception in the GUI
- - Remove return value as it is not processed
 
