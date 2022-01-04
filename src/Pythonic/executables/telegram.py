@@ -36,7 +36,6 @@ class Element(Function):
             self.return_queue.put(recordDone)
             return
 
-
         token = next(attr['Data'] for attr in specificConfig if attr['Name'] == 'Token')
 
         if not token:
@@ -48,12 +47,10 @@ class Element(Function):
 
         dispatcher = updater.dispatcher
 
-
         def start(update: Update, context: CallbackContext):
             
             chat_ids.add(update.message.chat_id) 
             context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, this chat ID is now registered for communication.")
-
 
         def unknown(update, context):
             context.bot.send_message(chat_id=update.effective_chat.id, text='Sorry, I didn\'t understand that command.')
@@ -104,4 +101,3 @@ class Element(Function):
 
 
             cmd = None
-

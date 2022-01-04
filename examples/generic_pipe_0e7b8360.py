@@ -36,8 +36,10 @@ class Element(Function):
         # Read from table several rows
         # SELECT * FROM my_table WHERE timestamp BETWEEN {} AND {}'.format( int(time.time())-12000, int(time.time()) )
 
+        # Sumup severals rows
+        # SELECT SUM(value) FROM mytable WHERE timestamp BETWEEN {} AND {}
 
-        output = 'SELECT * FROM my_table WHERE timestamp BETWEEN {} AND {}'.format(int(time.time())-12000, int(time.time()))
+        output = 'SELECT SUM(value) FROM my_table WHERE timestamp BETWEEN {} AND {}'.format(int(time.time())-12000, int(time.time()))
 
 
         
