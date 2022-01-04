@@ -96,6 +96,7 @@ class Element(Function):
                     try:
                         dispatcher.bot.send_message(chat_id=chat_id, text=str(cmd.data))
                     except Exception as e:
+                        # BAUSTELLE # Return Error Element ?
                         logging.error(e)
                         chat_ids.discard(chat_id)
                         logging.warning('ChatId removed')

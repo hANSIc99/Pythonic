@@ -1,6 +1,6 @@
-import time, queue, sqlite3
+import time, queue, sqlite3, logging
 try:
-    from element_types import Record, Function, ProcCMD, GuiCMD
+    from element_types import Record, Function, ProcCMD, GuiCMD, PythonicError
 except ImportError:    
     from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD
     
@@ -11,7 +11,6 @@ class Element(Function):
 
 
     def execute(self):
-
 
         #####################################
         #                                   #
@@ -28,29 +27,36 @@ class Element(Function):
             return
 
         filename = None
+        output = None
 
         for attrs in specificConfig:
             if attrs['Name'] == 'Filename':
                 filename = attrs['Data']
 
+        if self.inputData is None:
+            recordDone = Record(None, message='No input provided')
+            self.return_queue.put(recordDone)
+            return
+
         con = sqlite3.connect(filename)
-        # TODO 
+
         if not con:
             raise Exception('Can not connect to database')
 
-        if self.inputData is None:
-            output = 0
-        else:
-            output = self.inputData + 1
+        cur = con.cursor()
 
+        try:
+            cur.execute(self.inputData)
+        except Exception as e:
+            logging.warning(e)
+            recordDone = Record(PythonicError(e), 'Query failed') 
+            self.return_queue.put(recordDone)
+            con.close()    
+            return
 
-        
-        #########################################
-        #                                       #
-        #    The execution exits immediately    #
-        #    after providing output data        #
-        #                                       #
-        #########################################
+        output = cur.fetchall()
 
-        recordDone = Record(output, 'Sending value of cnt: {}'.format(output))     
+        con.commit()
+        con.close()
+        recordDone = Record(output, 'Query successful')     
         self.return_queue.put(recordDone)

@@ -53,6 +53,15 @@ class Record():
         #logging.debug('__getstate__() called Record')
         return(self.data, self.message)
 
+
+class PythonicError:
+
+    def __init__(self, msg : str) -> None:
+        self.msg = msg
+    
+    def  __str__(self) -> str:
+        return 'Error: {}'.format(self.msg)
+
 class GuiCMD:
     
     def __init__(self, text):

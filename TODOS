@@ -1,32 +1,45 @@
 General:
 
 Documentation:
-    When an element returns None, subsequent
-    elements are still triggered
+
+    Terms:
+        Configuration Data: Parameters passed over the GUI by the user
+        Input Data: Data which is forwarded from other elements
+
+    General behaviour:
+        When an element returns None, subsequent
+        elements are still triggered
 
     Exceptions:
-    Elements should throw an exception when configuration
-    data is missing or cannot be processed
 
-    Elements should try to handle all possible exceptions internally
-    and only throw unhandled exceptions
+        #1
+        Elements should throw an exception when configuration
+        data is missing or cannot be processed
 
-    The result of a operation (if successfull or not) should
-    be forwarded to subsequent elements in order to react to
-    a possible unsuccesfull operation
+        #2
+        Elements should try to handle all possible exceptions internally
+        and only throw critical exceptions.
 
-    When input data is required to perform some task and it
-    is missing, elements should pass this information to subsequent elements
-    and not throw an exception.d
+        #3
+        If appropriate, the result of a operation (if successfull or not) should
+        be forwarded to subsequent elements in order to react to
+        a possible unsuccesfull operation. When it was not possible to process the input data, return the PythonicError with related information.
+        Combine this with logging.warning (preferred) or logging.error.
+
+        #4
+        Avoid to use logging.error or logging.warning without the other mechanisms as those methods will only write to the log.
 
 
-CCXT Method: Remove large if-else areas for parsing config
+Check exception rules
+
+CCXT Method: Try to optimize large if-else areas for parsing config
 
 Python: Add type hints
 
 Check if the 'inline'-keyword can be applied to some loops
 (page 146 C++ Der Programmierer)
 
+Telegram: Return error element when chat id is removed?
 
 Elementeditor:
 Add the possibility to pass arbitrary number of keyword arguments or
