@@ -1,4 +1,4 @@
-import time, queue, sqlite3, logging
+import time, queue, sqlite3
 try:
     from element_types import Record, Function, ProcCMD, GuiCMD, PythonicError
 except ImportError:    
@@ -48,7 +48,6 @@ class Element(Function):
         try:
             cur.execute(self.inputData)
         except Exception as e:
-            logging.warning(e)
             recordDone = Record(PythonicError(e), 'Query failed') 
             self.return_queue.put(recordDone)
             con.close()    

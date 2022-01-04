@@ -10,7 +10,27 @@ Documentation:
         When an element returns None, subsequent
         elements are still triggered
 
-    Exceptions:
+    Logging:
+
+        #1 INFO:
+            Ordinary debug trace messages
+            Can be switched on or off by the user (checkbox in element configuration)
+            Implementation in own code is optional
+        
+
+        #2 WARNING: 
+            Signalize a failed execution
+            Can be switched on or off by the user (checkbox in element configuration)
+            A log entry of this type is created when the element returns data of type PythonicError
+            Implementation in own code is optional
+
+        #3 Critical (Unhandled exception):
+            Is signalized in the GUI an (,,Exception occured, open log for details)
+            Log entry (type ERROR) is made
+            Is always active (implementation not optional)
+
+
+    Error handling:
 
         #1
         Elements should throw an exception when configuration
@@ -21,16 +41,19 @@ Documentation:
         and only throw critical exceptions.
 
         #3
-        If appropriate, the result of a operation (if successfull or not) should
-        be forwarded to subsequent elements in order to react to
-        a possible unsuccesfull operation. When it was not possible to process the input data, return the PythonicError with related information.
-        Combine this with logging.warning (preferred) or logging.error.
+        The result of a operation (if successfull or not (see #2)) should always
+        be forwarded to subsequent elements in order to react to a possible failed call.
+        If the result of a failed call could be processed by an subsequent element,
+        it should be wrapped inside the PythonicError type.
 
         #4
-        Avoid to use logging.error or logging.warning without the other mechanisms as those methods will only write to the log.
+        In case of a failed call, a meaningful message or the exception text should returned
+        (PythonicError as data parameter in returned Record type)
 
+        #4
+        Dont to use logging.error or logging.warning as it has no effect if used in combination with multiprocessing.
 
-Check exception rules
+1917141915:AAHRe-CZhv8fIv6bQzHMipgYPuVnQbQGxtY
 
 CCXT Method: Try to optimize large if-else areas for parsing config
 

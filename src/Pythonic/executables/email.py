@@ -52,10 +52,8 @@ class Element(Function):
 
         if not sender:
             raise Exception('Sender missing in configuration')
-
         if not password:
             raise Exception('Password missing in configuration')
-
         if not url:
             raise Exception('URL missing in configuration')
         if not port:
@@ -64,15 +62,15 @@ class Element(Function):
 
         if isinstance(self.inputData, dict):
             if not 'recipient' in self.inputData or not isinstance(self.inputData['recipient'], str):
-                recordDone = Record(None, message='Key "recipient" not found or not of type string')
+                recordDone = Record(PythonicError('Key error, see log for details'), message='Key "recipient" not found or not of type string')
                 self.return_queue.put(recordDone)
                 return
             if not 'subject' in self.inputData or not isinstance(self.inputData['subject'], str):
-                recordDone = Record(None, message='Key "subject" not found or not of type string')
+                recordDone = Record(PythonicError('Key error, see log for details'), message='Key "subject" not found or not of type string')
                 self.return_queue.put(recordDone)
                 return
             if not 'message' in self.inputData or not isinstance(self.inputData['message'], str):
-                recordDone = Record(None, message='Key "subject" not found or not of type string')
+                recordDone = Record(PythonicError('Key error, see log for details'), message='Key "subject" not found or not of type string')
                 self.return_queue.put(recordDone)
                 return
 
@@ -85,14 +83,11 @@ class Element(Function):
 
                 attachments = self.inputData['attachment']
 
-
         else:
-            recordDone = Record(None, message='Config missing')
+            recordDone = Record(PythonicError('Config missing'), message='Config missing')
             self.return_queue.put(recordDone)
             return
 
-
-        
         msg = EmailMessage()
         msg['Subject']  = subject
         msg['From']     = sender
