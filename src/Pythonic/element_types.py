@@ -31,10 +31,8 @@ class Function():
         try:
             result = self.execute()
         except Exception as e:
-            guiexc = GuiException()
+            guiexc = GuiException(e)
             self.return_queue.put(guiexc)
-            self.logger.error(repr(e))
-            # signalize exception on GUI
 
 
 class Record():
@@ -74,7 +72,9 @@ class GuiCMD:
         return(self.text)
 
 class GuiException:
-    pass
+
+    def __init__(self, e : Exception) -> None:
+        self.e = e
 
 class ProcCMD:
 

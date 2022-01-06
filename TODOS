@@ -53,7 +53,6 @@ Documentation:
         #4
         Dont to use logging.error or logging.warning as it has no effect if used in combination with multiprocessing.
 
-1917141915:AAHRe-CZhv8fIv6bQzHMipgYPuVnQbQGxtY
 
 CCXT Method: Try to optimize large if-else areas for parsing config
 

@@ -534,6 +534,8 @@ class Operator(QObject):
                 'cmd'       : 'ElementException',
                 'address'   : address
             }
+            # log critical exceptions from multiprocessed elements
+            logging.error(repr(record.e))
             self.command.emit(cmd)
             return
         
