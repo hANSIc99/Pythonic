@@ -1,5 +1,45 @@
-## Documentation
+# Documentation
 
+## General
+
+### Terms
+
+- Element
+    -  A logical, independent unit of executable code
+    -  Visualized on the GUI
+    -  Can be connected with other elements
+- Configuration Data
+    - Element parameters passed over the GUI by the user
+- Input Data
+    - Data which is forwarded from other elements (left connection)
+- Output Data
+    - Data which is forwarded to other elements (right connection)  
+
+### Logging
+
+The execution of elements is logged in a file that changes daily.
+The log files are archived under `~/Pythonic/log (Linux)` or `%HOMEPATH%\Pythonic\log` (Windows).
+Pythonic's web service provides an overview of available log files at **http://<address-info>:7000/log**.
+
+- INFO
+    - Ordinary debug trace messages
+    - Can be switched on or off by the user (checkbox in element configuration)
+    - Implementation in own code is optional
+- WARNING
+    - Signalize a failed execution
+    - Can be switched on or off by the user (checkbox in element configuration)
+    - A log entry of this type is created when the element returns data of type PythonicError
+    - Implementation in own code is optional
+- Critical (Unhandled exception):
+    - Is signalized in the GUI an (,,Exception occured, open log for details)
+    - Log entry (type ERROR) is made
+    - Is always active (implementation not optional)
+
+### Exception handling
+
+
+
+## Elements
 
 ### Basic Elements
 
