@@ -78,6 +78,8 @@ lsblk -p
 # copy image from SD card to HDD
 dd if=/dev/sdc of=~/Pythonic-1.9.img bs=32M
 
+sudo pishrink.sh ~/Pythonic-1.9.img
+
 dd if=/home/stephan/Pythonic-1.6.img of=/dev/sdc conv=fsync bs=32M
 
 scp Pythonic-1.6.zip hansic99@frs.sourceforge.net:/home/frs/project/pythonicrpi/
@@ -90,6 +92,10 @@ scp Pythonic-1.6.zip hansic99@frs.sourceforge.net:/home/frs/project/pythonicrpi/
 
 #clean all log files
 find /var/log -type f -delete
+
+# User directory
+~/.cache (content)
+~/.bash_history (file)
 
 # remove everytring in
 /var/tmp

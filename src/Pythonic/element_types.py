@@ -2,6 +2,8 @@ import logging, pickle
 from pathlib import Path
 from typing import Optional
 
+
+
 class Function():
 
     def __init__(self, id, config, inputData, return_queue, cmd_queue):
@@ -60,6 +62,7 @@ class PythonicError:
     def  __str__(self) -> str:
         return 'Error: {}'.format(self.msg)
 
+
 class GuiCMD:
     
     def __init__(self, text):
@@ -71,10 +74,12 @@ class GuiCMD:
     def __getstate__(self):
         return(self.text)
 
+
 class GuiException:
 
     def __init__(self, e : Exception) -> None:
         self.e = e
+
 
 class ProcCMD:
 

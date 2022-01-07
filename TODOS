@@ -1,59 +1,3 @@
-General:
-
-Documentation:
-
-    Terms:
-        Configuration Data: Parameters passed over the GUI by the user
-        Input Data: Data which is forwarded from other elements
-
-    General behaviour:
-        When an element returns None, subsequent
-        elements are still triggered
-
-    Logging:
-
-        #1 INFO:
-            Ordinary debug trace messages
-            Can be switched on or off by the user (checkbox in element configuration)
-            Implementation in own code is optional
-        
-
-        #2 WARNING: 
-            Signalize a failed execution
-            Can be switched on or off by the user (checkbox in element configuration)
-            A log entry of this type is created when the element returns data of type PythonicError
-            Implementation in own code is optional
-
-        #3 Critical (Unhandled exception):
-            Is signalized in the GUI an (,,Exception occured, open log for details)
-            Log entry (type ERROR) is made
-            Is always active (implementation not optional)
-
-
-    Error handling:
-
-        #1
-        Elements should throw an exception when configuration
-        data is missing or cannot be processed
-
-        #2
-        Elements should try to handle all possible exceptions internally
-        and only throw critical exceptions.
-
-        #3
-        The result of a operation (if successfull or not (see #2)) should always
-        be forwarded to subsequent elements in order to react to a possible failed call.
-        If the result of a failed call could be processed by an subsequent element,
-        it should be wrapped inside the PythonicError type.
-
-        #4
-        In case of a failed call, a meaningful message or the exception text should returned
-        (PythonicError as data parameter in returned Record type)
-
-        #4
-        Dont to use logging.error or logging.warning as it has no effect if used in combination with multiprocessing.
-
-
 CCXT Method: Try to optimize large if-else areas for parsing config
 
 Python: Add type hints
@@ -67,4 +11,6 @@ Elementeditor:
 Add the possibility to pass arbitrary number of keyword arguments or
 to build a dictionary from within the editor
 
-
+Testing:
+Create Unit test for every element
+Create test project
