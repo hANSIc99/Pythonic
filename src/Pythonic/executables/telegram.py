@@ -1,16 +1,12 @@
-import logging, queue
+import queue
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, Filters
 
 try:
-    from element_types import Record, Function, ProcCMD, GuiCMD, SetPersist
+    from element_types import Record, Function, ProcCMD, GuiCMD, SetPersist, PythonicError
 except ImportError:    
-    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD, SetPersist
+    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD, SetPersist, PythonicError
 
-try:
-    from element_types import Record, Function, ProcCMD, GuiCMD
-except ImportError:    
-    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD
     
 class Element(Function):
 
@@ -36,7 +32,6 @@ class Element(Function):
             self.return_queue.put(recordDone)
             return
 
-
         token = next(attr['Data'] for attr in specificConfig if attr['Name'] == 'Token')
 
         if not token:
@@ -48,12 +43,10 @@ class Element(Function):
 
         dispatcher = updater.dispatcher
 
-
         def start(update: Update, context: CallbackContext):
             
             chat_ids.add(update.message.chat_id) 
             context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, this chat ID is now registered for communication.")
-
 
         def unknown(update, context):
             context.bot.send_message(chat_id=update.effective_chat.id, text='Sorry, I didn\'t understand that command.')
@@ -92,15 +85,11 @@ class Element(Function):
                 guitext = GuiCMD("Sending data: " + str(cmd.data))
                 self.return_queue.put(guitext)
 
-                for chat_id in chat_ids:
+                for chat_id in chat_ids.copy():
                     try:
                         dispatcher.bot.send_message(chat_id=chat_id, text=str(cmd.data))
                     except Exception as e:
-                        logging.error(e)
                         chat_ids.discard(chat_id)
-                        logging.warning('ChatId removed')
-                    
-
+                        self.return_queue.put(Record(PythonicError(e), 'Error sending message, related chat id removed'))
 
             cmd = None
-

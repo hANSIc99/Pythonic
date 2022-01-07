@@ -2,6 +2,8 @@ import logging, pickle
 from pathlib import Path
 from typing import Optional
 
+
+
 class Function():
 
     def __init__(self, id, config, inputData, return_queue, cmd_queue):
@@ -31,10 +33,8 @@ class Function():
         try:
             result = self.execute()
         except Exception as e:
-            guiexc = GuiException()
+            guiexc = GuiException(e)
             self.return_queue.put(guiexc)
-            self.logger.error(repr(e))
-            # signalize exception on GUI
 
 
 class Record():
@@ -53,6 +53,16 @@ class Record():
         #logging.debug('__getstate__() called Record')
         return(self.data, self.message)
 
+
+class PythonicError:
+
+    def __init__(self, msg : str) -> None:
+        self.msg = msg
+    
+    def  __str__(self) -> str:
+        return 'Error: {}'.format(self.msg)
+
+
 class GuiCMD:
     
     def __init__(self, text):
@@ -64,8 +74,12 @@ class GuiCMD:
     def __getstate__(self):
         return(self.text)
 
+
 class GuiException:
-    pass
+
+    def __init__(self, e : Exception) -> None:
+        self.e = e
+
 
 class ProcCMD:
 

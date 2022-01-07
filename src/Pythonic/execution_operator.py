@@ -10,9 +10,9 @@ from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt, QRunnable, QT
 
 
 try:
-    from element_types import Record, ProcCMD, GuiCMD, GuiException
+    from element_types import Record, ProcCMD, GuiCMD, GuiException, PythonicError
 except ImportError:    
-    from Pythonic.element_types import Record, ProcCMD, GuiCMD, GuiException
+    from Pythonic.element_types import Record, ProcCMD, GuiCMD, GuiException, PythonicError
 
 
 
@@ -177,7 +177,7 @@ class OperatorStartAll(QRunnable):
 
 class OperatorElementOpDone(QRunnable):
 
-    def __init__(self, config, id, record, identifier, operator):
+    def __init__(self, config, id, record : Record, identifier, operator):
         super(OperatorElementOpDone, self).__init__()
 
 
@@ -194,8 +194,13 @@ class OperatorElementOpDone(QRunnable):
 
         cfgElement = [x for x in self.currentConfig if x['Id'] == self.id][0]
 
+
+
         if cfgElement['Config']['GeneralConfig']['Logging'] and self.record.message: # Log Message enabled
-            logging.info('{} - {}'.format(cfgElement['ObjectName'], self.record.message))
+            if isinstance(self.record.data, PythonicError):
+                logging.warning('{} - {}'.format(cfgElement['ObjectName'], self.record.message))
+            else:
+                logging.info('{} - {}'.format(cfgElement['ObjectName'], self.record.message))
 
             data = {
                 'Id'        : cfgElement['Id'],
@@ -529,6 +534,8 @@ class Operator(QObject):
                 'cmd'       : 'ElementException',
                 'address'   : address
             }
+            # log critical exceptions from multiprocessed elements
+            logging.error(repr(record.e))
             self.command.emit(cmd)
             return
         

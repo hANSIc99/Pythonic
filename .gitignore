@@ -1,2 +1,10 @@
 .pyc
 setup.cfg
+
+src/Pythonic/PythonicRPI.egg-info
+src/PythonicRPI.egg-info
+src/Pythonic.egg-info
+src/Pythonic/Pythonic.egg-info
+src/Pythonic/.vscode
+src/code-server/*.vsix
+src/code-server/*.rpm

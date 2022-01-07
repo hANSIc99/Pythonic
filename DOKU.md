@@ -1,5 +1,49 @@
-## Documentation
+# Documentation
 
+## General
+
+### Terms
+
+- Element
+    -  A logical, independent unit of executable code
+    -  Visualized on the GUI
+    -  Can be connected with other elements
+- Configuration Data
+    - Element parameters passed over the GUI by the user
+- Input Data
+    - Data which is forwarded from other elements (left connection)
+- Output Data
+    - Data which is forwarded to other elements (right connection)  
+
+### Logging
+
+The execution of elements is logged in a file that changes daily.
+The log files are archived under `~/Pythonic/log (Linux)` or `%HOMEPATH%\Pythonic\log` (Windows).
+Pythonic's web service provides an overview of available log files at **http://\<address-info>:7000/log**. Single log files can be accessed witch the following scheme: **http://\<address-info>:7000/\<year>_\<month>_\<day>.txt**.
+
+- INFO
+    - Ordinary debug trace messages
+    - Can be switched on or off by the user (checkbox in element configuration)
+    - Implementation in own code is optional
+- WARNING
+    - Signalize a failed execution
+    - Can be switched on or off by the user (checkbox in element configuration)
+    - A log entry of this type is created when the element returns data of type PythonicError
+    - Implementation in own code is optional
+- ERROR (Unhandled exception):
+    - Caused by an unhandles exception
+    - Is signalized in the GUI ("Exception occured, open log for details")
+    - Is always active (implementation not optional)
+
+### Exception handling
+
+1. Elements should throw an exception when configuration data is missing or cannot be processed.
+2. Elements should try to handle all possible exceptions internally and only throw critical exceptions.
+3. The result of a operation (if successfull or not (see #2)) should always be forwarded to subsequent elements in order to react to a possible failed call. If the result of a failed call could be processed by an subsequent element, it should be wrapped in the `PythonicError` type.
+4. In case of a failed call, a meaningful message or the exception text should returned (`PythonicError` as data parameter in returned `Record` type)
+5. Don't to use `logging.error` or `logging.warning` as it has no effect if used in combination with multiprocessing.
+
+## Elements
 
 ### Basic Elements
 

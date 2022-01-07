@@ -5,7 +5,7 @@ with open('README.whl', 'r') as fh:
 
 
 setuptools.setup(
-        version = '1.09',
+        version = '1.10',
         author = 'Stephan Avenwedde',
         author_email = 's.avenwedde@gmail.com',
         license = 'GPLv3',
@@ -30,6 +30,7 @@ setuptools.setup(
              'public_html/static/Email.png',
              'public_html/static/CCXT.png',
              'public_html/static/CCXT_Method.png',
+             'public_html/static/SQLite.png',
              'public_html/static/python.ico',
              'public_html/static/qtlogo.svg',
              'public_html/static/qtloader.js',
@@ -38,7 +39,12 @@ setuptools.setup(
              'public_html/static/*.data',
              'public_html/templates/*.html',
              'public_html/config/Toolbox/0Basic/*',
-             'public_html/config/Toolbox/1IO/*',
+             'public_html/config/Toolbox/1IO/1GPIO_Write.json',
+             'public_html/config/Toolbox/1IO/GPIO_Write.editor',
+             'public_html/config/Toolbox/1IO/0GPIO_Read.json',
+             'public_html/config/Toolbox/1IO/GPIO_Read.editor',
+             'public_html/config/Toolbox/1IO/2SQLite.json',
+             'public_html/config/Toolbox/1IO/SQLite.editor',
              'public_html/config/Toolbox/2Connectivity/Telegram.editor',
              'public_html/config/Toolbox/2Connectivity/0Telegram.json',
              'public_html/config/Toolbox/2Connectivity/EMail.editor',

@@ -77,11 +77,11 @@ RUN /usr/bin/python3 -m pip install pylint==2.7.4
 ###################################
 
 
-COPY dist/Pythonic-1.9.tar.gz /
+COPY dist/Pythonic-1.10.tar.gz /
 
-RUN /usr/bin/python3 -m pip install /Pythonic-1.9.tar.gz
+RUN /usr/bin/python3 -m pip install /Pythonic-1.10.tar.gz
 
-RUN rm Pythonic-1.9.tar.gz
+RUN rm Pythonic-1.10.tar.gz
 	
 ###################################
 #                                 #

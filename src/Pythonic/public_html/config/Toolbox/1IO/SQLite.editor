@@ -1,0 +1,13 @@
+[
+	{
+        "Type"	      : "LineEdit2",
+	    "Name"        : "Filename",
+        "Title"       : "Filename:",
+	    "Defaulttext" : "my_db.bin"       
+	},
+	{
+        "Type"	      : "Text",
+	    "Name"        : "SQLTex",
+        "Text"       : "Input a SQL query string, e.g.:<br><br><b>INSERT INTO MY_TABLE VALUES (value1,value2)</b>"
+    }
+]

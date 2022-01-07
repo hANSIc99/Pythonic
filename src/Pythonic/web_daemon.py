@@ -411,7 +411,7 @@ class MainWorker(QObject):
         
         parser = argparse.ArgumentParser(description='Pythonic background daemon')
         # Debug output switch 
-        parser.add_argument('-Ex', action='store_true', help='Interactive shell intercace, Unix only')
+        parser.add_argument('-Ex', action='store_true', help='Interactive shell interface, Unix only')
         # Log level
         parser.add_argument('-v', action='store_true', help='Verbose output')
 

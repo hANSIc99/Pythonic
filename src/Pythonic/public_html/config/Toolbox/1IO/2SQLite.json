@@ -1,0 +1,24 @@
+{
+    "Socket"           : true,
+    "Plug"             : true,
+    "Typename"         : "SQLite",
+    "Iconname"         : "SQLite",
+    "Filename"         : "sqlite_BASICDATA_Id",
+    "Version"          : {
+                             "Major" : 0,
+                             "Minor" : 1
+                         },
+    "PythonicVersion" :  {
+                             "Major" : 1,
+                             "Minor" : 10
+                         },
+    "Author"          : "Stephan Avenwedde",
+    "License"         : "GPLv3",
+    "ConstructorCMD_Unix"  : "cp -u executables/sqlite.py ~/Pythonic/executables/sqlite_BASICDATA_Id.py",
+    "DestructorCMD_Unix"   : "rm ~/Pythonic/executables/sqlite_BASICDATA_Id.py",
+    "ConstructorCMD_Win32"  : "copy executables\\sqlite.py %HOMEPATH%\\Pythonic\\executables\\sqlite_BASICDATA_Id.py",
+    "DestructorCMD_Win32"   : "del %HOMEPATH%\\Pythonic\\executables\\sqlite_BASICDATA_Id.py",
+    "HighlightState"  : true,
+    "AllowStream"     : true
+}
+
