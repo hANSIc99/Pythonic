@@ -83,7 +83,3 @@ class Element(Function):
            
         recordDone = Record(data, '{}() successfull'.format(self.inputData['method']))     
         self.return_queue.put(recordDone)
-
-
-
-        
