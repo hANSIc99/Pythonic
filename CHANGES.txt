@@ -1,6 +1,13 @@
+1.10
+
+    SQLite element added
+    Logging optimized
+    Exception handling optimized
+
 1.9
 
-    
+    EMail element added
+    GUI now indicates if an element threw an exception
 
 1.8
 
