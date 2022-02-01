@@ -1,4 +1,4 @@
-import time, queue, logging
+import time, queue, logging, os
 from random import randrange
 try:
     from element_types import Record, Function, ProcCMD, GuiCMD, PythonicError
@@ -14,37 +14,18 @@ class Element(Function):
     def execute(self):
 
 
-        #####################################
-        #                                   #
-        #     REFERENCE IMPLEMENTATION      #
-        #                                   #
-        #####################################
 
 
-        # list all tables
-        # SELECT name FROM sqlite_master WHERE type='table'
+        # Raspberry Pi Only
+        #cpu_temp = os.popen("vcgencmd measure_temp").readline().replace("temp=", "").replace("'C\n", "")
+        #cpu_temp = float(cpu_temp)
 
-        # create table of not exist
-        # CREATE TABLE IF NOT EXISTS my_table (timestamp INTEGER PRIMARY KEY NOT NULL, value UNSIGNED BIG INT);
+        # Generate random temperature
+        cpu_temp = randrange(450, 500)
+        cpu_temp = float(cpu_temp/10)
 
-        # insert into table
-        # INSERT INTO my_table VALUES (?, ?)
-        # 
-        # epoch in seconds: int(time.time())
-        # random int: randrange(999)
-
-        # Read from table several rows
-        # SELECT * FROM my_table WHERE timestamp BETWEEN {} AND {}'.format( int(time.time())-12000, int(time.time()) )
-
-        # Sumup severals rows
-        # SELECT SUM(value) FROM mytable WHERE timestamp BETWEEN {} AND {}
-
-        # Generate value
-        # raise Exception('Custom Exception')
-        output = 'INSERT INTO my_table VALUES ({}, {})'.format(int(time.time()), randrange(30))
+        output = 'INSERT INTO my_table VALUES ({}, {})'.format(int(time.time()), cpu_temp)
         
-
-
         
         #########################################
         #                                       #

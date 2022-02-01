@@ -3,123 +3,12 @@
         "AllowStream": true,
         "AreaNo": 0,
         "Author": "Stephan Avenwedde",
-        "Childs": [
-            242975584
-        ],
+        "Childs": [],
         "Config": {
             "GeneralConfig": {
                 "Autostart": false,
                 "Debug": false,
                 "Logging": false,
-                "MP": false
-            },
-            "SpecificConfig": [
-                {
-                    "Data": "Single fire",
-                    "Index": 0,
-                    "Name": "Mode",
-                    "Type": "ComboBox"
-                },
-                {
-                    "Data": "Seconds",
-                    "Index": 0,
-                    "Name": "Timebase",
-                    "Type": "ComboBox"
-                },
-                {
-                    "Data": "2",
-                    "Name": "Intervalinput",
-                    "Type": "LineEdit"
-                },
-                {
-                    "Data": "10:00",
-                    "Name": "StartTime",
-                    "Type": "LineEdit"
-                },
-                {
-                    "Data": "13:00",
-                    "Name": "EndTime",
-                    "Type": "LineEdit"
-                },
-                {
-                    "Data": "13:00",
-                    "Name": "SpecificTime",
-                    "Type": "LineEdit"
-                },
-                {
-                    "Data": false,
-                    "Name": "Monday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Tuesday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Wednesday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Thursday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Friday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Saturday",
-                    "Type": "CheckBox"
-                },
-                {
-                    "Data": false,
-                    "Name": "Sunday",
-                    "Type": "CheckBox"
-                }
-            ]
-        },
-        "ConstructorCMD_Unix": "cp -u executables/manual_scheduler.py ~/Pythonic/executables/manual_scheduler_BASICDATA_Id.py",
-        "ConstructorCMD_Win32": "copy executables\\manual_scheduler.py %HOMEPATH%\\Pythonic\\executables\\manual_scheduler_BASICDATA_Id.py",
-        "DestructorCMD_Unix": "rm ~/Pythonic/executables/manual_scheduler_BASICDATA_Id.py",
-        "DestructorCMD_Win32": "del %HOMEPATH%\\Pythonic\\executables\\manual_scheduler_BASICDATA_Id.py",
-        "Filename": "manual_scheduler_47b74653",
-        "HighlightState": true,
-        "Iconname": "ManualScheduler",
-        "Id": 1203193427,
-        "License": "GPLv3",
-        "ObjectName": "ManualScheduler - 0x47b74653",
-        "Parents": [],
-        "Plug": true,
-        "Position": {
-            "x": 35,
-            "y": 159
-        },
-        "PythonicVersion": {
-            "Major": 1,
-            "Minor": 3
-        },
-        "Socket": false,
-        "Typename": "ManualScheduler",
-        "Version": {
-            "Major": 0,
-            "Minor": 1
-        }
-    },
-    {
-        "AllowStream": true,
-        "AreaNo": 0,
-        "Author": "Stephan Avenwedde",
-        "Childs": [],
-        "Config": {
-            "GeneralConfig": {
-                "Autostart": false,
-                "Debug": true,
-                "Logging": true,
                 "MP": false
             },
             "SpecificConfig": [
@@ -141,12 +30,12 @@
         "License": "GPLv3",
         "ObjectName": "SQLite - 0x196f9a6e",
         "Parents": [
-            1826686116,
-            242975584
+            242975584,
+            1826686116
         ],
         "Plug": true,
         "Position": {
-            "x": 637,
+            "x": 868,
             "y": 159
         },
         "PythonicVersion": {
@@ -170,7 +59,7 @@
         "Config": {
             "GeneralConfig": {
                 "Autostart": false,
-                "Debug": true,
+                "Debug": false,
                 "Logging": true,
                 "MP": false
             },
@@ -187,11 +76,11 @@
         "License": "GPLv3",
         "ObjectName": "DataAcquisition - 0x0e7b8360",
         "Parents": [
-            1203193427
+            1433802434
         ],
         "Plug": true,
         "Position": {
-            "x": 344,
+            "x": 519,
             "y": 160
         },
         "PythonicVersion": {
@@ -280,8 +169,8 @@
         "License": "GPLv3",
         "ObjectName": "Telegram - 0x2e4148e2",
         "Parents": [
-            2089028521,
-            1964450219
+            1964450219,
+            2089028521
         ],
         "Plug": true,
         "Position": {
@@ -304,15 +193,85 @@
         "AreaNo": 0,
         "Author": "Stephan Avenwedde",
         "Childs": [
-            1826686116
+            1826686116,
+            1433802434
         ],
         "Config": {
             "GeneralConfig": {
-                "Autostart": false,
+                "Autostart": true,
                 "Debug": false,
                 "Logging": false,
                 "MP": false
-            }
+            },
+            "SpecificConfig": [
+                {
+                    "Data": "Single fire",
+                    "Index": 0,
+                    "Name": "Mode",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "Seconds",
+                    "Index": 0,
+                    "Name": "Timebase",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "5",
+                    "Name": "Intervalinput",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "10:00",
+                    "Name": "StartTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "EndTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "SpecificTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": false,
+                    "Name": "Monday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Tuesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Wednesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Thursday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Friday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Saturday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Sunday",
+                    "Type": "CheckBox"
+                }
+            ]
         },
         "ConstructorCMD_Unix": "cp -u executables/manual_scheduler.py ~/Pythonic/executables/manual_scheduler_BASICDATA_Id.py",
         "ConstructorCMD_Win32": "copy executables\\manual_scheduler.py %HOMEPATH%\\Pythonic\\executables\\manual_scheduler_BASICDATA_Id.py",
@@ -327,8 +286,8 @@
         "Parents": [],
         "Plug": true,
         "Position": {
-            "x": 20,
-            "y": 30
+            "x": 0,
+            "y": 32
         },
         "PythonicVersion": {
             "Major": 1,
@@ -352,7 +311,7 @@
             "GeneralConfig": {
                 "Autostart": false,
                 "Debug": false,
-                "Logging": false,
+                "Logging": true,
                 "MP": false
             },
             "SpecificConfig": []
@@ -455,8 +414,8 @@
         "License": "GPLv3",
         "ObjectName": "ReportGenerator - 0x13ad992a",
         "Parents": [
-            1444402311,
-            239331030
+            239331030,
+            1444402311
         ],
         "Plug": true,
         "Position": {
@@ -597,6 +556,119 @@
         },
         "Socket": false,
         "Typename": "ManualStopProcess",
+        "Version": {
+            "Major": 0,
+            "Minor": 1
+        }
+    },
+    {
+        "AllowStream": true,
+        "AreaNo": 0,
+        "Author": "Stephan Avenwedde",
+        "Childs": [
+            242975584
+        ],
+        "Config": {
+            "GeneralConfig": {
+                "Autostart": false,
+                "Debug": false,
+                "Logging": false,
+                "MP": false
+            },
+            "SpecificConfig": [
+                {
+                    "Data": "Interval",
+                    "Index": 1,
+                    "Name": "Mode",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "Seconds",
+                    "Index": 0,
+                    "Name": "Timebase",
+                    "Type": "ComboBox"
+                },
+                {
+                    "Data": "5",
+                    "Name": "Intervalinput",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "10:00",
+                    "Name": "StartTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "EndTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": "13:00",
+                    "Name": "SpecificTime",
+                    "Type": "LineEdit"
+                },
+                {
+                    "Data": false,
+                    "Name": "Monday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Tuesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Wednesday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Thursday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Friday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Saturday",
+                    "Type": "CheckBox"
+                },
+                {
+                    "Data": false,
+                    "Name": "Sunday",
+                    "Type": "CheckBox"
+                }
+            ]
+        },
+        "ConstructorCMD_Unix": "cp -u executables/scheduler.py ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
+        "ConstructorCMD_Win32": "copy executables\\scheduler.py %HOMEPATH%\\Pythonic\\executables\\scheduler_BASICDATA_Id.py",
+        "DestructorCMD_Unix": "rm ~/Pythonic/executables/scheduler_BASICDATA_Id.py",
+        "DestructorCMD_Win32": "del %HOMEPATH%\\Pythonic\\executables\\scheduler_BASICDATA_Id.py",
+        "Filename": "scheduler_557616c2",
+        "HighlightState": true,
+        "Iconname": "Scheduler",
+        "Id": 1433802434,
+        "License": "GPLv3",
+        "ObjectName": "Scheduler - 0x557616c2",
+        "Parents": [
+            68344796
+        ],
+        "Plug": true,
+        "Position": {
+            "x": 240,
+            "y": 160
+        },
+        "PythonicVersion": {
+            "Major": 0,
+            "Minor": 1
+        },
+        "Socket": true,
+        "Typename": "Scheduler",
         "Version": {
             "Major": 0,
             "Minor": 1

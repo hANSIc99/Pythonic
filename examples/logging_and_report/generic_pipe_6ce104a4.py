@@ -12,28 +12,6 @@ class Element(Function):
 
     def execute(self):
 
-
-        #####################################
-        #                                   #
-        #     REFERENCE IMPLEMENTATION      #
-        #                                   #
-        #####################################
-
-
-
-        if self.inputData is None:
-            output = 0
-        else:
-            output = self.inputData + 1
-
-
-        
-        #########################################
-        #                                       #
-        #    The execution exits immediately    #
-        #    after providing output data        #
-        #                                       #
-        #########################################
-
-        recordDone = Record(output, 'Sending value of cnt: {}'.format(output))     
+        output = 'CREATE TABLE IF NOT EXISTS my_table (timestamp INTEGER PRIMARY KEY NOT NULL, value REAL)'
+        recordDone = Record(output, 'Creating table')     
         self.return_queue.put(recordDone)
