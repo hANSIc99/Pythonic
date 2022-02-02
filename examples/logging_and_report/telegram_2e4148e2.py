@@ -1,6 +1,7 @@
 import queue
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, Filters, CallbackQueryHandler
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 try:
     from element_types import Record, Function, ProcCMD, GuiCMD, SetPersist, PythonicError
@@ -46,7 +47,20 @@ class Element(Function):
         def start(update: Update, context: CallbackContext):
             
             chat_ids.add(update.message.chat_id) 
-            context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, this chat ID is now registered for communication.")
+            # keyboardButton = KeyboardButton(text="Request Report")
+            # buttonb = KeyboardButton()
+            # keyboard = [[keyboardButton]]
+            # reply_markup = ReplyKeyboardMarkup(keyboard)
+            data_short_report = 'A unique text for help button callback data'
+            report_button = InlineKeyboardButton(
+                text='Request Report: 5min', # text that show to user
+                callback_data=data_short_report # text that send to bot when user tap button
+            )
+            reply_markup = InlineKeyboardMarkup([[report_button]])
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text="Hello, this chat ID is now registered for communication.",
+                reply_markup=reply_markup)
 
         def unknown(update, context):
             context.bot.send_message(chat_id=update.effective_chat.id, text='Sorry, I didn\'t understand that command.')
@@ -58,12 +72,24 @@ class Element(Function):
             record = Record(update.message, 'Message received from: {}, MsgId.: {:d}'.format(update.message.from_user.first_name, update.message.message_id))
             self.return_queue.put(record)
 
-        start_handler       = CommandHandler('start', start)
-        message_handler     = MessageHandler(Filters.text &~ Filters.command, message)
-        unknown_cmd_handler = MessageHandler(Filters.command, unknown)
+        def callback_query_handler(update, context):
+
+            data = update.callback_query.data
+            context.bot.answer_callback_query(
+                callback_query_id = update.callback_query.id,
+                text = 'Preparing report...'
+            )
+
+
+
+        start_handler       = CommandHandler('start', start) # handler for the start command
+        message_handler     = MessageHandler(Filters.text &~ Filters.command, message) # only text and not commands
+        unknown_cmd_handler = MessageHandler(Filters.command, unknown) 
+        callback_handler    = CallbackQueryHandler(callback_query_handler)
 
         dispatcher.add_handler(start_handler)
-        dispatcher.add_handler(message_handler) # muss als letztes hinzugefügt werden
+        #dispatcher.add_handler(message_handler) # we don't need to process messages
+        dispatcher.add_handler(callback_handler)
         dispatcher.add_handler(unknown_cmd_handler)
 
         updater.start_polling()
