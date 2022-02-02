@@ -26,6 +26,7 @@ class Element(Function):
         cmd = None
         specificConfig = self.config.get('SpecificConfig')
         chat_ids = SetPersist('chat_ids')
+        callback_short_report = '5m'
 
         if not specificConfig:
 
@@ -51,7 +52,7 @@ class Element(Function):
             # buttonb = KeyboardButton()
             # keyboard = [[keyboardButton]]
             # reply_markup = ReplyKeyboardMarkup(keyboard)
-            data_short_report = 'A unique text for help button callback data'
+            data_short_report = '5m'
             report_button = InlineKeyboardButton(
                 text='Request Report: 5min', # text that show to user
                 callback_data=data_short_report # text that send to bot when user tap button
@@ -75,11 +76,17 @@ class Element(Function):
         def callback_query_handler(update, context):
 
             data = update.callback_query.data
-            context.bot.answer_callback_query(
-                callback_query_id = update.callback_query.id,
-                text = 'Preparing report...'
-            )
+            if data == callback_short_report:
 
+                context.bot.answer_callback_query(
+                    callback_query_id = update.callback_query.id,
+                    text = 'Preparing report...'
+                )
+
+                guitext = GuiCMD('Report request from: {}'.format(update.callback_query.from_user.first_name))
+                self.return_queue.put(guitext)
+                record = Record(data, 'Report request from: {}'.format(update.callback_query.from_user.first_name))
+                self.return_queue.put(record)
 
 
         start_handler       = CommandHandler('start', start) # handler for the start command
