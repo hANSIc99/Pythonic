@@ -194,13 +194,14 @@ class OperatorElementOpDone(QRunnable):
 
         cfgElement = [x for x in self.currentConfig if x['Id'] == self.id][0]
 
-
-
         if cfgElement['Config']['GeneralConfig']['Logging'] and self.record.message: # Log Message enabled
             if isinstance(self.record.data, PythonicError):
                 logging.warning('{} - {}'.format(cfgElement['ObjectName'], self.record.message))
             else:
                 logging.info('{} - {}'.format(cfgElement['ObjectName'], self.record.message))
+
+            # forward message to GUI so that the message can be 
+            # optionally displayed in the message sidebar
 
             data = {
                 'Id'        : cfgElement['Id'],
@@ -220,6 +221,9 @@ class OperatorElementOpDone(QRunnable):
 
 
         if cfgElement['Config']['GeneralConfig']['Debug'] : # Log Output enabled
+
+            # convert the payload to string to that the data can be
+            # optionally displayed in the output sidebar
 
             data = {
                 'Id'        : cfgElement['Id'],
@@ -362,7 +366,7 @@ class Operator(QObject):
             self.createProcHandle(startElement)
 
     def getIdent(self):
-
+        # generate a new process handle identifier
         self.identGenMutex.lock()
         
         self.n_ident += 1 
@@ -458,6 +462,7 @@ class Operator(QObject):
         self.threadpool.start(stateOperator)
         
     def updateStatus(self, element, status):
+        
         #start highlight
         # area
         # id

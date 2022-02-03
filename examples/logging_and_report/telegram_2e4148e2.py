@@ -27,6 +27,7 @@ class Element(Function):
         specificConfig = self.config.get('SpecificConfig')
         chat_ids = SetPersist('chat_ids')
         callback_short_report = '5m'
+        self.callback_query_id = None # stre the last chat id which created a query
 
         if not specificConfig:
 
@@ -76,12 +77,15 @@ class Element(Function):
         def callback_query_handler(update, context):
 
             data = update.callback_query.data
-            if data == callback_short_report:
+            self.callback_query_id = update.effective_chat.id
 
+            if data == callback_short_report:
+                
                 context.bot.answer_callback_query(
                     callback_query_id = update.callback_query.id,
                     text = 'Preparing report...'
                 )
+                
 
                 guitext = GuiCMD('Report request from: {}'.format(update.callback_query.from_user.first_name))
                 self.return_queue.put(guitext)
@@ -115,14 +119,23 @@ class Element(Function):
 
             elif isinstance(cmd, ProcCMD):
 
-                guitext = GuiCMD("Sending data: " + str(cmd.data))
-                self.return_queue.put(guitext)
+                #guitext = GuiCMD("Sending data: " + str(cmd.data))
+                #self.return_queue.put(guitext)
+                filename = cmd.data
 
-                for chat_id in chat_ids.copy():
-                    try:
-                        dispatcher.bot.send_message(chat_id=chat_id, text=str(cmd.data))
-                    except Exception as e:
-                        chat_ids.discard(chat_id)
-                        self.return_queue.put(Record(PythonicError(e), 'Error sending message, related chat id removed'))
+                if not filename or not isinstance(filename, str):
+                    continue
+ 
+                try:
+                    with open(filename, 'rb') as freport:
+                        try:
+                            dispatcher.bot.send_document(
+                                chat_id=self.callback_query_id, 
+                                document=freport)
+                        except Exception as e:
+                            self.return_queue.put(Record(PythonicError(e), 'Error sending message'))
 
+                except OSError as e:
+                    self.return_queue.put(Record(PythonicError(e), 'Error opening report'))
+ 
             cmd = None

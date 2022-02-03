@@ -41,13 +41,9 @@ class Element(Function):
         sheets = wb.sheetnames
         datasheet = wb['Data']
 
-        # example data
-        self.inputData = [  (1641378333, 5),
-                            (1641378433, 6),
-                            (1641378533, 7)]
 
         # create an iterator over the rows in the datasheet
-        rows = datasheet.iter_rows(min_row=0, max_row=999, min_col=0, max_col=2)
+        rows = datasheet.iter_rows(min_row=2, max_row=999, min_col=0, max_col=2)
 
         # Convert unix time [s] back into a datetime object, returns an iterator
         reportdata_dt = map(lambda foo: (datetime.datetime.fromtimestamp(foo[0]), foo[1]), self.inputData)
@@ -62,7 +58,7 @@ class Element(Function):
         # alternative approach (functional)
 
         # zip both iterators together
-        #data_it = zip(reportdata_dt, rows)
+        # data_it = zip(reportdata_dt, rows)
         # def write_row(data):
         #     (dt, val), (row_dt, row_val) = data
         #     row_dt.value = dt
