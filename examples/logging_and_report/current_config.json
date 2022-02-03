@@ -30,8 +30,8 @@
         "License": "GPLv3",
         "ObjectName": "SQLite - 0x196f9a6e",
         "Parents": [
-            1826686116,
-            242975584
+            242975584,
+            1826686116
         ],
         "Plug": true,
         "Position": {
@@ -60,7 +60,7 @@
             "GeneralConfig": {
                 "Autostart": false,
                 "Debug": false,
-                "Logging": true,
+                "Logging": false,
                 "MP": false
             },
             "SpecificConfig": []
@@ -262,8 +262,8 @@
         "AreaNo": 0,
         "Author": "Stephan Avenwedde",
         "Childs": [
-            1433802434,
-            1826686116
+            1826686116,
+            1433802434
         ],
         "Config": {
             "GeneralConfig": {
@@ -424,7 +424,7 @@
         "Config": {
             "GeneralConfig": {
                 "Autostart": false,
-                "Debug": true,
+                "Debug": false,
                 "Logging": false,
                 "MP": false
             },
@@ -475,8 +475,8 @@
         "Config": {
             "GeneralConfig": {
                 "Autostart": false,
-                "Debug": true,
-                "Logging": true,
+                "Debug": false,
+                "Logging": false,
                 "MP": false
             },
             "SpecificConfig": []
@@ -523,7 +523,8 @@
                 "Debug": false,
                 "Logging": false,
                 "MP": false
-            }
+            },
+            "SpecificConfig": []
         },
         "ConstructorCMD_Unix": "cp -u executables/generic_pipe.py ~/Pythonic/executables/generic_pipe_BASICDATA_Id.py",
         "ConstructorCMD_Win32": "copy executables\\generic_pipe.py %HOMEPATH%\\Pythonic\\executables\\generic_pipe_BASICDATA_Id.py",

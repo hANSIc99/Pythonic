@@ -1,4 +1,5 @@
 import time, queue, datetime
+from pathlib import Path
 from collections import deque
 from openpyxl import workbook 
 from openpyxl import load_workbook
@@ -18,12 +19,14 @@ class Element(Function):
 
         #####################################
         #                                   #
-        #     REPORT GENERATOR      #
+        #         REPORT GENERATOR          #
         #                                   #
         #####################################
 
+        path = Path.home() / 'Pythonic' / 'executables' / 'report_template.xlsx'
+
         try: 
-            wb = load_workbook("/home/stephan/Pythonic/executables/report_template.xlsx")
+            wb = load_workbook(path)
         except FileNotFoundError as e:
             recordDone = Record(PythonicError(e), 'Template not found') 
             self.return_queue.put(recordDone)
@@ -69,9 +72,10 @@ class Element(Function):
         # deque(maker, maxlen=0)
 
         reportDate = datetime.datetime.now().strftime('%d_%b_%Y_%H_%M_%S')
-        filename = '/home/stephan/Pythonic/log/report_{}.xlsx'.format(reportDate)
-        wb.save(filename)
+        filename = 'report_{}.xlsx'.format(reportDate)
+        filepath = Path.home() / 'Pythonic' / 'log' / filename
+        wb.save(filepath)
         wb.close()
 
-        recordDone = Record(filename, 'Report saved under: {}'.format(filename))     
+        recordDone = Record(filepath, 'Report saved under: {}'.format(filename))     
         self.return_queue.put(recordDone)

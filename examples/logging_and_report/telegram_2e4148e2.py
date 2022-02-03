@@ -2,7 +2,7 @@ import queue
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, Filters, CallbackQueryHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-
+from pathlib import PosixPath
 try:
     from element_types import Record, Function, ProcCMD, GuiCMD, SetPersist, PythonicError
 except ImportError:    
@@ -119,11 +119,10 @@ class Element(Function):
 
             elif isinstance(cmd, ProcCMD):
 
-                #guitext = GuiCMD("Sending data: " + str(cmd.data))
-                #self.return_queue.put(guitext)
                 filename = cmd.data
 
-                if not filename or not isinstance(filename, str):
+                if not filename or not isinstance(filename, PosixPath):
+                    cmd = None
                     continue
  
                 try:
