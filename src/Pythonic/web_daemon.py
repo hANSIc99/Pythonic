@@ -106,8 +106,6 @@ def ctrl(ws):
 
                 if logObj['logLvL'] == LogLvl.DEBUG.value:
                     logging.debug('PythonicWeb    - {}'.format(logObj['msg']))
-                if logObj['logLvL'] == LogLvl.DEBUG.value:
-                    logging.debug('PythonicWeb    - {}'.format(logObj['msg']))
                 elif logObj['logLvL'] == LogLvl.INFO.value:
                     logging.info('PythonicWeb    - {}'.format(logObj['msg']))
                 elif logObj['logLvL'] == LogLvl.WARNING.value:
@@ -124,10 +122,18 @@ def ctrl(ws):
                 ws.environ['mainWorker'].config = msg['data']
                 # Save config to file
                 ws.environ['mainWorker'].saveConfig.emit(msg['data'])
+                # Update config at Operator
+                ws.environ['mainWorker'].updateConfig.emit(msg['data'])
+
             elif msg['cmd'] == 'StartExec':
                 #logging.info(h.heap())
                 elementId = msg['data']      
-                ws.environ['mainWorker'].startExec.emit(elementId, ws.environ['mainWorker'].config)
+                # Update config at Operator
+                ws.environ['mainWorker'].updateConfig.emit(ws.environ['mainWorker'].config)
+                # Start execution with element Id
+                ws.environ['mainWorker'].startExec.emit(elementId)
+
+
             elif msg['cmd'] == 'StopExec':
                 elementId = msg['data']
                 ws.environ['mainWorker'].stopExec.emit(elementId)
@@ -392,8 +398,9 @@ class MainWorker(QObject):
     max_grid_cnt    = 5
     config          = None # element configuration
 
-    update_logdate  = Signal(object)        # update displayed date string in stdin_reader
-    startExec       = Signal(object, object)# element-Id, configuration
+    updateLogdate  = Signal(object)        # update displayed date string in stdin_reader
+    updateConfig   = Signal(object)        # update configuration in execution operator
+    startExec       = Signal(object)        # element-Id
     stopExec        = Signal(object)        # element-Id
     saveConfig      = Signal(object)        # configuration
     sysCommand      = Signal(object)        # Optional: Element Constructor / Destructor
@@ -443,6 +450,7 @@ class MainWorker(QObject):
         self.operator.command.connect(self.forwardCmd)
         self.startExec.connect(self.operator.startExec)
         self.stopExec.connect(self.operator.stopExec)
+        self.updateConfig.connect(self.operator.updateConfig)
         self.queryStates.connect(self.operator.getElementStates)
         self.startAll.connect(self.operator.startAll)
         self.stopAll.connect(self.operator.stopAll)
@@ -462,7 +470,7 @@ class MainWorker(QObject):
 
         # Connect the logger
         if self.args.Ex:
-            self.logFileHandler.update_logdate.connect(self.stdinReader.updateLogDate)
+            self.logFileHandler.updateLogdate.connect(self.stdinReader.updateLogDate)
                
 
         # Instantiate ToolboxLoader

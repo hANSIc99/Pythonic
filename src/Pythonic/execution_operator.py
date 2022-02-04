@@ -365,6 +365,11 @@ class Operator(QObject):
             logging.info("Autostart " + startElement['ObjectName'])
             self.createProcHandle(startElement)
 
+    def updateConfig(self, config):
+
+        logging.debug('Operator::updateConfig() called')
+        self.currentConfig = config
+
     def getIdent(self):
         # generate a new process handle identifier
         self.identGenMutex.lock()
@@ -381,15 +386,15 @@ class Operator(QObject):
 
         return self.n_ident
 
-    def startExec(self, id, config):
+    def startExec(self, id):
         logging.debug('Operator::startExec() called - id: 0x{:08x}'.format(id))
         ## create processor and forward config and start filename
 
-        self.currentConfig = config
+        # self.currentConfig = config
         # https://stackoverflow.com/questions/34609935/passing-a-function-with-two-arguments-to-filter-in-python
 
         # return first element which matches the ID
-        startElement = [x for x in config if x['Id'] == id][0]
+        startElement = [x for x in self.currentConfig if x['Id'] == id][0]
 
         self.createProcHandle(startElement)
 
@@ -462,7 +467,7 @@ class Operator(QObject):
         self.threadpool.start(stateOperator)
         
     def updateStatus(self, element, status):
-        
+
         #start highlight
         # area
         # id
