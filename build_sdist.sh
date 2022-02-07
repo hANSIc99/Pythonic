@@ -10,6 +10,7 @@
 #END
 #)
 cp setup_x86.cfg setup.cfg
+cp setup_x86.py setup.py
 python3 setup.py sdist
 
 #export PackageName=PythonicRPI
@@ -21,4 +22,5 @@ python3 setup.py sdist
 #END
 #)
 cp setup_rpi.cfg setup.cfg
+cp setup_rpi.py setup.py
 python3 setup.py sdist

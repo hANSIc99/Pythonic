@@ -1,3 +1,7 @@
+1.11
+
+    Configuration changes during runtime are now possible
+
 1.10
 
     SQLite element added

@@ -1,8 +1,8 @@
 import time, queue
 try:
-    from element_types import Record, Function, ProcCMD, GuiCMD
+    from element_types import Record, Function, ProcCMD, GuiCMD, PythonicError
 except ImportError:    
-    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD
+    from Pythonic.element_types import Record, Function, ProcCMD, GuiCMD, PythonicError
     
 class Element(Function):
 

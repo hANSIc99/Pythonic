@@ -10,7 +10,7 @@ def reset_screen():
                     '|_|    \__, |\__|_| |_|\___/|_| |_|_|\___|____/ \__,_|\___|_| |_| |_|\___/|_| |_|\n'\
                     '       |___/                                                                     \n'
 
-    version         = 'v1.10\n'
+    version         = 'v1.11\n'
     gitHub          = 'Visit https://github.com/hANSIc99/Pythonic\n'
     log_info_msg    = '<<<<<<<<<<<< Logging directory ~/Pythonic/log/\n'
 

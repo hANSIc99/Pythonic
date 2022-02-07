@@ -1,5 +1,6 @@
 .pyc
 setup.cfg
+setup.py
 
 src/Pythonic/PythonicRPI.egg-info
 src/PythonicRPI.egg-info
