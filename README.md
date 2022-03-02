@@ -58,7 +58,9 @@ Open a command shell and simply type `Pythonic`.
 
  
 ## Raspberry PI Image
-  
+
+<p align="center"><img src="https://github.com/hANSIc99/Pythonic/blob/master/screenshots/oss-rising-star-black.png"></p>
+ 
 The image is available at [sourceforge.net](https://sourceforge.net/projects/pythonicrpi/)
  
 [![Download PythonicRPI](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/pythonicrpi/files/latest/download)
