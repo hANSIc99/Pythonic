@@ -9,3 +9,4 @@ src/Pythonic/Pythonic.egg-info
 src/Pythonic/.vscode
 src/code-server/*.vsix
 src/code-server/*.rpm
+src/build-*
