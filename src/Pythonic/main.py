@@ -35,7 +35,7 @@ def run():
 
 
     """
-    Create launch.json with current PID in hte libraries installation path
+    Create launch.json with current PID in the libraries installation path
     """
     libPath = os.path.dirname(__file__)
 
