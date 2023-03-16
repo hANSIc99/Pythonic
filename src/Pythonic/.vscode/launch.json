@@ -11,7 +11,8 @@
             "program": "main.py",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "subProcess": false
+            "subProcess": false,
+            "qt" : "pyside2"
         },
         {
             "name": "Pythonic Verbose",
@@ -20,7 +21,8 @@
             "args": ["-v"],
             "program": "main.py",
             "console": "integratedTerminal",
-            "justMyCode": false
+            "justMyCode": false,
+            "qt" : "pyside2"
         },
         {
             "name": "Debugpy",
