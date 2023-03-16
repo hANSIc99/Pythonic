@@ -64,15 +64,12 @@ def run():
     
     with open(vsCodepath / 'launch.json', 'w') as file:
         json.dump(launch, file, indent=4)
-    
-
-
 
     app = QCoreApplication(sys.argv)
     ex = MainWorker(app)
     ex.start(sys.argv)
     
-    app.exec_()
+    app.exec()
 
 if __name__ == '__main__':
 

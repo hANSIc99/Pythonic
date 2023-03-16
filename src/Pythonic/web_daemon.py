@@ -7,18 +7,20 @@ from zipfile import ZipFile
 from enum import Enum
 from shutil import copyfile
 from PySide2.QtCore import QCoreApplication, QObject, QThread, Qt
-from PySide2.QtCore import Signal
+from PySide2.QtCore import Signal, QThreadPool
 
 try:
     from logfile_hanlder import LogFileHandler
     from execution_operator import Operator   
     from screen import reset_screen, reset_screen_dbg
     from configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
+    from httpd import HTTPD
 except ImportError:
     from Pythonic.logfile_hanlder import LogFileHandler
     from Pythonic.execution_operator import Operator
     from Pythonic.screen import reset_screen, reset_screen_dbg
     from Pythonic.configio import ToolboxLoader, ConfigLoader, EditorLoader, ConfigWriter, ExecSysCMD
+    from Pythonic.httpd import HTTPD
 
 
 ##############################################
@@ -61,14 +63,14 @@ def rcv(ws):
     ws.environ['mainWorker'].frontendCtrl.connect(send)
     
     bConnected = True
-    while bConnected:
+    while bConnected: ### TODO
         greenthread.sleep(0.1)
         QCoreApplication.processEvents()
         greenthread.sleep(0.1)
         QCoreApplication.processEvents()
         greenthread.sleep(0.1)
         QCoreApplication.processEvents()
-
+        #print('test!')
         try:
 
             date = datetime.datetime.now() #.strftime("%d-%b-%Y")
@@ -253,6 +255,7 @@ def dispatch(environ, start_response):
         start_response('200 OK', [  ('content-type', 'text/html'),
                                     ('Cross-Origin-Opener-Policy', 'same-origin'),
                                     ('Cross-Origin-Embedder-Policy', 'require-corp')])
+        print(os.path.join(os.path.dirname(__file__)))
         return [open(os.path.join(os.path.dirname(__file__),
             www_root + 'templates/PythonicWeb.html')).read()]
 
@@ -398,8 +401,8 @@ class MainWorker(QObject):
     max_grid_cnt    = 5
     config          = None # element configuration
 
-    updateLogdate  = Signal(object)        # update displayed date string in stdin_reader
-    updateConfig   = Signal(object)        # update configuration in execution operator
+    updateLogdate   = Signal(object)        # update displayed date string in stdin_reader
+    updateConfig    = Signal(object)        # update configuration in execution operator
     startExec       = Signal(object)        # element-Id
     stopExec        = Signal(object)        # element-Id
     saveConfig      = Signal(object)        # configuration
@@ -412,8 +415,8 @@ class MainWorker(QObject):
 
     def __init__(self, app):
         super(MainWorker, self).__init__()
-        self.app = app
-
+        self.app        = app
+        self.threadpool = QThreadPool.globalInstance()
         # Setup command line arguments
         
         parser = argparse.ArgumentParser(description='Pythonic background daemon')
@@ -443,7 +446,9 @@ class MainWorker(QObject):
         locale.setlocale(locale.LC_TIME, '')
 
         # Instantiate WSGI Server
-        self.wsgi_server = WSGI_Server(self)
+        #self.wsgi_server = WSGI_Server(self)
+        self.httpd = HTTPD()
+        
         
         # Instantiate Execution Operator
         self.operator = Operator()
@@ -516,7 +521,8 @@ class MainWorker(QObject):
         self.config = self.config_loader.loadConfigSync()
 
 
-        self.wsgi_server.start()
+        #self.wsgi_server.start()
+        self.threadpool.start(self.httpd)
         self.operator.start(self.config)
 
     def loadTools(self): # Multithreaded
