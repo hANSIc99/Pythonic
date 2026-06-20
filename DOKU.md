@@ -32,7 +32,7 @@ Pythonic's web service provides an overview of available log files at **http://\
     - Implementation in own code is optional
 - ERROR (Unhandled exception):
     - Caused by an unhandles exception
-    - Is signalized in the GUI ("Exception occured, open log for details")
+    - Is signalized in the GUI ("Exception occurred, open log for details")
     - Is always active (implementation not optional)
 
 ### Exception handling
